@@ -133,7 +133,7 @@ function generateSearchQueries(thesis: string): string[] {
   
   // Query 2: Find specific tickers
   if (isDefense) {
-    queries.push(`defense AI contractors stocks ticker BAH LDOS PLTR 2025`);
+    queries.push(`${concept} defense contractors stocks ticker symbol 2025`);
   } else if (isBiotech) {
     queries.push(`${concept} pharmaceutical companies stocks NYSE NASDAQ`);
   } else if (isEnergy) {
@@ -252,12 +252,22 @@ async function webSearchInstruments(query: string): Promise<{ tickers: string[];
     }
     
     const url = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=8`;
-    const resp = await fetch(url, {
-      headers: { "Accept": "application/json", "Accept-Encoding": "gzip", "X-Subscription-Token": apiKey },
-    });
+    let resp: Response | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      resp = await fetch(url, {
+        headers: { "Accept": "application/json", "Accept-Encoding": "gzip", "X-Subscription-Token": apiKey },
+      });
+      if (resp.status === 429) {
+        const delay = (attempt + 1) * 2000; // 2s, 4s, 6s backoff
+        console.error(`   ⚠️ Brave 429 — retrying in ${delay/1000}s...`);
+        await new Promise(r => setTimeout(r, delay));
+        continue;
+      }
+      break;
+    }
     
-    if (!resp.ok) {
-      console.error(`   ⚠️ Brave search: HTTP ${resp.status}`);
+    if (!resp || !resp.ok) {
+      console.error(`   ⚠️ Brave search: HTTP ${resp?.status || 'unknown'}`);
       return { tickers: [], snippets: [] };
     }
     
@@ -360,7 +370,7 @@ export async function discoverInstrumentsLive(thesis: string): Promise<Candidate
   const allSearchTickers: Map<string, number> = new Map(); // ticker → frequency count
   
   for (let i = 0; i < queries.length; i++) {
-    if (i > 0) await new Promise(r => setTimeout(r, 1100)); // Brave rate limit: 1 req/sec
+    if (i > 0) await new Promise(r => setTimeout(r, 1500)); // Brave rate limit: ~1 req/sec + buffer
     const result = await webSearchInstruments(queries[i]);
     for (const ticker of result.tickers) {
       if (seen.has(ticker)) continue;

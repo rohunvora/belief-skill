@@ -124,20 +124,43 @@ You know thousands of public companies. For common themes (AI, defense, energy, 
 
 ### Source 3: Live web search (for unknown themes)
 
-When you encounter a thesis about something you don't know well (peptides, lithium recycling, pre-IPO drone companies), use the discovery tool:
+When you encounter a thesis about something you don't know well, use the discovery tool:
 
 ```bash
 bun run scripts/discover.ts "peptide therapeutics stocks ETFs"
 ```
 
-This searches the web, extracts tickers from financial articles, and validates them via Yahoo Finance. Results include source attribution.
+This searches the web, extracts tickers from financial articles, and validates them. The web is your instrument database — it knows about every industry that exists.
+
+**Discovery follows the ReAct pattern — Reason → Act → Observe → Reason again:**
+
+1. **Reason** — What sub-themes does this thesis imply? What should I search for?
+2. **Act** — Run discover.ts with a focused query
+3. **Observe** — Did it find relevant tickers? Are they actually connected to the thesis?
+4. **Reason** — Are there gaps? Did I miss an angle? Do I need more searches?
+5. **Act again** — If results are sparse, search with different terms. Try the SECOND-ORDER effect.
 
 **When to use discover.ts vs your own knowledge:**
-- Theme you know well (AI, crypto, defense) → own knowledge first, discover.ts to check for recent names you might miss
-- Theme you DON'T know well (peptides, lithium recycling, construction tech) → discover.ts first
-- Completely novel thesis → discover.ts + `web_search` for additional context
+- Theme you know well (AI, crypto, defense) → own knowledge first, discover.ts to catch recent names
+- Theme you DON'T know well → discover.ts first, then evaluate results
+- Completely novel thesis → Multiple discover.ts calls with different angles + `web_search` for context
 
-**Important: Filter discover.ts results.** Web search returns noise. If AAPL shows up for "lithium recycling", drop it — Apple isn't a lithium recycler. Use YOUR judgment on which discovered tickers actually connect to the thesis.
+**Example — multi-step discovery for "peptides are about to blow up":**
+```bash
+# Step 1: Direct search
+bun run scripts/discover.ts "peptide therapeutics stocks"
+# → finds HIMS, NVO, maybe some noise
+
+# Step 2: Broader angle — what companies make peptides?
+bun run scripts/discover.ts "BPC-157 peptide pharmaceutical companies"
+# → finds more specific plays
+
+# Step 3: Adjacent angle — who benefits from peptide popularity?
+bun run scripts/discover.ts "compounding pharmacy stocks publicly traded"
+# → finds the second-order plays
+```
+
+**Critical: Filter results.** Web search returns noise. If AAPL shows up for "lithium recycling", drop it — Apple isn't a lithium recycler. Use YOUR judgment on which discovered tickers actually connect to the thesis. The search finds candidates; YOU decide which are relevant.
 
 ---
 
