@@ -17,10 +17,10 @@ description: >
 
 ## Defaults
 
-- **Risk mode: max upside.** Optimize for asymmetry and convexity. Ruin risk (losing the full $100K) is acceptable. Prefer instruments with uncapped upside: options, perps, binary contracts. Eliminate instruments with capped upside (plain stock/ETF) unless the thesis is structural and long-horizon.
+- **Risk mode: max upside.** Optimize for asymmetry and convexity. Ruin risk (losing the full $100K) is acceptable. Prefer instruments with uncapped upside: options, perps, binary contracts. Deprioritize capped-upside instruments (plain stock/ETF) — but use them when the thesis is structural, long-horizon, or when they're genuinely the highest-beta expression.
 - **Bet size: $100,000.** Show payoff scenarios at this amount, not just $100 basis.
 - **Goal: one trade.** Find THE single best expression. Not a portfolio. Show 1-2 alternatives with genuinely different risk profiles, but lead with THE trade and commit to it.
-- **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in. This determines eligible instruments — >2yr eliminates standard options, <1mo eliminates shares for max-upside.
+- **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in. See Phase 1 Time Horizon and Phase 3 criterion #2.
 
 ---
 
@@ -57,16 +57,23 @@ The deeper claim often points to a **completely different instrument** than the 
 | "AI will replace search" | Buy AI companies | Google's ad monopoly is the casualty | Long AI | **Short GOOG** — the victim is more mispriced than the winner |
 | "Bugatti customers are all crypto bros" | Buy crypto | Crypto wealth effect flows into luxury goods | Long BTC | **Long luxury (LVMH, Ferrari RACE)** — the non-obvious beneficiary |
 | "Interest rates are staying higher for longer" | Buy bank stocks | Long-duration assets get punished across the board | Long JPM | **Short TLT or long TBT** — the most direct rates expression |
+| "Fed won't cut in March" | Short rate-sensitive stocks | Market is overpricing the cut — the NO side is mispriced | Short REITs | **Kalshi NO on March cut at $0.08** — 12x payout if right, defined $100K risk |
+| "SOL is going to flip ETH" | Long SOL | The ratio is what matters, not the absolute price | Long SOL spot | **Long SOL / short ETH perps on Hyperliquid** — profits on the spread regardless of market direction |
 
 **The key insight: the obvious trade is usually priced in. The deeper trade — the one that requires the causal chain — is where the asymmetry is.**
 
 ### Think in Causal Chains
 
-Map the thesis forward at least 3 levels:
+Map the thesis forward using the frame that fits:
 
+**For directional theses** (something goes up or down):
 1. **Who benefits directly?** (first-order — usually priced in)
 2. **Who supplies the winners? Who gets hurt?** (second-order — often mispriced)
 3. **What infrastructure is needed? What breaks?** (third-order — where the edge is)
+
+**For probability theses** (something will/won't happen): What probability is the market assigning? What should it be? Where is the gap widest?
+
+**For relative theses** (X outperforms Y): What's the ratio? What should it be? What drives convergence? Can you isolate the spread from market direction?
 
 ### Clarity Gate
 
@@ -93,14 +100,17 @@ After stating the deeper claim, extract three time estimates:
 2. **Price-in window:** When does the market start pricing it? Known catalysts price in 6-18 months early. Surprises price in 0-3 months.
 3. **Trade horizon:** Catalyst minus price-in window = your actual holding period. This is how long you're in the trade, not how long the thesis takes to play out.
 
-Example — PQC mandate:
+Example — PQC mandate (structural):
 - Catalyst: NIST full migration by 2035, first hardware deadline 2026
 - Price-in: Market reprices when first contracts are signed (~2027-2028)
 - Trade horizon: 2-3 years for the re-rating move
 
-**This determines eligible instruments in Phase 3.** >2yr horizon eliminates standard options (unless LEAPS exist). <3mo horizon eliminates shares (insufficient convexity). Perps with >0.03%/day funding become expensive past 6 months.
+Example — Fed holds March (event-driven):
+- Catalyst: FOMC meeting March 19
+- Price-in: 1-2 weeks before (futures and Kalshi adjust)
+- Trade horizon: <1 month — enter 3-4 weeks before, exit day of
 
-You MUST state the trade horizon before proceeding to Phase 2.
+You MUST state the trade horizon before proceeding to Phase 2. This gates instrument selection in Phase 3.
 
 ---
 
@@ -223,7 +233,7 @@ Pick the winner. State WHY it wins in 2-3 sentences.
 
 Before committing, construct the strongest case AGAINST the winning trade. Ask:
 
-- **What would make this trade lose money even if the thesis is directionally correct?** (Timing — thesis plays out after your options expire. Mechanism — the move happens but through a channel that doesn't benefit your instrument. Already priced in — the market already moved.)
+- **What would make this trade lose money even if the thesis is directionally correct?** (Timing — thesis plays out after expiry. Mechanism — move happens through a channel that doesn't benefit your instrument. Carry — funding rate flips and eats the position. Technicality — Kalshi contract resolves on a definitional edge case. Already priced in.)
 - **Try to rebut it with evidence from Phase 2.** Cite a specific data point.
 - **If you can't rebut it, don't hide it.** Flag it as a known risk in the "What kills it" section of the output. If the counterargument is devastating (e.g., the entire upside requires an assumption you can't support), reconsider the runner-up.
 
@@ -305,16 +315,7 @@ bun run scripts/card.ts --id ID
 
 ### Build Payoff Table
 
-Using live pricing + the trade horizon from Phase 1, build 5 scenario rows at the **$100,000 bet size**. Each row has:
-
-- **Rough timeline:** When could this scenario plausibly occur? Use the trade horizon, catalyst dates, and comparable precedents. Downside is usually faster than upside.
-- **Multiple or loss:** Upside as Nx (3x, 5x, 10x). Downside as dollar loss (lose $60K, lose $35K). Asymmetric framing — losses in dollars, gains in multiples.
-- **Context:** What this scenario means. Upside rows reference a comparable company at that MC. Downside rows state the condition.
-
-Claude estimates the timelines — scripts provide price levels, not time. Base estimates on:
-- Catalyst dates from Phase 1 (hard deadlines)
-- Comparable company growth rates (how fast did similar companies reach that MC?)
-- Market pricing dynamics (when does consensus shift?)
+Using live pricing + the trade horizon from Phase 1, build 5 scenario rows at the **$100,000 bet size**. See formatting principles #4 and #9 for column format (timeline, dollar loss / multiple gain, comparable context).
 
 For each instrument type, include the relevant specifics:
 - **Options:** strike, expiry, approximate premium, number of contracts at $100K, breakeven price. Warn about IV crush for catalyst-dated theses.
@@ -338,17 +339,16 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 
 ### Formatting Principles
 
-1. **Minto Pyramid structure.** Belief → Company intro → Trade line → Why (flowing into scenarios) → Kills → Rejected → Deeper claim → Alt → Execute. Each section meets the reader at their current understanding.
-2. **Company before ticker.** The reader must know WHAT they're buying before they see the ticker. Introduce the company in plain English first: "There's a $688M Swiss chip company making the exact hardware that NIST requires..." The ticker line becomes confirmation, not introduction.
-3. **WHY flows into scenarios.** Don't drop a disconnected data table. Build understanding progressively: mandate/catalyst (fact) → deadline (urgency) → company's product (connection) → market size (scale) → floor statement ("at current price, market is pricing zero adoption") → here's what that looks like for your $100K (payoff).
-4. **Comparable-as-label for upside, dollar loss for downside.** Upside rows use multiples (3x, 5x, 10x) with → [COMP]-size as context. Downside rows use dollar losses (lose $60K, lose $35K). Asymmetric framing maps to how traders process each direction differently.
-5. **Comparable legend below the table.** Tickers mean nothing to most readers. One line each, sorted by size: `QUBT  $2.1B  Quantum Computing Inc`.
+1. **Minto Pyramid structure.** Belief → Context intro → Trade line → Why (flowing into scenarios) → Kills → Rejected → Deeper claim → Alt → Execute. Each section meets the reader at their current understanding.
+2. **Context before ticker.** The reader must know WHAT they're buying/selling before they see the ticker. For equities: company in plain English ("There's a $688M Swiss chip company..."). For Kalshi: the contract and what it resolves ("There's a binary on whether the Fed cuts in March..."). For perps: the position and what drives it. The ticker line becomes confirmation, not introduction.
+3. **WHY flows into scenarios.** Build understanding progressively toward the payoff table. The p3 anchor adapts by instrument type — see Instrument-Type Adaptations table.
+4. **Asymmetric framing.** Upside rows: multiples (3x, 5x, 10x). Downside rows: dollar losses (lose $60K). Losses as dollar pain, gains as multiple excitement (prospect theory). For equities, upside labels use → [COMP]-size as context; for other types, use the relevant math (see adaptations table).
+5. **Comparable legend when applicable.** For equity trades with MC comparables, add one line each below the table, sorted by size: `QUBT  $2.1B  Quantum Computing Inc`. Skip for Kalshi, perps, and options.
 6. **Price included.** Price appears on the trade line and in the scenario table header for brokerage checking ("am I winning?"). MC appears in the company intro. Comparable gives MC meaning.
 7. **Telegram-native formatting.** Entire output is a single monospace code block. No markdown tables (they break on mobile). Use `────` dividers between sections. Align columns with spaces. Target ~4096 chars max for a single Telegram message.
 8. **Eliminations are compressed.** One line per rejected instrument with ticker, key data point, and reason. Column-aligned for scannability. A framing sentence before the table turns rejections into evidence for the winning trade.
-9. **Time-aware scenarios.** Each scenario row includes a rough timeline as the first column. Downside is usually faster than upside. Timelines are estimates based on catalyst dates and comparable precedents, not precision — use ranges (< 1yr, 2-3yr, 5yr+).
-10. **Asymmetric framing.** Downside in dollar losses (lose $60K). Upside in multiples (3x, 5x, 10x). Maps to how traders process risk vs reward — losses are pain denominated in dollars, gains are excitement denominated in multiples.
-11. **Temporal origin.** Company intro includes WHEN they built the thing, not just what it is. "Spent two years building X before anyone wanted it — hit production the year Y mandated it" tells the reader about timing risk (they're not vaporware) in one sentence.
+9. **Time-aware scenarios.** Each scenario row includes a rough timeline as first column. Downside resolves faster than upside. Use ranges (< 1yr, 2-3yr, 5yr+) based on catalyst dates and comparable precedents. Scripts provide price levels, not time — Claude estimates timelines from catalysts, comparable growth rates, and market pricing dynamics.
+10. **Temporal origin.** For single-company theses, intro includes WHEN they built the thing — "hit production the year Y mandated it" is due diligence about timing risk in one sentence. Skip for ETFs, indices, Kalshi binaries, perp pairs, and commodity instruments.
 
 ### Output Template
 
@@ -361,8 +361,7 @@ Not a logic flowchart, but the bet stated plainly.]
 ────────────────────────────────────
 
 There's a [MC] [country/descriptor] [company type] [making/that]
-[temporal beat — what they built and when, connecting to
-why the timing is now, not just what they do].
+[temporal beat — WHEN they built it + why timing is now].
 
 [COMPANY NAME] ([TICKER]) · $[PRICE] · [DIRECTION]
 
@@ -411,8 +410,7 @@ Next: [nearest catalyst with date]
 
 REJECTED
 
-[One sentence framing why the rejections prove the thesis.
-Turns eliminations into evidence for the winning trade.]
+[Optional: one sentence framing if rejections share a theme.]
 
 [TICKER1]       [key data point], [reason]
 [TICKER2]       [key data point], [reason]
@@ -444,15 +442,31 @@ EXECUTE
 Market data for informational purposes.
 ```
 
+### Instrument-Type Adaptations
+
+The template above is the reference implementation (equity-long). For other instrument types, adapt these sections — the skeleton (BELIEF → intro → WHY → table → KILLS → REJECTED → DEEPER CLAIM → ALT → EXECUTE) stays identical:
+
+| Section | Equity (default) | Kalshi binary | Perp / leveraged | Options / puts |
+|---------|-----------------|---------------|------------------|----------------|
+| Intro | Company desc + MC + temporal | Contract + resolution date + market probability | Position + leverage + funding rate | Underlying + strike + expiry + IV |
+| WHY p3 anchor | MC gap vs addressable market | Probability mispricing: "market says X%, should be Y%" | Ratio divergence or momentum + carry cost | Premium vs expected move + IV vs realized |
+| Table upside | Nx → [COMP]-size | Payout at $1/contract (show # contracts) | Nx at leverage (show liquidation price) | Nx on premium (show breakeven price) |
+| Table downside | lose $XXK | lose $XXK (premium = max loss) | lose $XXK or "liquidated at $X" | lose $XXK (premium = max loss) |
+| Summary line | [shares] sh · horizon · >X% +EV | [contracts] ct · resolves [date] · >X% +EV | [size] @ [leverage]x · [funding]/yr · >X% +EV | [contracts] · [expiry] · >X% +EV |
+
+Comparables and comparable legend: use for equities and equity-like instruments. For Kalshi, perps, and options, replace with the relevant math context (payout structure, leverage math, greeks).
+
 ### Output Precision Rules
 
-**Scenario table math:** Implied price = target MC ÷ shares outstanding. Multiple = target price ÷ entry price. State shares outstanding and entry price in the header. MC comparables must be real, recognizable companies — ideally same sector. Downside rows show dollar loss (lose $XXK), upside rows show multiple (Nx).
+**Scenario table math by type:**
+- **Equity:** Implied price = target MC ÷ shares outstanding. Multiple = target price ÷ entry price. MC comparables must be real, recognizable companies — ideally same sector.
+- **Kalshi:** P&L = contracts × (payout − entry price). State # contracts at $100K and implied probability.
+- **Perps:** P&L = position size × leverage × price move %. State liquidation price in every scenario.
+- **Options:** P&L = contracts × (intrinsic value at target − premium paid) × 100. State breakeven price and expiry.
 
-**Timeline estimation:** Claude estimates rough timelines for each scenario row. Use ranges (< 1yr, 2-3yr, 5yr+), not specific dates. Base on catalyst dates, comparable growth rates, and market pricing dynamics. Downside scenarios typically resolve faster than upside.
+**Kill conditions:** Specific, observable, with time column. Not "if the thesis is wrong" but "2026  QS7001 misses mass production" or "policy  NIST delays or softens mandate." `Next:` highlights nearest catalyst.
 
-**Kill conditions:** Specific, observable, with time column. Not "if the thesis is wrong" but "2026  QS7001 misses mass production" or "policy  NIST delays or softens mandate." The `Next:` line highlights the nearest catalyst.
-
-**Rejections:** One framing sentence, then one line per instrument with one data point each. "IONQ calls  96% IV, 74% to breakeven." If you can't say it in one line, the reasoning isn't sharp enough. The framing sentence turns the rejections into evidence for the winning trade.
+**Rejections:** One line per instrument with one data point each. If rejections share a common theme, add a framing sentence that turns them into evidence for the winner. If they're heterogeneous (different elimination reasons), skip the framing — the data speaks.
 
 ---
 

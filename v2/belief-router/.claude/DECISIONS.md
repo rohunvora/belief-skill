@@ -154,3 +154,43 @@ Five surgical changes to the output template:
 16. **Temporal origin in company intro.** WHEN they built the thing matters as much as WHAT they built. "Hit production the year NIST made it mandatory" is due diligence about timing risk in one sentence — they're not vaporware.
 
 17. **Rejection framing.** One sentence before the rejection table that turns eliminations into evidence. "Every obvious quantum play has the same problem — priced for the narrative, not the mandate" makes the rejected instruments prove something about the market's mispricing, rather than just listing what we didn't pick.
+
+## 2026-02-15: Session 4 — Instrument-Type Generalization (455 → 484 lines)
+
+### Context
+Line-level audit found the output template, formatting principles, and precision rules were overfitted to equity-long trades. The template assumed a company with MC, comparables, and shares — producing visibly templated output for Kalshi binaries, perp pairs, options, and inverse ETFs.
+
+### What changed
+
+**Round 11: Instrument-type adaptation table**
+- Added adaptation table after the output template — 5 sections (Intro, WHY p3 anchor, Table upside, Table downside, Summary line) × 4 instrument types (Equity, Kalshi, Perp, Options)
+- Keeps the equity template as reference implementation (hardest to get right, most iterated)
+- Claude adapts the 5 variable sections per type; skeleton stays identical
+- Why not branching templates: 3 full templates would cost ~200 lines and repeat the skeleton 3x
+
+**Round 12: Formatting principles generalized**
+- #1: "Company intro" → "Context intro"
+- #2: "Company before ticker" → "Context before ticker" with examples per instrument type
+- #3: WHY flow now references adaptation table for p3 anchor
+- #4: Merged with old #10 (asymmetric framing) — comparables are equity-specific, framing is universal
+- #5: "Comparable legend when applicable" — skip for non-equity
+
+**Round 13: Output precision rules expanded**
+- Added instrument-type math: Kalshi (contracts × payout gap), Perps (position × leverage × move), Options (contracts × intrinsic − premium)
+- Rejection framing made conditional: "if rejections share a theme" rather than always forcing a unifying sentence
+
+**Other fixes:**
+- Defaults: "Eliminate" → "Deprioritize" capped-upside instruments (the PQC trade itself was shares)
+- Worked examples: added Kalshi binary (Fed hold) and Hyperliquid perp pair (SOL/ETH) so not all deeper trades land on Robinhood
+- Causal chains: added probability estimation and relative value thinking frames alongside supply-chain framing
+- Time horizon: added short-dated example (FOMC, <1 month) alongside structural PQC example
+- Stress-test: added perp (funding rate flips) and Kalshi (resolves on technicality) failure modes
+- Temporal origin: expanded skip-list to include Kalshi binaries and perp pairs
+
+### Key design decisions (additions)
+
+18. **Adaptation table over branching templates.** The skeleton is universal (BELIEF → intro → WHY → table → KILLS → REJECTED → DEEPER CLAIM → ALT → EXECUTE). Only 5 sections vary by instrument type. A compact table (~12 lines) replaces what would be ~200 lines of branching templates. Claude already knows what Kalshi contracts and perps look like — it needs surgical overrides, not full templates.
+
+19. **Equity template stays as reference implementation.** It's the most complex case (MC, comparables, temporal origin, supply chain reasoning) and was iterated over 10 rounds. The adaptation table tells Claude what to swap out for simpler instrument types, keeping the equity version as the quality bar.
+
+20. **Thinking frames per thesis type.** Directional theses (who benefits/supplies/breaks), probability theses (market price vs your price), and relative theses (ratio + convergence driver) each require different Phase 1 reasoning. One frame doesn't fit all.

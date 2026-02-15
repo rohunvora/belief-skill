@@ -6,21 +6,22 @@ Claude Code skill that routes a thesis into a single highest-upside trade expres
 
 ## How it works
 
-| Phase | What happens | Where |
-|-------|-------------|-------|
-| 1. Extract | Separate surface claim from deeper claim. Find the causal chain. | Thinking |
-| 2. Research | 2-3 parallel web searches for live data: prices, valuations, consensus. | Thinking |
-| 3. Eliminate | 4-8 candidates across platforms, cut with evidence to 1 winner. | Thinking |
-| 4. Validate | Run adapter scripts for live pricing on 2-3 survivors. | Thinking |
-| 5. Present | Assemble full verbose reasoning (internal only). | Thinking |
-| 6. Format | Compress into reader-facing output. Inverted pyramid: trade first, essay last. | Output |
+| Phase | What happens |
+|-------|-------------|
+| 1. Extract | Separate surface claim from deeper claim. Extract time horizon (catalyst, price-in window, trade horizon). |
+| 2. Research | Parallel web searches for live data: prices, valuations, consensus. Check trade history. |
+| 3. Eliminate | 4-8 candidates across platforms, cut with evidence to 1 winner. Stress-test the pick. |
+| 4. Validate | Run adapter scripts for live pricing on 2-3 survivors. Build payoff table. |
+| 5. Format | Compress into reader-facing output. Minto Pyramid: belief first, details last. |
 
 ## Key design decisions
 
-- **MC-first, not price-first.** Payoff table leads with market cap. Comparable column shows which companies get flipped at each tier.
-- **Inverted pyramid output.** Trade → Payoff → Why (3 bullets) → Kills → Eliminations (table) → Deeper claim → Execute. ADHD-friendly.
-- **Two-pass architecture.** Phases 1-5 think verbose for reasoning fidelity. Phase 6 compresses for the reader. Thinking depth is never sacrificed for output brevity.
-- **Telegram-native formatting.** Monospace code blocks instead of markdown tables (tables break on mobile). No collapsible sections. Sources in Obsidian callout for MD output only.
+- **Adaptation table, not branching templates.** One equity-long reference template + a compact table that tells Claude what to swap for Kalshi binaries, perps, and options. 12 lines instead of 200.
+- **Context before ticker.** Reader knows WHAT they're buying before they see the symbol. Company description for equities, contract description for Kalshi, position description for perps.
+- **Asymmetric framing.** Downside in dollar losses (lose $60K). Upside in multiples (3x, 5x). Prospect theory — losses as pain, gains as excitement.
+- **Time-aware scenarios.** Every payoff row has a rough timeline. A 3x in 2 years and a 3x in 8 years are different trades.
+- **Three thinking frames.** Directional (who benefits/loses), probability (market price vs yours), relative (ratio + convergence). Not all theses are supply-chain reasoning.
+- **Telegram-native formatting.** Monospace code blocks, `────` dividers, column alignment. No markdown tables (break on mobile).
 
 ## Platforms
 
@@ -33,9 +34,10 @@ Claude Code skill that routes a thesis into a single highest-upside trade expres
 
 ## Defaults
 
-- **Risk mode:** Max upside. Ruin risk acceptable. Prefer uncapped instruments.
+- **Risk mode:** Max upside. Ruin risk acceptable. Deprioritize (not eliminate) capped-upside instruments.
 - **Bet size:** $100,000. Payoff scenarios at real dollar amounts.
 - **Goal:** One trade. Not a portfolio.
+- **Time horizon:** Match to thesis. Catalyst date → price-in window → trade horizon.
 
 ## Usage
 
@@ -47,14 +49,17 @@ Installed as a Claude Code skill via symlink:
 
 Triggered by: `/belief-router`, "trade this", "how would I trade this", "express this view", or any directional thesis.
 
+## Current stage
+
+SKILL.md at 484 lines across 5 phases. Output template generalized across 4 instrument types (equity, Kalshi binary, perps, options). 10 formatting principles. Reference files loaded on-demand for instrument reasoning, portfolio construction, and blindspots/risk.
+
 ## What's next
 
-- [ ] Output format flag: Telegram vs Obsidian MD (auto-detect or explicit)
-- [ ] Telegram-optimized format (monospace blocks, no tables, no collapsible)
+- [ ] Output format flag: Telegram vs Obsidian MD
 - [ ] Card image generation for shareable trade cards
-- [ ] Track record integration (record → check → close → card)
+- [ ] Trade memory storage design (for OpenClaw/Claude Code instances)
 
 ## What's blocked
 
-- LEAPS options pricing: can't scrape live LEAPS data programmatically (Yahoo/Barchart require JS rendering). Currently estimating from Black-Scholes + IV.
-- Kalshi quantum markets: no active quantum computing contracts found.
+- LEAPS options pricing: can't scrape live LEAPS data programmatically (Yahoo/Barchart require JS rendering)
+- Kalshi quantum markets: no active quantum computing contracts found
