@@ -9,7 +9,6 @@ import { discoverInstruments } from "../scripts/instruments";
 import { enrichInstruments } from "../scripts/research";
 import { rankInstruments } from "../scripts/rank";
 import { sizePositions } from "../scripts/size";
-import { decomposeThesis } from "../scripts/decompose";
 import type { SizedRecommendation } from "../scripts/types";
 
 const PORTFOLIO_PATH = new URL("../../../examples/sample-state.json", import.meta.url).pathname;
@@ -23,26 +22,10 @@ for (const scenario of scenarios) {
   const errors: string[] = [];
 
   try {
-    // LLM decomposition + web search discovery (mirrors router.ts pipeline)
-    const decomposed = await decomposeThesis(scenario.thesis);
-    const CRYPTO_SET = new Set(["BTC","ETH","SOL","HYPE","TRUMP","PENGU","BONK","WIF","PYTH","JUP","RAY","JTO","ORCA","DYDX","AAVE","UNI","MKR","CRV","SNX","RNDR","AKT","TAO","ARB","OP","MATIC","GALA","IMX","AXS","SAND","MANA","VIRTUAL","AI16Z","FET","NEAR"]);
-    const llmCandidates = decomposed.instruments.map(inst => {
-      const ticker = inst.ticker.replace(/\$/g, "").toUpperCase();
-      let asset_class: "stock" | "etf" | "crypto" | "secondary" = "stock";
-      if (inst.asset_class?.includes("crypto") || CRYPTO_SET.has(ticker)) asset_class = "crypto";
-      else if (inst.asset_class?.includes("etf") || inst.asset_class?.includes("ETF")) asset_class = "etf";
-      else if (inst.asset_class?.includes("secondary") || inst.asset_class?.includes("pre-IPO")) asset_class = "secondary";
-      return { ticker, name: ticker, asset_class, sub_themes: ["llm"], source: "llm-decompose", _direction: inst.direction };
-    });
-    const discoverCandidates = await discoverInstruments(scenario.thesis);
-    const seen = new Set(llmCandidates.map(c => c.ticker));
-    const allCandidates = [...llmCandidates, ...discoverCandidates.filter(c => !seen.has(c.ticker))];
+    // Keyword pipeline (mirrors router.ts — no LLM calls)
+    const allCandidates = await discoverInstruments(scenario.thesis);
     const enriched = await enrichInstruments(allCandidates);
     const ranked = rankInstruments(enriched, scenario.thesis);
-    for (const r of ranked) {
-      const llmInst = decomposed.instruments.find(i => i.ticker.replace(/\$/g, "").toUpperCase() === r.ticker.toUpperCase());
-      if (llmInst?.direction === "short") (r as any)._direction = "short";
-    }
     const sized = sizePositions(ranked, portfolio, scenario.budget, scenario.thesis);
 
     const checks = scenario.checks;
