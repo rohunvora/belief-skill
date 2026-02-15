@@ -122,15 +122,53 @@ export function sizePositions(
   // Secondaries always included (they get $0 allocation, so don't compete for budget slots)
   top.push(...secondariesList);
   
+  // Check if portfolio is already HEAVILY exposed to this SPECIFIC thesis
+  // Only count direct ticker matches + same-theme crypto correlation
+  let directExposureTotal = 0;
+  for (const inst of top) {
+    if (inst.asset_class === "secondary") continue;
+    // Only count DIRECT holdings (not broad asset-class correlation)
+    const ticker = inst.ticker.toUpperCase();
+    const directHolding = Object.entries(existingPositions).find(([k]) => k.toUpperCase() === ticker);
+    if (directHolding) directExposureTotal += directHolding[1].usd || 0;
+  }
+  // Also check theme-specific crypto correlation — only for CRYPTO-focused theses
+  // (e.g., "AI tokens on Base" when holding BNKR, NOT "defense AI spending")
+  const thesisCryptoCount = top.filter(t => t.asset_class === "crypto").length;
+  const cryptoKeywords = /\bcrypto|token|chain|defi|dex|sol|eth|base chain|onchain\b/i;
+  const thesisIsCryptoFocused = thesisCryptoCount > top.length * 0.3 || (thesis && cryptoKeywords.test(thesis));
+  if (thesisIsCryptoFocused) {
+    const portfolioCrypto: Record<string, string[]> = {
+      "BNKR": ["ai", "base"], "KELLYCLAUDE": ["ai", "base"],
+      "FELIX": ["ai", "base"], "KLED": ["meme", "base"],
+    };
+    const thesisThemes = new Set(top.flatMap(t => t.sub_themes?.map(s => s.toLowerCase()) || []));
+    for (const [name, themes] of Object.entries(portfolioCrypto)) {
+      const pos = Object.entries(existingPositions).find(([k]) => k.toUpperCase() === name);
+      if (!pos) continue;
+      if (themes.some(t => [...thesisThemes].some(tt => tt.includes(t)))) {
+        directExposureTotal += pos[1].usd || 0;
+      }
+    }
+  }
+  const thesisExposureRatio = directExposureTotal / (totalPortfolio || 1);
+  const effectiveBudget = thesisExposureRatio > 0.4
+    ? budget * 0.2 // "You ARE this trade" — only small adds
+    : thesisExposureRatio > 0.2
+    ? budget * 0.5
+    : budget;
+  
+  // Debug: console.error(`DEBUG: top=${top.length} effectiveBudget=${effectiveBudget}`);
+  
   // Kelly-inspired sizing: allocate proportionally by composite score
   const totalScore = top.reduce((sum, r) => sum + r.scores.composite, 0);
   
   const sized: SizedRecommendation[] = top.map(inst => {
-    // Base allocation proportional to score
-    let allocation = (inst.scores.composite / totalScore) * budget;
+    // Base allocation proportional to score (use effective budget for already-exposed theses)
+    let allocation = (inst.scores.composite / totalScore) * effectiveBudget;
     
     // Cap at max concentration
-    allocation = Math.min(allocation, budget * MAX_CONCENTRATION);
+    allocation = Math.min(allocation, effectiveBudget * MAX_CONCENTRATION);
     
     // Check existing exposure
     const existingExposure = findExistingExposure(inst, existingPositions, portfolioData);
@@ -147,10 +185,14 @@ export function sizePositions(
         if (exposureRatio > 0.1) allocation *= 0.3;
         else if (exposureRatio > 0.05) allocation *= 0.6;
       }
-      // Correlated exposure: reduce proportionally when very high
-      const corrRatio = existingExposure / (totalPortfolio || existingExposure);
-      if (corrRatio > 0.3) allocation *= 0.15; // >30% portfolio in correlated → tiny adds
-      else if (corrRatio > 0.15) allocation *= 0.4;
+      // Correlated exposure: reduce proportionally when very high, but keep minimum viable
+      if (!isDirect) {
+        const corrRatio = existingExposure / (totalPortfolio || existingExposure);
+        if (corrRatio > 0.3) {
+          const minPos = Math.min(MIN_POSITION_DEFAULT, budget * 0.05);
+          allocation = Math.max(allocation * 0.15, minPos);
+        } else if (corrRatio > 0.15) allocation *= 0.4;
+      }
     }
 
     // Minimum position size — scale with budget
@@ -177,19 +219,21 @@ export function sizePositions(
       existing_exposure: existingExposure,
       order_details: inst.price > 0 ? `~$${inst.price.toFixed(2)}` : undefined,
     };
-  }).filter(r => r.allocation_usd > 0 || r.asset_class === "secondary");
+  });
+  // Debug: sized.forEach(r => console.error(`  ALLOC: ${r.ticker} ${r.direction} $${r.allocation_usd}`));
+  const result = sized.filter(r => r.allocation_usd > 0 || r.asset_class === "secondary");
 
   // Normalize allocations to fit budget
-  const totalAllocated = sized.reduce((sum, r) => sum + r.allocation_usd, 0);
+  const totalAllocated = result.reduce((sum, r) => sum + r.allocation_usd, 0);
   if (totalAllocated > budget) {
     const scale = budget / totalAllocated;
-    sized.forEach(r => {
+    result.forEach(r => {
       r.allocation_usd = Math.round(r.allocation_usd * scale);
       r.allocation_pct = Math.round((r.allocation_usd / budget) * 100);
     });
   }
 
-  return sized;
+  return result;
 }
 
 function findExistingExposure(

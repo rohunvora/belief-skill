@@ -78,7 +78,12 @@ export async function enrichInstruments(candidates: CandidateInstrument[]): Prom
       const dex = await fetchDexScreener(c.ticker);
       if (dex) data = dex;
     }
-    cryptoResults.push(data ? { ...c, price: 0, ...data } as EnrichedInstrument : null);
+    if (data) {
+      cryptoResults.push({ ...c, price: 0, ...data } as EnrichedInstrument);
+    } else {
+      // Keep instrument with degraded data — better than dropping it
+      cryptoResults.push({ ...c, price: 0, name: c.name || c.ticker, risk_note: "Price data unavailable" } as EnrichedInstrument);
+    }
   }
 
   // Secondaries — no live data, just flag
