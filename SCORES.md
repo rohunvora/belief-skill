@@ -1,5 +1,15 @@
 # Belief Router Test Scores
 
+## 2026-02-15 ~00:45 EST — 🎉 48/48 PASSING (99 avg)
+- **Baseline: 1/1 passing | avg 100/100**
+- **Easy: 8/8 passing | avg 99/100**
+- **Medium: 21/21 passing | avg 100/100** ⬆️ (was 98)
+- **Hard: 18/18 passing | avg 98/100**
+- **TOTAL: 48/48 passing | avg 99/100 | 156.9s total** ⬆️ (was 98)
+- Changes: bare crypto/ETF ticker recognition in thesis, lateral thesis detection (crypto as context)
+- tweet-33: 80→100 (BONK/WIF/PEPE), tweet-6: 80→100 (no BTC/ETH in luxury recs)
+- Commit: `302e23e`
+
 ## 2026-02-15 ~00:30 EST — 🎉 48/48 PASSING (98 avg)
 - **Baseline: 1/1 passing | avg 100/100**
 - **Easy: 8/8 passing | avg 99/100**
@@ -26,3 +36,13 @@
 - Passing tests (from cache/keyword matching): tweet-1, tweet-2, tweet-3, tweet-21
 - Failing tests: scenario-5 (energy), tweet-4 (AI broad), tweet-5 (gold), tweet-39 (oil)
 - Common failure: Zero total allocation (sizing can't run with 0 discovered instruments)
+
+## 2026-02-18 ~23:25 EST
+- **Baseline: 1/1 passing | avg 100/100** ✅
+- **Easy: 8/8 passing | avg 99/100** ✅
+- **Medium: 21/21 passing | avg 100/100** ✅ (up from 98)
+- **Hard: 18/18 passing | avg 98/100** ✅
+- **TOTAL: 48/48 passing | avg 99/100** ✅ (up from 98)
+- Time: 157.4s total | 3.3s avg/test
+- All tests from seeded cache (Brave quota still exhausted)
+- Phase 1 gates: Easy 99 (req 90) ✅ | Medium 100 (req 70) ✅ | Hard 98 (req 50) ✅
