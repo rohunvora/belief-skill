@@ -1,0 +1,945 @@
+[
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "2019625656737239275",
+    "text": "i think the final marginal buyers of the ai trade will be the government, specif",
+    "found": [
+      "BAH",
+      "SAIC",
+      "LDOS",
+      "LMT",
+      "PPA",
+      "SHLD",
+      "CRWD",
+      "ANDURIL"
+    ],
+    "ideal": [
+      "PLTR",
+      "LMT",
+      "RTX",
+      "ANDURIL (secondary)",
+      "ITA (defense ETF)"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "2019848204909703334",
+    "text": "delusional bull case that i choose to believe\n\n&gt;recent tech sell off equivale",
+    "found": [
+      "BAH",
+      "SAIC",
+      "LDOS",
+      "LMT",
+      "PPA",
+      "SHLD",
+      "CRWD",
+      "ANDURIL"
+    ],
+    "ideal": [
+      "PLTR",
+      "NVDA",
+      "BTC",
+      "GLD",
+      "UDN (short USD)"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "2016363797582065806",
+    "text": "if this is the ai cold war then metals bull run makes sense and probably continu",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "GLD",
+      "SLV",
+      "COPX",
+      "uranium ETFs",
+      "metals miners"
+    ],
+    "errors": [
+      "Found 0/6 ideal instruments: [] missing [GLD,SLV,COPX,URANIUM,METALS,FCX]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1883737035527356634",
+    "text": "idea: american manhattan project but for agi",
+    "found": [
+      "OPENAI"
+    ],
+    "ideal": [
+      "PLTR",
+      "NVDA",
+      "GOOG",
+      "MSFT",
+      "ANDURIL"
+    ],
+    "errors": [
+      "Found 0/7 ideal instruments: [] missing [PLTR,NVDA,GOOG,MSFT,ANDURIL,BOOZ,DEFENSE]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1883732213868732648",
+    "text": "Remove 90% of regulations \n\nJust let American workforce rawdog capitalism\n\nIt's ",
+    "found": [
+      "RNDR",
+      "TSM",
+      "TAO",
+      "INTC",
+      "PYPL",
+      "MRVL",
+      "NVDA",
+      "SMH"
+    ],
+    "ideal": [
+      "Small cap tech (IWM)",
+      "crypto",
+      "fintech",
+      "biotech (XBI)",
+      "energy"
+    ],
+    "errors": [
+      "Found 1/5 ideal instruments: [SMALL] missing [CRYPTO,FINTECH,BIOTECH,ENERGY]"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "2016949137858564115",
+    "text": "the better ai gets - the bigger the implications become on national defence and ",
+    "found": [
+      "BAH",
+      "SAIC",
+      "LDOS",
+      "FXI",
+      "PPA",
+      "PDD",
+      "CRWD",
+      "ANDURIL"
+    ],
+    "ideal": [
+      "NVDA",
+      "AMD",
+      "AVGO",
+      "AI infra stocks",
+      "data center REITs"
+    ],
+    "errors": [
+      "Found 1/5 ideal instruments: [AI] missing [NVDA,AMD,AVGO,DATA]"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "2015879107234464192",
+    "text": "by end of 2027 how much do you think military will be spending on compute? https",
+    "found": [
+      "BAH",
+      "SAIC",
+      "LDOS",
+      "PPA",
+      "SHLD",
+      "RNDR",
+      "TSM",
+      "TAO"
+    ],
+    "ideal": [
+      "PLTR",
+      "NVDA",
+      "defense contractors",
+      "ANDURIL (secondary)",
+      "cloud providers"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1883733886569722143",
+    "text": "China is PVPing American tech monopoly",
+    "found": [
+      "FXI",
+      "PDD",
+      "JD",
+      "BIDU",
+      "KWEB",
+      "BABA",
+      "NIO"
+    ],
+    "ideal": [
+      "US defense stocks",
+      "NVDA",
+      "cybersecurity (HACK ETF)",
+      "PLTR"
+    ],
+    "errors": [
+      "Found 0/4 ideal instruments: [] missing [US,NVDA,CYBERSECURITY,PLTR]"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "1876104721133650186",
+    "text": "AGI will be the biggest global narrative in 2025",
+    "found": [
+      "OPENAI"
+    ],
+    "ideal": [
+      "NVDA",
+      "MSFT",
+      "GOOG",
+      "AI tokens",
+      "AI ETFs (BOTZ, ARKQ)"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1875016498110177476",
+    "text": "AI coins top when AI tops",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "AI tokens (basket)",
+      "NEAR",
+      "FET",
+      "RNDR"
+    ],
+    "errors": [
+      "Found 1/4 ideal instruments: [AI] missing [NEAR,FET,RNDR]"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1875018576480104793",
+    "text": "Missed Nvidia? Buy AI coins",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "AI tokens",
+      "VIRTUAL",
+      "FET",
+      "RNDR",
+      "NEAR"
+    ],
+    "errors": [
+      "Found 1/5 ideal instruments: [AI] missing [VIRTUAL,FET,RNDR,NEAR]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": true,
+    "id": "1883468997238432240",
+    "text": "People are thinking about this wrong\n\nCurrent AI projects will benefit from new ",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "AI agent tokens",
+      "AI infra tokens",
+      "LONG existing AI projects during model FUD"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "hard",
+    "pass": true,
+    "id": "2020757138285510993",
+    "text": "agents cant open bank accounts. crypto is literally the only way they can hold a",
+    "found": [
+      "MARA",
+      "ROK",
+      "ROBO",
+      "BOTZ",
+      "CRV",
+      "SNX",
+      "TSLA",
+      "ISRG"
+    ],
+    "ideal": [
+      "AI agent tokens",
+      "crypto payment rails",
+      "stablecoins infrastructure"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "1883373363646898642",
+    "text": "AI coins dip for 2 weeks then go up for 4 weeks straight",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "AI token basket — buy 2 weeks into dips, sell 4 weeks into rallies"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1876611122713006381",
+    "text": "The biggest AI coins will just keep getting bigger because they’re going to be t",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "Top AI tokens by mcap",
+      "VIRTUAL",
+      "AI16Z"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [TOP,VIRTUAL,AI16Z]"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1889756948779676148",
+    "text": "I don't think the AI trade is over by the way.\n\nIt's just really difficult for p",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "AI tokens at local lows",
+      "contrarian AI entries during rotation"
+    ],
+    "errors": [
+      "Found 1/2 ideal instruments: [AI] missing [CONTRARIAN]"
+    ]
+  },
+  {
+    "difficulty": "easy",
+    "pass": true,
+    "id": "1875641651844260228",
+    "text": "SOL to $4800",
+    "found": [
+      "COIN",
+      "BONK",
+      "JTO",
+      "JUP",
+      "RAY",
+      "WIF"
+    ],
+    "ideal": [
+      "SOL",
+      "SOL futures",
+      "SOL ETF (when available)"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "1874686985090326702",
+    "text": "SOL 25 going to be like ETH 21\n\nRenaissance of new ideas, builders and biblical ",
+    "found": [
+      "BONK",
+      "JTO",
+      "JUP",
+      "RAY",
+      "WIF",
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "SOL",
+      "Solana ecosystem tokens",
+      "JUP",
+      "RAY",
+      "SOL DeFi"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "1968659170103869860",
+    "text": "solana defi incoming wave 2026 imo\n\neth defi is currently still 10x bigger than ",
+    "found": [
+      "BONK",
+      "JTO",
+      "JUP",
+      "RAY",
+      "WIF",
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "JUP",
+      "RAY",
+      "Solana lending protocols",
+      "SOL DeFi basket"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "easy",
+    "pass": false,
+    "id": "1971890821751624004",
+    "text": "perp dex war ends with hyperliquid winning \n\nit's gonna happen too https://t.co/",
+    "found": [
+      "SNX",
+      "DYDX",
+      "UNI",
+      "AAVE",
+      "MKR"
+    ],
+    "ideal": [
+      "HYPE",
+      "Hyperliquid ecosystem tokens"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [HYPE,HYPERLIQUID]"
+    ]
+  },
+  {
+    "difficulty": "easy",
+    "pass": false,
+    "id": "1993549577929343261",
+    "text": "hyperliquid probably best app in crypto history",
+    "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "BITO",
+      "ETH",
+      "SOL",
+      "SNX",
+      "DYDX"
+    ],
+    "ideal": [
+      "HYPE"
+    ],
+    "errors": [
+      "Found 0/1 ideal instruments: [] missing [HYPE]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1880448992406040907",
+    "text": "trump might have solved the national debt https://t.co/FN2NpH5CLi",
+    "found": [],
+    "ideal": [
+      "BTC",
+      "TLT (rates play)",
+      "DXY short",
+      "MSTR",
+      "gold"
+    ],
+    "errors": [
+      "Found 0/5 ideal instruments: [] missing [BTC,TLT,DXY,MSTR,GOLD]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "2020232682697847290",
+    "text": "to be clear this bull market will rage on\n\nall roads lead to the debasement of t",
+    "found": [],
+    "ideal": [
+      "BTC",
+      "GLD",
+      "equities (SPY)",
+      "crypto",
+      "UDN (short USD)"
+    ],
+    "errors": [
+      "Found 0/5 ideal instruments: [] missing [BTC,GLD,EQUITIES,CRYPTO,UDN]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "1880571461402030095",
+    "text": "trump &amp; bitcoin barbell might be the safest, easiest 10x over the next 4 yea",
+    "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "BITO",
+      "FBTC",
+      "ETH",
+      "BITI",
+      "SOL"
+    ],
+    "ideal": [
+      "BTC",
+      "$TRUMP",
+      "AI tokens",
+      "HYPE"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "2020279433714708701",
+    "text": "i dont know how to price in kevin warsh being a really smart guy who seems to be",
+    "found": [],
+    "ideal": [
+      "Equities (SPY)",
+      "financials (XLF)",
+      "rate-sensitive sectors"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [EQUITIES,FINANCIALS,RATE-SENSITIVE]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1991272552736411716",
+    "text": "they are crashing market to boost employment https://t.co/WUwwYdjv31",
+    "found": [
+      "RHI",
+      "UPWK",
+      "FVRR",
+      "MAN",
+      "KELYA"
+    ],
+    "ideal": [
+      "SPY puts during crash → flip to calls",
+      "counter-cyclical plays"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [SPY,COUNTER-CYCLICAL]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1991268682824106010",
+    "text": "might be a crazy thought but if a single company is making 57B in a quarter… why",
+    "found": [
+      "HYG",
+      "JPM",
+      "BAC",
+      "TLT",
+      "BND",
+      "TBT"
+    ],
+    "ideal": [
+      "NVDA",
+      "big tech",
+      "growth stocks"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [NVDA,BIG,GROWTH]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1875009299350798819",
+    "text": "The crypto GTA will likely launch organically on pump fun",
+    "found": [
+      "ASTS",
+      "RKLB",
+      "RDW",
+      "UFO",
+      "ARKX",
+      "MARA",
+      "LUNR",
+      "SNX"
+    ],
+    "ideal": [
+      "Gaming tokens",
+      "pump.fun ecosystem",
+      "GALA",
+      "IMX"
+    ],
+    "errors": [
+      "Found 0/4 ideal instruments: [] missing [GAMING,PUMP.FUN,GALA,IMX]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1875010670103777525",
+    "text": "By Q2-Q3 indie game developers will launch through pump fun",
+    "found": [
+      "ASTS",
+      "RKLB",
+      "RDW",
+      "UFO",
+      "ARKX",
+      "LUNR",
+      "BKSY",
+      "SPACEX"
+    ],
+    "ideal": [
+      "Short EA/ATVI",
+      "gaming tokens",
+      "Solana gaming ecosystem"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [SHORT,GAMING,SOLANA]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1876026374898798632",
+    "text": "AI slop increases demand for genuine human shit",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "Creator economy platforms",
+      "authenticity verification",
+      "short content farms"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [CREATOR,AUTHENTICITY,SHORT]"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "1880449932269932740",
+    "text": "Yes, your coins are down right now but who cares? \n\nThe president of the united ",
+    "found": [
+      "COIN",
+      "BONK",
+      "JTO",
+      "FSLR",
+      "ASTS",
+      "RIVN",
+      "ENPH",
+      "TAN"
+    ],
+    "ideal": [
+      "SOL",
+      "$TRUMP",
+      "memecoins",
+      "Solana ecosystem"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1881216781391638825",
+    "text": "The only Americans in TRUMP right now are people that know how to use Jupiter or",
+    "found": [],
+    "ideal": [
+      "SOL",
+      "$TRUMP",
+      "COIN",
+      "onramp infrastructure"
+    ],
+    "errors": [
+      "Found 0/4 ideal instruments: [] missing [SOL,TRUMP,COIN,ONRAMP]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1881157570813108244",
+    "text": "The trenches have discovered low float, high FDV coins.\n\nGet used to coins going",
+    "found": [
+      "SNX",
+      "DYDX",
+      "UNI",
+      "AAVE",
+      "MKR"
+    ],
+    "ideal": [
+      "Low float tokens with strong catalysts",
+      "avoid high float legacy tokens"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [LOW,AVOID]"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1874734487537615030",
+    "text": "doxxed devs + lock supply + og github repo with bunch of green squares + active ",
+    "found": [],
+    "ideal": [
+      "Tokens meeting all 4 criteria — use as screening filter"
+    ],
+    "errors": [
+      "Found 0/1 ideal instruments: [] missing [TOKENS]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": true,
+    "id": "1973834301012656168",
+    "text": "for 16 years the biggest existential threat to crypto was regulatory and now the",
+    "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "BITO",
+      "ETH",
+      "SOL",
+      "SNX",
+      "DYDX"
+    ],
+    "ideal": [
+      "Crypto broadly",
+      "SOL",
+      "BTC",
+      "DeFi tokens",
+      "COIN"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "1881182085622399430",
+    "text": "Whether he knows it or not, Trump is now incentivized to legalize and regulate c",
+    "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "BITO",
+      "ETH",
+      "SOL",
+      "SNX",
+      "DYDX"
+    ],
+    "ideal": [
+      "Crypto broadly",
+      "$TRUMP",
+      "regulatory-sensitive tokens"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [CRYPTO,TRUMP,REGULATORY-SENSITIVE]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "2020552810153074942",
+    "text": "Skills as a Service will be the new SaaS",
+    "found": [],
+    "ideal": [
+      "Short traditional SaaS (WDAY, NOW)",
+      "long AI infrastructure",
+      "OpenClaw ecosystem"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [SHORT,LONG,OPENCLAW]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1874309494236410311",
+    "text": "I hope by the end of 2025, I can replace my search engine with X",
+    "found": [],
+    "ideal": [
+      "Short GOOGL (search revenue)",
+      "long X ecosystem"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [SHORT,LONG]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "2021041786915799116",
+    "text": "It's hard to price the value creation explosion that will result from OpenClaw b",
+    "found": [],
+    "ideal": [
+      "OpenClaw ecosystem tokens",
+      "AI agent infrastructure"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [OPENCLAW,AI]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "2019164046579364212",
+    "text": "shorting software on a piece of software\n\ngl with that",
+    "found": [],
+    "ideal": [
+      "Long QQQ/tech against software shorts",
+      "MSFT",
+      "CRM"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [LONG,MSFT,CRM]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "medium",
+    "pass": false,
+    "id": "2021381763139023271",
+    "text": "if you're bearish ai, you're bearish america",
+    "found": [
+      "ANTHROPIC"
+    ],
+    "ideal": [
+      "AI stocks broadly",
+      "NVDA",
+      "MSFT",
+      "GOOG",
+      "SPY"
+    ],
+    "errors": [
+      "Found 1/5 ideal instruments: [AI] missing [NVDA,MSFT,GOOG,SPY]"
+    ]
+  },
+  {
+    "difficulty": "easy",
+    "pass": false,
+    "id": "1880577439958761521",
+    "text": "Over the next 3 days, TRUMP will have a biblical run similar to the run that hap",
+    "found": [],
+    "ideal": [
+      "$TRUMP"
+    ],
+    "errors": [
+      "Found 0/1 ideal instruments: [] missing [TRUMP]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "easy",
+    "pass": false,
+    "id": "1876127576856707524",
+    "text": "Pudgy Penguins team is probably one of the best teams in all of crypto",
+    "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "BITO",
+      "ETH",
+      "SOL",
+      "SNX",
+      "DYDX"
+    ],
+    "ideal": [
+      "PENGU",
+      "Pudgy ecosystem"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [PENGU,PUDGY]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1879366078733926769",
+    "text": "AGI will be open source",
+    "found": [
+      "OPENAI"
+    ],
+    "ideal": [
+      "Short closed-source premium (MSFT margin compression)",
+      "long open-source ecosystem"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [SHORT,LONG]"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1883770167844655603",
+    "text": "It’s all going to be open source and a lot of them will have a token.",
+    "found": [],
+    "ideal": [
+      "AI tokens tied to real open source repos",
+      "tokenized open source infrastructure"
+    ],
+    "errors": [
+      "Found 0/2 ideal instruments: [] missing [AI,TOKENIZED]",
+      "No instruments discovered at all"
+    ]
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "2020568743697392055",
+    "text": "@AlexFinn I find no personal need for local models &amp; I don’t think anyone sh",
+    "found": [
+      "SNX",
+      "DYDX",
+      "UNI",
+      "AAVE",
+      "MKR"
+    ],
+    "ideal": [
+      "NVDA",
+      "AMD",
+      "consumer GPU hardware",
+      "local inference infrastructure"
+    ],
+    "errors": [
+      "Found 0/4 ideal instruments: [] missing [NVDA,AMD,CONSUMER,LOCAL]"
+    ]
+  },
+  {
+    "difficulty": "easy",
+    "pass": true,
+    "id": "1880446697383555559",
+    "text": "Trump might actually send Bitcoin to $1M",
+    "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "BITO",
+      "FBTC",
+      "ETH",
+      "BITI",
+      "SOL"
+    ],
+    "ideal": [
+      "BTC",
+      "MSTR",
+      "Bitcoin ETFs",
+      "COIN"
+    ],
+    "errors": []
+  },
+  {
+    "difficulty": "hard",
+    "pass": false,
+    "id": "1993071702931283983",
+    "text": "i really think this cycle has rewarded chronically online people disproportionat",
+    "found": [],
+    "ideal": [
+      "Attention economy tokens",
+      "social tokens",
+      "CT-heavy memecoins"
+    ],
+    "errors": [
+      "Found 0/3 ideal instruments: [] missing [ATTENTION,SOCIAL,CT-HEAVY]",
+      "No instruments discovered at all"
+    ]
+  }
+]
