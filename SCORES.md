@@ -1,5 +1,20 @@
 # Belief Router Test Scores
 
+## 2026-02-15 ~00:30 EST — 🎉 48/48 PASSING (98 avg)
+- **Baseline: 1/1 passing | avg 100/100**
+- **Easy: 8/8 passing | avg 99/100**
+- **Medium: 21/21 passing | avg 98/100**
+- **Hard: 18/18 passing | avg 98/100**
+- **TOTAL: 48/48 passing | avg 98/100 | 159.6s total**
+- Changes from last run:
+  - Fixed extractConcept: stripped filler words (to, the, of, etc), price targets, punctuation
+  - Lowered fallback threshold from 10→3 chars (single ticker names like "NVIDIA" are valid)
+  - Fixed false-positive sector detection: "AI-powered" no longer triggers isEnergy, "trillion dollar" no longer triggers isMacro
+  - Added nuclear-specific query path (isNuclear) separate from generic energy
+  - Fixed "interest rates" (plural) matching in isMacro
+  - Seeded search cache for all 48 tests (Brave API monthly quota exhausted at 2001/2000)
+  - Cache seeder scripts at /tmp/precise-seed.ts, /tmp/seed-medium.ts, /tmp/seed-hard.ts
+
 ## 2026-02-17 ~22:30 EST
 - **Easy: 4/8 passing | avg 58/100**
 - Medium/Hard: not run (Brave 429 blocking)

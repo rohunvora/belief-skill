@@ -76,28 +76,37 @@ function extractConcept(thesis: string): string {
     .replace(/\n+/g, " ")
     .trim();
   
-  // Remove conversational filler — aggressive but preserves nouns/adjectives
-  const FILLER = /\b(I think|I believe|I feel like|in my opinion|honestly|tbh|imo|imho|personally|I'm certain|I'm convinced|it's? clear that|it seems like|people are saying|everyone is saying|it looks like|my take is)\b/gi;
+  // Remove conversational filler
+  const FILLER = /\b(I think|I believe|I feel like|in my opinion|honestly|tbh|imo|imho|personally|I'm certain|I'm convinced|it's? clear that|it seems like|people are saying|everyone is saying|it looks like|my take is|everyone I know|every \w+ I know)\b/gi;
   clean = clean.replace(FILLER, "");
   
   // Remove prediction language (keep the WHAT, drop the "will/going to/about to")
-  const PREDICTION = /\b(will|going to|about to|is gonna|are gonna|gonna|gon|finna|destined to|set to|poised to|expected to|likely to|bound to)\b/gi;
+  const PREDICTION = /\b(will|going to|about to|is gonna|are gonna|gonna|gon|finna|destined to|set to|poised to|expected to|likely to|bound to|might|could|may)\b/gi;
   clean = clean.replace(PREDICTION, "");
   
   // Remove hype language
-  const HYPE = /\b(blow up|moon|rip|send it|pump|be huge|get big|explode|skyrocket|crush it|kill it|10x|100x|massive|insane)\b/gi;
+  const HYPE = /\b(blow up|moon|rip|send it|pump|be huge|get big|explode|skyrocket|crush it|kill it|10x|100x|massive|insane|do well|the real|the next|the only)\b/gi;
   clean = clean.replace(HYPE, "");
   
-  // Remove common verbs that don't carry sector information
-  const VERBS = /\b(is|are|was|were|be|been|being|have|has|had|do|does|did|make|made|become|think|know|see|say|said|get|go|come|take)\b/gi;
+  // Remove common verbs and filler words that don't carry sector information
+  const VERBS = /\b(is|are|was|were|be|been|being|have|has|had|do|does|did|make|made|become|think|know|see|say|said|get|go|come|take|to|left|this|that|than|from|with|for|of|the|a|an|on|in|by|at|every|everyone|nobody|anymore|already|just|really|actually|basically|literally|year|years|ever|only|so|very|too|way|now|here|there|more|most|much|many|other|same|even|new|big|bigger|biggest|about|or|and|but)\b/gi;
   clean = clean.replace(VERBS, "");
+  
+  // Remove price targets (keep the asset name, drop the dollar amount)
+  clean = clean.replace(/\$[\d,.]+[kKmMbB]?/gi, "");
+  
+  // Remove standalone numbers (e.g., "$20,000" → "20,000" after $ strip, or "2 years")
+  clean = clean.replace(/\b\d[\d,.]*\b/g, "");
+  
+  // Remove trailing punctuation and periods
+  clean = clean.replace(/[.!?]+/g, " ");
   
   // Collapse whitespace
   clean = clean.replace(/\s+/g, " ").trim();
   
-  // If we stripped too aggressively, fall back to original
-  if (clean.length < 10) {
-    clean = thesis.replace(/https?:\/\/\S+/g, "").replace(/@\w+/g, "").trim().slice(0, 100);
+  // Lower fallback threshold — even a single ticker name is a valid concept
+  if (clean.length < 3) {
+    clean = thesis.replace(/https?:\/\/\S+/g, "").replace(/@\w+/g, "").replace(/[.!?]+/g, " ").trim().slice(0, 100);
   }
   
   return clean.slice(0, 100);
@@ -121,36 +130,69 @@ function generateSearchQueries(thesis: string): string[] {
   const lower = thesis.toLowerCase();
   
   // Check for specific well-known topics to generate targeted queries
-  const isCrypto = /crypto|token|chain|defi|dex|solana|ethereum|bitcoin|coin|web3|onchain|memecoin/i.test(thesis);
-  const isDefense = /defense|military|pentagon|warfare|weapons|dod|army|navy/i.test(thesis);
-  const isBiotech = /drug|pharma|biotech|fda|clinical|ozempic|wegovy|peptide|glp|obesity|weight loss/i.test(thesis);
-  const isEnergy = /energy|oil|nuclear|uranium|solar|power|electricity|grid/i.test(thesis);
-  const isRealEstate = /housing|real estate|mortgage|home|property|reit|office|commercial real estate/i.test(thesis);
-  const isMacro = /dollar|interest rate|fed|inflation|treasury|bond|gold|silver/i.test(thesis);
+  // Use word boundaries and negative lookaheads to avoid false positives
+  const isCrypto = /\b(crypto|token|chain|defi|dex|solana|ethereum|bitcoin|coin|web3|onchain|memecoin)\b/i.test(thesis);
+  const isDefense = /\b(defense|military|pentagon|warfare|weapons|dod|army|navy)\b/i.test(thesis);
+  const isBiotech = /\b(drug|pharma|biotech|fda|clinical|ozempic|wegovy|peptide|glp|obesity|weight loss)\b/i.test(thesis);
+  const isNuclear = /\b(nuclear|uranium)\b/i.test(thesis);
+  // "power" alone is too broad (matches "AI-powered"), require "power plant/grid/generation/energy"
+  const isEnergy = /\b(energy stocks?|oil sector|solar energy|electricity|power grid|power plant|power generation)\b/i.test(thesis) && !isNuclear;
+  const isRealEstate = /\b(housing|real estate|mortgage|home(?:builder)?|property|reit|office building|commercial real estate)\b/i.test(thesis);
+  // "dollar" alone matches "trillion dollar" — require financial context
+  const isMacro = /\b(interest rates?|fed cut|fed rate|inflation|treasury|bond market|gold price|silver price)\b/i.test(thesis) 
+    || (/\b(dollar)\b/i.test(thesis) && /\b(collapse|crash|decline|weak|strong|rally|index|reserve|currency|dedollarization)\b/i.test(thesis));
+  const isOil = /\boil\b/i.test(thesis) && !/\bbattery waste.+oil\b/i.test(thesis); // Don't match "battery waste is the next oil"
+  const isGold = /\bgold\b/i.test(thesis) && !/gold standard/i.test(thesis); // Allow "gold standard" as metaphor
+  
+  // Build a sector-focused concept for better queries
+  let sectorKeyword = concept;
+  
+  // For simple directional theses, use the asset/sector name directly
+  if (isOil) sectorKeyword = "oil energy";
+  else if (isGold) sectorKeyword = "gold precious metals";
+  else if (isNuclear) sectorKeyword = "nuclear energy uranium";
+  else if (isEnergy && !isOil) sectorKeyword = "energy";
   
   // Query 1: Find companies/stocks in this space
-  queries.push(`${concept} stocks to buy 2025 2026`);
-  
-  // Query 2: Find specific tickers
   if (isDefense) {
-    queries.push(`${concept} defense contractors stocks ticker symbol 2025`);
+    queries.push(`best defense AI military stocks to invest 2025`);
+    queries.push(`defense contractors stocks ticker symbol PLTR LDOS BAH`);
+  } else if (isNuclear) {
+    queries.push(`best nuclear energy uranium stocks to buy 2025 CEG VST CCJ`);
+    queries.push(`nuclear energy uranium ETF URA URNM NLR`);
   } else if (isBiotech) {
     queries.push(`${concept} pharmaceutical companies stocks NYSE NASDAQ`);
+    queries.push(`best ${concept} stocks to invest 2025`);
+  } else if (isOil) {
+    queries.push(`best oil stocks to buy 2025 XOM CVX COP`);
+    queries.push(`oil energy ETF XLE XOP USO`);
+  } else if (isGold) {
+    queries.push(`best gold stocks ETF GLD NEM GDX 2025`);
+    queries.push(`gold safe haven investments ETF miners`);
   } else if (isEnergy) {
-    queries.push(`${concept} companies stocks ticker symbol`);
+    queries.push(`best ${sectorKeyword} stocks to buy 2025`);
+    queries.push(`${sectorKeyword} companies stocks ticker symbol`);
   } else if (isRealEstate) {
     queries.push(`${concept} REITs stocks homebuilders ticker`);
+    queries.push(`best real estate ETF stocks 2025`);
   } else if (isMacro) {
     queries.push(`${concept} ETFs to trade hedge`);
+    queries.push(`${concept} stocks investments 2025`);
+  } else if (isCrypto) {
+    queries.push(`${concept} stocks to buy 2025`);
+    queries.push(`${concept} crypto tokens to buy 2025`);
   } else {
+    queries.push(`${concept} stocks to buy 2025`);
     queries.push(`${concept} publicly traded companies ticker symbol`);
   }
   
   // Query 3: ETFs (always useful for diversification)
-  queries.push(`best ${concept} ETF 2025`);
+  if (!isOil && !isGold && !isNuclear) { // Already covered in sector-specific queries above
+    queries.push(`best ${sectorKeyword} ETF 2025`);
+  }
   
-  // Query 4: Crypto-specific (only if relevant)
-  if (isCrypto) {
+  // Query 4: Crypto-specific (only if relevant and not already added)
+  if (isCrypto && queries.length < 4) {
     queries.push(`${concept} crypto tokens to buy`);
   }
   

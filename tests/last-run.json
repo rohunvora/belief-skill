@@ -1,15 +1,30 @@
 {
-  "timestamp": "2026-02-15T03:48:22.542Z",
-  "total": 1,
-  "passed": 1,
+  "timestamp": "2026-02-15T04:18:31.928Z",
+  "total": 48,
+  "passed": 48,
   "failed": 0,
-  "avg_score": 80,
+  "avg_score": 98,
   "by_difficulty": {
-    "easy": {
+    "baseline": {
       "passed": 1,
       "total": 1,
-      "avg": 80
+      "avg": 100
+    },
+    "medium": {
+      "passed": 21,
+      "total": 21,
+      "avg": 98
+    },
+    "hard": {
+      "passed": 18,
+      "total": 18,
+      "avg": 98
+    },
+    "easy": {
+      "passed": 8,
+      "total": 8,
+      "avg": 99
     }
   },
-  "time_seconds": 54
+  "time_seconds": 160
 }
