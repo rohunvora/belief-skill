@@ -252,11 +252,42 @@ When a thesis contains multiple distinct claims:
 3. Mention the other legs as alternatives
 4. Check `references/portfolio-construction.md` for multi-leg guidance if the user explicitly wants a portfolio
 
+### Step 2.5: Private Market Scan
+
+**Trigger:** public winner has thesis beta <50%, OR the thesis targets an emerging trend with no public pure-play.
+
+Search for higher-purity private expressions:
+
+```bash
+bun run scripts/adapters/angel/instruments.ts "thesis keywords"
+```
+
+The script searches Republic, Wefunder, and Crunchbase for active raises matching the thesis. Evaluate private instruments on the same metric with an illiquidity penalty:
+
+`thesis beta × convexity / (time cost + illiquidity cost)`
+
+Illiquidity cost: assume 5-7 year lockup for seed/A, 2-4 years for late-stage/pre-IPO. Annualize as opportunity cost (~10%/yr).
+
+Private markets win when thesis beta × convexity is so high it overcomes the lockup penalty. This typically happens when:
+- No public pure-play exists (thesis beta gap >30% vs public winner)
+- Trend is pre-IPO stage (the companies that WILL be the public tickers don't exist yet)
+- User has domain expertise or network edge in the space
+
+**If private scan finds results:** add a PRIVATE MARKET section to the output (see Phase 5). This supplements — never replaces — the public market trade.
+
+**If private scan returns empty or low-quality:** skip silently.
+
+| Public winner thesis beta | Private section? |
+|--------------------------|:---:|
+| >70% | Skip |
+| 50-70% | Show only if standout find |
+| <50% | Always scan and show if results |
+
 ### When No Traditional Instrument Exists
 
 **Never dead-end. Never say "this isn't tradeable." Always descend the expression fidelity ladder until you find something actionable.**
 
-When the thesis doesn't map to any instrument on the four platforms (Robinhood, Kalshi, Hyperliquid, Bankr) — or when every available instrument has near-zero thesis beta — keep going. Descend through these levels, stopping at the first one that produces a real action:
+When the thesis doesn't map to any instrument on the five platforms (Robinhood, Kalshi, Hyperliquid, Bankr, Angel) — or when every available instrument has near-zero thesis beta — keep going. Descend through these levels, stopping at the first one that produces a real action:
 
 **Level 1: High-beta proxy.** Parent company stock, sector ETF. State thesis beta honestly: "WMG captures ~2% of the Osamason thesis."
 
@@ -292,6 +323,9 @@ bun run scripts/adapters/kalshi/instruments.ts "keyword phrase"
 
 # Bankr: thesis-based (sends to Bankr AI agent)
 bun run scripts/adapters/bankr/instruments.ts "thesis text"
+
+# Angel: keyword search across Republic, Wefunder, Crunchbase
+bun run scripts/adapters/angel/instruments.ts "thesis keywords"
 ```
 
 For bearish theses on Robinhood: propose inverse ETFs directly (SQQQ, SRS, TBT, etc.).
@@ -439,6 +473,21 @@ ALT
 [INSTRUMENT from a DIFFERENT class] — [1-2 sentences.
 State the metric tradeoff: "Higher convexity but 35%
 thesis beta" or "Zero carry but capped at 1.2x."]
+
+PRIVATE MARKET (only if Step 2.5 triggered)
+
+Public winner has [X]% thesis beta. Private markets
+offer higher-purity exposure:
+
+· [Company/category description]
+  [Stage] · $[check size range] · [convexity range]
+  [Platform] → "[search terms]"
+
+· [Company/category description]
+  [Stage] · $[check size range] · [convexity range]
+  [Platform] → "[search terms]"
+
+⚠️ [lockup]yr lockup, illiquid, binary outcomes
 
 EXECUTE
 [Platform] → [TICKER] → [Action] → [Type]
