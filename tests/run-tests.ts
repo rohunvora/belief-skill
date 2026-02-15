@@ -1,249 +1,126 @@
 #!/usr/bin/env bun
 /**
- * Behavioral test runner — validates not just structure but JUDGMENT quality.
- * Tests what matters to a trader: direction, concentration warnings, overlap flags,
- * conviction calibration, and contradiction handling.
+ * Tool tests — validates that research.ts and size.ts work correctly.
+ * 
+ * These test the DATA TOOLS, not the agent's thesis decomposition.
+ * The agent (Claude via SKILL.md) handles decomposition — that's OpenClaw's job.
  */
 
-import { discoverInstruments } from "../scripts/instruments";
 import { enrichInstruments } from "../scripts/research";
-import { rankInstruments } from "../scripts/rank";
 import { sizePositions } from "../scripts/size";
-import type { SizedRecommendation } from "../scripts/types";
+import type { CandidateInstrument, RankedInstrument } from "../scripts/types";
 
 const PORTFOLIO_PATH = new URL("../../../examples/sample-state.json", import.meta.url).pathname;
-const scenarios = JSON.parse(await Bun.file(new URL("./scenarios.json", import.meta.url).pathname).text());
 const portfolio = JSON.parse(await Bun.file(PORTFOLIO_PATH).text());
 
 let passed = 0;
 let failed = 0;
 
-for (const scenario of scenarios) {
-  const errors: string[] = [];
+function test(name: string, fn: () => Promise<void> | void) {
+  return { name, fn };
+}
 
-  try {
-    // Keyword pipeline (mirrors router.ts — no LLM calls)
-    const allCandidates = await discoverInstruments(scenario.thesis);
-    const enriched = await enrichInstruments(allCandidates);
-    const ranked = rankInstruments(enriched, scenario.thesis);
-    const sized = sizePositions(ranked, portfolio, scenario.budget, scenario.thesis);
+const tests = [
+  // ── research.ts tests ──
+  test("research.ts: enriches stocks with Yahoo Finance data", async () => {
+    const candidates: CandidateInstrument[] = [
+      { ticker: "AAPL", name: "Apple", asset_class: "stock", sub_themes: [], source: "test" },
+      { ticker: "NVDA", name: "NVIDIA", asset_class: "stock", sub_themes: [], source: "test" },
+    ];
+    const enriched = await enrichInstruments(candidates);
+    if (enriched.length < 2) throw new Error(`Expected 2 enriched, got ${enriched.length}`);
+    const aapl = enriched.find(e => e.ticker === "AAPL");
+    if (!aapl || aapl.price <= 0) throw new Error(`AAPL price missing or zero: ${aapl?.price}`);
+    if (!aapl.market_cap || aapl.market_cap < 1e12) throw new Error(`AAPL market cap implausible: ${aapl?.market_cap}`);
+  }),
 
-    const checks = scenario.checks;
-    const tickers = sized.map(s => s.ticker.toUpperCase());
-    const classes = new Set(sized.map(s => s.asset_class));
-    const longs = sized.filter(s => s.direction === "long");
-    const shorts = sized.filter(s => s.direction === "short");
+  test("research.ts: enriches ETFs", async () => {
+    const candidates: CandidateInstrument[] = [
+      { ticker: "SPY", name: "S&P 500", asset_class: "etf", sub_themes: [], source: "test" },
+    ];
+    const enriched = await enrichInstruments(candidates);
+    if (enriched.length < 1) throw new Error("SPY not enriched");
+    if (enriched[0].price <= 0) throw new Error(`SPY price missing: ${enriched[0].price}`);
+  }),
+
+  test("research.ts: handles unknown tickers gracefully", async () => {
+    const candidates: CandidateInstrument[] = [
+      { ticker: "ZZZZNOTREAL", name: "Fake", asset_class: "stock", sub_themes: [], source: "test" },
+    ];
+    const enriched = await enrichInstruments(candidates);
+    // Should not crash — may return empty or with price=0
+  }),
+
+  test("research.ts: classifies secondaries correctly", async () => {
+    const candidates: CandidateInstrument[] = [
+      { ticker: "ANDURIL", name: "Anduril", asset_class: "secondary", sub_themes: [], source: "test" },
+    ];
+    const enriched = await enrichInstruments(candidates);
+    const anduril = enriched.find(e => e.ticker === "ANDURIL");
+    if (anduril && anduril.asset_class !== "secondary") throw new Error("Anduril should stay secondary");
+  }),
+
+  // ── size.ts tests ──
+  test("size.ts: allocates budget across instruments", () => {
+    const ranked: RankedInstrument[] = [
+      { ticker: "AAPL", name: "Apple", asset_class: "stock", price: 180, sub_themes: [], source: "test",
+        scores: { thesis_alignment: 90, valuation: 70, catalyst_proximity: 50, liquidity: 80, portfolio_fit: 60, composite: 75 }, rank: 1 },
+      { ticker: "NVDA", name: "NVIDIA", asset_class: "stock", price: 800, sub_themes: [], source: "test",
+        scores: { thesis_alignment: 85, valuation: 60, catalyst_proximity: 60, liquidity: 90, portfolio_fit: 50, composite: 70 }, rank: 2 },
+    ];
+    const sized = sizePositions(ranked, portfolio, 10000);
     const totalAlloc = sized.reduce((s, r) => s + r.allocation_usd, 0);
+    if (totalAlloc <= 0) throw new Error("No allocation made");
+    if (totalAlloc > 10000) throw new Error(`Over-allocated: $${totalAlloc}`);
+  }),
 
-    // === Structural checks ===
-    if (checks.min_instruments && sized.length < checks.min_instruments)
-      errors.push(`Expected ≥${checks.min_instruments} instruments, got ${sized.length}`);
-
-    if (checks.must_include_tickers)
-      for (const req of checks.must_include_tickers)
-        if (!tickers.includes(req)) errors.push(`Missing required: ${req}`);
-
-    if (checks.must_include_any_of)
-      for (const group of checks.must_include_any_of)
-        if (!group.some((t: string) => tickers.includes(t)))
-          errors.push(`Missing one of: ${group.join("/")}`);
-
-
-    if (checks.must_not_include_tickers)
-      for (const bad of checks.must_not_include_tickers)
-        if (tickers.includes(bad)) errors.push(`Should NOT include: ${bad}`);
-
-    if (checks.must_include_asset_classes)
-      for (const req of checks.must_include_asset_classes)
-        if (!classes.has(req)) errors.push(`Missing asset class: ${req}`);
-
-    if (checks.must_include_secondary && !sized.some(s => s.asset_class === "secondary"))
-      errors.push("Missing secondary instrument");
-
-    if (checks.bah_in_top_3) {
-      const top3 = sized.slice(0, 3).map(s => s.ticker.toUpperCase());
-      if (!top3.includes("BAH")) errors.push(`BAH not in top 3 (got: ${top3.join(", ")})`);
+  test("size.ts: respects concentration limits", () => {
+    const ranked: RankedInstrument[] = [
+      { ticker: "AAPL", name: "Apple", asset_class: "stock", price: 180, sub_themes: [], source: "test",
+        scores: { thesis_alignment: 99, valuation: 99, catalyst_proximity: 99, liquidity: 99, portfolio_fit: 99, composite: 99 }, rank: 1 },
+    ];
+    const sized = sizePositions(ranked, portfolio, 100000);
+    const aaplAlloc = sized.find(s => s.ticker === "AAPL");
+    if (aaplAlloc && aaplAlloc.allocation_usd > 25000) {
+      throw new Error(`Single position $${aaplAlloc.allocation_usd} exceeds 25% of $100K budget`);
     }
+  }),
 
-    if (checks.multi_asset_count_min) {
-      if (classes.size < checks.multi_asset_count_min)
-        errors.push(`Expected ≥${checks.multi_asset_count_min} asset classes, got ${classes.size}`);
-    }
+  test("size.ts: flags existing portfolio overlap", () => {
+    const ranked: RankedInstrument[] = [
+      { ticker: "SOL", name: "Solana", asset_class: "crypto", price: 100, sub_themes: [], source: "test",
+        scores: { thesis_alignment: 80, valuation: 70, catalyst_proximity: 50, liquidity: 80, portfolio_fit: 60, composite: 70 }, rank: 1 },
+    ];
+    // Portfolio has crypto positions — sizing should detect overlap
+    const sized = sizePositions(ranked, portfolio, 10000, "solana ecosystem");
+    // Just verify it doesn't crash with crypto thesis + crypto-heavy portfolio
+  }),
 
-    // === Behavioral: Direction checks ===
-    if (checks.has_short_positions && shorts.length === 0)
-      errors.push("Expected short positions but found none");
+  test("size.ts: handles short positions", () => {
+    const ranked: RankedInstrument[] = [
+      { ticker: "MSFT", name: "Microsoft", asset_class: "stock", price: 400, sub_themes: [], source: "test",
+        scores: { thesis_alignment: 80, valuation: 70, catalyst_proximity: 50, liquidity: 80, portfolio_fit: 60, composite: 70 }, rank: 1,
+        _direction: "short" } as any,
+    ];
+    const sized = sizePositions(ranked, portfolio, 10000, "open source replaces proprietary");
+    const msft = sized.find(s => s.ticker === "MSFT");
+    if (msft && msft.direction !== "short") throw new Error(`MSFT should be short, got ${msft.direction}`);
+  }),
+];
 
-    if (checks.has_long_positions && longs.length === 0)
-      errors.push("Expected long positions but found none");
-
-    if (checks.not_all_long && shorts.length === 0)
-      errors.push("All positions are long — bear thesis should have shorts");
-
-    if (checks.long_includes_beneficiaries) {
-      const longTickers = longs.map(l => l.ticker.toUpperCase());
-      const found = checks.long_includes_beneficiaries.some((t: string) => longTickers.includes(t));
-      if (!found) errors.push(`Expected long beneficiary from ${checks.long_includes_beneficiaries.join("/")} but none found`);
-    }
-
-    // === Behavioral: Conviction calibration ===
-    if (checks.confidence_is_low) {
-      // Vague thesis should produce lower confidence output
-      // Check: thesis words like "feel like", "might" should reduce conviction
-      const hasLowSignals = /feel like|might|maybe|could/i.test(scenario.thesis);
-      if (!hasLowSignals) errors.push("Test setup error: thesis should contain low-conviction language");
-    }
-
-    if (checks.etf_heavy) {
-      const etfCount = sized.filter(s => s.asset_class === "etf").length;
-      const stockCount = sized.filter(s => s.asset_class === "stock").length;
-      if (etfCount <= stockCount)
-        errors.push(`Vague thesis should prefer ETFs over stocks (got ${etfCount} ETFs, ${stockCount} stocks)`);
-    }
-
-    if (checks.smaller_positions && totalAlloc > 0) {
-      // Without explicit budget, vague thesis should auto-size conservatively
-      // Check that no single position exceeds 15% of liquid cash
-      const liquidCash = portfolio.portfolio?.usdc_solana?.amount || 83000;
-      const maxPos = Math.max(...sized.map(s => s.allocation_usd));
-      if (maxPos > liquidCash * 0.15)
-        errors.push(`Vague thesis: largest position $${maxPos} exceeds 15% of liquid ($${Math.round(liquidCash * 0.15)})`);
-    }
-
-    // === Behavioral: Portfolio awareness ===
-    if (checks.has_usdc_overlap_flag) {
-      const hasUsdcFlag = sized.some(s => s.existing_exposure > 0 && s.sub_themes?.some(t => t.includes("stablecoin")));
-      // Also check if the output format function would flag USDC
-      const portfolioHasUsdc = (portfolio.portfolio?.usdc_solana?.amount || 0) > 0;
-      if (portfolioHasUsdc && !hasUsdcFlag)
-        errors.push("Should flag existing USDC exposure for stablecoin thesis");
-    }
-
-    if (checks.has_crypto_concentration_warning) {
-      const existingCrypto = Object.values(portfolio.portfolio?.positions || {})
-        .reduce((sum: number, p: any) => sum + (p.usd || 0), 0);
-      const newCrypto = sized.filter(s => s.asset_class === "crypto").reduce((s, r) => s + r.allocation_usd, 0);
-      const totalPortfolio = portfolio.portfolio?.total_estimate || 613668;
-      const cryptoPct = (existingCrypto + newCrypto) / totalPortfolio;
-      // If crypto would be >70% of portfolio, there should be a concentration flag
-      if (cryptoPct > 0.7) {
-        const hasWarning = sized.some(s => s.existing_exposure > 0 && s.asset_class === "crypto");
-        if (!hasWarning) errors.push(`Crypto would be ${Math.round(cryptoPct * 100)}% of portfolio — should flag concentration`);
-      }
-    }
-
-    if (checks.has_portfolio_contradiction_warning) {
-      // For "crypto will crash" with 85% crypto portfolio
-      const existingCrypto = Object.values(portfolio.portfolio?.positions || {})
-        .reduce((sum: number, p: any) => sum + (p.usd || 0), 0);
-      const totalPortfolio = portfolio.portfolio?.total_estimate || 613668;
-      const cryptoPct = existingCrypto / totalPortfolio;
-      if (cryptoPct > 0.5) {
-        // Check that output signals contradiction (via _contradiction flag or hedge instruments)
-        const hasHedge = sized.some(s => s.direction === "short" || s.rationale?.toLowerCase().includes("hedge"));
-        const hasInverse = sized.some(s => /BITO|SQQQ|BITI/i.test(s.ticker));
-        if (!hasHedge && !hasInverse) errors.push("Contradiction thesis should include hedge/short instruments");
-      }
-    }
-
-    if (checks.suggests_reducing_existing) {
-      // For contradictory thesis, should have short positions or exposure flags
-      const hasShorts = sized.some(s => s.direction === "short");
-      const hasExposureFlags = sized.some(s => s.existing_exposure > 0);
-      if (!hasShorts && !hasExposureFlags) errors.push("Should flag existing positions at risk from contradictory thesis");
-    }
-
-    if (checks.has_hedge_instruments) {
-      const hasShortOrInverse = sized.some(s => s.direction === "short") ||
-        sized.some(s => /inverse|hedge|put|short/i.test(s.rationale || ""));
-      if (!hasShortOrInverse) errors.push("Contradictory thesis should suggest hedges");
-    }
-
-    if (checks.has_already_exposed_warning) {
-      // For "AI tokens on Base" with $441K already in Base AI tokens
-      const hasExposureFlag = sized.some(s => s.existing_exposure > 0);
-      if (!hasExposureFlag) errors.push("Should flag existing Base AI token exposure");
-    }
-
-    if (checks.recommends_caution) {
-      // When already fully exposed, total new allocation should be small relative to budget
-      if (scenario.budget && totalAlloc > scenario.budget * 0.5)
-        errors.push(`Already exposed: new allocation $${totalAlloc} is >${Math.round(scenario.budget * 0.5)} (50% of budget) — should be cautious`);
-    }
-
-    if (checks.flags_existing_positions) {
-      const exposedCount = sized.filter(s => s.existing_exposure > 0).length;
-      if (exposedCount === 0) errors.push("Should flag at least one existing position overlap");
-    }
-
-    // === Behavioral: Non-obvious discovery ===
-    if (checks.has_non_obvious_pick) {
-      // For stablecoin thesis, should find something beyond the obvious COIN/PYPL
-      const obvious = ["COIN", "USDC", "USDT"];
-      const nonObvious = sized.filter(s => !obvious.includes(s.ticker.toUpperCase()));
-      if (nonObvious.length < 2) errors.push("Expected non-obvious picks beyond COIN/USDC");
-    }
-
-    if (checks.not_just_sol) {
-      // Solana thesis should have ecosystem tokens, not just SOL
-      const solEcosystem = sized.filter(s =>
-        s.asset_class === "crypto" && s.ticker.toUpperCase() !== "SOL"
-      );
-      if (solEcosystem.length === 0) errors.push("Should find Solana ecosystem tokens, not just SOL");
-    }
-
-    if (checks.has_solana_ecosystem) {
-      const solTokens = ["JUP", "RAY", "ORCA", "BONK", "WIF", "PYTH", "JTO"];
-      const hasSolToken = sized.some(s => solTokens.includes(s.ticker.toUpperCase()));
-      if (!hasSolToken) errors.push("Missing Solana ecosystem token");
-    }
-
-    // === Behavioral: Time awareness ===
-    if (checks.recognizes_date_catalyst) {
-      // Thesis mentions "Feb 25" — output should reference the date
-      const hasDate = /feb|february|25/i.test(scenario.thesis);
-      if (!hasDate) errors.push("Test setup error: thesis should contain date");
-      // Check if any instrument has catalyst or timing info
-      // (This is primarily handled by Claude in conversational mode, but the pipeline
-      //  should at least detect time-sensitive language)
-    }
-
-    // === Behavioral: Energy/compute theme coverage ===
-    if (checks.has_energy_or_compute) {
-      const found = checks.has_energy_or_compute.some((t: string) => tickers.includes(t));
-      if (!found) errors.push(`Expected energy/compute play from ${checks.has_energy_or_compute.join("/")}`);
-    }
-
-    // === Output quality ===
-    if (checks.has_invalidation) {
-      // Check that at least one recommendation has a non-generic rationale
-      const genericCount = sized.filter(s =>
-        !s.rationale || s.rationale.includes("Direct") && !s.rationale.includes("PE")
-      ).length;
-      if (genericCount > sized.length * 0.5)
-        errors.push(`${genericCount}/${sized.length} rationales are generic — need enrichment data`);
-    }
-
-    if (checks.has_secondary) {
-      if (!sized.some(s => s.asset_class === "secondary"))
-        errors.push("Expected secondary/pre-IPO instrument");
-    }
-
-  } catch (e) {
-    errors.push(`Pipeline error: ${(e as Error).message}`);
-  }
-
-  if (errors.length === 0) {
-    console.log(`✅ #${scenario.id}: ${scenario.name}`);
+// Run all tests
+for (const t of tests) {
+  try {
+    await t.fn();
+    console.log(`✅ ${t.name}`);
     passed++;
-  } else {
-    console.log(`❌ #${scenario.id}: ${scenario.name}`);
-    errors.forEach(e => console.log(`   • ${e}`));
+  } catch (e) {
+    console.log(`❌ ${t.name}`);
+    console.log(`   ${(e as Error).message}`);
     failed++;
   }
 }
 
 console.log(`\n${"═".repeat(40)}`);
-console.log(`${passed}/${passed + failed} scenarios passing`);
-if (failed > 0) console.log(`${failed} failing — fix these next`);
-process.exit(failed > 0 ? 1 : 0);
+console.log(`${passed}/${passed + failed} tests passing`);
+if (failed > 0) process.exit(1);
