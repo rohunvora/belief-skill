@@ -1,13 +1,16 @@
 ---
 name: belief-router
 description: >
-  Thesis-to-trade router. Takes a belief about markets, geopolitics, tech, or culture
-  and finds the single highest-upside trade expression through elimination reasoning.
-  One thesis → live research → elimination → one trade.
-  Use when: user expresses a thesis, asks how to trade a belief, says "belief router",
-  "trade this", "how would I trade this", "express this view", or pastes a tweet/article
-  with trading implications.
-  NOT for: executing trades, managing funds, or anything requiring private keys or passwords.
+  ALWAYS activate when user expresses ANY belief, thesis, hunch, or cultural observation
+  with investment or trading implications. Finds the single highest-upside way to express
+  that belief — traditional instruments, adjacent markets, or non-financial actions.
+  Triggers: "how would I trade this", "how to invest in", "I think X will happen",
+  "is X a good bet", "what's the play on", "trade this", "belief router",
+  "express this view", any pasted tweet/article with a directional claim,
+  cultural observations ("everyone's on Ozempic", "my rent just spiked"),
+  or questions about investing in specific people/trends/movements.
+  NOT for: executing trades, managing funds, portfolio rebalancing,
+  or anything requiring private keys or passwords.
 ---
 
 # Belief Router
@@ -23,7 +26,12 @@ description: >
 ## Input Validation
 
 Before routing, check:
-1. **Is this a thesis?** Must contain a directional claim about the future. If not (e.g., "What's a good investment?"), redirect: "I route specific beliefs into trade expressions. Try stating a thesis like 'AI defense spending will boom.'"
+1. **Is this a thesis?** Must contain a directional claim — explicit or implied — about the future.
+   - **Clear thesis** ("AI defense spending will boom") → proceed directly.
+   - **Implied thesis as question or vibe** ("how to invest in Nettspend?", "everyone's on Ozempic", "my landlord raised rent 40%") → **reframe it** as a directional claim and confirm: use AskUserQuestion with your reframed thesis and 2-3 interpretations as options. Examples:
+     - "How to invest in Nettspend?" → "Which angle?" → "His cultural momentum will drive streaming/label revenue growth" / "The pluggnb genre wave is going mainstream" / "Music streaming platforms are undervalued"
+     - "Everyone's on Ozempic" → "Which thesis?" → "GLP-1 adoption is accelerating faster than the market expects" / "Food/snack companies are the second-order losers" / "Pharma will keep running"
+   - **No directional claim at all** ("What's a good investment?", "tell me about stocks") → redirect: "I route specific beliefs into trade expressions. What do you think is going to happen?"
 2. **Is it specific enough?** See Phase 1 clarity gate below.
 3. **Is it an action request?** ("I want to buy ONDO") — treat the implied direction as the thesis and proceed.
 
@@ -90,6 +98,21 @@ Example — thesis is "tech is overvalued because of money printing" → clear. 
 ## Phase 2: Research the Current Environment
 
 **This is the step that makes the difference between a stale ChatGPT answer and an actionable trade.** You must ground the thesis in live data before touching any instruments.
+
+### Check Trade History
+
+Before researching, check for past trades on similar theses:
+
+```bash
+bun run scripts/track.ts check
+```
+
+If similar past trades exist:
+- **Still open:** "You already have exposure to this thesis via [TRADE]. Consider whether this adds or overlaps." Don't recommend a correlated position without flagging it.
+- **Closed at a loss:** "A similar thesis led to [TRADE] on [DATE], closed at [LOSS]. What's different this time?" Surface the context — don't auto-block, but make the user think.
+- **Closed at a gain:** Reference it briefly and move on.
+
+If `track.ts` has no data or no similar trades, skip silently. Don't add friction when there's nothing to surface.
 
 ### What to Research
 
@@ -209,6 +232,16 @@ After elimination, you should have 2-3 survivors. Do a head-to-head comparison o
 
 Pick the winner. State WHY it wins in 2-3 sentences.
 
+### Step 4: Stress-Test the Winner
+
+Before committing, construct the strongest case AGAINST the winning trade. Ask:
+
+- **What would make this trade lose money even if the thesis is directionally correct?** (Timing — thesis plays out after your options expire. Mechanism — the move happens but through a channel that doesn't benefit your instrument. Already priced in — the market already moved.)
+- **Try to rebut it with evidence from Phase 2.** Cite a specific data point.
+- **If you can't rebut it, don't hide it.** Flag it as a known risk in the "What kills it" section of the output. If the counterargument is devastating (e.g., the entire upside requires an assumption you can't support), reconsider the runner-up.
+
+This step catches trades where you've convinced yourself of something by accumulating only supporting evidence. The counterexample forces you to look for disconfirming data.
+
 ### Compound Theses
 
 When a thesis contains multiple distinct claims:
@@ -216,6 +249,46 @@ When a thesis contains multiple distinct claims:
 2. Route the STRONGEST leg (highest conviction, clearest asymmetry) as the primary trade
 3. Mention the other legs as alternatives
 4. Check `references/portfolio-construction.md` for multi-leg guidance if the user explicitly wants a portfolio
+
+### When No Traditional Instrument Exists
+
+**Never dead-end. Never say "this isn't tradeable." Always descend the expression fidelity ladder until you find something actionable.**
+
+When the thesis doesn't map to any instrument on the four platforms (Robinhood, Kalshi, Hyperliquid, Bankr) — or when every available instrument has near-zero thesis beta — keep going. Descend through these levels, stopping at the first one that produces a real action:
+
+**Level 1: High-beta proxy.** A traditional instrument that captures most of the thesis.
+- Parent company stock (Osamason → Atlantic → WMG on NASDAQ)
+- Sector ETF that includes the thesis target
+- State the thesis beta honestly: "WMG captures ~2% of the Osamason thesis. You're mostly betting on the music industry."
+
+**Level 2: Adjacent market.** Platforms and instruments outside the four adapters.
+- Music royalty platforms (Royal.io, SongVest, Royalty Exchange, Sonomo) — search for the specific artist/asset
+- Alternative prediction markets (Polymarket, Metaculus)
+- Pre-IPO / secondaries platforms — check `references/secondaries.json`
+- Crowdfunding platforms (Republic, Wefunder) for relevant startups
+
+**Level 3: Infrastructure play.** Bet on the platform or enabler that would benefit if the thesis is right.
+- "If Nettspend blows up, Spotify benefits" → SPOT
+- "If pickleball eats tennis, who makes pickleball equipment?" → search for the market leader
+- The infrastructure play is always more indirect, but often more tradeable
+
+**Level 4: Non-financial expression.** Actions that aren't trades but express the belief with real upside.
+- **Limited merch / collectibles:** Search for the artist's official store, identify limited drops, assess flip potential on secondary markets (StockX, eBay, Grailed). State what to buy and where to resell.
+- **Event tickets:** Find the next concert/event in the user's area. Early tickets to an artist who blows up appreciate in resale value.
+- **Domain names / social handles:** If the thesis is about an emerging trend, the digital real estate may be underpriced.
+- **Build in the space:** "The best way to long X might be to build the tool/platform/product that serves X."
+
+**Level 5: Position for the future.** When nothing is actionable today, set up monitoring.
+- Set alerts for when a direct instrument appears (artist lists royalties, company IPOs, token launches)
+- Identify the specific trigger event that would create a tradeable instrument
+- State: "No trade today. Here's exactly what to watch for and where to look."
+
+**Output adapts to the level:**
+- Levels 1-2: Use the standard payoff table and output template, noting the thesis beta gap.
+- Levels 3-4: Replace the payoff table with an action list — what to buy, where, approximate cost, and realistic upside. No fake precision.
+- Level 5: Replace the trade section with a monitoring plan — what triggers, what platforms to check, what timeline.
+
+**Always be honest about the gap.** "This is a Level 3 expression — you're betting on the infrastructure, not the thesis directly. Thesis beta is ~0.1." The user deserves to know how directly their action maps to their belief.
 
 ---
 
@@ -305,121 +378,128 @@ This is the verbose version that ensures rigor. Every elimination must cite a sp
 
 ## Phase 6: Format for Reader
 
-**The reader has ADHD but is a sharp trader. Lead with the trade, not the journey.**
+**The reader has ADHD but is a sharp trader. The output must be self-contained — no Googling, no leaving the message to understand it.**
 
-Take the full reasoning from Phase 5 and restructure it using the inverted pyramid: punchline first, reasoning below, details last.
+Take the full reasoning from Phase 5 and restructure it following Minto Pyramid: answer first, supporting logic below, details last. Every section only requires understanding from the sections above it.
 
 ### Formatting Principles
 
-1. **Inverted pyramid.** Trade → Payoff → Why (3 bullets) → Kills → Eliminations (table) → Deeper claim → Execute. The punchline is first. The essay is last.
-2. **MC-first.** First mention of any instrument uses market cap, not price. "$688M MC" not "$3.85/share." Price only appears in the execution section and payoff footnote.
-3. **No naked prices.** Every price mention must include market cap for context.
-4. **Payoff table leads with MC.** Each scenario row shows the implied market cap in bold. Add a "Comparable" column showing which known companies get flipped at each MC tier. Calculate MC from shares outstanding × target price.
-5. **Eliminations are a table, not paragraphs.** One row per rejected instrument. One sentence max, citing one data point.
-6. **"Why this trade" is exactly 3 bullets.** Each starts bold. Reader can skim bold words only and get the thesis.
-7. **Sources in collapsed Obsidian callout.** Use `> [!info]- Sources` format so they don't clutter the reading view.
+1. **Minto Pyramid structure.** Belief → Company intro → Trade line → Why (flowing into scenarios) → Kills → Rejected → Deeper claim → Alt → Execute. Each section meets the reader at their current understanding.
+2. **Company before ticker.** The reader must know WHAT they're buying before they see the ticker. Introduce the company in plain English first: "There's a $688M Swiss chip company making the exact hardware that NIST requires..." The ticker line becomes confirmation, not introduction.
+3. **WHY flows into scenarios.** Don't drop a disconnected data table. Build understanding progressively: mandate/catalyst (fact) → deadline (urgency) → company's product (connection) → market size (scale) → "if they capture X%, they re-rate to..." (the "aha") → here's what that looks like for your $100K (payoff).
+4. **Comparable-as-label for upside, loss % for downside.** Match how traders think. Losing: "how much am I down?" → −60%, −35%. Winning: "what size is it now?" → QUBT, RGTI, D-Wave. Use → arrow prefix for upside rows.
+5. **Comparable legend below the table.** Tickers mean nothing to most readers. One line each: `QUBT = Quantum Computing Inc ($1.8B)`.
+6. **Price included.** Price appears on the trade line and in the scenario table for brokerage checking ("am I winning?"). MC appears on the trade line intro and as proof in the scenario table. Comparable gives MC meaning.
+7. **Telegram-native formatting.** Entire output is a single monospace code block. No markdown tables (they break on mobile). Use `────` dividers between sections. Align columns with spaces. Target ~4096 chars max for a single Telegram message.
+8. **Eliminations are compressed.** One line per rejected instrument with ticker, key data point, and reason. Column-aligned for scannability.
 
 ### Output Template
 
+The entire output goes inside a single code block (triple backticks). Use this structure:
+
 ```
-# [TICKER] ([COMPANY]) [DIRECTION] — [CURRENT MC]
+BELIEF
+[user's thesis as causal chain, abbreviated]
+────────────────────────────────────
 
-> [One-line thesis. What you're buying and why. Max 20 words.]
+There's a [MC] [country/descriptor] [company type] making
+[what they do in plain English that connects to the thesis].
+[Why this matters — the mandate, catalyst, or force.]
 
----
+[COMPANY NAME] ([TICKER]) · $[PRICE] · [DIRECTION]
 
-### $100K → ?
+────────────────────────────────────
 
-| Scenario | MC | Your $100K | Comparable |
-|----------|-----|-----------|------------|
-| Thesis wrong | **$XXXM** | $XX,000 (−$XXK) | [stays micro-cap / comparable] |
-| Mild against | **$XXXM** | $XX,000 (−$XXK) | [comparable] |
-| **Thesis plays out** | **$X.XB** | **$XXX,000** (+$XXXK) | Flips [COMPANY] ($X.XB) |
-| **Thesis very right** | **$X.XB** | **$XXX,000** (+$XXXK) | Enters [COMPANY] territory ($X.XB) |
-| **Home run** | **$X.XB** | **$X,XXX,000** (+$XXXK) | Flips [COMPANY] ($X.XB) |
+WHY
 
-[Position details: shares/contracts, entry, shares outstanding, current MC.]
-[Key stats: No expiration / Expires DATE. Leverage / No leverage.]
-[Conviction breakeven: >X% for +EV.]
+[Paragraph 1: The catalyst/mandate/force. What happened,
+what's the deadline, why there's no opt-out. Facts only.]
 
----
+[Paragraph 2: The company's specific product/position.
+Revenue, cash, key differentiator. Why purest play.]
 
-### Why this trade
+[Paragraph 3: Market sizing → re-rating logic → transition
+into scenarios. "If [COMPANY] captures even X%, it re-rates
+to the size of existing [sector] companies:"]
 
-- **[Bold lead-in.]** [1-2 sentences. The core reason — why this thesis demands this instrument.]
-- **[Bold lead-in.]** [1-2 sentences. Why THIS specific instrument, not the obvious one.]
-- **[Bold lead-in.]** [1-2 sentences. The math — market size, revenue path, MC re-rating logic.]
+── $100K at $[PRICE] ([MC]) ─────
 
-### What kills it
+ −XX%    $X.XX     $XXK   [implied MC]
+ −XX%    $X.XX     $XXK   [implied MC]
+→ [COMP1]  $XX.XX    $XXXK   [MC at this level]
+→ [COMP2]  $XX.XX    $XXXK   [MC at this level]
+→ [COMP3]  $XX.XX      $XM   [MC at this level]
 
-- [Kill condition 1 — specific, with date if possible]
-- [Kill condition 2]
-- [Kill condition 3]
-- [Kill condition 4]
+[COMP1] = [Full Name] ([current MC])
+[COMP2] = [Full Name] ([current MC])
+[COMP3] = [Full Name] ([current MC])
 
-**Watch:** [Specific dates/events/data releases to monitor]
+[shares] sh · [expiry info] · >[X]% +EV
 
----
+────────────────────────────────────
 
-### Why not these instead
+KILLS
 
-| Rejected | Why |
-|----------|-----|
-| **[NAME]** | [One sentence, one data point. E.g., "96% IV makes LEAPS cost 42% of stock price. Breakeven requires 74% move."] |
-| **[NAME]** | [One sentence, one data point.] |
-| **[NAME]** | [One sentence, one data point.] |
-| **[NAME]** | [One sentence, one data point.] |
-| **[NAME]** | [One sentence, one data point.] |
+· [Kill condition 1 — specific]
+· [Kill condition 2 — specific]
+· [Kill condition 3 — specific]
+· [Kill condition 4 — specific]
 
----
+Watch: [date/event 1] · [date/event 2] · [date/event 3]
 
-### The deeper claim
+────────────────────────────────────
 
-[The intellectual argument. 2-4 sentences max. Surface claim vs deeper claim.
-Why the obvious trade is wrong. The causal chain and why this instrument
-sits at the strongest link. This is the "if you want to understand the
-reasoning" section — it rewards the reader who scrolls this far.]
+REJECTED
 
-**Current backdrop:** [2-3 sentences of live data grounding the thesis.
-Specific numbers with dates.]
+[TICKER1]       [key data point], [reason]
+[TICKER2]       [key data point], [reason]
+[TICKER3]       [key data point], [reason]
+[TICKER4]       [key data point], [reason]
+[TICKER5]       [key data point], [reason]
+[TICKER6]       [key data point], [reason]
 
----
+────────────────────────────────────
 
-### Also consider
+DEEPER CLAIM
 
-**[ALT INSTRUMENT]** — [2-3 sentences. Must be a genuinely different risk
-profile, not second-best version of the same trade. State the tradeoff:
-"Higher ceiling ($500K+), higher floor ($0)."]
+[2-4 sentences. Surface claim vs deeper claim.
+Why the obvious trade path has more assumptions.
+Why this specific angle needs fewer steps.
+What makes the thesis work even if other legs fail.]
 
-### Execute on [Platform]
+────────────────────────────────────
 
-1. [Step — bold the key action]
-2. [Step]
-3. [Step — call out limit orders or gotchas]
-4. [Step]
+ALT
+[INSTRUMENT] — [1-2 sentences. Genuinely different
+risk profile. State the tradeoff: higher ceiling,
+higher floor, different risk type.]
 
----
+EXECUTE
+[Platform] → [TICKER] → [Action] → [Type]
+→ $[AMOUNT] → [Order type] ([gotcha if any])
 
-*Market data for informational purposes. Most retail traders lose money on leveraged products.*
-
-> [!info]- Sources
-> - [Source 1](url)
-> - [Source 2](url)
+Market data for informational purposes.
 ```
 
 ### Output Quality Rules
 
-**MC comparables:** The "Comparable" column in the payoff table must reference real, recognizable companies with current market caps. Use companies the reader would know — ideally in the same sector or adjacent. "Flips D-Wave ($7.3B)" is instantly meaningful. "Flips XYZ Corp ($7.3B)" is not. If no sector-relevant comparable exists at that tier, use a well-known company for scale: "Approaches Palantir territory."
+**Self-contained rule:** The reader must understand the entire output without leaving the message. Company introduced in plain English before the ticker. Every ticker in the scenario table or rejected section gets a one-line legend. No jargon without context.
 
-**Elimination table:** Each row must cite ONE specific data point from Phase 2 research. Not "this seems risky" but "96% IV makes LEAPS cost 42% of stock price." The table format forces compression — if you can't say it in one sentence, the elimination reasoning isn't sharp enough.
+**Company-before-ticker:** The opening paragraph describes the company, its market cap, what it makes, and why it matters — all before the ticker appears. The ticker line is confirmation: "Oh, THAT's the ticker for the company I just read about." Not introduction.
 
-**The winning trade:** The 3 bullets in "Why this trade" must connect to the DEEPER claim from Phase 1, not the surface claim. First bullet = the force driving the trade. Second bullet = why this instrument specifically. Third bullet = the math that makes the MC re-rating plausible.
+**WHY section progressive build:** The WHY section must flow logically: fact → urgency → connection → scale → "aha" → payoff. The scenario table is the CONCLUSION of the WHY section, not a disconnected data block. The reader should feel the scenarios are the natural "so what does this mean for my money?" after understanding the thesis.
 
-**Payoff MC math:** Calculate implied market cap at each scenario from shares outstanding × implied price. State shares outstanding once in the footnote. The MC column is the headline — it's what sharp traders anchor on, not per-share price.
+**Comparable-as-label:** Upside scenario rows use → prefix with a comparable company ticker as the label. These are milestones: "if it reaches QUBT-size, here's your return." Downside rows use −XX% as the label. The comparable legend below the table gives each ticker its full name and current MC so the reader never has to look anything up.
 
-**Kill conditions:** Specific, observable, ideally dated. Not "if the thesis is wrong" but "if core PCE drops below 2.5% on the March 13 release" or "if the Fed signals 3+ cuts at the March 18 FOMC."
+**MC comparables:** Must reference real, recognizable companies with current market caps. Ideally same sector. "→ QBTS" with legend "QBTS = D-Wave Quantum ($7.3B)" is instantly meaningful. If no sector-relevant comparable exists at that tier, use a well-known company.
 
-**Execution:** Platform-specific, step-by-step. The user should be able to open their broker app and follow the instructions without thinking. Call out limit orders, wide spreads, or low-volume gotchas.
+**Scenario table math:** Calculate implied price at each tier from target MC ÷ shares outstanding. Calculate $100K position value from (target price ÷ entry price) × $100K. State shares outstanding and entry price in the table header line. Show implied MC in the rightmost column.
+
+**Rejected section:** One line per instrument. Column-aligned. Each line cites ONE specific data point from Phase 2 research. "IONQ calls  96% IV, 74% to breakeven" — the compression forces sharp reasoning. If you can't say it in one line, the elimination isn't sharp enough.
+
+**Kill conditions:** Specific, observable, ideally dated. Not "if the thesis is wrong" but "NIST delays past 2035" or "QS7001 misses 2026 production." The Watch line lists upcoming catalysts with dates.
+
+**Execution:** Platform-specific, single line with arrows showing the click path. Call out limit orders, wide spreads, or low-volume gotchas in parentheses.
 
 ---
 
