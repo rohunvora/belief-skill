@@ -1,27 +1,28 @@
 # Belief Router v2
 
-Claude Code skill that routes a thesis into a single highest-upside trade expression through elimination reasoning.
+Claude Code skill that routes a thesis into a single highest-upside trade expression through shape classification, metric-based ranking, and cross-class validation.
 
-**One thesis → live research → elimination → one trade.**
+**One thesis → classify shape → live research → best-in-class → cross-check → one trade.**
 
 ## How it works
 
 | Phase | What happens |
 |-------|-------------|
-| 1. Extract | Separate surface claim from deeper claim. Extract time horizon (catalyst, price-in window, trade horizon). |
-| 2. Research | Parallel web searches for live data: prices, valuations, consensus. Check trade history. |
-| 3. Eliminate | 4-8 candidates across platforms, cut with evidence to 1 winner. Stress-test the pick. |
-| 4. Validate | Run adapter scripts for live pricing on 2-3 survivors. Build payoff table. |
+| 1. Extract + Classify | Classify thesis shape (binary, company, sector, relative, vulnerability). Extract deeper claim. Extract time horizon. |
+| 2. Research | Parallel web searches for live data: prices, valuations, consensus. Check prediction markets. Check trade history. |
+| 3. Find THE Trade | Binary check → best-in-class within shape → cross-check across classes → stress-test. Rank by `thesis beta × convexity / time cost`. |
+| 4. Validate | Run adapter scripts for live pricing on winner + alt. Build payoff table. |
 | 5. Format | Compress into reader-facing output. Minto Pyramid: belief first, details last. |
 
-## Key design decisions
+## Core concepts
 
-- **Adaptation table, not branching templates.** One equity-long reference template + a compact table that tells Claude what to swap for Kalshi binaries, perps, and options. 12 lines instead of 200.
-- **Context before ticker.** Reader knows WHAT they're buying before they see the symbol. Company description for equities, contract description for Kalshi, position description for perps.
-- **Asymmetric framing.** Downside in dollar losses (lose $60K). Upside in multiples (3x, 5x). Prospect theory — losses as pain, gains as excitement.
-- **Time-aware scenarios.** Every payoff row has a rough timeline. A 3x in 2 years and a 3x in 8 years are different trades.
-- **Three thinking frames.** Directional (who benefits/loses), probability (market price vs yours), relative (ratio + convergence). Not all theses are supply-chain reasoning.
-- **Telegram-native formatting.** Monospace code blocks, `────` dividers, column alignment. No markdown tables (break on mobile).
+- **Thesis shape classification.** Binary events go through prediction markets. Mispriced companies go through equity/options. Relative theses go through pair trades. The shape determines the instrument class before research begins.
+- **Ranking metric: `thesis beta × convexity / time cost`.** Purest expression, most leverage, cheapest to hold. Naturally surfaces the right instrument without hardcoded preferences.
+- **Binary check (Step 0).** If a prediction market contract exists on the exact thesis, it must be explicitly beaten — it's ~100% thesis beta with zero carry.
+- **Cross-check de-biases.** Home pick vs best from a different class, compared on the same metric. Catches cases where a non-obvious instrument wins.
+- **Adaptation table, not branching templates.** One equity-long reference template + a compact table for Kalshi, perps, and options. 12 lines instead of 200.
+- **Asymmetric framing.** Downside in dollar losses. Upside in multiples. Prospect theory.
+- **Telegram-native formatting.** Monospace code blocks, `────` dividers, column alignment. No markdown tables.
 
 ## Platforms
 
@@ -34,7 +35,7 @@ Claude Code skill that routes a thesis into a single highest-upside trade expres
 
 ## Defaults
 
-- **Risk mode:** Max upside. Ruin risk acceptable. Deprioritize (not eliminate) capped-upside instruments.
+- **Ranking metric:** `thesis beta × convexity / time cost`. No hardcoded instrument preferences.
 - **Bet size:** $100,000. Payoff scenarios at real dollar amounts.
 - **Goal:** One trade. Not a portfolio.
 - **Time horizon:** Match to thesis. Catalyst date → price-in window → trade horizon.
@@ -51,13 +52,14 @@ Triggered by: `/belief-router`, "trade this", "how would I trade this", "express
 
 ## Current stage
 
-SKILL.md at 484 lines across 5 phases. Output template generalized across 4 instrument types (equity, Kalshi binary, perps, options). 10 formatting principles. Reference files loaded on-demand for instrument reasoning, portfolio construction, and blindspots/risk.
+SKILL.md across 5 phases with shape-based routing. Thesis shape classification gates instrument search. Metric-based ranking replaces raw convexity. Cross-check enforces cross-class comparison. 10 formatting principles. Adaptation table for 4 instrument types. Reference files loaded on-demand.
 
 ## What's next
 
 - [ ] Output format flag: Telegram vs Obsidian MD
 - [ ] Card image generation for shareable trade cards
 - [ ] Trade memory storage design (for OpenClaw/Claude Code instances)
+- [ ] Live funding rate data for perps (currently estimated)
 
 ## What's blocked
 

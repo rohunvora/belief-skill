@@ -194,3 +194,68 @@ Line-level audit found the output template, formatting principles, and precision
 19. **Equity template stays as reference implementation.** It's the most complex case (MC, comparables, temporal origin, supply chain reasoning) and was iterated over 10 rounds. The adaptation table tells Claude what to swap out for simpler instrument types, keeping the equity version as the quality bar.
 
 20. **Thinking frames per thesis type.** Directional theses (who benefits/supplies/breaks), probability theses (market price vs your price), and relative theses (ratio + convergence driver) each require different Phase 1 reasoning. One frame doesn't fit all.
+
+## 2026-02-15: Session 5 — Shape Classification + Metric-Based Ranking (484 → ~480 lines)
+
+### Context
+Architectural critique identified the root cause of instrument-class bias: one framework (causal chains) feeding into one metric (raw convexity) defaults to equities. Binary theses forced through causal chains lose information. Relative theses expressed as directional trades lose half the thesis.
+
+Three abstractions identified:
+1. **Thesis shape** — different theses have different shapes, and the shape determines which instrument class is appropriate
+2. **Two evaluation modes** — observable probability (prediction markets give you the price) vs estimated probability (you guess both likelihood and magnitude)
+3. **Ranking metric is wrong** — raw convexity ignores thesis beta and time cost
+
+### What changed
+
+**Ranking metric replaced:**
+- Old: implicit preference hierarchy (options > perps > Kalshi > stocks) + raw convexity
+- New: `thesis beta × convexity / time cost` — purest expression, most leverage, lowest carry
+- Naturally surfaces the right instrument: Kalshi for binary events, options for short-dated catalysts, shares for structural multi-year, perps for crypto directional, pairs for relative value
+
+**Phase 1 restructured — shape classification added:**
+- New section before deeper claim extraction: classify thesis shape
+- Five shapes: binary event, mispriced company, sector/theme, relative value, vulnerability
+- Each shape maps to a natural instrument home and evaluation mode
+- Thinking frames (directional/probability/relative from session 4) preserved but repositioned under "Think in the Frame That Fits"
+- Gate now requires thesis shape + deeper claim + time horizon (was just deeper claim + horizon)
+- Time horizon section now explicitly connects to time cost (metric denominator)
+- Added worked example: gold thesis → HL GOLD-PERP at 3x (perps for non-crypto assets)
+
+**Phase 2 — prediction market check added:**
+- New research step: for any thesis with a date or binary resolution, search Kalshi for a direct contract
+- Feeds into Phase 3 Step 0
+
+**Phase 3 fully restructured — shape→optimize→cross-check replaces generate→eliminate:**
+- Old flow: generate 4-8 candidates → eliminate by sequential criteria → final comparison → stress test
+- New flow: Step 0 (binary check) → Step 1 (best-in-class within shape) → Step 2 (cross-check across classes) → Step 3 (stress-test)
+- Step 0 (binary check): does a prediction market contract exist on literally this event? If yes, it must be explicitly beaten
+- Step 1 (best-in-class): find the best instrument within the natural class for the thesis shape, scored by the metric
+- Step 2 (cross-check): compare home pick against best from at least one other class on normalized metric terms — this is where objectivity lives
+- Step 3 (stress-test): preserved from previous version
+- Elimination criteria redistributed: thesis beta, convexity, time cost absorbed into metric; thesis contradiction, liquidity, priced-in, time mismatch become binary disqualifiers that override the metric
+- Platform guide table moved from Phase 3 into Phase 1 shape classification (it's really about which platforms to consider given the shape)
+- Two worked cross-check examples added: Fed/Kalshi vs TLT puts, and SEALSQ shares vs LEAPS
+
+**Phase 5 — ALT updated:**
+- ALT now explicitly comes from a different instrument class (the cross-check loser)
+- States the metric tradeoff ("Higher convexity but 35% thesis beta" or "Zero carry but capped at 1.2x")
+
+**Removed:**
+- Hardcoded instrument preference in Defaults
+- "Deprioritize capped-upside instruments" — the metric handles this
+- Phase 3 Step 1 "generate 4-8 candidates" — replaced by shape-directed search
+- Phase 3 Step 2 verbose elimination criteria (6 numbered items with sub-bullets) — redistributed to metric components + compact disqualifiers
+- Phase 3 Step 3 narrative comparison table — replaced by metric comparison
+- Thesis type → platform guide table in Phase 3 (moved to Phase 1)
+
+### Key design decisions (additions)
+
+21. **`thesis beta × convexity / time cost` as the universal ranking metric.** Replaces implicit preference hierarchy and raw convexity ranking. The metric naturally surfaces the right instrument for each thesis shape without special cases. A Kalshi binary at 12x with 100% thesis beta and zero carry beats a 5x option with 35% thesis beta — the math makes this obvious without needing a rule.
+
+22. **Shape classification as Phase 1 entry point.** The shape determines the evaluation mode (observable vs estimated probability), the natural instrument class, and the reasoning frame. Binary theses go through probability analysis, not causal chains. Relative theses go through ratio analysis. The causal chain is still valuable — it's the right tool for directional/sector theses — but it's no longer the only tool.
+
+23. **Binary check (Step 0) before all other instrument search.** When a prediction market contract exists on the exact thesis, it's the highest-thesis-beta instrument possible (~100%) with zero carry. Everything else must explicitly beat it. This prevents the skill from converting mode-1-eligible theses (observable probability) into mode-2 problems (estimated probability), which adds noise.
+
+24. **Cross-check as the de-biasing mechanism.** Without cross-check, shape classification would just route to the natural home and stop. The cross-check forces an explicit comparison between the home pick and the best from another class, on the same metric. This is where the skill catches cases where a non-obvious instrument class actually wins (e.g., perps beating shares for a gold thesis because of leverage at low funding cost).
+
+25. **Disqualifiers separate from the metric.** Thesis contradiction, liquidity failure, already-priced-in, and time mismatch are binary gates, not gradients. An illiquid instrument with a perfect metric score is still untradeable. Keeping these as hard disqualifiers prevents the metric from accidentally surfacing instruments that can't be executed.

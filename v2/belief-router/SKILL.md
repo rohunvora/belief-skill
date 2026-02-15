@@ -17,10 +17,10 @@ description: >
 
 ## Defaults
 
-- **Risk mode: max upside.** Optimize for asymmetry and convexity. Ruin risk (losing the full $100K) is acceptable. Prefer instruments with uncapped upside: options, perps, binary contracts. Deprioritize capped-upside instruments (plain stock/ETF) — but use them when the thesis is structural, long-horizon, or when they're genuinely the highest-beta expression.
+- **Ranking metric: `thesis beta × convexity / time cost`.** Purest expression of the thesis, with the most leverage, at the lowest cost to hold. This replaces any hardcoded instrument preference — the metric naturally surfaces the right instrument for each thesis shape.
 - **Bet size: $100,000.** Show payoff scenarios at this amount, not just $100 basis.
 - **Goal: one trade.** Find THE single best expression. Not a portfolio. Show 1-2 alternatives with genuinely different risk profiles, but lead with THE trade and commit to it.
-- **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in. See Phase 1 Time Horizon and Phase 3 criterion #2.
+- **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in. See Phase 1 Time Horizon.
 
 ---
 
@@ -38,9 +38,25 @@ Before routing, check:
 
 ---
 
-## Phase 1: Extract the Deeper Claim
+## Phase 1: Extract the Deeper Claim + Classify Shape
 
-**This is the most important step. The deeper claim determines the trade. Get this wrong and everything downstream is wrong.**
+**This is the most important step. The deeper claim AND the thesis shape determine the trade. Get either wrong and everything downstream is wrong.**
+
+### Classify Thesis Shape
+
+Before anything else, classify the thesis. Shape determines which instruments are natural candidates and which evaluation mode to use.
+
+| Shape | Signal | Natural home | Evaluation mode |
+|-------|--------|-------------|-----------------|
+| Binary event | Resolves yes/no on a specific date ("Fed holds in March") | Prediction markets (Kalshi) | Observable probability — market price IS the implied probability |
+| Mispriced company | Specific company re-rates over time ("SEALSQ is undervalued") | Equity / options | Estimated probability — you estimate likelihood AND magnitude |
+| Sector/theme | Broad trend benefits a category ("AI defense spending booms") | ETF or highest-beta single name | Estimated probability |
+| Relative value | X outperforms Y, ratio changes ("SOL flips ETH") | Pair trade (perps) | Ratio analysis — isolate the spread from market direction |
+| Vulnerability | Something breaks or declines ("Google's ad monopoly is the casualty") | Short-side instruments (puts, inverse ETFs, short perps) | Estimated probability |
+
+The "natural home" is the starting point, not the answer. Phase 3's cross-check tests whether another instrument class beats it on the metric.
+
+### Extract the Deeper Claim
 
 Every thesis has two layers:
 - **Surface claim:** What the user literally said. The obvious interpretation.
@@ -59,21 +75,24 @@ The deeper claim often points to a **completely different instrument** than the 
 | "Interest rates are staying higher for longer" | Buy bank stocks | Long-duration assets get punished across the board | Long JPM | **Short TLT or long TBT** — the most direct rates expression |
 | "Fed won't cut in March" | Short rate-sensitive stocks | Market is overpricing the cut — the NO side is mispriced | Short REITs | **Kalshi NO on March cut at $0.08** — 12x payout if right, defined $100K risk |
 | "SOL is going to flip ETH" | Long SOL | The ratio is what matters, not the absolute price | Long SOL spot | **Long SOL / short ETH perps on Hyperliquid** — profits on the spread regardless of market direction |
+| "Gold is going higher on geopolitical risk" | Buy GLD | Gold will reprice but shares cap upside at 1x | Buy GLD | **Long GOLD-PERP on HL at 3x** — same thesis beta, 3x convexity, low funding (~5%/yr for non-crypto assets) |
 
 **The key insight: the obvious trade is usually priced in. The deeper trade — the one that requires the causal chain — is where the asymmetry is.**
 
-### Think in Causal Chains
+### Think in the Frame That Fits
 
-Map the thesis forward using the frame that fits:
+Different thesis shapes need different reasoning tools:
 
-**For directional theses** (something goes up or down):
+**Directional theses** (something goes up or down) — use causal chains:
 1. **Who benefits directly?** (first-order — usually priced in)
 2. **Who supplies the winners? Who gets hurt?** (second-order — often mispriced)
 3. **What infrastructure is needed? What breaks?** (third-order — where the edge is)
 
-**For probability theses** (something will/won't happen): What probability is the market assigning? What should it be? Where is the gap widest?
+**Probability theses** (something will/won't happen) — use probability analysis:
+What probability is the market assigning? What should it be? Where is the gap widest? Is the gap wide enough to justify the payout structure?
 
-**For relative theses** (X outperforms Y): What's the ratio? What should it be? What drives convergence? Can you isolate the spread from market direction?
+**Relative theses** (X outperforms Y) — use ratio analysis:
+What's the ratio? What should it be? What drives convergence? Can you isolate the spread from market direction?
 
 ### Clarity Gate
 
@@ -90,7 +109,7 @@ Example — "tech is overvalued because of money printing" → clear. Don't ask.
 
 ### Gate
 
-**You MUST state the deeper claim in 1-2 sentences before proceeding to Phase 2.** Write it out explicitly. If you can't find a deeper claim, the surface claim IS the deeper claim — state that.
+**You MUST state (a) the thesis shape, (b) the deeper claim in 1-2 sentences, and (c) the time horizon before proceeding to Phase 2.** Write them out explicitly. If you can't find a deeper claim, the surface claim IS the deeper claim — state that.
 
 ### Time Horizon
 
@@ -110,7 +129,7 @@ Example — Fed holds March (event-driven):
 - Price-in: 1-2 weeks before (futures and Kalshi adjust)
 - Trade horizon: <1 month — enter 3-4 weeks before, exit day of
 
-You MUST state the trade horizon before proceeding to Phase 2. This gates instrument selection in Phase 3.
+**Time cost implications:** The trade horizon directly affects instrument viability through the metric's denominator. Annualized carry costs: options theta (~30-60% of premium over 6 months), perps funding (~10-30%/yr in crypto, ~2-5%/yr for commodities), Kalshi zero, shares zero. A 12-month crypto perp thesis with 25%/yr funding costs 25% to hold — the metric penalizes this automatically.
 
 ---
 
@@ -140,7 +159,8 @@ Use web search (parallel searches for speed) to find:
 1. **Current state of whatever the thesis depends on.** The key macro data, valuations, and prices that ground the thesis in reality.
 2. **What has already moved.** YTD performance, 52-week ranges for likely instruments. If the move is underway, state it — it changes entry risk.
 3. **What consensus thinks.** If everyone agrees, there's no edge. If contrarian, that's where asymmetry lives.
-4. **Specific numbers for elimination.** Every fact here becomes ammunition for Phase 3. "CAPE at 39.8 — second highest ever" not "valuations seem high."
+4. **Specific numbers for scoring.** Every fact here becomes ammunition for Phase 3. "CAPE at 39.8 — second highest ever" not "valuations seem high."
+5. **Prediction market check.** For any thesis with a date or binary resolution, search Kalshi (and Polymarket if relevant) for a direct contract. Note the current price/implied probability.
 
 ### Gate
 
@@ -148,88 +168,73 @@ Use web search (parallel searches for speed) to find:
 
 ---
 
-## Phase 3: Eliminate to THE Trade
+## Phase 3: Find THE Trade
 
-**Goal:** Arrive at the single highest-upside expression through elimination, not enumeration. Start broad, cut ruthlessly, show your reasoning.
+**Goal:** Arrive at the single highest-scoring expression using the metric: `thesis beta × convexity / time cost`.
 
-### Step 1: Generate Candidates
+The architecture: classify shape (Phase 1) → find best-in-class for that shape → cross-check against other classes → stress-test the winner.
 
-Using the deeper claim + causal chain from Phase 1, list 4-8 candidate instruments across platforms. Think across:
+### Step 0: Binary Check
 
-- **Direct expressions** (the obvious instrument for the thesis)
-- **Indirect expressions** (second/third-order beneficiaries or victims)
-- **Different instrument types** (options, perps, binary contracts, stock/ETF, leveraged ETF)
-- **Different platforms** (Robinhood, Kalshi, Hyperliquid, Bankr)
+**Before anything else:** does a prediction market contract exist that literally resolves on this thesis?
 
-Use this as a guide for which platforms to consider:
+Search Kalshi (and Polymarket if relevant) for the exact event. If a contract exists:
+- It becomes a candidate that MUST be explicitly beaten by something else
+- Evaluate in observable-probability mode: market price = implied probability, your estimate = your edge, EV = `(your probability × payout) − cost`
+- It sets the thesis-beta ceiling: the contract IS the event (~100% thesis beta, zero carry)
+- Other instruments must justify why they beat 100% thesis beta with zero time cost
 
-| Thesis type | Likely platforms |
-|---|---|
-| Fed / rates / inflation / tariffs | Kalshi (binary), Robinhood (TLT, banks, GLD) |
-| Crypto directional | Hyperliquid (perps), Kalshi (price ranges) |
-| Sectors (AI, defense, biotech, etc.) | Robinhood (stocks, ETFs, options) |
-| Token narratives / DeFi | Bankr (tokens), Hyperliquid (perps) |
-| Energy / commodities / gold | Robinhood (XLE, GLD, USO), HL (PAXG) |
-| Relative / pair ("X flips Y") | Hyperliquid (long/short perps) |
-| Binary policy outcomes | Kalshi |
+If no direct contract exists, proceed to Step 1.
 
-### Step 2: Eliminate with Evidence
+### Step 1: Best-in-Class Within Shape
 
-Go through each candidate and eliminate it with a specific reason citing data from Phase 2. The elimination reasoning IS the value — show it, don't hide it.
+Using the thesis shape from Phase 1, find the best instrument WITHIN the natural class.
 
-**Elimination criteria (in order):**
+| Shape | Where to look | What to optimize |
+|-------|--------------|-----------------|
+| Binary event | Kalshi, Polymarket — exact contract | Best price relative to your probability estimate |
+| Mispriced company | Robinhood (shares, options, LEAPS) | Highest convexity that matches trade horizon |
+| Sector/theme | Robinhood (ETFs, highest-beta single name) | Highest thesis beta within the sector |
+| Relative value | Hyperliquid (long/short perp pair) | Cleanest spread isolation, net funding cost |
+| Vulnerability | Robinhood (puts, inverse ETFs), HL (short perps) | Most direct short-side expression |
 
-1. **Thesis contradiction.** Does this instrument bet AGAINST the deeper claim?
-   - "Short IGV" contradicts "AI is a scapegoat" — if AI isn't the real threat, software is being unfairly punished and should recover.
-   - "Long QQQ puts" aligns with the surface claim (tech falls) but not the deeper claim (money printing). It requires an additional assumption about Fed reaction.
-   - **The trade must align with the DEEPER claim, not just the surface claim.**
-   - Load `references/instrument-reasoning.md` for detailed thesis contradiction patterns.
+Also consider cross-platform: commodities like gold can be expressed as GLD (Robinhood, zero carry) OR GOLD-PERP (Hyperliquid, leverage + low carry). Crypto directional can be spot, perps, or Kalshi price-range contracts.
 
-2. **Time mismatch.** Does the instrument's lifespan match the trade horizon from Phase 1?
-   - Trade horizon >2yr: standard options expire too soon. Require LEAPS or use shares/perps.
-   - Trade horizon <3mo: shares lack convexity. Prefer options or binary contracts.
-   - Perps: annualize the funding rate. At 0.03%/day, a 1-year hold costs ~11% in carry.
-   - Kalshi: contract must resolve AFTER the catalyst. If it resolves before, you're betting on noise.
-   - Leveraged ETFs: quantify decay drag over the trade horizon. >2 weeks = state the cost.
+For each surviving candidate within the class, compute the three metric components:
+- **Thesis beta:** What % of this instrument's price movement is driven by THIS thesis? Kalshi binary on the exact event ≈ 100%. Sector ETF ≈ 30-60%. Single name ≈ 60-90%. Pair trade on the exact ratio ≈ 90-100%.
+- **Convexity:** Raw upside multiple at $100K if thesis plays out. Shares 0.2-2x. Options 3-10x. Kalshi binaries 2-12x. Perps at leverage 2-20x.
+- **Time cost:** Annualized carry over the trade horizon. Options: theta (estimate ~30-60% of premium over 6 months). Perps: funding rate × horizon. Kalshi: zero. Shares: zero. Leveraged ETFs: decay drag (quantify over horizon).
 
-3. **Upside cap.** We're optimizing for max upside. Eliminate instruments with capped returns unless nothing better exists.
-   - Stock/ETF: realistic upside is 20-40% over 6 months. For a $100K max-upside bet, that's $20-40K gain.
-   - Options: 3-10x possible. $100K → $300K-$1M.
-   - Kalshi binary: 2-10x possible on low-probability events.
-   - Perps with leverage: 5-20x possible (but liquidation risk).
-   - **If two instruments align equally with the thesis, prefer the one with higher convexity.**
+Your "home pick" is the highest-scoring candidate within the natural class.
 
-4. **Already moved / priced in.** Use the data from Phase 2.
-   - If an instrument is already up 20% YTD on this thesis, the easy money may be gone.
-   - If market consensus matches the thesis, the asymmetry is thin.
-   - Cite the specific data: "XLE is already +19% YTD — much of the energy move has happened."
+### Step 2: Cross-Check Across Classes
 
-5. **Liquidity and execution.** Can you actually fill $100K?
-   - QQQ options: yes, deepest options market in the world.
-   - Niche Kalshi markets: maybe not — slippage above $500 orders.
-   - Small-cap perps on HL: 3-5x leverage cap signals thin books.
+Is the home pick actually the best? Compare it against the best instrument from at least one OTHER class on the same metric.
 
-6. **Thesis beta.** How much of the instrument's price movement is driven by THIS thesis?
-   - SQQQ shorts ALL of Nasdaq including AAPL/MSFT which have real earnings — low thesis beta.
-   - IGV targets software — higher thesis beta for a software thesis.
-   - Single name has highest thesis beta but adds idiosyncratic risk.
-   - Prefer the instrument where the thesis explains the largest % of the expected move.
+The cross-check forces an explicit comparison between instrument classes on normalized terms. This is where the objectivity lives — without it, you'd just default to whatever class the shape points to.
 
-### Step 3: Final Comparison
+Example — "Fed won't cut in March":
+- Home pick (binary): Kalshi NO at $0.08 → thesis beta ~1.0, convexity 12x, time cost 0 → score: high
+- Cross-check (options): TLT puts → thesis beta ~0.35, convexity 5x, time cost ~40%/yr annualized theta → score: `0.35 × 5 / 1.4 = 1.25` — much lower
+- Winner: Kalshi
 
-After elimination, you should have 2-3 survivors. Do a head-to-head comparison on:
+Example — "SEALSQ undervalued because of PQC mandate":
+- Home pick (equity): LAES shares → thesis beta ~0.8, convexity 1.5x, time cost 0 → score: `0.8 × 1.5 / ~0 = high (zero-carry)`
+- Cross-check (options): LAES LEAPS → thesis beta ~0.8, convexity 5x, time cost ~30%/yr → score: `0.8 × 5 / 1.3 = 3.08`
+- LEAPS beat shares if you trust the 2-year horizon. Shares win if timing is uncertain (zero carry = patience is free).
 
-| Factor | Candidate A | Candidate B |
-|--------|------------|------------|
-| Thesis alignment | Deeper or surface? | Deeper or surface? |
-| Max upside if right | $X | $X |
-| Max loss if wrong | $X | $X |
-| Timing dependency | Must be right by [date]? | Can hold indefinitely? |
-| What has to go right | [conditions] | [conditions] |
+Present the winner AND the best from a different class as the ALT. The reader always sees two genuinely different risk profiles.
 
-Pick the winner. State WHY it wins in 2-3 sentences.
+### Disqualifiers
 
-### Step 4: Stress-Test the Winner
+These override the metric — an instrument fails on any of these regardless of score:
+
+- **Thesis contradiction.** Instrument bets against the deeper claim, not just the surface claim. The trade must align with the DEEPER claim. Load `references/instrument-reasoning.md` for detailed thesis contradiction patterns.
+- **Liquidity.** Can't fill $100K without >2% slippage. Niche Kalshi markets may cap at ~$500/order. Small-cap perps on HL with 3-5x leverage caps signal thin books.
+- **Already priced in.** Instrument has already moved significantly on this thesis AND consensus agrees. Cite the specific data: "XLE is already +19% YTD."
+- **Time mismatch.** Options expire before catalyst. Kalshi contract resolves before the event. Instrument mechanically can't capture the thesis.
+
+### Step 3: Stress-Test the Winner
 
 Before committing, construct the strongest case AGAINST the winning trade. Ask:
 
@@ -269,11 +274,11 @@ When the thesis doesn't map to any instrument on the four platforms (Robinhood, 
 
 ## Phase 4: Validate & Price
 
-**Goal:** Confirm the trade is executable and get live pricing. Scripts validate — they don't drive the selection. If script data contradicts your elimination reasoning (instrument is illiquid, price has moved significantly), go back to Phase 3.
+**Goal:** Confirm the trade is executable and get live pricing. Scripts validate — they don't drive the selection. If script data contradicts your Phase 3 reasoning (instrument is illiquid, price has moved significantly), go back to Phase 3.
 
 ### Validate THE Trade + Alternatives
 
-Only validate what survived elimination. 2-3 instruments max.
+Only validate what survived Phase 3. 2-3 instruments max (winner + cross-check alt).
 
 ```bash
 # Robinhood: YOU propose tickers, script validates via Yahoo Finance
@@ -431,9 +436,9 @@ What makes the thesis work even if other legs fail.]
 ────────────────────────────────────
 
 ALT
-[INSTRUMENT] — [1-2 sentences. Genuinely different
-risk profile. State the tradeoff: higher ceiling,
-higher floor, different risk type.]
+[INSTRUMENT from a DIFFERENT class] — [1-2 sentences.
+State the metric tradeoff: "Higher convexity but 35%
+thesis beta" or "Zero carry but capped at 1.2x."]
 
 EXECUTE
 [Platform] → [TICKER] → [Action] → [Type]
@@ -481,4 +486,3 @@ Comparables and comparable legend: use for equities and equity-like instruments.
 7. **Catalyst-dated theses.** Warn about IV crush on options. Select expiry AFTER the catalyst date.
 8. **End every response** with the disclaimer line.
 9. **Evidence over logic.** Every claim about an instrument must be backed by data from Phase 2 research. No "this seems expensive" — only "this trades at 37.65x P/E vs a 20-year average of 19.08."
-
