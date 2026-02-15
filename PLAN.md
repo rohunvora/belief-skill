@@ -342,7 +342,6 @@ skills/belief-router/
 │   ├── execute.ts                    # Brokerage-specific execution guides
 │   └── export-card.ts                # Satori PNG card generation
 ├── references/
-│   ├── theme-map.json                # Fallback theme → ticker mappings
 │   ├── secondaries.json              # Pre-IPO companies
 │   ├── ticker-context.json           # Curated context for rationale
 │   └── brokerages/                   # Execution templates per brokerage

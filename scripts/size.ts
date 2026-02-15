@@ -71,6 +71,13 @@ export function sizePositions(
   // If crypto-heavy thesis (>60% crypto candidates), favor crypto slots
   const isCryptoHeavy = cryptoCount > stockCount * 2;
   
+  // Pre-compute direction for each instrument based on thesis
+  for (const r of ranked) {
+    if (!(r as any)._direction) {
+      (r as any)._direction = inferDirection(r, thesis);
+    }
+  }
+  
   // Separate short candidates — ensure they get slots
   const shortCandidates = ranked.filter(r => (r as any)._direction === "short");
   const longCandidates = ranked.filter(r => (r as any)._direction !== "short");
@@ -205,7 +212,7 @@ export function sizePositions(
     }
 
     // Determine direction from thesis (default long)
-    const direction = inferDirection(inst);
+    const direction = inferDirection(inst, thesis);
 
     // Generate rationale
     const rationale = generateRationale(inst, existingExposure);
@@ -291,12 +298,99 @@ function findExistingExposure(
   return 0;
 }
 
-function inferDirection(instrument: RankedInstrument): "long" | "short" {
+function inferDirection(instrument: RankedInstrument, thesis?: string): "long" | "short" {
   // Check if instrument was flagged for shorting by the rank stage
   if ((instrument as any)._direction === "short") return "short";
   // Staffing/labor stocks in a "replace jobs" thesis should be shorted
   if (instrument.sub_themes?.includes("staffing_labor")) return "short";
+  
+  // Thesis-based direction inference
+  if (thesis) {
+    const lower = thesis.toLowerCase();
+    
+    // Detect bearish thesis patterns
+    const isBearish = /\b(crash|collapse|die|dying|dead|overvalued|overhyped|bubble|scam|fraud|no revenue|worthless|zero|dump|short|bearish|decline|fail|failing)\b/i.test(lower);
+    const isReplace = /\b(replace|displace|kill|destroy|eat|obsolete|dinosaur)\b/i.test(lower);
+    
+    if (isBearish) {
+      // For inverse/short ETFs, the thesis bearishness means we go LONG on them
+      const isInverseETF = /^(SQQQ|SPXU|SRS|BITI|TBT|SDOW|SRTY|FAZ|SKF)$/i.test(instrument.ticker);
+      if (isInverseETF) return "long";
+      
+      // Identify what the thesis is bearish ABOUT
+      const bearishTarget = detectBearishTarget(lower);
+      
+      // If this instrument IS the thing being called bearish, short it
+      if (bearishTarget && isTargetOfBearishness(instrument, bearishTarget)) return "short";
+    }
+    
+    if (isReplace) {
+      // "AI will replace Google" — short GOOG, long MSFT/OPENAI
+      // "DeFi will eat banks" — short JPM/GS, long COIN/UNI
+      const replaceTarget = detectReplaceTarget(lower);
+      if (replaceTarget && isTargetOfReplacement(instrument, replaceTarget)) return "short";
+    }
+  }
+  
   return "long";
+}
+
+function detectBearishTarget(thesis: string): string | null {
+  // Extract what's being called bearish
+  const patterns = [
+    /\b(crypto|bitcoin|btc)\b.*\b(crash|collapse|dump)/i,
+    /\b(quantum|commercial real estate|social media|ev|electric vehicle)\b.*\b(overhyped|dead|dying|collapse|overrated)/i,
+    /\b(crash|collapse|dump|dead|dying|overhyped|overrated|overvalued)\b.*\b(crypto|bitcoin|btc|quantum|commercial real estate|social media)\b/i,
+  ];
+  
+  if (/crypto|bitcoin/i.test(thesis) && /crash|collapse|dump/i.test(thesis)) return "crypto";
+  if (/quantum/i.test(thesis) && /overhyped|no revenue/i.test(thesis)) return "quantum";
+  if (/commercial real estate|office building/i.test(thesis) && /collapse|worthless/i.test(thesis)) return "commercial_re";
+  if (/social media/i.test(thesis) && /dying|dead/i.test(thesis)) return "social_media";
+  if (/electric vehicle|ev\b/i.test(thesis) && /overrated|overhyped/i.test(thesis)) return "ev";
+  if (/google|search/i.test(thesis) && /replace/i.test(thesis)) return "google_search";
+  
+  return null;
+}
+
+function isTargetOfBearishness(instrument: RankedInstrument, target: string): boolean {
+  const ticker = instrument.ticker.toUpperCase();
+  
+  switch (target) {
+    case "crypto":
+      // Short crypto-exposed stocks (they're long crypto by nature)
+      return ["COIN", "MSTR", "MARA", "RIOT", "CLSK", "BITF", "HUT"].includes(ticker) ||
+             instrument.asset_class === "crypto";
+    case "quantum":
+      return ["IONQ", "RGTI", "QUBT"].includes(ticker);
+    case "commercial_re":
+      return ["BXP", "SLG", "VNO", "CBRE"].includes(ticker);
+    case "social_media":
+      return ["META", "SNAP", "PINS", "RDDT"].includes(ticker);
+    case "ev":
+      return ["TSLA", "RIVN", "LCID", "NIO", "XPEV"].includes(ticker);
+    default:
+      return false;
+  }
+}
+
+function detectReplaceTarget(thesis: string): string | null {
+  if (/replace.*(google|search)/i.test(thesis) || /(google|search).*replace/i.test(thesis)) return "google";
+  if (/(defi|decentralized).*(eat|replace|kill).*(bank|traditional finance|tradfi)/i.test(thesis) ||
+      /(bank|traditional finance|tradfi).*(dinosaur|obsolete|dead)/i.test(thesis)) return "banks";
+  return null;
+}
+
+function isTargetOfReplacement(instrument: RankedInstrument, target: string): boolean {
+  const ticker = instrument.ticker.toUpperCase();
+  switch (target) {
+    case "google":
+      return ticker === "GOOG" || ticker === "GOOGL";
+    case "banks":
+      return ["JPM", "GS", "MS", "BAC", "C", "WFC"].includes(ticker);
+    default:
+      return false;
+  }
 }
 
 // Load ticker context for richer rationale
