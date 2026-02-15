@@ -1,11 +1,13 @@
 /**
  * Instrument Discovery — maps thesis text to candidate instruments
- * Uses theme-map.json + secondaries.json for local matching,
- * with web search fallback for discovery.
+ * 
+ * Primary: live web search (discover.ts) — handles ANY thesis, no hardcoded knowledge needed
+ * Fallback: theme-map.json for fast offline matching when search unavailable
  */
 
 import type { CandidateInstrument } from "./types";
 import { expandThesis, extractMentionedTickers } from "./expand";
+import { discoverInstrumentsLive } from "./discover";
 
 const THEME_MAP_PATH = new URL("../references/theme-map.json", import.meta.url).pathname;
 const SECONDARIES_PATH = new URL("../references/secondaries.json", import.meta.url).pathname;
@@ -29,12 +31,29 @@ interface SecondaryEntry {
 }
 
 export async function discoverInstruments(thesis: string): Promise<CandidateInstrument[]> {
+  // Try live web search first — handles ANY thesis without hardcoded knowledge
+  let liveCandidates: CandidateInstrument[] = [];
+  try {
+    liveCandidates = await discoverInstrumentsLive(thesis);
+  } catch (e) {
+    console.error(`   ⚠️ Live discovery failed: ${(e as Error).message}`);
+  }
+  
+  // Also run theme-map matching for fast, reliable coverage of known themes
   const themeMap: Record<string, ThemeEntry> = JSON.parse(await Bun.file(THEME_MAP_PATH).text());
   const secondaries: Record<string, SecondaryEntry> = JSON.parse(await Bun.file(SECONDARIES_PATH).text());
   
   const lower = thesis.toLowerCase();
   const candidates: CandidateInstrument[] = [];
   const seen = new Set<string>();
+  
+  // Start with live-discovered candidates (highest priority — real-time data)
+  for (const c of liveCandidates) {
+    if (!seen.has(c.ticker)) {
+      seen.add(c.ticker);
+      candidates.push(c);
+    }
+  }
 
   // Match themes by keyword overlap
   const matchedThemes: { theme: string; entry: ThemeEntry; score: number }[] = [];
