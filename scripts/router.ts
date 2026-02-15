@@ -10,6 +10,7 @@ import { discoverInstruments } from "./instruments.ts";
 import { rankInstruments } from "./rank.ts";
 import { sizePositions } from "./size.ts";
 import { enrichInstruments } from "./research.ts";
+import { decomposeThesis, type DecomposedThesis } from "./decompose.ts";
 
 // ─── Types (exported for other modules) ───
 export interface SubTheme {
@@ -467,24 +468,78 @@ async function main() {
   console.error(`Thesis: "${thesisText}"`);
   console.error(`Budget: $${budget.toLocaleString()}\n`);
 
-  // 1. Parse
-  console.error("1/4 Parsing thesis...");
+  // 1. LLM Decomposition (the core — Claude IS the router)
+  console.error("1/4 Decomposing thesis (LLM)...");
+  const decomposed = await decomposeThesis(thesisText);
+  console.error(`   → ${decomposed.instruments.length} instruments, confidence: ${decomposed.confidence}`);
+  if (decomposed.reasoning) console.error(`   → ${decomposed.reasoning.slice(0, 120)}`);
+
+  // Also run keyword parsing for invalidation/themes (lightweight supplement)
   const thesis = parseThesis(thesisText);
-  console.error(`   → ${thesis.sub_themes.length} sub-themes, confidence: ${thesis.confidence}`);
+  // Override with LLM confidence/invalidation if available
+  if (decomposed.confidence) thesis.confidence = decomposed.confidence;
+  if (decomposed.invalidation?.length) thesis.invalidation = decomposed.invalidation;
+  if (decomposed.horizon) thesis.time_horizon = decomposed.horizon;
 
-  // 2. Discover instruments
-  console.error("2/4 Discovering instruments...");
-  const candidates = await discoverInstruments(thesis.raw);
-  console.error(`   → ${candidates.length} candidates`);
+  // 2. Build candidate list from LLM suggestions + web search discovery
+  console.error("2/4 Building candidate list...");
+  
+  // LLM-suggested tickers (primary — these come from understanding intent)
+  const KNOWN_CRYPTO = new Set([
+    "BTC", "ETH", "SOL", "HYPE", "TRUMP", "PENGU", "BONK", "WIF", "PYTH", "JUP",
+    "RAY", "JTO", "ORCA", "DYDX", "AAVE", "UNI", "MKR", "CRV", "SNX", "RNDR",
+    "AKT", "TAO", "ARB", "OP", "MATIC", "LDO", "RPL", "ENS", "FXS", "DEGEN",
+    "AERO", "BRETT", "TOSHI", "GALA", "IMX", "AXS", "SAND", "MANA", "VIRTUAL",
+    "AI16Z", "FET", "NEAR", "AVAX", "DOT", "LINK", "ATOM",
+  ]);
+  
+  const llmCandidates: CandidateInstrument[] = decomposed.instruments.map(inst => {
+    const ticker = inst.ticker.replace(/\$/g, "").toUpperCase();
+    // Auto-classify asset class
+    let asset_class: "stock" | "etf" | "crypto" | "secondary" = "stock";
+    if (inst.asset_class?.includes("crypto") || KNOWN_CRYPTO.has(ticker)) asset_class = "crypto";
+    else if (inst.asset_class?.includes("etf") || inst.asset_class?.includes("ETF")) asset_class = "etf";
+    else if (inst.asset_class?.includes("secondary") || inst.asset_class?.includes("pre-IPO")) asset_class = "secondary";
+    
+    return {
+      ticker,
+      name: ticker,
+      asset_class,
+      sub_themes: [inst.why?.slice(0, 50) || "llm"],
+      source: "llm-decompose",
+      _direction: inst.direction,
+      _why: inst.why,
+    } as CandidateInstrument & { _direction: string; _why: string };
+  });
+  
+  // Also run web search + theme-map discovery (secondary — fills gaps)
+  const discoverCandidates = await discoverInstruments(thesis.raw);
+  
+  // Merge: LLM candidates first, then discover candidates that aren't duplicates
+  const seen = new Set(llmCandidates.map(c => c.ticker));
+  const allCandidates = [
+    ...llmCandidates,
+    ...discoverCandidates.filter(c => !seen.has(c.ticker)),
+  ];
+  console.error(`   → ${llmCandidates.length} from LLM + ${discoverCandidates.filter(c => !seen.has(c.ticker)).length} from search = ${allCandidates.length} total`);
 
-  // 2.5 Enrich
-  console.error("2.5/4 Enriching with market data...");
-  const enriched = await enrichInstruments(candidates);
+  // 3. Enrich with market data
+  console.error("3/4 Enriching with market data...");
+  const enriched = await enrichInstruments(allCandidates);
   console.error(`   → ${enriched.length} enriched`);
 
-  // 3. Rank
-  console.error("3/4 Ranking...");
+  // 3.5 Rank — preserve LLM direction flags
+  console.error("3.5/4 Ranking...");
   const ranked = await rankInstruments(enriched, thesis.raw);
+  // Apply LLM direction hints to ranked instruments
+  for (const r of ranked) {
+    const llmInst = decomposed.instruments.find(i => 
+      i.ticker.replace(/\$/g, "").toUpperCase() === r.ticker.toUpperCase()
+    );
+    if (llmInst?.direction === "short") {
+      (r as any)._direction = "short";
+    }
+  }
   console.error(`   → Top: ${ranked.slice(0, 3).map(r => r.ticker).join(", ")}`);
 
   // 4. Size
