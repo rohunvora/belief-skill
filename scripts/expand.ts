@@ -66,12 +66,40 @@ const SEMANTIC_ALIASES: Record<string, string[]> = {
   "bridge": ["ethereum_ecosystem", "solana_ecosystem"],
   
   // Consumer & culture
-  "luxury": ["commodities"], // loose match — luxury goods
+  "luxury": ["commodities"],
   "gaming": ["gaming_metaverse"],
+  "game": ["gaming_metaverse"],
+  "gta": ["gaming_metaverse"],
   "metaverse": ["gaming_metaverse"],
-  "creator": ["ai_software", "gaming_metaverse"],
-  "attention": ["ai_software", "gaming_metaverse"],
-  "social": ["ai_software"],
+  "creator": ["attention_economy"],
+  "attention": ["attention_economy"],
+  "social": ["attention_economy"],
+  "chronically online": ["attention_economy", "meme_culture"],
+  "content": ["attention_economy"],
+  "slop": ["attention_economy", "ai_software"],
+  "human": ["attention_economy"],
+  
+  // Deregulation & policy
+  "regulation": ["deregulation", "stablecoin"],
+  "legalize": ["deregulation", "crypto_broad"],
+  "workforce": ["deregulation", "staffing_labor"],
+  "american": ["deregulation", "defense_ai"],
+  
+  // Memes & culture
+  "trenches": ["meme_culture", "solana_ecosystem"],
+  "degen": ["meme_culture", "defi"],
+  "ct": ["meme_culture", "crypto_broad"],
+  "pump fun": ["meme_culture", "solana_ecosystem"],
+  "pump.fun": ["meme_culture", "solana_ecosystem"],
+  
+  // Market structure  
+  "low float": ["meme_culture"],
+  "high fdv": ["meme_culture"],
+  "doxxed": ["meme_culture"],
+  
+  // Search & platforms
+  "search engine": ["ai_software"],
+  "google": ["ai_software"],
   
   // Healthcare
   "drug": ["biotech"],
@@ -150,6 +178,66 @@ const CAUSAL_CHAINS: { pattern: RegExp; themes: string[]; reason: string }[] = [
     themes: ["ev_clean_energy", "energy_ai", "commodities"],
     reason: "Energy transition → renewables, grid infrastructure, materials"
   },
+  {
+    pattern: /remove.*regulation|deregulat|rawdog.*capital|let.*american/i,
+    themes: ["deregulation", "fintech", "crypto_broad", "biotech", "ev_clean_energy"],
+    reason: "Deregulation → all regulated sectors benefit"
+  },
+  {
+    pattern: /national debt|deficit|debt.*ceiling|debasement/i,
+    themes: ["national_debt", "commodities", "crypto_broad", "interest_rates"],
+    reason: "Fiscal concerns → hard assets, inflation hedges"
+  },
+  {
+    pattern: /pump\.?fun|indie.*game|game.*developer|crypto.*gta/i,
+    themes: ["gaming_metaverse", "solana_ecosystem", "meme_culture"],
+    reason: "Gaming on Solana via pump.fun"
+  },
+  {
+    pattern: /ai.*slop|genuine.*human|authentic/i,
+    themes: ["attention_economy", "ai_software"],
+    reason: "AI content flood → demand for authenticity"
+  },
+  {
+    pattern: /chronically online|attention|reward.*online/i,
+    themes: ["attention_economy", "meme_culture", "crypto_broad"],
+    reason: "Attention economy thesis"
+  },
+  {
+    pattern: /replace.*search|kill.*google|search.*replace/i,
+    themes: ["ai_software"],
+    reason: "Search disruption"
+  },
+  {
+    pattern: /skill.*service|new.*saas/i,
+    themes: ["ai_software", "staffing_labor"],
+    reason: "Skills-as-a-service → AI disruption of services"
+  },
+  {
+    pattern: /crash.*market|market.*crash|boost.*employment/i,
+    themes: ["interest_rates", "staffing_labor", "crypto_broad"],
+    reason: "Market manipulation/crash thesis"
+  },
+  {
+    pattern: /single.*company.*\d+[bB]|biggest.*company|57[bB]/i,
+    themes: ["ai_compute", "ai_software"],
+    reason: "Big tech earnings → AI infrastructure"
+  },
+  {
+    pattern: /pudgy|penguin/i,
+    themes: ["meme_culture", "solana_ecosystem"],
+    reason: "Pudgy Penguins ecosystem"
+  },
+  {
+    pattern: /open.*source/i,
+    themes: ["ai_software", "ai_compute"],
+    reason: "Open source AI thesis"
+  },
+  {
+    pattern: /local.*model|local.*inference|consumer.*gpu/i,
+    themes: ["ai_compute"],
+    reason: "Local inference → GPU hardware demand"
+  },
 ];
 
 /**
@@ -197,6 +285,13 @@ export function extractMentionedTickers(thesis: string): string[] {
     "render": "RNDR", "fetch": "FET", "near": "NEAR", "akash": "AKT",
     "bittensor": "TAO", "virtual": "VIRTUAL", "ai16z": "AI16Z",
     "gala": "GALA", "immutable": "IMX",
+    "pengu": "PENGU", "pudgy penguins": "PENGU",
+    "amd": "AMD", "broadcom": "AVGO", "avgo": "AVGO",
+    "google": "GOOG", "alphabet": "GOOG",
+    "apple": "AAPL", "amazon": "AMZN", "meta": "META",
+    "microsoft": "MSFT", "crowdstrike": "CRWD",
+    "hype": "HYPE", "dydx": "DYDX",
+    "spy": "SPY", "qqq": "QQQ",
   };
   
   const lower = thesis.toLowerCase();

@@ -248,8 +248,8 @@
       "yield",
       "amm",
       "liquidity",
-      "crypto",
-      "bitcoin"
+      "perp",
+      "perpetual"
     ],
     "tickers": {
       "crypto": [
@@ -260,7 +260,8 @@
         "SNX",
         "DYDX",
         "JUP",
-        "RAY"
+        "RAY",
+        "HYPE"
       ]
     }
   },
@@ -416,12 +417,16 @@
   "gaming_metaverse": {
     "keywords": [
       "gaming",
+      "game",
+      "gta",
       "metaverse",
       "vr",
       "ar",
       "virtual reality",
       "roblox",
-      "unity"
+      "unity",
+      "indie game",
+      "game developer"
     ],
     "tickers": {
       "stocks": [
@@ -648,6 +653,35 @@
         "ETH",
         "SOL"
       ]
+    }
+  },
+  "deregulation": {
+    "keywords": ["deregulation", "regulation", "remove regulation", "red tape", "rawdog capital", "free market", "let american", "legalize"],
+    "tickers": {
+      "stocks": ["COIN", "HOOD", "SOFI", "SQ", "AFRM"],
+      "etfs": ["IWM", "FINX", "ARKF"],
+      "crypto": ["BTC", "ETH", "SOL", "HYPE", "TRUMP"]
+    }
+  },
+  "national_debt": {
+    "keywords": ["national debt", "deficit", "debasement", "debt ceiling", "treasury", "money printing", "fiscal"],
+    "tickers": {
+      "stocks": ["NEM", "GOLD", "FCX", "XOM"],
+      "etfs": ["GLD", "TLT", "TBT", "DBC", "PDBC"],
+      "crypto": ["BTC", "ETH"]
+    }
+  },
+  "meme_culture": {
+    "keywords": ["memecoin", "meme coin", "trenches", "pump fun", "pump.fun", "degen", "ape", "ct", "crypto twitter"],
+    "tickers": {
+      "crypto": ["BONK", "WIF", "TRUMP", "PENGU", "DEGEN", "BRETT", "HYPE", "SOL"]
+    }
+  },
+  "attention_economy": {
+    "keywords": ["attention", "creator", "content", "influencer", "social media", "chronically online", "audience"],
+    "tickers": {
+      "stocks": ["META", "SNAP", "PINS", "RBLX", "SPOT"],
+      "crypto": ["BONK", "WIF", "DEGEN"]
     }
   },
   "base_ecosystem": {

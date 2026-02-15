@@ -154,7 +154,7 @@ export async function discoverInstruments(thesis: string): Promise<CandidateInst
       seen.add(ticker);
       // Auto-classify: check if it's a known crypto or secondary
       const isSecondary = secondaries[ticker.toLowerCase()];
-      const isCrypto = ["BTC", "ETH", "SOL", "HYPE", "TRUMP", "PENGU", "BONK", "WIF", "PYTH", "JUP", "RAY", "JTO", "ORCA", "DYDX", "AAVE", "UNI", "MKR", "CRV", "SNX", "RNDR", "AKT", "TAO", "ARB", "OP", "MATIC", "LDO", "RPL", "ENS", "FXS", "DEGEN", "AERO", "BRETT", "TOSHI"].includes(ticker);
+      const isCrypto = ["BTC", "ETH", "SOL", "HYPE", "TRUMP", "PENGU", "BONK", "WIF", "PYTH", "JUP", "RAY", "JTO", "ORCA", "DYDX", "AAVE", "UNI", "MKR", "CRV", "SNX", "RNDR", "AKT", "TAO", "ARB", "OP", "MATIC", "LDO", "RPL", "ENS", "FXS", "DEGEN", "AERO", "BRETT", "TOSHI", "GALA", "IMX", "AXS", "SAND", "MANA", "VIRTUAL", "AI16Z", "FET", "NEAR"].includes(ticker);
       candidates.push({
         ticker,
         name: isSecondary?.name || ticker,

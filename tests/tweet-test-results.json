@@ -9,10 +9,10 @@
       "PPA",
       "SHLD",
       "NEM",
+      "RNDR",
       "CEG",
       "TSM",
-      "CRWD",
-      "AKT"
+      "TAO"
     ],
     "ideal": [
       "PLTR",
@@ -34,9 +34,9 @@
       "SHLD",
       "TRUMP",
       "NEM",
+      "RNDR",
       "CEG",
-      "TSM",
-      "CRWD"
+      "TSM"
     ],
     "ideal": [
       "PLTR",
@@ -53,13 +53,13 @@
     "id": "2016363797582065806",
     "text": "if this is the ai cold war then metals bull run makes sense and probably continu",
     "found": [
-      "NEM",
+      "META",
       "DBC",
       "GLD",
       "BAH",
+      "RNDR",
       "CEG",
       "TSM",
-      "CRWD",
       "TAO"
     ],
     "ideal": [
@@ -78,13 +78,13 @@
     "text": "idea: american manhattan project but for agi",
     "found": [
       "BAH",
-      "SAIC",
       "PPA",
       "SHLD",
       "TSM",
       "CEG",
       "MSFT",
-      "FET"
+      "COIN",
+      "RNDR"
     ],
     "ideal": [
       "PLTR",
@@ -97,18 +97,18 @@
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "1883732213868732648",
     "text": "Remove 90% of regulations \n\nJust let American workforce rawdog capitalism\n\nIt's ",
     "found": [
-      "TSM",
+      "IWM",
       "PYPL",
-      "SMH",
-      "SOXX",
-      "AKT",
+      "ARKF",
+      "COIN",
       "BAH",
-      "NEM",
-      "RNDR"
+      "TSM",
+      "BTC",
+      "ETH"
     ],
     "ideal": [
       "Small cap tech (IWM)",
@@ -117,13 +117,11 @@
       "biotech (XBI)",
       "energy"
     ],
-    "errors": [
-      "Found 1/5 ideal instruments: [SMALL] missing [CRYPTO,FINTECH,BIOTECH,ENERGY]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "2016949137858564115",
     "text": "the better ai gets - the bigger the implications become on national defence and ",
     "found": [
@@ -143,9 +141,7 @@
       "AI infra stocks",
       "data center REITs"
     ],
-    "errors": [
-      "Found 1/5 ideal instruments: [AI] missing [NVDA,AMD,AVGO,DATA]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
@@ -230,8 +226,8 @@
       "AIQ",
       "MARA",
       "IRBO",
-      "FET",
-      "TSM"
+      "TSM",
+      "RNDR"
     ],
     "ideal": [
       "AI tokens (basket)",
@@ -254,7 +250,7 @@
       "AIQ",
       "MARA",
       "IRBO",
-      "NEAR"
+      "RNDR"
     ],
     "ideal": [
       "AI tokens",
@@ -273,12 +269,12 @@
     "found": [
       "MSFT",
       "GOOG",
-      "CRM",
       "AIQ",
+      "MARA",
       "IRBO",
-      "TAO",
       "TSM",
-      "RNDR"
+      "RNDR",
+      "FET"
     ],
     "ideal": [
       "AI agent tokens",
@@ -293,7 +289,7 @@
     "id": "2020757138285510993",
     "text": "agents cant open bank accounts. crypto is literally the only way they can hold a",
     "found": [
-      "UNI",
+      "BTC",
       "FIGURE-AI"
     ],
     "ideal": [
@@ -336,7 +332,7 @@
       "AIQ",
       "MARA",
       "IRBO",
-      "FET"
+      "RNDR"
     ],
     "ideal": [
       "Top AI tokens by mcap",
@@ -347,26 +343,24 @@
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1889756948779676148",
     "text": "I don't think the AI trade is over by the way.\n\nIt's just really difficult for p",
     "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "RIOT",
+      "BITO",
       "MSFT",
-      "GOOG",
-      "CRM",
-      "SNOW",
-      "AIQ",
-      "IRBO",
       "TSM",
-      "RNDR"
+      "BTC"
     ],
     "ideal": [
       "AI tokens at local lows",
       "contrarian AI entries during rotation"
     ],
-    "errors": [
-      "Found 1/2 ideal instruments: [AI] missing [CONTRARIAN]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "easy",
@@ -397,8 +391,8 @@
       "SOL",
       "JUP",
       "RAY",
+      "ORCA",
       "BONK",
-      "WIF",
       "ANTHROPIC"
     ],
     "ideal": [
@@ -437,7 +431,7 @@
     "id": "1971890821751624004",
     "text": "perp dex war ends with hyperliquid winning \n\nit's gonna happen too https://t.co/",
     "found": [
-      "HYPE",
+      "UNI",
       "ANDURIL"
     ],
     "ideal": [
@@ -455,10 +449,10 @@
       "MARA",
       "MSTR",
       "IBIT",
+      "RIOT",
+      "COIN",
+      "CLSK",
       "BITO",
-      "BTC",
-      "ETH",
-      "SOL",
       "HYPE"
     ],
     "ideal": [
@@ -494,10 +488,10 @@
       "NEM",
       "DBC",
       "XOM",
-      "CVX",
       "GLD",
-      "OXY",
       "MARA",
+      "JPM",
+      "CVX",
       "BTC"
     ],
     "ideal": [
@@ -574,45 +568,45 @@
       "counter-cyclical plays"
     ],
     "errors": [
-      "Found 0/2 ideal instruments: [] missing [SPY,COUNTER-CYCLICAL]"
+      "Found 1/2 ideal instruments: [COUNTER-CYCLICAL] missing [SPY]"
     ]
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "1991268682824106010",
     "text": "might be a crazy thought but if a single company is making 57B in a quarter… why",
     "found": [
       "HYG",
       "JPM",
-      "BAC",
       "TLT",
       "BND",
-      "TBT"
+      "TBT",
+      "TSM",
+      "RNDR",
+      "AKT"
     ],
     "ideal": [
       "NVDA",
       "big tech",
       "growth stocks"
     ],
-    "errors": [
-      "Found 0/3 ideal instruments: [] missing [NVDA,BIG,GROWTH]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "1875009299350798819",
     "text": "The crypto GTA will likely launch organically on pump fun",
     "found": [
-      "ASTS",
-      "RKLB",
-      "RDW",
-      "UFO",
-      "ARKX",
+      "META",
+      "HERO",
+      "RBLX",
+      "U",
       "MARA",
-      "LUNR",
-      "JUP"
+      "GAMR",
+      "AXS",
+      "SAND"
     ],
     "ideal": [
       "Gaming tokens",
@@ -620,50 +614,51 @@
       "GALA",
       "IMX"
     ],
-    "errors": [
-      "Found 0/4 ideal instruments: [] missing [GAMING,PUMP.FUN,GALA,IMX]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "1875010670103777525",
     "text": "By Q2-Q3 indie game developers will launch through pump fun",
     "found": [
-      "ASTS",
-      "RKLB",
-      "RDW",
-      "UFO",
-      "ARKX",
+      "META",
+      "HERO",
+      "RBLX",
       "MARA",
-      "COIN",
-      "SOL"
+      "GAMR",
+      "AXS",
+      "SAND",
+      "ASTS"
     ],
     "ideal": [
       "Short EA/ATVI",
       "gaming tokens",
       "Solana gaming ecosystem"
     ],
-    "errors": [
-      "Found 1/3 ideal instruments: [SOLANA] missing [SHORT,GAMING]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "1876026374898798632",
     "text": "AI slop increases demand for genuine human shit",
     "found": [
-      "ANTHROPIC"
+      "META",
+      "PINS",
+      "SNAP",
+      "RBLX",
+      "MSFT",
+      "BONK",
+      "WIF",
+      "AIQ"
     ],
     "ideal": [
       "Creator economy platforms",
       "authenticity verification",
       "short content farms"
     ],
-    "errors": [
-      "Found 0/3 ideal instruments: [] missing [CREATOR,AUTHENTICITY,SHORT]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
@@ -671,9 +666,14 @@
     "id": "1880449932269932740",
     "text": "Yes, your coins are down right now but who cares? \n\nThe president of the united ",
     "found": [
+      "COIN",
+      "MARA",
+      "FSLR",
       "SOL",
       "JUP",
-      "SPACEX"
+      "ASTS",
+      "RIVN",
+      "IBIT"
     ],
     "ideal": [
       "SOL",
@@ -689,14 +689,14 @@
     "id": "1881216781391638825",
     "text": "The only Americans in TRUMP right now are people that know how to use Jupiter or",
     "found": [
-      "MARA",
-      "MSTR",
-      "IBIT",
-      "RIOT",
-      "BITO",
-      "ETH",
+      "IWM",
+      "ARKF",
+      "COIN",
+      "HOOD",
       "BAH",
-      "TRUMP"
+      "MARA",
+      "JUP",
+      "BTC"
     ],
     "ideal": [
       "SOL",
@@ -708,44 +708,42 @@
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1881157570813108244",
     "text": "The trenches have discovered low float, high FDV coins.\n\nGet used to coins going",
     "found": [
+      "COIN",
+      "ORCA",
+      "PYTH",
+      "JTO",
       "UNI",
-      "AAVE",
-      "MKR",
-      "CRV",
-      "SNX"
+      "AAVE"
     ],
     "ideal": [
       "Low float tokens with strong catalysts",
       "avoid high float legacy tokens"
     ],
-    "errors": [
-      "Found 0/2 ideal instruments: [] missing [LOW,AVOID]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1874734487537615030",
     "text": "doxxed devs + lock supply + og github repo with bunch of green squares + active ",
     "found": [
+      "MARA",
+      "MSTR",
+      "IBIT",
+      "BITO",
       "FSLR",
-      "RIVN",
-      "ENPH",
-      "TAN",
-      "LIT",
       "NEM",
-      "CEG"
+      "CEG",
+      "BTC"
     ],
     "ideal": [
       "Tokens meeting all 4 criteria — use as screening filter"
     ],
-    "errors": [
-      "Found 0/1 ideal instruments: [] missing [TOKENS]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
@@ -753,14 +751,9 @@
     "id": "1973834301012656168",
     "text": "for 16 years the biggest existential threat to crypto was regulatory and now the",
     "found": [
-      "MARA",
-      "MSTR",
-      "IBIT",
-      "RIOT",
-      "HYG",
-      "COIN",
-      "JPM",
-      "BTC"
+      "BTC",
+      "ETH",
+      "ANDURIL"
     ],
     "ideal": [
       "Crypto broadly",
@@ -773,12 +766,12 @@
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1881182085622399430",
     "text": "Whether he knows it or not, Trump is now incentivized to legalize and regulate c",
     "found": [
+      "BTC",
       "ETH",
-      "SOL",
       "ANDURIL"
     ],
     "ideal": [
@@ -786,22 +779,20 @@
       "$TRUMP",
       "regulatory-sensitive tokens"
     ],
-    "errors": [
-      "Found 1/3 ideal instruments: [TRUMP] missing [CRYPTO,REGULATORY-SENSITIVE]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "2020552810153074942",
     "text": "Skills as a Service will be the new SaaS",
     "found": [
       "MSFT",
       "GOOG",
       "CRM",
-      "SNOW",
       "AIQ",
       "IRBO",
+      "RHI",
       "RNDR",
       "FET"
     ],
@@ -810,47 +801,51 @@
       "long AI infrastructure",
       "OpenClaw ecosystem"
     ],
-    "errors": [
-      "Found 0/3 ideal instruments: [] missing [SHORT,LONG,OPENCLAW]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
     "pass": false,
     "id": "1874309494236410311",
     "text": "I hope by the end of 2025, I can replace my search engine with X",
-    "found": [],
+    "found": [
+      "MSFT",
+      "GOOG",
+      "CRM",
+      "SNOW",
+      "AIQ",
+      "MDB",
+      "IRBO",
+      "RNDR"
+    ],
     "ideal": [
       "Short GOOGL (search revenue)",
       "long X ecosystem"
     ],
     "errors": [
-      "Found 0/2 ideal instruments: [] missing [SHORT,LONG]",
-      "No instruments discovered at all"
+      "Found 1/2 ideal instruments: [LONG] missing [SHORT]"
     ]
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "2021041786915799116",
     "text": "It's hard to price the value creation explosion that will result from OpenClaw b",
     "found": [
       "BAH",
-      "SAIC",
       "PPA",
       "SHLD",
+      "HYPE",
       "NEM",
       "MSFT",
-      "CRWD",
-      "RNDR"
+      "TSM",
+      "CRWD"
     ],
     "ideal": [
       "OpenClaw ecosystem tokens",
       "AI agent infrastructure"
     ],
-    "errors": [
-      "Found 1/2 ideal instruments: [AI] missing [OPENCLAW]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
@@ -920,7 +915,7 @@
   },
   {
     "difficulty": "easy",
-    "pass": false,
+    "pass": true,
     "id": "1876127576856707524",
     "text": "Pudgy Penguins team is probably one of the best teams in all of crypto",
     "found": [
@@ -931,15 +926,13 @@
       "BTC",
       "ETH",
       "SOL",
-      "PENGU"
+      "BONK"
     ],
     "ideal": [
       "PENGU",
       "Pudgy ecosystem"
     ],
-    "errors": [
-      "Found 1/2 ideal instruments: [PENGU] missing [PUDGY]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
@@ -961,12 +954,12 @@
       "long open-source ecosystem"
     ],
     "errors": [
-      "Found 0/2 ideal instruments: [] missing [SHORT,LONG]"
+      "Found 1/2 ideal instruments: [LONG] missing [SHORT]"
     ]
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "1883770167844655603",
     "text": "It’s all going to be open source and a lot of them will have a token.",
     "found": [
@@ -977,21 +970,15 @@
       "AI tokens tied to real open source repos",
       "tokenized open source infrastructure"
     ],
-    "errors": [
-      "Found 1/2 ideal instruments: [AI] missing [TOKENIZED]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "2020568743697392055",
     "text": "@AlexFinn I find no personal need for local models &amp; I don’t think anyone sh",
     "found": [
-      "UNI",
-      "AAVE",
-      "MKR",
-      "CRV",
-      "SNX"
+      "RNDR"
     ],
     "ideal": [
       "NVDA",
@@ -999,9 +986,7 @@
       "consumer GPU hardware",
       "local inference infrastructure"
     ],
-    "errors": [
-      "Found 0/4 ideal instruments: [] missing [NVDA,AMD,CONSUMER,LOCAL]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "easy",
@@ -1028,26 +1013,24 @@
   },
   {
     "difficulty": "hard",
-    "pass": false,
+    "pass": true,
     "id": "1993071702931283983",
     "text": "i really think this cycle has rewarded chronically online people disproportionat",
     "found": [
+      "META",
+      "PINS",
       "BAH",
-      "SAIC",
-      "PPA",
-      "SHLD",
-      "HYPE",
       "NEM",
-      "CRWD",
-      "COIN"
+      "DBC",
+      "BONK",
+      "WIF",
+      "CRWD"
     ],
     "ideal": [
       "Attention economy tokens",
       "social tokens",
       "CT-heavy memecoins"
     ],
-    "errors": [
-      "Found 1/3 ideal instruments: [SOCIAL] missing [ATTENTION,CT-HEAVY]"
-    ]
+    "errors": []
   }
 ]

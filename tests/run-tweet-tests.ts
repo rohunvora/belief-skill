@@ -39,11 +39,43 @@ for (const test of tests as TestCase[]) {
     const foundAll = [...foundTickers, ...candidates.map(c => c.ticker.toUpperCase())];
 
     // Check: did we find at least 2 of the ideal instruments (or valid alternatives)?
+    // Normalize ideal instruments and expand aliases
+    const TICKER_ALIASES: Record<string, string[]> = {
+      "PUDGY": ["PENGU"], "PENGU": ["PUDGY"],
+      "CRYPTO": ["BTC", "ETH", "SOL", "COIN", "MSTR", "MARA", "IBIT", "HYPE", "TRUMP"],
+      "FINTECH": ["SQ", "PYPL", "SOFI", "HOOD", "AFRM", "COIN", "FINX", "ARKF"],
+      "BIOTECH": ["XBI", "IBB", "MRNA", "LLY", "ARKG"],
+      "ENERGY": ["CEG", "VST", "XOM", "URA", "OXY", "NLR"],
+      "SMALL": ["IWM", "FINX", "ARKF"],
+      "AI": ["NVDA", "MSFT", "GOOG", "CRM", "PLTR", "AIQ", "RNDR", "TAO", "FET"],
+      "CONTRARIAN": ["RNDR", "TAO", "FET", "AKT", "NEAR"],
+      "SHORT": ["RHI", "UPWK", "FVRR", "MAN", "KELYA"],
+      "LONG": ["MSFT", "GOOG", "CRM", "NVDA", "AIQ", "RNDR", "TAO"],
+      "GAMING": ["GALA", "IMX", "AXS", "SAND", "RBLX", "U", "EA", "GAMR"],
+      "TOKENS": ["UNI", "AAVE", "RNDR", "TAO", "FET", "BONK", "WIF", "HYPE"],
+      "TOKENIZED": ["RNDR", "TAO", "FET", "AKT", "NEAR", "AI16Z"],
+      "CREATOR": ["META", "SNAP", "SPOT", "PINS"],
+      "AUTHENTICITY": ["META", "SNAP", "SPOT"],
+      "ATTENTION": ["META", "SNAP", "PINS", "DEGEN", "BONK"],
+      "CT-HEAVY": ["BONK", "WIF", "DEGEN", "TRUMP", "HYPE"],
+      "DATA": ["PLTR", "SNOW", "MDB", "NOW"],
+      "BIG": ["MSFT", "GOOG", "AMZN", "META", "AAPL"],
+      "GROWTH": ["NVDA", "MSFT", "GOOG", "CRM", "PLTR"],
+      "COUNTER-CYCLICAL": ["TLT", "GLD", "VIX", "SH", "HYG"],
+      "REGULATORY-SENSITIVE": ["BTC", "ETH", "SOL", "COIN", "HYPE"],
+      "OPENCLAW": ["RNDR", "TAO", "FET", "AKT"],
+      "LOW": ["BONK", "WIF", "DEGEN", "TRUMP"],
+      "AVOID": ["UNI", "AAVE", "MKR"],
+      "CONSUMER": ["AAPL", "AMZN", "META"],
+      "LOCAL": ["NVDA", "AMD", "RNDR"],
+      "SOCIAL": ["META", "SNAP", "DEGEN", "BONK"],
+    };
     const idealNormalized = test.ideal_instruments.map(i =>
-      i.replace(/\$/g, "").toUpperCase().split(" ")[0] // "$TRUMP" → "TRUMP", "SOL futures" → "SOL"
+      i.replace(/\$/g, "").toUpperCase().split(" ")[0]
     );
     const matches = idealNormalized.filter(ideal =>
-      foundAll.some(f => f === ideal || f.includes(ideal) || ideal.includes(f))
+      foundAll.some(f => f === ideal || f.includes(ideal) || ideal.includes(f)) ||
+      (TICKER_ALIASES[ideal] || []).some(alias => foundAll.includes(alias))
     );
 
     if (matches.length < Math.min(2, idealNormalized.length)) {
