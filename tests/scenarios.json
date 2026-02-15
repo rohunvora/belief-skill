@@ -1,21 +1,18 @@
 [
   {
     "id": 1,
-    "name": "Defense AI",
+    "name": "Defense AI (Gold Standard)",
     "thesis": "China is catching up in AI. This will trigger massive US military AI spending.",
     "budget": 20000,
     "checks": {
       "min_instruments": 5,
-      "must_include_tickers": [
-        "BAH",
-        "LDOS"
-      ],
-      "must_include_asset_classes": [
-        "stock",
-        "etf"
-      ],
+      "must_include_any_of": [["BAH", "LDOS", "SAIC"]],
+      "must_include_asset_classes": ["stock", "etf"],
       "must_include_secondary": true,
-      "bah_in_top_3": true
+      "bah_in_top_3": true,
+      "has_energy_or_compute": ["CEG", "VST", "CCJ"],
+      "has_invalidation": true,
+      "multi_asset_count_min": 3
     }
   },
   {
@@ -25,24 +22,27 @@
     "budget": 15000,
     "checks": {
       "min_instruments": 4,
-      "must_include_tickers": [
-        "COIN"
-      ],
-      "must_include_asset_classes": [
-        "stock"
-      ]
+      "must_include_tickers": ["COIN"],
+      "must_include_asset_classes": ["stock"],
+      "must_not_include_tickers": ["USDC", "USDT"],
+      "has_usdc_overlap_flag": true,
+      "has_non_obvious_pick": true,
+      "has_invalidation": true
     }
   },
   {
     "id": 3,
-    "name": "Bear Thesis (AI replaces devs)",
+    "name": "Bear Thesis (Short Bias)",
     "thesis": "AI coding agents will replace 50% of junior developer jobs within 2 years.",
     "budget": 10000,
     "checks": {
       "min_instruments": 3,
-      "must_include_asset_classes": [
-        "stock"
-      ]
+      "has_short_positions": true,
+      "has_long_positions": true,
+      "must_include_asset_classes": ["stock"],
+      "long_includes_beneficiaries": ["MSFT", "GOOG", "CRM"],
+      "has_secondary": true,
+      "not_all_long": true
     }
   },
   {
@@ -52,20 +52,22 @@
     "budget": 25000,
     "checks": {
       "min_instruments": 4,
-      "must_include_asset_classes": [
-        "crypto"
-      ]
+      "must_include_asset_classes": ["crypto"],
+      "has_solana_ecosystem": true,
+      "has_crypto_concentration_warning": true,
+      "not_just_sol": true
     }
   },
   {
     "id": 5,
-    "name": "Vague Thesis",
+    "name": "Vague/Low-Conviction",
     "thesis": "I feel like energy stocks might do well.",
     "checks": {
       "min_instruments": 3,
-      "must_include_asset_classes": [
-        "etf"
-      ]
+      "confidence_is_low": true,
+      "etf_heavy": true,
+      "smaller_positions": true,
+      "must_include_asset_classes": ["etf"]
     }
   },
   {
@@ -74,7 +76,10 @@
     "thesis": "Crypto is going to crash 80% from here.",
     "budget": 20000,
     "checks": {
-      "min_instruments": 2
+      "min_instruments": 2,
+      "has_portfolio_contradiction_warning": true,
+      "suggests_reducing_existing": true,
+      "has_hedge_instruments": true
     }
   },
   {
@@ -84,9 +89,9 @@
     "budget": 10000,
     "checks": {
       "min_instruments": 3,
-      "must_include_tickers": [
-        "NVDA"
-      ]
+      "must_include_tickers": ["NVDA"],
+      "recognizes_date_catalyst": true,
+      "has_timing_guidance": true
     }
   },
   {
@@ -95,69 +100,9 @@
     "thesis": "AI tokens on Base chain will 10x.",
     "budget": 50000,
     "checks": {
-      "min_instruments": 1
-    }
-  },
-  {
-    "id": "quantum-drugs",
-    "name": "Quantum + Biotech Cross-Theme",
-    "thesis": "Quantum computing will revolutionize drug discovery and make current pharma R&D obsolete",
-    "budget": 15000,
-    "checks": {
-      "min_instruments": 4,
-      "must_include_asset_classes": [
-        "stock",
-        "etf"
-      ]
-    }
-  },
-  {
-    "id": "gold-inflation",
-    "name": "Commodities Inflation Hedge",
-    "thesis": "Inflation will re-accelerate in 2026 and gold will hit three thousand dollars",
-    "budget": 20000,
-    "checks": {
-      "min_instruments": 4,
-      "must_include_asset_classes": [
-        "stock",
-        "etf"
-      ]
-    }
-  },
-  {
-    "id": "space-race",
-    "name": "Space Industry Boom",
-    "thesis": "The new space race between US and China will make satellite and launch companies massively valuable",
-    "budget": 10000,
-    "checks": {
-      "min_instruments": 3,
-      "must_include_secondary": true
-    }
-  },
-  {
-    "id": "fintech-disruption",
-    "name": "Fintech Disrupts Banks",
-    "thesis": "Neobanks and fintech will permanently take share from traditional banks with embedded finance",
-    "budget": 25000,
-    "checks": {
-      "min_instruments": 4,
-      "must_include_asset_classes": [
-        "stock"
-      ]
-    }
-  },
-  {
-    "id": "robotics-humanoid",
-    "name": "Humanoid Robot Revolution",
-    "thesis": "Humanoid robots will be deployed in factories at scale by 2028, led by Tesla Optimus and Figure",
-    "budget": 30000,
-    "checks": {
-      "min_instruments": 4,
-      "must_include_secondary": true,
-      "must_include_asset_classes": [
-        "stock",
-        "etf"
-      ]
+      "has_already_exposed_warning": true,
+      "recommends_caution": true,
+      "flags_existing_positions": true
     }
   }
 ]

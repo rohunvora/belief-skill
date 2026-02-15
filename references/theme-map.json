@@ -74,7 +74,10 @@
       "copilot",
       "llm",
       "foundation model",
-      "saas ai"
+      "saas ai",
+      "ai token",
+      "ai crypto",
+      "ai agent"
     ],
     "tickers": {
       "stocks": [
@@ -605,6 +608,54 @@
         "MOO",
         "DBA",
         "VEGI"
+      ]
+    }
+  },
+  "crypto_broad": {
+    "keywords": [
+      "crypto",
+      "bitcoin",
+      "cryptocurrency",
+      "digital asset"
+    ],
+    "tickers": {
+      "stocks": [
+        "COIN",
+        "MSTR",
+        "MARA",
+        "RIOT",
+        "CLSK"
+      ],
+      "etfs": [
+        "BITO",
+        "BITI",
+        "IBIT",
+        "FBTC"
+      ],
+      "crypto": [
+        "BTC",
+        "ETH",
+        "SOL"
+      ]
+    }
+  },
+  "base_ecosystem": {
+    "keywords": [
+      "base chain",
+      "base ecosystem",
+      "base l2",
+      "base network"
+    ],
+    "tickers": {
+      "stocks": [
+        "COIN"
+      ],
+      "etfs": [],
+      "crypto": [
+        "AERO",
+        "BRETT",
+        "TOSHI",
+        "DEGEN"
       ]
     }
   }

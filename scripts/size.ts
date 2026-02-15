@@ -24,6 +24,7 @@ export function sizePositions(
   ranked: RankedInstrument[],
   portfolio: PortfolioState,
   explicitBudget?: number,
+  thesis?: string,
 ): SizedRecommendation[] {
   // Support both { portfolio: { positions } } and { positions } formats
   const portfolioData = portfolio.portfolio || portfolio as any;
@@ -63,6 +64,10 @@ export function sizePositions(
   const cryptoCount = byClass["crypto"]?.length || 0;
   const stockCount = byClass["stock"]?.length || 0;
   
+  // Detect conviction level from thesis language
+  const isLowConviction = thesis ? /feel like|might|maybe|could|not sure|i guess/i.test(thesis) : false;
+  const isVague = isLowConviction || (!explicitBudget && budget < 10000);
+  
   // If crypto-heavy thesis (>60% crypto candidates), favor crypto slots
   const isCryptoHeavy = cryptoCount > stockCount * 2;
   
@@ -77,20 +82,45 @@ export function sizePositions(
     longByClass[cls].push(r);
   }
   
-  const stocks = longByClass["stock"]?.slice(0, isCryptoHeavy ? 2 : 5) || [];
-  const etfs = (byClass["etf"] || []).filter(e => (e as any)._direction !== "short").slice(0, 2);
+  // Theme-diverse stock selection: ensure at least one from each sub-theme
+  const allStocks = longByClass["stock"] || [];
+  const maxStocks = isCryptoHeavy ? 2 : isVague ? 2 : 5;
+  const stocks: RankedInstrument[] = [];
+  const seenThemes = new Set<string>();
+  // First pass: one stock per theme (highest ranked)
+  for (const s of allStocks) {
+    if (stocks.length >= maxStocks) break;
+    const newTheme = s.sub_themes?.find(t => !seenThemes.has(t));
+    if (newTheme) {
+      stocks.push(s);
+      s.sub_themes?.forEach(t => seenThemes.add(t));
+    }
+  }
+  // Second pass: fill remaining slots by score
+  for (const s of allStocks) {
+    if (stocks.length >= maxStocks) break;
+    if (!stocks.includes(s)) stocks.push(s);
+  }
+  const etfs = (byClass["etf"] || []).filter(e => (e as any)._direction !== "short").slice(0, isVague ? 4 : 2);
   const secondariesList = byClass["secondary"]?.slice(0, 1) || [];
   const crypto = longByClass["crypto"]?.slice(0, isCryptoHeavy ? 5 : 2) || [];
-  // If thesis is mostly bearish (>50% shorts), give more short slots
+  // Shorts always get slots when detected
   const shortRatio = shortCandidates.length / ranked.length;
-  const maxShorts = shortRatio > 0.5 ? 5 : 2;
+  const maxShorts = shortCandidates.length > 0 ? Math.max(1, Math.min(shortRatio > 0.5 ? 5 : 2, shortCandidates.length)) : 0;
   const shorts = shortCandidates.slice(0, maxShorts);
   
-  top.push(...stocks, ...etfs, ...secondariesList, ...crypto, ...shorts);
-  // Sort by composite score
-  top.sort((a, b) => b.scores.composite - a.scores.composite);
-  // Cap at 8
-  top.splice(8);
+  top.push(...stocks, ...etfs, ...crypto, ...shorts);
+  // Sort by composite score (longs first, then shorts) — secondaries added separately
+  const longItems = top.filter(t => (t as any)._direction !== "short");
+  const shortItems = top.filter(t => (t as any)._direction === "short");
+  longItems.sort((a, b) => b.scores.composite - a.scores.composite);
+  shortItems.sort((a, b) => b.scores.composite - a.scores.composite);
+  // Reserve slots for shorts, fill rest with longs
+  const maxLongs = 8 - shortItems.length;
+  top.length = 0;
+  top.push(...longItems.slice(0, maxLongs), ...shortItems);
+  // Secondaries always included (they get $0 allocation, so don't compete for budget slots)
+  top.push(...secondariesList);
   
   // Kelly-inspired sizing: allocate proportionally by composite score
   const totalScore = top.reduce((sum, r) => sum + r.scores.composite, 0);
@@ -117,7 +147,10 @@ export function sizePositions(
         if (exposureRatio > 0.1) allocation *= 0.3;
         else if (exposureRatio > 0.05) allocation *= 0.6;
       }
-      // Correlated exposure: just flag it, don't reduce
+      // Correlated exposure: reduce proportionally when very high
+      const corrRatio = existingExposure / (totalPortfolio || existingExposure);
+      if (corrRatio > 0.3) allocation *= 0.15; // >30% portfolio in correlated → tiny adds
+      else if (corrRatio > 0.15) allocation *= 0.4;
     }
 
     // Minimum position size — scale with budget
@@ -170,13 +203,34 @@ function findExistingExposure(
     if (name.toUpperCase() === ticker) return pos.usd || 0;
   }
 
-  // Correlation matching — only crypto-to-crypto AI correlation
-  if (instrument.asset_class === "crypto" && instrument.sub_themes?.some(t => t.includes("ai"))) {
-    const cryptoAiTokens = ["BNKR", "KELLYCLAUDE", "FELIX"];
-    const aiExposure = Object.entries(positions)
-      .filter(([name]) => cryptoAiTokens.includes(name.toUpperCase()))
-      .reduce((sum, [, pos]) => sum + (pos.usd || 0), 0);
-    if (aiExposure > 0) return aiExposure;
+  // Correlation matching — crypto-to-crypto by theme overlap
+  if (instrument.asset_class === "crypto") {
+    // Known portfolio crypto positions and their themes
+    const portfolioCryptoThemes: Record<string, string[]> = {
+      "BNKR": ["ai", "base"],
+      "KELLYCLAUDE": ["ai", "base"],
+      "FELIX": ["ai", "base"],
+      "KLED": ["meme", "base"],
+    };
+    const instrumentThemes = new Set(instrument.sub_themes?.map(t => t.toLowerCase()) || []);
+    // Check if instrument shares a theme with any existing crypto position
+    let correlatedExposure = 0;
+    for (const [name, themes] of Object.entries(portfolioCryptoThemes)) {
+      const pos = Object.entries(positions).find(([k]) => k.toUpperCase() === name);
+      if (!pos) continue;
+      const overlap = themes.some(t =>
+        instrumentThemes.has(t) || [...instrumentThemes].some(it => it.includes(t) || t.includes(it))
+      );
+      if (overlap) correlatedExposure += pos[1].usd || 0;
+    }
+    // Also flag any thesis about "base chain" or "ai tokens" against all crypto
+    if (correlatedExposure === 0) {
+      const totalCrypto = Object.values(positions).reduce((s, p) => s + (p.usd || 0), 0);
+      // If new crypto would add to already-high crypto allocation, flag the total
+      const totalPortfolioVal = portfolioData?.total_estimate || 1;
+      if (totalCrypto / totalPortfolioVal > 0.5) correlatedExposure = totalCrypto;
+    }
+    if (correlatedExposure > 0) return correlatedExposure;
   }
 
   // USDC/stablecoin exposure — check both positions and usdc_solana field

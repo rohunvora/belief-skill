@@ -298,6 +298,33 @@ function formatTelegram(thesis: ParsedThesis, recommendations: SizedRecommendati
   out += `Confidence: ${thesis.confidence.charAt(0).toUpperCase() + thesis.confidence.slice(1)} | Horizon: ${thesis.time_horizon}\n`;
   out += `Themes: ${thesis.sub_themes.map(t => t.theme.replace(/_/g, " ")).join(", ")}\n\n`;
 
+  // Portfolio contradiction warning
+  const totalPortfolioValue = Object.values(portfolio.positions).reduce((sum, p) => sum + (p.usd || 0), 0);
+  if (totalPortfolioValue > 0) {
+    const isBearish = recommendations.some(r => r.direction === "short");
+    const thesisText = thesis.raw.toLowerCase();
+    
+    // Check if thesis is bearish on crypto and portfolio is crypto-heavy
+    const cryptoKeywords = ["crypto", "bitcoin", "defi", "solana", "ethereum", "token"];
+    const thesisMentionsCrypto = cryptoKeywords.some(k => thesisText.includes(k));
+    const thesisIsBearish = ["crash", "drop", "fall", "decline", "collapse", "bear"].some(k => thesisText.includes(k));
+    
+    if (thesisMentionsCrypto && thesisIsBearish && totalPortfolioValue > 0) {
+      const cryptoPct = Math.round((totalPortfolioValue / (totalPortfolioValue + 126000)) * 100); // rough estimate with bank
+      out += `⚠️ PORTFOLIO CONTRADICTION\n`;
+      out += `Your portfolio is ~${cryptoPct}% crypto ($${(totalPortfolioValue/1000).toFixed(0)}K). This thesis implies massive losses on existing holdings.\n`;
+      out += `Consider REDUCING existing positions before adding new short bets.\n`;
+      out += `Hedges: puts on COIN, short BITO ETF, or convert to stablecoins.\n\n`;
+    }
+    
+    // Check if thesis is bearish on stocks and portfolio has significant stock exposure
+    const stockKeywords = ["stock", "market", "equit", "s&p", "nasdaq"];
+    if (stockKeywords.some(k => thesisText.includes(k)) && thesisIsBearish) {
+      out += `⚠️ PORTFOLIO CONTRADICTION\n`;
+      out += `This bearish thesis may impact your existing holdings. Review exposure before acting.\n\n`;
+    }
+  }
+
   for (let i = 0; i < Math.min(recommendations.length, 8); i++) {
     const rec = recommendations[i];
     const dir = rec.direction === "long" ? "Long" : "Short";
@@ -463,7 +490,7 @@ async function main() {
   // 4. Size
   console.error("4/4 Sizing positions...");
   const portfolio = loadPortfolio(portfolioPath);
-  const sized = sizePositions(ranked, portfolio, budget);
+  const sized = sizePositions(ranked, portfolio, budget, thesis);
 
   // Output
   const output = formatTelegram(thesis, sized, portfolio, budget);

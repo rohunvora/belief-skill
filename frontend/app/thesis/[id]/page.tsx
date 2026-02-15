@@ -2,6 +2,7 @@ import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { notFound } from "next/navigation";
 import TradeCard, { ThesisData } from "@/components/TradeCard";
+import TrackButton from "@/components/TrackButton";
 
 function loadThesis(id: string): ThesisData | null {
   const filePath = path.resolve(process.cwd(), `../data/history/${id}.json`);
@@ -27,6 +28,11 @@ export default async function ThesisPage({ params }: { params: Promise<{ id: str
       {/* Card */}
       <div style={{ marginBottom: 32 }}>
         <TradeCard data={data} />
+      </div>
+
+      {/* Track P&L */}
+      <div style={{ marginBottom: 24 }}>
+        <TrackButton thesisId={id} />
       </div>
 
       {/* Detail section */}

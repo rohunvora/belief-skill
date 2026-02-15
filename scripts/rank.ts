@@ -105,7 +105,7 @@ function detectShortThemes(thesis: string): string[] {
   const bearPatterns: [string[], string[]][] = [
     [["replace", "jobs", "developer"], ["staffing_labor"]],
     [["crash", "housing"], ["real_estate"]],
-    [["crash", "crypto"], ["solana_ecosystem", "ethereum_ecosystem", "defi"]],
+    [["crash", "crypto"], ["solana_ecosystem", "ethereum_ecosystem", "defi", "crypto_broad"]],
   ];
   
   for (const [keywords, themes] of bearPatterns) {
@@ -154,12 +154,16 @@ export function rankInstruments(enriched: EnrichedInstrument[], thesis: string):
 
     // Detect if this instrument should be shorted
     const isShort = (inst.sub_themes || []).some(t => shortThemes.includes(t));
+    // Inverse ETFs are LONG when thesis is bearish
+    const inverseETFs = ["BITI", "SQQQ", "SPXS", "UVXY"];
+    const isInverse = inverseETFs.includes(inst.ticker.toUpperCase());
+    const direction = isInverse ? "long" : isShort ? "short" : "long";
 
     return {
       ...inst,
       scores,
       rank: 0,
-      _direction: isShort ? "short" : "long",
+      _direction: direction,
     } as RankedInstrument;
   });
 
