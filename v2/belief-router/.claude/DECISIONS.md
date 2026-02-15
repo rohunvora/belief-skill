@@ -104,3 +104,53 @@
 - IONQ: $34.11, MC $12.3B, IV 96%
 - RGTI: $16.09, MC $5.3B, IV 93%
 - QBTS: $19.67, MC $7.3B
+
+## 2026-02-15: Session 3 — Output v7 (Time-Aware + Asymmetric Framing + Tonal)
+
+### Context
+User feedback on v6 scenario table: "Unclear what's being said, in arguably the most interesting/important part." Three specific gaps:
+1. No time dimension — a 3x in 2 years and a 3x in 8 years are completely different trades
+2. Reading `$300K` requires subtracting `$100K` to understand the gain, while `3x` is instant
+3. MC comps hard to parse in the table's last column — should lead with timeline, then multiples
+
+Additionally, user asked: "should time be factored in before elimination begins?" — identifying a structural gap where time horizon wasn't extracted early enough to gate instrument selection.
+
+Informed by analysis of Citrini Research's writing style (Atoms vs Bits, 26 Trades for 2026): the skill's output was structurally sound but needed tonal adjustments to shift from "analyst proving rigor" to "sharp friend who saw something first."
+
+### Output format iterations continued (rounds 8-10)
+
+**Round 8: Time-aware scenario table**
+- Added rough timeline as first column in scenario table (< 1yr, 2-3yr, 5yr+)
+- Claude estimates timelines based on catalyst dates, comparable growth rates, and market pricing dynamics
+- Scripts provide price levels, not time — time estimation is reasoning, not data
+- Downside scenarios typically resolve faster than upside
+
+**Round 9: Asymmetric framing (dollar loss / multiple gain)**
+- Old downside: −60%, −35% (percentage). Old upside: $300K, $500K (absolute dollars)
+- New downside: lose $60K, lose $35K (dollar pain). New upside: 3x, 5x, 10x (multiple excitement)
+- Trade-off: breaks visual consistency in the table, but maps to how traders actually process each direction differently (prospect theory — losses denominated in dollars, gains in multiples)
+- Lower total cognitive load than either pure-dollar or pure-multiple
+
+**Round 10: Tonal adjustments (Citrini-inspired)**
+Five surgical changes to the output template:
+1. **BELIEF line**: logic flowchart → insight claim. "The AI buildout has a beneficiary nobody's pricing" not "ai overbuild → compute glut → quantum"
+2. **Company intro**: added temporal beat. "Spent two years building X before anyone wanted it" — shows timing risk posture, not just what they do
+3. **WHY p3**: floor statement moved from DEEPER CLAIM to right before the scenario table. "At current price, market is pricing zero mandate adoption. That's the floor." Frames how you read the numbers.
+4. **REJECTED**: added framing sentence. "Every obvious quantum play has the same problem — priced for the narrative, not the mandate." Turns rejections into evidence for the winning trade.
+5. **KILLS**: added time column (2026, 2027+, anytime, policy). `Next:` replaces `Watch:` for urgency.
+
+### Key design decisions (additions)
+
+11. **Time horizon as Phase 1 output.** Three-part extraction: catalyst date, price-in window, trade horizon (catalyst minus price-in). For a 2035 mandate, the trade horizon is NOT 10 years — market reprices when first contracts are signed (2027-2028). Gates instrument selection before any research.
+
+12. **Time mismatch as elimination criterion #2.** Moved from #4 to #2 (after thesis contradiction). A trade with the right thesis and wrong timeframe is the second most common failure mode. >2yr eliminates standard options, <3mo eliminates shares, perp funding costs compound past 6 months.
+
+13. **Asymmetric framing.** Dollar losses / multiple gains. Prospect theory: losses are pain denominated in dollars, gains are excitement denominated in multiples. "lose $60K" and "3x" require less processing than "-60%" and "$300K" respectively.
+
+14. **Floor statement placement.** Moved from DEEPER CLAIM to WHY paragraph 3, right before the scenario table. Different points using the same concept: WHY version is about valuation ("market is pricing zero adoption"), DEEPER CLAIM version is about thesis robustness ("the mandate is the floor, AI overbuild is upside"). Acceptable duplication — different functions.
+
+15. **BELIEF as insight claim.** The causal chain is Phase 1 reasoning output. The BELIEF line in the formatted output is the conclusion: what's mispriced and why. Reader knows what they're betting on without parsing derivation steps.
+
+16. **Temporal origin in company intro.** WHEN they built the thing matters as much as WHAT they built. "Hit production the year NIST made it mandatory" is due diligence about timing risk in one sentence — they're not vaporware.
+
+17. **Rejection framing.** One sentence before the rejection table that turns eliminations into evidence. "Every obvious quantum play has the same problem — priced for the narrative, not the mandate" makes the rejected instruments prove something about the market's mispricing, rather than just listing what we didn't pick.

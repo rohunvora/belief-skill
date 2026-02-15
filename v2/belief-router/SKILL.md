@@ -20,6 +20,7 @@ description: >
 - **Risk mode: max upside.** Optimize for asymmetry and convexity. Ruin risk (losing the full $100K) is acceptable. Prefer instruments with uncapped upside: options, perps, binary contracts. Eliminate instruments with capped upside (plain stock/ETF) unless the thesis is structural and long-horizon.
 - **Bet size: $100,000.** Show payoff scenarios at this amount, not just $100 basis.
 - **Goal: one trade.** Find THE single best expression. Not a portfolio. Show 1-2 alternatives with genuinely different risk profiles, but lead with THE trade and commit to it.
+- **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in. This determines eligible instruments — >2yr eliminates standard options, <1mo eliminates shares for max-upside.
 
 ---
 
@@ -76,22 +77,30 @@ If the thesis is ambiguous — direction is unclear, the sector is too broad, or
 - **Use structured options, not open-ended questions.** Give 2-4 specific interpretations to choose from.
 - **Skip entirely if the thesis is clear.** A well-articulated tweet or detailed thesis needs zero questions.
 
-Example — thesis is "energy will do well":
-```
-AskUserQuestion:
-  "Which energy thesis?"
-  Options:
-  - "Oil/gas — supply constraints and OPEC"
-  - "Nuclear/uranium — AI datacenter power demand"
-  - "Renewables — policy/subsidy driven"
-  - "Broad energy sector"
-```
+Example — "energy will do well" → ask: "Which energy thesis?" with options: Oil/gas (supply), Nuclear (AI power demand), Renewables (policy), Broad sector.
 
-Example — thesis is "tech is overvalued because of money printing" → clear. Don't ask anything. Proceed.
+Example — "tech is overvalued because of money printing" → clear. Don't ask. Proceed.
 
 ### Gate
 
 **You MUST state the deeper claim in 1-2 sentences before proceeding to Phase 2.** Write it out explicitly. If you can't find a deeper claim, the surface claim IS the deeper claim — state that.
+
+### Time Horizon
+
+After stating the deeper claim, extract three time estimates:
+
+1. **Catalyst date:** When does the key event happen? (e.g., "NIST first hardware deadline: 2026")
+2. **Price-in window:** When does the market start pricing it? Known catalysts price in 6-18 months early. Surprises price in 0-3 months.
+3. **Trade horizon:** Catalyst minus price-in window = your actual holding period. This is how long you're in the trade, not how long the thesis takes to play out.
+
+Example — PQC mandate:
+- Catalyst: NIST full migration by 2035, first hardware deadline 2026
+- Price-in: Market reprices when first contracts are signed (~2027-2028)
+- Trade horizon: 2-3 years for the re-rating move
+
+**This determines eligible instruments in Phase 3.** >2yr horizon eliminates standard options (unless LEAPS exist). <3mo horizon eliminates shares (insufficient convexity). Perps with >0.03%/day funding become expensive past 6 months.
+
+You MUST state the trade horizon before proceeding to Phase 2.
 
 ---
 
@@ -118,33 +127,10 @@ If `track.ts` has no data or no similar trades, skip silently. Don't add frictio
 
 Use web search (parallel searches for speed) to find:
 
-1. **Current state of whatever the thesis depends on.**
-   - Rates thesis → current Fed rate, dot plot, market expectations for cuts/hikes, recent FOMC commentary
-   - Inflation thesis → latest CPI, core PCE, TIPS breakeven rates (5yr, 10yr)
-   - Tech thesis → current Shiller CAPE, sector P/E vs historical averages, recent earnings data
-   - Crypto thesis → current prices, BTC dominance, ETF flows, funding rates
-   - Sector thesis → current valuations, recent rotation data, earnings calendar
-
-2. **What has already moved.**
-   - If the thesis is "value will outperform growth" and value is already +10% YTD vs growth -5%, the move is UNDERWAY. State that — it changes the entry risk.
-   - Pull YTD performance for the likely instruments.
-   - Check 52-week ranges to understand where we are in the cycle.
-
-3. **What consensus thinks.**
-   - If everyone agrees with the thesis, there's no edge. Flag it.
-   - If the thesis is contrarian, that's where the asymmetry lives.
-   - Check: recent analyst upgrades/downgrades, positioning data, sentiment indicators.
-
-4. **Specific numbers for the elimination.**
-   - You will use these data points in Phase 3 to eliminate instruments with evidence. Every fact you find here becomes ammunition. "CAPE at 39.8 — second highest ever" is a data point that supports a short-tech thesis with specific evidence.
-
-### How to Research
-
-Launch 2-3 web searches in parallel. Structure them by what you need:
-
-- **Search 1:** Macro data relevant to the deeper claim (rates, inflation, valuations, policy)
-- **Search 2:** Current prices and performance of likely instruments (ETFs, stocks, options, crypto)
-- **Search 3:** Consensus positioning and recent analyst views (what's priced in)
+1. **Current state of whatever the thesis depends on.** The key macro data, valuations, and prices that ground the thesis in reality.
+2. **What has already moved.** YTD performance, 52-week ranges for likely instruments. If the move is underway, state it — it changes entry risk.
+3. **What consensus thinks.** If everyone agrees, there's no edge. If contrarian, that's where asymmetry lives.
+4. **Specific numbers for elimination.** Every fact here becomes ammunition for Phase 3. "CAPE at 39.8 — second highest ever" not "valuations seem high."
 
 ### Gate
 
@@ -189,23 +175,24 @@ Go through each candidate and eliminate it with a specific reason citing data fr
    - **The trade must align with the DEEPER claim, not just the surface claim.**
    - Load `references/instrument-reasoning.md` for detailed thesis contradiction patterns.
 
-2. **Upside cap.** We're optimizing for max upside. Eliminate instruments with capped returns unless nothing better exists.
+2. **Time mismatch.** Does the instrument's lifespan match the trade horizon from Phase 1?
+   - Trade horizon >2yr: standard options expire too soon. Require LEAPS or use shares/perps.
+   - Trade horizon <3mo: shares lack convexity. Prefer options or binary contracts.
+   - Perps: annualize the funding rate. At 0.03%/day, a 1-year hold costs ~11% in carry.
+   - Kalshi: contract must resolve AFTER the catalyst. If it resolves before, you're betting on noise.
+   - Leveraged ETFs: quantify decay drag over the trade horizon. >2 weeks = state the cost.
+
+3. **Upside cap.** We're optimizing for max upside. Eliminate instruments with capped returns unless nothing better exists.
    - Stock/ETF: realistic upside is 20-40% over 6 months. For a $100K max-upside bet, that's $20-40K gain.
    - Options: 3-10x possible. $100K → $300K-$1M.
    - Kalshi binary: 2-10x possible on low-probability events.
    - Perps with leverage: 5-20x possible (but liquidation risk).
    - **If two instruments align equally with the thesis, prefer the one with higher convexity.**
 
-3. **Already moved / priced in.** Use the data from Phase 2.
+4. **Already moved / priced in.** Use the data from Phase 2.
    - If an instrument is already up 20% YTD on this thesis, the easy money may be gone.
    - If market consensus matches the thesis, the asymmetry is thin.
    - Cite the specific data: "XLE is already +19% YTD — much of the energy move has happened."
-
-4. **Timing risk vs. thesis horizon.** Match the instrument's time characteristics to the thesis.
-   - Options have expiration. If the thesis is structural (12+ months), options with 6-month expiry may expire before the thesis plays out.
-   - Leveraged ETFs decay. Never hold >2 weeks without quantifying the drag.
-   - Perps have funding costs. Annualize the rate.
-   - Kalshi has resolution dates. The thesis must resolve before the contract does.
 
 5. **Liquidity and execution.** Can you actually fill $100K?
    - QQQ options: yes, deepest options market in the world.
@@ -256,39 +243,17 @@ When a thesis contains multiple distinct claims:
 
 When the thesis doesn't map to any instrument on the four platforms (Robinhood, Kalshi, Hyperliquid, Bankr) — or when every available instrument has near-zero thesis beta — keep going. Descend through these levels, stopping at the first one that produces a real action:
 
-**Level 1: High-beta proxy.** A traditional instrument that captures most of the thesis.
-- Parent company stock (Osamason → Atlantic → WMG on NASDAQ)
-- Sector ETF that includes the thesis target
-- State the thesis beta honestly: "WMG captures ~2% of the Osamason thesis. You're mostly betting on the music industry."
+**Level 1: High-beta proxy.** Parent company stock, sector ETF. State thesis beta honestly: "WMG captures ~2% of the Osamason thesis."
 
-**Level 2: Adjacent market.** Platforms and instruments outside the four adapters.
-- Music royalty platforms (Royal.io, SongVest, Royalty Exchange, Sonomo) — search for the specific artist/asset
-- Alternative prediction markets (Polymarket, Metaculus)
-- Pre-IPO / secondaries platforms — check `references/secondaries.json`
-- Crowdfunding platforms (Republic, Wefunder) for relevant startups
+**Level 2: Adjacent market.** Royalty platforms (Royal.io, SongVest, Sonomo), prediction markets (Polymarket), pre-IPO/secondaries (`references/secondaries.json`), crowdfunding (Republic, Wefunder). Search for the specific asset.
 
-**Level 3: Infrastructure play.** Bet on the platform or enabler that would benefit if the thesis is right.
-- "If Nettspend blows up, Spotify benefits" → SPOT
-- "If pickleball eats tennis, who makes pickleball equipment?" → search for the market leader
-- The infrastructure play is always more indirect, but often more tradeable
+**Level 3: Infrastructure play.** Who benefits if the thesis is right? "Nettspend blows up → Spotify benefits" → SPOT. More indirect, but often more tradeable.
 
-**Level 4: Non-financial expression.** Actions that aren't trades but express the belief with real upside.
-- **Limited merch / collectibles:** Search for the artist's official store, identify limited drops, assess flip potential on secondary markets (StockX, eBay, Grailed). State what to buy and where to resell.
-- **Event tickets:** Find the next concert/event in the user's area. Early tickets to an artist who blows up appreciate in resale value.
-- **Domain names / social handles:** If the thesis is about an emerging trend, the digital real estate may be underpriced.
-- **Build in the space:** "The best way to long X might be to build the tool/platform/product that serves X."
+**Level 4: Non-financial expression.** Limited merch drops to flip (check official store + StockX/eBay), event tickets, domain names, or building in the space yourself.
 
-**Level 5: Position for the future.** When nothing is actionable today, set up monitoring.
-- Set alerts for when a direct instrument appears (artist lists royalties, company IPOs, token launches)
-- Identify the specific trigger event that would create a tradeable instrument
-- State: "No trade today. Here's exactly what to watch for and where to look."
+**Level 5: Position for the future.** No trade today. Set monitoring for when a direct instrument appears (royalty listing, IPO, token launch). State the specific trigger and where to watch.
 
-**Output adapts to the level:**
-- Levels 1-2: Use the standard payoff table and output template, noting the thesis beta gap.
-- Levels 3-4: Replace the payoff table with an action list — what to buy, where, approximate cost, and realistic upside. No fake precision.
-- Level 5: Replace the trade section with a monitoring plan — what triggers, what platforms to check, what timeline.
-
-**Always be honest about the gap.** "This is a Level 3 expression — you're betting on the infrastructure, not the thesis directly. Thesis beta is ~0.1." The user deserves to know how directly their action maps to their belief.
+**Output adapts:** Levels 1-2 use the standard payoff table. Levels 3-4 use an action list (what, where, cost, upside). Level 5 uses a monitoring plan. Always state the thesis beta gap honestly.
 
 ---
 
@@ -330,19 +295,26 @@ bun run scripts/adapters/kalshi/returns.ts "EVENT-TICKER" "yes|no"
 
 # Bankr: ticker + direction
 bun run scripts/adapters/bankr/returns.ts "TICKER" "long"
+
+# Record, track, close, card
+bun run scripts/track.ts record --thesis "..." --platform X --instrument Y --direction Z --entry-price N
+bun run scripts/track.ts check
+bun run scripts/track.ts close --id ID --exit-price N
+bun run scripts/card.ts --id ID
 ```
 
 ### Build Payoff Table
 
-Using live pricing, build 4-5 scenarios at the **$100,000 bet size**:
+Using live pricing + the trade horizon from Phase 1, build 5 scenario rows at the **$100,000 bet size**. Each row has:
 
-| Scenario | What happens | Position value | Return |
-|----------|-------------|---------------|--------|
-| Thesis wrong | [specific adverse condition] | $XX,XXX | -$XX,XXX |
-| Mild against | [partial adverse move] | $XX,XXX | -$XX,XXX |
-| Thesis plays out | [expected move] | $XX,XXX | +$XX,XXX |
-| Thesis very right | [strong move] | $XX,XXX | +$XX,XXX |
-| Home run | [extreme move, tail scenario] | $XX,XXX | +$XX,XXX |
+- **Rough timeline:** When could this scenario plausibly occur? Use the trade horizon, catalyst dates, and comparable precedents. Downside is usually faster than upside.
+- **Multiple or loss:** Upside as Nx (3x, 5x, 10x). Downside as dollar loss (lose $60K, lose $35K). Asymmetric framing — losses in dollars, gains in multiples.
+- **Context:** What this scenario means. Upside rows reference a comparable company at that MC. Downside rows state the condition.
+
+Claude estimates the timelines — scripts provide price levels, not time. Base estimates on:
+- Catalyst dates from Phase 1 (hard deadlines)
+- Comparable company growth rates (how fast did similar companies reach that MC?)
+- Market pricing dynamics (when does consensus shift?)
 
 For each instrument type, include the relevant specifics:
 - **Options:** strike, expiry, approximate premium, number of contracts at $100K, breakeven price. Warn about IV crush for catalyst-dated theses.
@@ -358,40 +330,25 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 
 ---
 
-## Phase 5: Present (Full Reasoning)
+## Phase 5: Format for Reader
 
-**Phases 1-4 are your thinking engine — stay thorough and verbose there. Phase 5 assembles the full reasoning internally. Phase 6 compresses it for the reader.**
+**Phases 1-4 are internal reasoning — do not output them. Only output Phase 5.**
 
-In Phase 5, you assemble all findings from Phases 1-4 into a complete reasoning document. This happens in your thinking/chain of thought. It should include:
-
-- The deeper claim (from Phase 1)
-- Key data points (from Phase 2)
-- Full elimination reasoning with evidence (from Phase 3)
-- Validated pricing and payoff scenarios (from Phase 4)
-- The winning trade and why it won
-
-This is the verbose version that ensures rigor. Every elimination must cite a specific data point. Every claim must have evidence. The winning trade must connect to the DEEPER claim. This is where you catch errors and stress-test your logic.
-
-**Do not output Phase 5 to the user.** It feeds Phase 6.
-
----
-
-## Phase 6: Format for Reader
-
-**The reader has ADHD but is a sharp trader. The output must be self-contained — no Googling, no leaving the message to understand it.**
-
-Take the full reasoning from Phase 5 and restructure it following Minto Pyramid: answer first, supporting logic below, details last. Every section only requires understanding from the sections above it.
+**The reader has ADHD but is a sharp trader. The output must be self-contained — no Googling, no leaving the message to understand it.** Structure as Minto Pyramid: answer first, supporting logic below, details last.
 
 ### Formatting Principles
 
 1. **Minto Pyramid structure.** Belief → Company intro → Trade line → Why (flowing into scenarios) → Kills → Rejected → Deeper claim → Alt → Execute. Each section meets the reader at their current understanding.
 2. **Company before ticker.** The reader must know WHAT they're buying before they see the ticker. Introduce the company in plain English first: "There's a $688M Swiss chip company making the exact hardware that NIST requires..." The ticker line becomes confirmation, not introduction.
-3. **WHY flows into scenarios.** Don't drop a disconnected data table. Build understanding progressively: mandate/catalyst (fact) → deadline (urgency) → company's product (connection) → market size (scale) → "if they capture X%, they re-rate to..." (the "aha") → here's what that looks like for your $100K (payoff).
-4. **Comparable-as-label for upside, loss % for downside.** Match how traders think. Losing: "how much am I down?" → −60%, −35%. Winning: "what size is it now?" → QUBT, RGTI, D-Wave. Use → arrow prefix for upside rows.
-5. **Comparable legend below the table.** Tickers mean nothing to most readers. One line each: `QUBT = Quantum Computing Inc ($1.8B)`.
-6. **Price included.** Price appears on the trade line and in the scenario table for brokerage checking ("am I winning?"). MC appears on the trade line intro and as proof in the scenario table. Comparable gives MC meaning.
+3. **WHY flows into scenarios.** Don't drop a disconnected data table. Build understanding progressively: mandate/catalyst (fact) → deadline (urgency) → company's product (connection) → market size (scale) → floor statement ("at current price, market is pricing zero adoption") → here's what that looks like for your $100K (payoff).
+4. **Comparable-as-label for upside, dollar loss for downside.** Upside rows use multiples (3x, 5x, 10x) with → [COMP]-size as context. Downside rows use dollar losses (lose $60K, lose $35K). Asymmetric framing maps to how traders process each direction differently.
+5. **Comparable legend below the table.** Tickers mean nothing to most readers. One line each, sorted by size: `QUBT  $2.1B  Quantum Computing Inc`.
+6. **Price included.** Price appears on the trade line and in the scenario table header for brokerage checking ("am I winning?"). MC appears in the company intro. Comparable gives MC meaning.
 7. **Telegram-native formatting.** Entire output is a single monospace code block. No markdown tables (they break on mobile). Use `────` dividers between sections. Align columns with spaces. Target ~4096 chars max for a single Telegram message.
-8. **Eliminations are compressed.** One line per rejected instrument with ticker, key data point, and reason. Column-aligned for scannability.
+8. **Eliminations are compressed.** One line per rejected instrument with ticker, key data point, and reason. Column-aligned for scannability. A framing sentence before the table turns rejections into evidence for the winning trade.
+9. **Time-aware scenarios.** Each scenario row includes a rough timeline as the first column. Downside is usually faster than upside. Timelines are estimates based on catalyst dates and comparable precedents, not precision — use ranges (< 1yr, 2-3yr, 5yr+).
+10. **Asymmetric framing.** Downside in dollar losses (lose $60K). Upside in multiples (3x, 5x, 10x). Maps to how traders process risk vs reward — losses are pain denominated in dollars, gains are excitement denominated in multiples.
+11. **Temporal origin.** Company intro includes WHEN they built the thing, not just what it is. "Spent two years building X before anyone wanted it — hit production the year Y mandated it" tells the reader about timing risk (they're not vaporware) in one sentence.
 
 ### Output Template
 
@@ -399,12 +356,13 @@ The entire output goes inside a single code block (triple backticks). Use this s
 
 ```
 BELIEF
-[user's thesis as causal chain, abbreviated]
+[The insight as a claim — what's mispriced and why.
+Not a logic flowchart, but the bet stated plainly.]
 ────────────────────────────────────
 
-There's a [MC] [country/descriptor] [company type] making
-[what they do in plain English that connects to the thesis].
-[Why this matters — the mandate, catalyst, or force.]
+There's a [MC] [country/descriptor] [company type] [making/that]
+[temporal beat — what they built and when, connecting to
+why the timing is now, not just what they do].
 
 [COMPANY NAME] ([TICKER]) · $[PRICE] · [DIRECTION]
 
@@ -418,38 +376,43 @@ what's the deadline, why there's no opt-out. Facts only.]
 [Paragraph 2: The company's specific product/position.
 Revenue, cash, key differentiator. Why purest play.]
 
-[Paragraph 3: Market sizing → re-rating logic → transition
-into scenarios. "If [COMPANY] captures even X%, it re-rates
-to the size of existing [sector] companies:"]
+[Paragraph 3: The anchoring number. State the gap between
+current MC and the addressable market. "At $[MC], the market
+is pricing [what's implied — usually zero/minimal adoption].
+That's the floor. [What changes above that floor]:"
+→ flows directly into the scenario table]
 
-── $100K at $[PRICE] ([MC]) ─────
+── $100K in [TICKER] at $[PRICE] ─────
 
- −XX%    $X.XX     $XXK   [implied MC]
- −XX%    $X.XX     $XXK   [implied MC]
-→ [COMP1]  $XX.XX    $XXXK   [MC at this level]
-→ [COMP2]  $XX.XX    $XXXK   [MC at this level]
-→ [COMP3]  $XX.XX      $XM   [MC at this level]
+ [time]   lose $XXK   [condition]
+ [time]   lose $XXK   [condition]
+ [time]      Nx       → [COMP1]-size
+ [time]      Nx       → [COMP2]-size
+ [time]      Nx       → [COMP3]-size
 
-[COMP1] = [Full Name] ([current MC])
-[COMP2] = [Full Name] ([current MC])
-[COMP3] = [Full Name] ([current MC])
+[COMP1]  [MC]  [Full Name]
+[COMP2]  [MC]  [Full Name]
+[COMP3]  [MC]  [Full Name]
 
-[shares] sh · [expiry info] · >[X]% +EV
+[shares] sh · [trade horizon] · >[X]% +EV
 
 ────────────────────────────────────
 
 KILLS
 
-· [Kill condition 1 — specific]
-· [Kill condition 2 — specific]
-· [Kill condition 3 — specific]
-· [Kill condition 4 — specific]
+· [time]   [kill condition — specific, observable]
+· [time]   [kill condition]
+· [time]   [kill condition]
+· [time]   [kill condition]
 
-Watch: [date/event 1] · [date/event 2] · [date/event 3]
+Next: [nearest catalyst with date]
 
 ────────────────────────────────────
 
 REJECTED
+
+[One sentence framing why the rejections prove the thesis.
+Turns eliminations into evidence for the winning trade.]
 
 [TICKER1]       [key data point], [reason]
 [TICKER2]       [key data point], [reason]
@@ -481,25 +444,15 @@ EXECUTE
 Market data for informational purposes.
 ```
 
-### Output Quality Rules
+### Output Precision Rules
 
-**Self-contained rule:** The reader must understand the entire output without leaving the message. Company introduced in plain English before the ticker. Every ticker in the scenario table or rejected section gets a one-line legend. No jargon without context.
+**Scenario table math:** Implied price = target MC ÷ shares outstanding. Multiple = target price ÷ entry price. State shares outstanding and entry price in the header. MC comparables must be real, recognizable companies — ideally same sector. Downside rows show dollar loss (lose $XXK), upside rows show multiple (Nx).
 
-**Company-before-ticker:** The opening paragraph describes the company, its market cap, what it makes, and why it matters — all before the ticker appears. The ticker line is confirmation: "Oh, THAT's the ticker for the company I just read about." Not introduction.
+**Timeline estimation:** Claude estimates rough timelines for each scenario row. Use ranges (< 1yr, 2-3yr, 5yr+), not specific dates. Base on catalyst dates, comparable growth rates, and market pricing dynamics. Downside scenarios typically resolve faster than upside.
 
-**WHY section progressive build:** The WHY section must flow logically: fact → urgency → connection → scale → "aha" → payoff. The scenario table is the CONCLUSION of the WHY section, not a disconnected data block. The reader should feel the scenarios are the natural "so what does this mean for my money?" after understanding the thesis.
+**Kill conditions:** Specific, observable, with time column. Not "if the thesis is wrong" but "2026  QS7001 misses mass production" or "policy  NIST delays or softens mandate." The `Next:` line highlights the nearest catalyst.
 
-**Comparable-as-label:** Upside scenario rows use → prefix with a comparable company ticker as the label. These are milestones: "if it reaches QUBT-size, here's your return." Downside rows use −XX% as the label. The comparable legend below the table gives each ticker its full name and current MC so the reader never has to look anything up.
-
-**MC comparables:** Must reference real, recognizable companies with current market caps. Ideally same sector. "→ QBTS" with legend "QBTS = D-Wave Quantum ($7.3B)" is instantly meaningful. If no sector-relevant comparable exists at that tier, use a well-known company.
-
-**Scenario table math:** Calculate implied price at each tier from target MC ÷ shares outstanding. Calculate $100K position value from (target price ÷ entry price) × $100K. State shares outstanding and entry price in the table header line. Show implied MC in the rightmost column.
-
-**Rejected section:** One line per instrument. Column-aligned. Each line cites ONE specific data point from Phase 2 research. "IONQ calls  96% IV, 74% to breakeven" — the compression forces sharp reasoning. If you can't say it in one line, the elimination isn't sharp enough.
-
-**Kill conditions:** Specific, observable, ideally dated. Not "if the thesis is wrong" but "NIST delays past 2035" or "QS7001 misses 2026 production." The Watch line lists upcoming catalysts with dates.
-
-**Execution:** Platform-specific, single line with arrows showing the click path. Call out limit orders, wide spreads, or low-volume gotchas in parentheses.
+**Rejections:** One framing sentence, then one line per instrument with one data point each. "IONQ calls  96% IV, 74% to breakeven." If you can't say it in one line, the reasoning isn't sharp enough. The framing sentence turns the rejections into evidence for the winning trade.
 
 ---
 
@@ -513,31 +466,5 @@ Market data for informational purposes.
 6. **Bear theses → short-side instruments.** Inverse ETFs on RH, short perps on HL, NO on Kalshi. Map to instruments that PROFIT when the thesis is correct.
 7. **Catalyst-dated theses.** Warn about IV crush on options. Select expiry AFTER the catalyst date.
 8. **End every response** with the disclaimer line.
-9. **One trade, not a portfolio.** The goal is THE single best expression. Alternatives are genuinely different approaches, not diversification.
-10. **Evidence over logic.** Every claim about an instrument must be backed by data from Phase 2 research. No "this seems expensive" — only "this trades at 37.65x P/E vs a 20-year average of 19.08."
+9. **Evidence over logic.** Every claim about an instrument must be backed by data from Phase 2 research. No "this seems expensive" — only "this trades at 37.65x P/E vs a 20-year average of 19.08."
 
----
-
-## Script Reference
-
-```bash
-# Validate tickers (YOU propose, scripts validate)
-bun run scripts/adapters/robinhood/instruments.ts "TICKER1,TICKER2"
-bun run scripts/adapters/hyperliquid/instruments.ts "TICKER1,TICKER2"
-bun run scripts/adapters/kalshi/instruments.ts "keyword phrase"
-bun run scripts/adapters/bankr/instruments.ts "thesis text"
-
-# Get returns
-bun run scripts/adapters/robinhood/returns.ts "TICKER" "long" "stock|etf|option"
-bun run scripts/adapters/hyperliquid/returns.ts "TICKER" "long" "5"
-bun run scripts/adapters/kalshi/returns.ts "EVENT" "yes|no"
-bun run scripts/adapters/bankr/returns.ts "TICKER" "long"
-
-# Record & track
-bun run scripts/track.ts record --thesis "..." --platform X --instrument Y --direction Z --entry-price N
-bun run scripts/track.ts check
-bun run scripts/track.ts close --id ID --exit-price N
-
-# Generate card
-bun run scripts/card.ts --id ID
-```
