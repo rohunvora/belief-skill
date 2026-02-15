@@ -1,0 +1,137 @@
+{
+  "anduril": {
+    "name": "Anduril Industries",
+    "sector": "defense_ai",
+    "valuation": "$60B+",
+    "last_round": "Raising $8B at $60B+ (Feb 2026)",
+    "revenue_est": "$2B+ (2025)",
+    "ipo_timeline": "2027-2028",
+    "access": [
+      "EquityZen",
+      "Forge Global",
+      "IPO Club"
+    ],
+    "minimum": "$50K-$100K typical",
+    "thesis_keywords": [
+      "defense",
+      "autonomous weapons",
+      "drones",
+      "golden dome",
+      "lattice"
+    ],
+    "note": "Palmer Luckey. Software-defined defense. Golden Dome SBI prototype."
+  },
+  "anthropic": {
+    "name": "Anthropic",
+    "sector": "ai_software",
+    "valuation": "$60B+",
+    "last_round": "Series E at $60B (2025)",
+    "revenue_est": "$1B+",
+    "ipo_timeline": "2026-2027",
+    "access": [
+      "EquityZen",
+      "Forge Global"
+    ],
+    "minimum": "$25K-$50K typical",
+    "thesis_keywords": [
+      "ai",
+      "llm",
+      "claude",
+      "foundation model",
+      "safety"
+    ],
+    "note": "Claude maker. Constitutional AI. Google-backed."
+  },
+  "openai": {
+    "name": "OpenAI",
+    "sector": "ai_software",
+    "valuation": "$157B",
+    "last_round": "Oct 2024 at $157B",
+    "revenue_est": "$3.4B (2024)",
+    "ipo_timeline": "2025-2026",
+    "access": [
+      "EquityZen",
+      "Forge Global"
+    ],
+    "minimum": "$50K+",
+    "thesis_keywords": [
+      "ai",
+      "gpt",
+      "chatgpt",
+      "foundation model",
+      "agi"
+    ],
+    "note": "Market leader. Transitioning to for-profit."
+  },
+  "shield-ai": {
+    "name": "Shield AI",
+    "sector": "defense_ai",
+    "valuation": "$5.3B",
+    "last_round": "Series F-1 (March 2025)",
+    "revenue_est": "$200-400M",
+    "ipo_timeline": "2026-2027 (S-1 filed)",
+    "access": [
+      "EquityZen"
+    ],
+    "minimum": "$25K+",
+    "thesis_keywords": [
+      "drones",
+      "autonomous",
+      "defense",
+      "hivemind"
+    ],
+    "note": "Hivemind AI pilot. V-BAT drones. L3Harris investor."
+  },
+  "scale-ai": {
+    "name": "Scale AI",
+    "sector": "ai_software",
+    "valuation": "$14B",
+    "last_round": "2024",
+    "revenue_est": "$1B+",
+    "ipo_timeline": "2026+",
+    "access": [
+      "Forge Global"
+    ],
+    "minimum": "$50K+",
+    "thesis_keywords": [
+      "ai",
+      "data labeling",
+      "defense",
+      "thunderforge"
+    ],
+    "note": "DoD Thunderforge prime contractor. Alexander Wang."
+  },
+  "spacex": {
+    "name": "SpaceX",
+    "sector": "space",
+    "valuation": "$350B+",
+    "last_round": "Dec 2024",
+    "revenue_est": "$15B+",
+    "ipo_timeline": "Starlink IPO possible 2026-2027",
+    "access": [
+      "Forge Global",
+      "EquityZen"
+    ],
+    "minimum": "$50K+",
+    "thesis_keywords": [
+      "space",
+      "starlink",
+      "satellite",
+      "defense",
+      "launch"
+    ],
+    "note": "Elon Musk. Starlink dominance. Government contracts."
+  },
+  "figure-ai": {
+    "name": "Figure AI",
+    "sector": "robotics_automation",
+    "valuation": "B (2025)",
+    "thesis_keywords": [
+      "humanoid",
+      "robot",
+      "figure",
+      "robotics"
+    ],
+    "access": "EquityZen, Forge"
+  }
+}
