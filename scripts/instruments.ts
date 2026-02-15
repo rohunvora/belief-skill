@@ -56,19 +56,21 @@ export async function discoverInstruments(thesis: string): Promise<CandidateInst
   matchedThemes.sort((a, b) => b.score - a.score);
 
   // Semantic expansion: find themes that keyword matching misses
-  // Only add expansion themes if we have NO keyword matches (avoid dilution)
-  if (matchedThemes.length === 0) {
-    const expandedThemeNames = expandThesis(thesis);
-    for (const themeName of expandedThemeNames) {
-      if (themeMap[themeName] && !matchedThemes.some(m => m.theme === themeName)) {
-        matchedThemes.push({ theme: themeName, entry: themeMap[themeName], score: 0.5 });
-      }
+  // Semantic expansion: add expanded themes with lower priority
+  const expandedThemeNames = expandThesis(thesis);
+  for (const themeName of expandedThemeNames) {
+    if (themeMap[themeName] && !matchedThemes.some(m => m.theme === themeName)) {
+      // Give expanded themes a fractional score so they don't dominate
+      matchedThemes.push({ theme: themeName, entry: themeMap[themeName], score: 0.3 });
     }
-    matchedThemes.sort((a, b) => b.score - a.score);
   }
+  matchedThemes.sort((a, b) => b.score - a.score);
 
-  // Take top 5 themes — complex theses span multiple sectors
-  const topThemes = matchedThemes.slice(0, 5);
+  // Take keyword-matched themes first, then fill with expanded (up to 5 total)
+  const keywordThemes = matchedThemes.filter(m => m.score >= 1);
+  const expandedOnly = matchedThemes.filter(m => m.score < 1);
+  const remainingSlots = Math.max(0, 5 - keywordThemes.length);
+  const topThemes = [...keywordThemes.slice(0, 5), ...expandedOnly.slice(0, remainingSlots)];
 
   for (const { theme, entry } of topThemes) {
     // Add stocks

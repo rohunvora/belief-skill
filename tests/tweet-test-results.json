@@ -6,13 +6,13 @@
     "text": "i think the final marginal buyers of the ai trade will be the government, specif",
     "found": [
       "BAH",
-      "SAIC",
-      "LDOS",
-      "LMT",
       "PPA",
       "SHLD",
+      "NEM",
+      "CEG",
+      "TSM",
       "CRWD",
-      "ANDURIL"
+      "AKT"
     ],
     "ideal": [
       "PLTR",
@@ -30,12 +30,12 @@
     "text": "delusional bull case that i choose to believe\n\n&gt;recent tech sell off equivale",
     "found": [
       "BAH",
-      "SAIC",
-      "LDOS",
-      "LMT",
       "PPA",
       "SHLD",
       "TRUMP",
+      "NEM",
+      "CEG",
+      "TSM",
       "CRWD"
     ],
     "ideal": [
@@ -60,7 +60,7 @@
       "CEG",
       "TSM",
       "CRWD",
-      "RNDR"
+      "TAO"
     ],
     "ideal": [
       "GLD",
@@ -84,7 +84,7 @@
       "TSM",
       "CEG",
       "MSFT",
-      "RNDR"
+      "FET"
     ],
     "ideal": [
       "PLTR",
@@ -102,12 +102,12 @@
     "text": "Remove 90% of regulations \n\nJust let American workforce rawdog capitalism\n\nIt's ",
     "found": [
       "TSM",
-      "INTC",
       "PYPL",
-      "MRVL",
-      "NVDA",
       "SMH",
       "SOXX",
+      "AKT",
+      "BAH",
+      "NEM",
       "RNDR"
     ],
     "ideal": [
@@ -128,11 +128,11 @@
     "text": "the better ai gets - the bigger the implications become on national defence and ",
     "found": [
       "BAH",
-      "SAIC",
-      "LDOS",
       "FXI",
       "PPA",
       "PDD",
+      "NEM",
+      "CEG",
       "CRWD",
       "ANDURIL"
     ],
@@ -155,10 +155,10 @@
     "found": [
       "BAH",
       "SAIC",
-      "LDOS",
       "PPA",
       "SHLD",
       "TSM",
+      "CEG",
       "CRWD",
       "RNDR"
     ],
@@ -173,17 +173,18 @@
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1883733886569722143",
     "text": "China is PVPing American tech monopoly",
     "found": [
       "FXI",
       "PDD",
-      "JD",
-      "BIDU",
       "KWEB",
-      "BABA",
-      "NIO"
+      "BAH",
+      "MSFT",
+      "TSM",
+      "CRWD",
+      "RNDR"
     ],
     "ideal": [
       "US defense stocks",
@@ -191,9 +192,7 @@
       "cybersecurity (HACK ETF)",
       "PLTR"
     ],
-    "errors": [
-      "Found 0/4 ideal instruments: [] missing [US,NVDA,CYBERSECURITY,PLTR]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
@@ -207,8 +206,8 @@
       "NVDA",
       "SMH",
       "SOXX",
-      "RNDR",
-      "AKT"
+      "MSFT",
+      "RNDR"
     ],
     "ideal": [
       "NVDA",
@@ -221,11 +220,18 @@
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1875016498110177476",
     "text": "AI coins top when AI tops",
     "found": [
-      "ANTHROPIC"
+      "MSFT",
+      "GOOG",
+      "CRM",
+      "AIQ",
+      "MARA",
+      "IRBO",
+      "FET",
+      "TSM"
     ],
     "ideal": [
       "AI tokens (basket)",
@@ -233,18 +239,22 @@
       "FET",
       "RNDR"
     ],
-    "errors": [
-      "Found 1/4 ideal instruments: [AI] missing [NEAR,FET,RNDR]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1875018576480104793",
     "text": "Missed Nvidia? Buy AI coins",
     "found": [
       "NVDA",
-      "ANTHROPIC"
+      "MSFT",
+      "GOOG",
+      "CRM",
+      "AIQ",
+      "MARA",
+      "IRBO",
+      "NEAR"
     ],
     "ideal": [
       "AI tokens",
@@ -253,9 +263,7 @@
       "RNDR",
       "NEAR"
     ],
-    "errors": [
-      "Found 1/5 ideal instruments: [AI] missing [VIRTUAL,FET,RNDR,NEAR]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "hard",
@@ -266,11 +274,11 @@
       "MSFT",
       "GOOG",
       "CRM",
-      "SNOW",
       "AIQ",
       "IRBO",
-      "ROK",
-      "ANTHROPIC"
+      "TAO",
+      "TSM",
+      "RNDR"
     ],
     "ideal": [
       "AI agent tokens",
@@ -285,14 +293,8 @@
     "id": "2020757138285510993",
     "text": "agents cant open bank accounts. crypto is literally the only way they can hold a",
     "found": [
-      "MARA",
-      "ROK",
-      "ROBO",
-      "BOTZ",
-      "TSLA",
-      "ISRG",
-      "FANUY",
-      "SNX"
+      "UNI",
+      "FIGURE-AI"
     ],
     "ideal": [
       "AI agent tokens",
@@ -307,7 +309,14 @@
     "id": "1883373363646898642",
     "text": "AI coins dip for 2 weeks then go up for 4 weeks straight",
     "found": [
-      "ANTHROPIC"
+      "MSFT",
+      "GOOG",
+      "CRM",
+      "SNOW",
+      "AIQ",
+      "MARA",
+      "IRBO",
+      "RNDR"
     ],
     "ideal": [
       "AI token basket — buy 2 weeks into dips, sell 4 weeks into rallies"
@@ -316,20 +325,25 @@
   },
   {
     "difficulty": "medium",
-    "pass": false,
+    "pass": true,
     "id": "1876611122713006381",
     "text": "The biggest AI coins will just keep getting bigger because they’re going to be t",
     "found": [
-      "ANTHROPIC"
+      "MSFT",
+      "GOOG",
+      "CRM",
+      "SNOW",
+      "AIQ",
+      "MARA",
+      "IRBO",
+      "FET"
     ],
     "ideal": [
       "Top AI tokens by mcap",
       "VIRTUAL",
       "AI16Z"
     ],
-    "errors": [
-      "Found 0/3 ideal instruments: [] missing [TOP,VIRTUAL,AI16Z]"
-    ]
+    "errors": []
   },
   {
     "difficulty": "medium",
@@ -337,7 +351,14 @@
     "id": "1889756948779676148",
     "text": "I don't think the AI trade is over by the way.\n\nIt's just really difficult for p",
     "found": [
-      "ANTHROPIC"
+      "MSFT",
+      "GOOG",
+      "CRM",
+      "SNOW",
+      "AIQ",
+      "IRBO",
+      "TSM",
+      "RNDR"
     ],
     "ideal": [
       "AI tokens at local lows",
@@ -354,11 +375,11 @@
     "text": "SOL to $4800",
     "found": [
       "COIN",
-      "BONK",
-      "JTO",
+      "SOL",
       "JUP",
       "RAY",
-      "WIF"
+      "ORCA",
+      "BONK"
     ],
     "ideal": [
       "SOL",
@@ -373,10 +394,10 @@
     "id": "1874686985090326702",
     "text": "SOL 25 going to be like ETH 21\n\nRenaissance of new ideas, builders and biblical ",
     "found": [
-      "BONK",
-      "JTO",
+      "SOL",
       "JUP",
       "RAY",
+      "BONK",
       "WIF",
       "ANTHROPIC"
     ],
@@ -395,11 +416,11 @@
     "id": "1968659170103869860",
     "text": "solana defi incoming wave 2026 imo\n\neth defi is currently still 10x bigger than ",
     "found": [
-      "BONK",
-      "JTO",
+      "SOL",
       "JUP",
       "RAY",
-      "WIF",
+      "ORCA",
+      "BONK",
       "ANTHROPIC"
     ],
     "ideal": [
@@ -416,11 +437,8 @@
     "id": "1971890821751624004",
     "text": "perp dex war ends with hyperliquid winning \n\nit's gonna happen too https://t.co/",
     "found": [
-      "SNX",
-      "DYDX",
-      "UNI",
-      "AAVE",
-      "MKR"
+      "HYPE",
+      "ANDURIL"
     ],
     "ideal": [
       "HYPE",
@@ -438,10 +456,10 @@
       "MSTR",
       "IBIT",
       "BITO",
+      "BTC",
       "ETH",
       "SOL",
-      "SNX",
-      "DYDX"
+      "HYPE"
     ],
     "ideal": [
       "HYPE"
@@ -455,7 +473,7 @@
     "text": "trump might have solved the national debt https://t.co/FN2NpH5CLi",
     "found": [
       "TRUMP",
-      "ETH",
+      "BTC",
       "ANDURIL"
     ],
     "ideal": [
@@ -480,7 +498,7 @@
       "GLD",
       "OXY",
       "MARA",
-      "ETH"
+      "BTC"
     ],
     "ideal": [
       "BTC",
@@ -497,14 +515,14 @@
     "id": "1880571461402030095",
     "text": "trump &amp; bitcoin barbell might be the safest, easiest 10x over the next 4 yea",
     "found": [
+      "MSFT",
+      "AIQ",
       "MARA",
-      "MSTR",
-      "IBIT",
-      "BITO",
-      "FBTC",
-      "ETH",
-      "BITI",
-      "SOL"
+      "HYPE",
+      "TRUMP",
+      "IRBO",
+      "BOTZ",
+      "IBIT"
     ],
     "ideal": [
       "BTC",
@@ -544,9 +562,12 @@
     "found": [
       "RHI",
       "UPWK",
+      "HYG",
       "FVRR",
-      "MAN",
-      "KELYA"
+      "MARA",
+      "JPM",
+      "IBIT",
+      "BTC"
     ],
     "ideal": [
       "SPY puts during crash → flip to calls",
@@ -591,7 +612,7 @@
       "ARKX",
       "MARA",
       "LUNR",
-      "SNX"
+      "JUP"
     ],
     "ideal": [
       "Gaming tokens",
@@ -614,9 +635,9 @@
       "RDW",
       "UFO",
       "ARKX",
-      "LUNR",
-      "BKSY",
-      "SPACEX"
+      "MARA",
+      "COIN",
+      "SOL"
     ],
     "ideal": [
       "Short EA/ATVI",
@@ -624,7 +645,7 @@
       "Solana gaming ecosystem"
     ],
     "errors": [
-      "Found 0/3 ideal instruments: [] missing [SHORT,GAMING,SOLANA]"
+      "Found 1/3 ideal instruments: [SOLANA] missing [SHORT,GAMING]"
     ]
   },
   {
@@ -650,14 +671,9 @@
     "id": "1880449932269932740",
     "text": "Yes, your coins are down right now but who cares? \n\nThe president of the united ",
     "found": [
-      "COIN",
-      "BONK",
-      "JTO",
-      "FSLR",
-      "ASTS",
-      "RIVN",
-      "ENPH",
-      "TAN"
+      "SOL",
+      "JUP",
+      "SPACEX"
     ],
     "ideal": [
       "SOL",
@@ -696,11 +712,11 @@
     "id": "1881157570813108244",
     "text": "The trenches have discovered low float, high FDV coins.\n\nGet used to coins going",
     "found": [
-      "SNX",
-      "DYDX",
       "UNI",
       "AAVE",
-      "MKR"
+      "MKR",
+      "CRV",
+      "SNX"
     ],
     "ideal": [
       "Low float tokens with strong catalysts",
@@ -740,11 +756,11 @@
       "MARA",
       "MSTR",
       "IBIT",
-      "BITO",
-      "ETH",
-      "SOL",
-      "SNX",
-      "DYDX"
+      "RIOT",
+      "HYG",
+      "COIN",
+      "JPM",
+      "BTC"
     ],
     "ideal": [
       "Crypto broadly",
@@ -761,14 +777,9 @@
     "id": "1881182085622399430",
     "text": "Whether he knows it or not, Trump is now incentivized to legalize and regulate c",
     "found": [
-      "MARA",
-      "MSTR",
-      "IBIT",
-      "BITO",
       "ETH",
       "SOL",
-      "SNX",
-      "DYDX"
+      "ANDURIL"
     ],
     "ideal": [
       "Crypto broadly",
@@ -791,8 +802,8 @@
       "SNOW",
       "AIQ",
       "IRBO",
-      "NU",
-      "ANTHROPIC"
+      "RNDR",
+      "FET"
     ],
     "ideal": [
       "Short traditional SaaS (WDAY, NOW)",
@@ -831,7 +842,7 @@
       "NEM",
       "MSFT",
       "CRWD",
-      "ANDURIL"
+      "RNDR"
     ],
     "ideal": [
       "OpenClaw ecosystem tokens",
@@ -854,7 +865,7 @@
       "NEM",
       "MSFT",
       "CRWD",
-      "ANDURIL"
+      "RNDR"
     ],
     "ideal": [
       "Long QQQ/tech against software shorts",
@@ -872,11 +883,11 @@
       "MARA",
       "MSTR",
       "IBIT",
-      "RIOT",
       "HYG",
-      "COIN",
-      "ETH",
-      "JPM"
+      "JPM",
+      "MSFT",
+      "TSM",
+      "BTC"
     ],
     "ideal": [
       "AI stocks broadly",
@@ -898,9 +909,9 @@
       "IBIT",
       "RIOT",
       "BITO",
-      "ETH",
       "BAH",
-      "TRUMP"
+      "TRUMP",
+      "BTC"
     ],
     "ideal": [
       "$TRUMP"
@@ -917,10 +928,10 @@
       "MSTR",
       "IBIT",
       "BITO",
+      "BTC",
       "ETH",
       "SOL",
-      "SNX",
-      "DYDX"
+      "PENGU"
     ],
     "ideal": [
       "PENGU",
@@ -959,6 +970,7 @@
     "id": "1883770167844655603",
     "text": "It’s all going to be open source and a lot of them will have a token.",
     "found": [
+      "RNDR",
       "ANTHROPIC"
     ],
     "ideal": [
@@ -975,11 +987,11 @@
     "id": "2020568743697392055",
     "text": "@AlexFinn I find no personal need for local models &amp; I don’t think anyone sh",
     "found": [
-      "SNX",
-      "DYDX",
       "UNI",
       "AAVE",
-      "MKR"
+      "MKR",
+      "CRV",
+      "SNX"
     ],
     "ideal": [
       "NVDA",
@@ -998,13 +1010,13 @@
     "text": "Trump might actually send Bitcoin to $1M",
     "found": [
       "MARA",
-      "MSTR",
       "IBIT",
       "BITO",
       "FBTC",
-      "ETH",
+      "BAH",
       "BITI",
-      "SOL"
+      "BTC",
+      "ETH"
     ],
     "ideal": [
       "BTC",
@@ -1024,10 +1036,10 @@
       "SAIC",
       "PPA",
       "SHLD",
+      "HYPE",
       "NEM",
       "CRWD",
-      "COIN",
-      "SNX"
+      "COIN"
     ],
     "ideal": [
       "Attention economy tokens",

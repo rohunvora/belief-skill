@@ -77,7 +77,9 @@
       "saas ai",
       "ai token",
       "ai crypto",
-      "ai agent"
+      "ai agent",
+      "ai coin",
+      "ai coins"
     ],
     "tickers": {
       "stocks": [
@@ -97,6 +99,15 @@
       "secondaries": [
         "anthropic",
         "openai"
+      ],
+      "crypto": [
+        "RNDR",
+        "FET",
+        "NEAR",
+        "TAO",
+        "AKT",
+        "VIRTUAL",
+        "AI16Z"
       ]
     }
   },

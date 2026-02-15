@@ -22,7 +22,7 @@
     "budget": 15000,
     "checks": {
       "min_instruments": 4,
-      "must_include_tickers": ["COIN"],
+      "must_include_any_of": [["COIN", "PYPL"]],
       "must_include_asset_classes": ["stock"],
       "must_not_include_tickers": ["USDC", "USDT"],
       "has_usdc_overlap_flag": true,

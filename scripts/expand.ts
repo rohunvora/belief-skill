@@ -39,7 +39,9 @@ const SEMANTIC_ALIASES: Record<string, string[]> = {
   "fed": ["interest_rates"],
   "stimulus": ["interest_rates", "crypto_broad"],
   
-  // Tech industry
+  // Tech industry  
+  "pvp": ["china", "defense_ai", "cybersecurity"],
+  "monopoly": ["ai_software", "ai_compute"],
   "saas": ["ai_software", "fintech"],
   "software": ["ai_software"],
   "open source": ["ai_software"],
@@ -114,6 +116,21 @@ const CAUSAL_CHAINS: { pattern: RegExp; themes: string[]; reason: string }[] = [
     reason: "Political catalyst → crypto, defense, deregulation plays"
   },
   {
+    pattern: /bearish.*ai|ai.*over|ai.*top/i,
+    themes: ["ai_software", "ai_compute"],
+    reason: "Bearish AI → short AI plays"
+  },
+  {
+    pattern: /bullish.*ai|ai.*under|ai.*trade.*not.*over/i,
+    themes: ["ai_software", "ai_compute"],
+    reason: "Bullish AI → long AI plays"
+  },
+  {
+    pattern: /ai coin|ai token|crypto.*ai|ai.*crypto/i,
+    themes: ["ai_software", "crypto_broad"],
+    reason: "AI crypto thesis → AI tokens + broad crypto"
+  },
+  {
     pattern: /china|ccp|beijing|xi jinping/i,
     themes: ["china", "defense_ai", "commodities"],
     reason: "China-related thesis → direct China plays + defense + supply chain"
@@ -175,8 +192,11 @@ export function extractMentionedTickers(thesis: string): string[] {
     "solana": "SOL", "sol": "SOL", "hyperliquid": "HYPE",
     "nvidia": "NVDA", "nvda": "NVDA", "coinbase": "COIN",
     "palantir": "PLTR", "tesla": "TSLA",
-    "trump": "TRUMP", "pudgy": "PENGU", "bonk": "BONK",
+    "trump": "TRUMP", "pudgy": "PENGU", "pudgy penguin": "PENGU", "bonk": "BONK",
     "jupiter": "JUP", "raydium": "RAY",
+    "render": "RNDR", "fetch": "FET", "near": "NEAR", "akash": "AKT",
+    "bittensor": "TAO", "virtual": "VIRTUAL", "ai16z": "AI16Z",
+    "gala": "GALA", "immutable": "IMX",
   };
   
   const lower = thesis.toLowerCase();

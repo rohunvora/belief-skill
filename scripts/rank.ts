@@ -73,7 +73,9 @@ function scoreThesisAlignment(instrument: EnrichedInstrument, thesisThemes: stri
   }
 
   // Direct theme-map matches are higher quality than fallbacks
+  // Instruments listed earlier in theme-map are more directly relevant
   if (instrument.source === "theme-map") score += 10;
+  if (instrument.source === "thesis-mention") score += 20; // explicitly mentioned in thesis
   if (instrument.source === "secondaries-registry") score += 15; // secondaries are non-obvious = valuable
 
   return Math.min(100, score);
