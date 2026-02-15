@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "name": "Defense AI",
+    "thesis": "China is catching up in AI. This will trigger massive US military AI spending.",
+    "budget": 20000,
+    "checks": {
+      "min_instruments": 5,
+      "must_include_tickers": ["BAH", "LDOS"],
+      "must_include_asset_classes": ["stock", "etf"],
+      "must_include_secondary": true,
+      "bah_in_top_3": true
+    }
+  },
+  {
+    "id": 2,
+    "name": "Stablecoin Regulation",
+    "thesis": "Stablecoin regulation will pass in the US and massively benefit compliant issuers.",
+    "budget": 15000,
+    "checks": {
+      "min_instruments": 4,
+      "must_include_tickers": ["COIN"],
+      "must_include_asset_classes": ["stock"]
+    }
+  },
+  {
+    "id": 3,
+    "name": "Bear Thesis (AI replaces devs)",
+    "thesis": "AI coding agents will replace 50% of junior developer jobs within 2 years.",
+    "budget": 10000,
+    "checks": {
+      "min_instruments": 3,
+      "must_include_asset_classes": ["stock"]
+    }
+  },
+  {
+    "id": 4,
+    "name": "Solana Flips Ethereum",
+    "thesis": "Solana will permanently flip Ethereum in DEX volume and become the default settlement layer.",
+    "budget": 25000,
+    "checks": {
+      "min_instruments": 4,
+      "must_include_asset_classes": ["crypto"]
+    }
+  },
+  {
+    "id": 5,
+    "name": "Vague Thesis",
+    "thesis": "I feel like energy stocks might do well.",
+    "checks": {
+      "min_instruments": 3,
+      "must_include_asset_classes": ["etf"]
+    }
+  },
+  {
+    "id": 6,
+    "name": "Contradicts Portfolio",
+    "thesis": "Crypto is going to crash 80% from here.",
+    "budget": 20000,
+    "checks": {
+      "min_instruments": 2
+    }
+  },
+  {
+    "id": 7,
+    "name": "Time-Sensitive Catalyst",
+    "thesis": "NVDA earnings on Feb 25 will blow out expectations because of AI inference demand.",
+    "budget": 10000,
+    "checks": {
+      "min_instruments": 3,
+      "must_include_tickers": ["NVDA"]
+    }
+  },
+  {
+    "id": 8,
+    "name": "Already Fully Exposed",
+    "thesis": "AI tokens on Base chain will 10x.",
+    "budget": 50000,
+    "checks": {
+      "min_instruments": 1
+    }
+  }
+]
