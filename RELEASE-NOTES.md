@@ -1,7 +1,7 @@
 # Belief Router — Release Notes
 
 **Date:** February 14, 2026  
-**Status:** Gate 1 ✅ | Gate 2 ✅ | Gate 3 (Polish) ~80%
+**Status:** Gate 1 ✅ | Gate 2 ✅ | Gate 3 ✅ Complete
 
 ---
 
@@ -93,10 +93,13 @@ Themes: defense ai, cybersecurity, energy ai, china
 
 ---
 
-## What's Needed for Gate 3 (Excellent)
+## Gate 3 Completed
 
-- [ ] Counter-thesis generation (US-11: "Show me what happens if I'm wrong")
-- [ ] Learning from outcomes (US-12: Compare thesis-time prices vs current)
-- [ ] 5 self-invented test scenarios
-- [ ] Options strategy suggestions for leveraged plays
-- [ ] Claude-scored thesis alignment in conversational mode
+- [x] Counter-thesis generation (`--counter` flag: shows max loss, per-position risk, hedge suggestions)
+- [x] Learning from outcomes (`scripts/track.ts`: compares thesis-time vs current prices, gives verdict)
+- [x] 13 test scenarios (8 original + 5 new: quantum+biotech, commodities, space, fintech, robotics)
+- [x] History/replay system (`history`, `replay <id>` subcommands)
+- [x] 23 themes, 218 tickers in theme-map
+- [x] Theme-specific invalidation for all 23 themes
+- [ ] Options strategy suggestions (future — needs options pricing data)
+- [ ] Claude-scored thesis alignment (available in conversational mode, not CLI)

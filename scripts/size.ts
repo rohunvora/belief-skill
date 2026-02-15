@@ -201,34 +201,56 @@ function inferDirection(instrument: RankedInstrument): "long" | "short" {
   return "long";
 }
 
+// Load ticker context for richer rationale
+let _tickerContext: Record<string, { context: string; category: string }> | null = null;
+function getTickerContext(): Record<string, { context: string; category: string }> {
+  if (!_tickerContext) {
+    try {
+      const path = new URL("../references/ticker-context.json", import.meta.url).pathname;
+      _tickerContext = JSON.parse(require("fs").readFileSync(path, "utf-8"));
+    } catch {
+      _tickerContext = {};
+    }
+  }
+  return _tickerContext!;
+}
+
 function generateRationale(instrument: RankedInstrument, existingExposure: number): string {
   const parts: string[] = [];
+  const ctx = getTickerContext()[instrument.ticker.toUpperCase()];
 
   if (instrument.asset_class === "secondary") {
-    return `Pre-IPO. ${instrument.name}. Illiquid — access via EquityZen/Forge.`;
+    const secCtx = getTickerContext()[instrument.ticker.toUpperCase()];
+    return `Pre-IPO. ${instrument.name}.${secCtx ? " " + secCtx.context + "." : ""} Illiquid — access via EquityZen/Forge.`;
+  }
+
+  // Lead with curated context if available
+  if (ctx) {
+    parts.push(ctx.context + ".");
   }
 
   if (instrument.asset_class === "etf") {
-    parts.push(`Diversified ${instrument.sub_themes?.[0]?.replace(/_/g, " ") || "sector"} exposure.`);
+    if (!ctx) {
+      parts.push(`Diversified ${instrument.sub_themes?.[0]?.replace(/_/g, " ") || "sector"} exposure.`);
+    }
     if (instrument.price) parts.push(`$${instrument.price.toFixed(2)}.`);
     return parts.join(" ");
   }
 
-  // Lead with the most interesting data point
+  // Add valuation context
   if (instrument.pe_ratio) {
     if (instrument.pe_ratio < 15) {
-      parts.push(`${instrument.pe_ratio.toFixed(1)}x PE — undervalued vs sector.`);
-    } else if (instrument.pe_ratio < 25) {
-      parts.push(`${instrument.pe_ratio.toFixed(1)}x PE — reasonable.`);
+      parts.push(`${instrument.pe_ratio.toFixed(1)}x PE — undervalued.`);
     } else if (instrument.pe_ratio > 100) {
       parts.push(`${instrument.pe_ratio.toFixed(0)}x PE — priced for perfection.`);
-    } else {
+    } else if (!ctx) {
+      // Only show PE if we don't have richer context
       parts.push(`${instrument.pe_ratio.toFixed(1)}x PE.`);
     }
   }
 
-  // Market cap for context
-  if (instrument.market_cap) {
+  // Market cap only if no context (avoid info overload)
+  if (!ctx && instrument.market_cap) {
     const mcapB = instrument.market_cap / 1e9;
     if (mcapB > 100) parts.push(`$${mcapB.toFixed(0)}B mcap.`);
     else if (mcapB > 1) parts.push(`$${mcapB.toFixed(1)}B mcap.`);

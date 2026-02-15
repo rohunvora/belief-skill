@@ -1,0 +1,290 @@
+{
+  "PLTR": {
+    "context": "AI-powered battlefield OS, Maven Smart System, $10B Army enterprise deal",
+    "category": "AI-native defense"
+  },
+  "BAH": {
+    "context": "Defense AI consulting, digital transformation for DoD/IC. Cheapest pure-play defense AI",
+    "category": "Defense IT"
+  },
+  "LDOS": {
+    "context": "Defense IT modernization, AI/ML for intel agencies, cyber ops",
+    "category": "Defense IT"
+  },
+  "SAIC": {
+    "context": "Defense IT services, AI integration, cloud migration for DoD",
+    "category": "Defense IT"
+  },
+  "RTX": {
+    "context": "AI-powered radar/sensors, missile defense AI, Raytheon cyber division",
+    "category": "Legacy prime"
+  },
+  "LMT": {
+    "context": "Golden Dome SBI, F-35 AI upgrades, Project Carrera autonomous systems",
+    "category": "Legacy prime"
+  },
+  "NOC": {
+    "context": "Golden Dome SBI prototype, B-21 (autonomous capable), JADC2 architect",
+    "category": "Legacy prime"
+  },
+  "GD": {
+    "context": "GDIT cloud/AI for DoD networks, IT services backbone",
+    "category": "Legacy prime"
+  },
+  "LHX": {
+    "context": "Shield AI investor, ISR systems, comms/EW with AI integration",
+    "category": "Legacy prime"
+  },
+  "CRWD": {
+    "context": "Endpoint security leader, government contracts expanding, Falcon platform",
+    "category": "Cybersecurity"
+  },
+  "PANW": {
+    "context": "Zero-trust leader, Cortex XSIAM AI-powered SOC, FedRAMP authorized",
+    "category": "Cybersecurity"
+  },
+  "ZS": {
+    "context": "Zero-trust network access, FedGov growing 40%+ YoY",
+    "category": "Cybersecurity"
+  },
+  "NVDA": {
+    "context": "GPU monopoly for AI training/inference, H100/B200 chip cycle, $100B+ datacenter TAM",
+    "category": "AI compute"
+  },
+  "AMD": {
+    "context": "MI300X challenging NVDA, growing datacenter share, cheaper alternative",
+    "category": "AI compute"
+  },
+  "AVGO": {
+    "context": "Custom AI chips (Google TPU, Meta MTIA), networking for AI clusters",
+    "category": "AI compute"
+  },
+  "TSM": {
+    "context": "Manufactures 90%+ of advanced chips, NVDA/AMD/AAPL all depend on TSMC",
+    "category": "AI compute"
+  },
+  "CEG": {
+    "context": "Largest US nuclear fleet, Microsoft datacenter power deal, AI energy play",
+    "category": "Energy/AI"
+  },
+  "VST": {
+    "context": "Texas power generator, datacenter demand beneficiary, nuclear restart potential",
+    "category": "Energy/AI"
+  },
+  "CCJ": {
+    "context": "World's largest uranium producer, nuclear renaissance beneficiary",
+    "category": "Nuclear"
+  },
+  "SMR": {
+    "context": "NuScale small modular reactors, first SMR design certified by NRC",
+    "category": "Nuclear"
+  },
+  "OKLO": {
+    "context": "Sam Altman-backed micro-reactor company, AI datacenter power play",
+    "category": "Nuclear"
+  },
+  "COIN": {
+    "context": "Largest US crypto exchange, USDC co-issuer, regulatory moat if stablecoin bill passes",
+    "category": "Crypto infrastructure"
+  },
+  "MSFT": {
+    "context": "Copilot revenue ramp, Azure AI, OpenAI partnership, enterprise AI leader",
+    "category": "AI software"
+  },
+  "GOOG": {
+    "context": "Gemini models, TPU advantage, search AI transformation, DeepMind",
+    "category": "AI software"
+  },
+  "CRM": {
+    "context": "Einstein AI for enterprise, Agentforce platform, largest enterprise SaaS",
+    "category": "AI software"
+  },
+  "LLY": {
+    "context": "Mounjaro/Zepbound GLP-1 leader, $100B+ TAM for obesity drugs",
+    "category": "GLP-1/Biotech"
+  },
+  "NVO": {
+    "context": "Ozempic/Wegovy pioneer, 65% GLP-1 market share, massive demand backlog",
+    "category": "GLP-1/Biotech"
+  },
+  "TSLA": {
+    "context": "Optimus humanoid robot, FSD autonomous driving, energy storage",
+    "category": "Robotics/AI"
+  },
+  "IONQ": {
+    "context": "Trapped-ion quantum computing, partnerships with DoD and pharma",
+    "category": "Quantum"
+  },
+  "RGTI": {
+    "context": "Superconducting quantum, Ankaa-3 processor, Google Cloud partnership",
+    "category": "Quantum"
+  },
+  "RKLB": {
+    "context": "Electron rocket (most launched after SpaceX), Neutron in development, space systems",
+    "category": "Space"
+  },
+  "ASTS": {
+    "context": "Space-based cellular broadband, BlueWalker 3 satellite, AT&T/Verizon partnerships",
+    "category": "Space"
+  },
+  "SOFI": {
+    "context": "Digital bank + lending + investing, bank charter advantage, growing deposits",
+    "category": "Fintech"
+  },
+  "AFRM": {
+    "context": "BNPL leader, Amazon partnership, Debit+ card expanding TAM",
+    "category": "Fintech"
+  },
+  "ITA": {
+    "context": "iShares US Aerospace & Defense ETF \u2014 broad defense exposure including BA, RTX, LMT, NOC, GD",
+    "category": "ETF"
+  },
+  "DFEN": {
+    "context": "Direxion 3x Daily Aerospace & Defense Bull \u2014 leveraged defense bet, use with caution",
+    "category": "ETF"
+  },
+  "PPA": {
+    "context": "Invesco Aerospace & Defense ETF \u2014 includes mid-cap defense names missed by ITA",
+    "category": "ETF"
+  },
+  "HACK": {
+    "context": "ETFMG Prime Cyber Security ETF \u2014 CRWD, PANW, ZS, FTNT, broad cyber exposure",
+    "category": "ETF"
+  },
+  "SMH": {
+    "context": "VanEck Semiconductor ETF \u2014 NVDA, TSM, AVGO, AMD, ASML. The AI chip basket",
+    "category": "ETF"
+  },
+  "GLD": {
+    "context": "SPDR Gold Shares \u2014 physical gold-backed, largest gold ETF, inflation hedge",
+    "category": "ETF"
+  },
+  "TLT": {
+    "context": "iShares 20+ Year Treasury Bond ETF \u2014 rate cut play, long duration",
+    "category": "ETF"
+  },
+  "UFO": {
+    "context": "Procure Space ETF \u2014 RKLB, satellite cos, defense space contractors",
+    "category": "ETF"
+  },
+  "XBI": {
+    "context": "SPDR S&P Biotech ETF \u2014 equal-weight biotech, high-beta pharma play",
+    "category": "ETF"
+  },
+  "VNQ": {
+    "context": "Vanguard Real Estate ETF \u2014 REITs basket, rate-sensitive",
+    "category": "ETF"
+  },
+  "FXI": {
+    "context": "iShares China Large-Cap ETF \u2014 BABA, PDD, JD, bank/tech mix",
+    "category": "ETF"
+  },
+  "KWEB": {
+    "context": "KraneShares CSI China Internet ETF \u2014 pure Chinese tech play",
+    "category": "ETF"
+  },
+  "PFE": {
+    "context": "Post-COVID pipeline rebuild, obesity drug candidate danuglipron, deep value play",
+    "category": "Pharma"
+  },
+  "VRTX": {
+    "context": "Cystic fibrosis monopoly, pain drug pipeline (non-opioid), gene editing partnerships",
+    "category": "Biotech"
+  },
+  "AMGN": {
+    "context": "MariTide obesity drug in Phase 2, diversified biotech, biosimilar leader",
+    "category": "Biotech"
+  },
+  "MRNA": {
+    "context": "mRNA platform beyond COVID, cancer vaccines in trials, flu+COVID combo vaccine",
+    "category": "Biotech"
+  },
+  "BABA": {
+    "context": "Chinese e-commerce giant, Alibaba Cloud AI investments, cheapest big tech globally",
+    "category": "China tech"
+  },
+  "PDD": {
+    "context": "Temu parent, fastest-growing e-commerce platform globally, expanding internationally",
+    "category": "China tech"
+  },
+  "JD": {
+    "context": "Chinese Amazon \u2014 logistics moat, JD Health, warehousing automation",
+    "category": "China tech"
+  },
+  "BIDU": {
+    "context": "Chinese search + Ernie AI chatbot, autonomous driving Apollo Go, AI cloud",
+    "category": "China tech"
+  },
+  "SOL": {
+    "context": "Fastest L1 blockchain, 65K TPS, dominant DEX volume, Firedancer upgrade coming",
+    "category": "Crypto L1"
+  },
+  "ETH": {
+    "context": "Smart contract pioneer, largest DeFi ecosystem, ETF approved, Pectra upgrade",
+    "category": "Crypto L1"
+  },
+  "JUP": {
+    "context": "Solana DEX aggregator, largest swap platform, JUP token staking",
+    "category": "Solana DeFi"
+  },
+  "RAY": {
+    "context": "Raydium AMM \u2014 core Solana DEX liquidity, concentrated liquidity pools",
+    "category": "Solana DeFi"
+  },
+  "BONK": {
+    "context": "Solana meme coin, community-driven, high volume indicator of SOL ecosystem health",
+    "category": "Solana meme"
+  },
+  "UNI": {
+    "context": "Uniswap \u2014 largest DEX by volume, UNI governance token, fee switch potential",
+    "category": "DeFi"
+  },
+  "AAVE": {
+    "context": "Largest DeFi lending protocol, multi-chain, GHO stablecoin",
+    "category": "DeFi"
+  },
+  "MKR": {
+    "context": "MakerDAO \u2014 DAI stablecoin issuer, real-world asset integration, revenue-generating",
+    "category": "DeFi"
+  },
+  "JPM": {
+    "context": "Largest US bank, rate-sensitive, investment banking leader, fortress balance sheet",
+    "category": "Banking"
+  },
+  "GS": {
+    "context": "Goldman Sachs \u2014 M&A/IPO cycle beneficiary, asset management growth",
+    "category": "Banking"
+  },
+  "RHI": {
+    "context": "Robert Half \u2014 largest US staffing firm, directly exposed to white-collar hiring trends",
+    "category": "Staffing"
+  },
+  "UPWK": {
+    "context": "Freelance marketplace \u2014 AI could boost (AI assistants) or hurt (less freelance demand)",
+    "category": "Staffing"
+  },
+  "ISRG": {
+    "context": "Intuitive Surgical \u2014 da Vinci robotic surgery monopoly, 9000+ systems installed",
+    "category": "Robotics"
+  },
+  "QUBT": {
+    "context": "Quantum Computing Inc \u2014 photonic quantum computing, early-stage high-risk",
+    "category": "Quantum"
+  },
+  "SQ": {
+    "context": "Block/Square \u2014 Cash App + merchant payments, Bitcoin exposure, afterpay BNPL",
+    "category": "Fintech"
+  },
+  "PYPL": {
+    "context": "PayPal \u2014 400M+ accounts, Venmo, PYUSD stablecoin, checkout ubiquity",
+    "category": "Fintech"
+  },
+  "NEM": {
+    "context": "Newmont \u2014 world's largest gold miner, dividend play, inflation hedge",
+    "category": "Commodities"
+  },
+  "XOM": {
+    "context": "ExxonMobil \u2014 largest US oil company, Permian Basin dominance, massive buybacks",
+    "category": "Energy"
+  }
+}

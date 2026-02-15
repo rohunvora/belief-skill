@@ -6,8 +6,14 @@
     "budget": 20000,
     "checks": {
       "min_instruments": 5,
-      "must_include_tickers": ["BAH", "LDOS"],
-      "must_include_asset_classes": ["stock", "etf"],
+      "must_include_tickers": [
+        "BAH",
+        "LDOS"
+      ],
+      "must_include_asset_classes": [
+        "stock",
+        "etf"
+      ],
       "must_include_secondary": true,
       "bah_in_top_3": true
     }
@@ -19,8 +25,12 @@
     "budget": 15000,
     "checks": {
       "min_instruments": 4,
-      "must_include_tickers": ["COIN"],
-      "must_include_asset_classes": ["stock"]
+      "must_include_tickers": [
+        "COIN"
+      ],
+      "must_include_asset_classes": [
+        "stock"
+      ]
     }
   },
   {
@@ -30,7 +40,9 @@
     "budget": 10000,
     "checks": {
       "min_instruments": 3,
-      "must_include_asset_classes": ["stock"]
+      "must_include_asset_classes": [
+        "stock"
+      ]
     }
   },
   {
@@ -40,7 +52,9 @@
     "budget": 25000,
     "checks": {
       "min_instruments": 4,
-      "must_include_asset_classes": ["crypto"]
+      "must_include_asset_classes": [
+        "crypto"
+      ]
     }
   },
   {
@@ -49,7 +63,9 @@
     "thesis": "I feel like energy stocks might do well.",
     "checks": {
       "min_instruments": 3,
-      "must_include_asset_classes": ["etf"]
+      "must_include_asset_classes": [
+        "etf"
+      ]
     }
   },
   {
@@ -68,7 +84,9 @@
     "budget": 10000,
     "checks": {
       "min_instruments": 3,
-      "must_include_tickers": ["NVDA"]
+      "must_include_tickers": [
+        "NVDA"
+      ]
     }
   },
   {
@@ -78,6 +96,68 @@
     "budget": 50000,
     "checks": {
       "min_instruments": 1
+    }
+  },
+  {
+    "id": "quantum-drugs",
+    "name": "Quantum + Biotech Cross-Theme",
+    "thesis": "Quantum computing will revolutionize drug discovery and make current pharma R&D obsolete",
+    "budget": 15000,
+    "checks": {
+      "min_instruments": 4,
+      "must_include_asset_classes": [
+        "stock",
+        "etf"
+      ]
+    }
+  },
+  {
+    "id": "gold-inflation",
+    "name": "Commodities Inflation Hedge",
+    "thesis": "Inflation will re-accelerate in 2026 and gold will hit three thousand dollars",
+    "budget": 20000,
+    "checks": {
+      "min_instruments": 4,
+      "must_include_asset_classes": [
+        "stock",
+        "etf"
+      ]
+    }
+  },
+  {
+    "id": "space-race",
+    "name": "Space Industry Boom",
+    "thesis": "The new space race between US and China will make satellite and launch companies massively valuable",
+    "budget": 10000,
+    "checks": {
+      "min_instruments": 3,
+      "must_include_secondary": true
+    }
+  },
+  {
+    "id": "fintech-disruption",
+    "name": "Fintech Disrupts Banks",
+    "thesis": "Neobanks and fintech will permanently take share from traditional banks with embedded finance",
+    "budget": 25000,
+    "checks": {
+      "min_instruments": 4,
+      "must_include_asset_classes": [
+        "stock"
+      ]
+    }
+  },
+  {
+    "id": "robotics-humanoid",
+    "name": "Humanoid Robot Revolution",
+    "thesis": "Humanoid robots will be deployed in factories at scale by 2028, led by Tesla Optimus and Figure",
+    "budget": 30000,
+    "checks": {
+      "min_instruments": 4,
+      "must_include_secondary": true,
+      "must_include_asset_classes": [
+        "stock",
+        "etf"
+      ]
     }
   }
 ]
