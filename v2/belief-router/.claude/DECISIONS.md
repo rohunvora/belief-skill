@@ -43,12 +43,51 @@
 
 5. **"Why this trade" = exactly 3 bullets.** Reader can skim bold lead-ins only and get the thesis. Bullet 1 = force. Bullet 2 = why this instrument. Bullet 3 = the math.
 
-### Open question: output medium
+### Resolved: output medium → Telegram-native monospace
 - Markdown tables break on Telegram (OpenClaw distribution)
-- Monospace code blocks work everywhere (Telegram, terminal, MD)
-- Need format flag or auto-detection: Telegram vs Obsidian MD
-- Telegram format: code blocks for scenarios + rejections, no tables, no collapsible sections
-- Obsidian format: full markdown tables, collapsed source callout
+- Decision: monospace code blocks as the single default format
+- Works everywhere: Telegram, terminal, Obsidian MD
+- Obsidian-specific format (tables, callouts) deferred — can add later as a flag
+
+## 2026-02-15: Session 2 — Output v6 (Minto + Price + Comparables)
+
+### What changed
+- Phase 6 in SKILL.md rewritten to v6 Minto/Telegram-native format
+- Input validation expanded: implied theses (questions, vibes) now get reframed with AskUserQuestion
+- Trade history check added to Phase 2 (checks `track.ts` for overlapping positions)
+- v1 files relocated from repo root to `v1/`
+
+### Output format iterations continued (rounds 4-7)
+
+**Round 4: Stock price was missing**
+- "You kind of need it" — price is how traders check their brokerage app
+- Added price to trade line and scenario table
+- MC stays for thesis evaluation, price for brokerage checking
+
+**Round 5: MC means nothing without a comparable**
+- Insight: "$688M" is abstract. "Approaching QUBT-size ($2.1B)" is instant
+- Comparable-as-label pattern: upside rows labeled by company milestone (→ QUBT, → RGTI, → QBTS), downside by loss % (−60%, −35%)
+
+**Round 6: "I don't even know what LAES is"**
+- Minto Pyramid applied: company introduced in plain English before ticker
+- "There's a $688M Swiss chip company making the exact hardware that NIST requires..."
+- Ticker line becomes confirmation, not introduction
+
+**Round 7: WHY section flows into scenarios**
+- Old: disconnected data table dropped after one-liner thesis
+- New: progressive build — mandate (fact) → deadline (urgency) → company product (connection) → market size (scale) → "if they capture 5%..." (aha) → scenario table (payoff)
+
+### Key design decisions (additions)
+
+6. **Company before ticker (Minto).** Reader must know WHAT they're buying before they see the ticker. No Googling required. Each section only needs understanding from sections above it.
+
+7. **Comparable-as-label.** Upside scenarios use → [COMPANY] as labels (milestones). Downside uses −XX% (loss framing). Matches how traders actually think in each direction.
+
+8. **Price + MC + Comparable = triple anchor.** Price for brokerage checking ("am I winning?"). MC as proof of scale. Comparable gives MC meaning. All three serve different reader moments.
+
+9. **Progressive WHY.** The scenario table is the conclusion of the WHY section, not a standalone block. Reader builds understanding before seeing the numbers.
+
+10. **Telegram-native as default.** Single monospace code block. No markdown tables. `────` dividers. Column alignment with spaces. ~4096 chars target.
 
 ### Known issues
 - LEAPS pricing not available programmatically — Yahoo/Barchart require JS rendering
