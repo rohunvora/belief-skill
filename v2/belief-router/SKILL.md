@@ -207,6 +207,14 @@ For each surviving candidate within the class, compute the three metric componen
 
 Your "home pick" is the highest-scoring candidate within the natural class.
 
+### Thesis Beta Floor
+
+**A high thesis-beta instrument with defined loss ALWAYS beats a low thesis-beta instrument with zero carry.** This is the most common routing error — defaulting to a "safe" ETF (25% thesis beta, 1.3x, zero carry) when an options or binary expression exists with 80%+ thesis beta and 5-10x convexity at defined risk.
+
+Rule: if a candidate scores >5x higher on the metric than the home pick, it wins — even if it's in a different instrument class, even if it has time cost. A $100K defined-loss put with 11x convexity and 90% thesis beta is a better belief expression than a $100K ETF position with 1.3x upside that mostly moves on unrelated factors.
+
+When the home pick has thesis beta <50%, **always** cross-check the vulnerability class (puts on the loser) and binary class (prediction markets) before committing. The beneficiary trade is often the boring one; the victim trade is where the convexity lives.
+
 ### Step 2: Cross-Check Across Classes
 
 Is the home pick actually the best? Compare it against the best instrument from at least one OTHER class on the same metric.
