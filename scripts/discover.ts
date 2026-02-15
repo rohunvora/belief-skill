@@ -131,7 +131,12 @@ function generateSearchQueries(thesis: string): string[] {
   
   // Check for specific well-known topics to generate targeted queries
   // Use word boundaries and negative lookaheads to avoid false positives
-  const isCrypto = /\b(crypto|token|chain|defi|dex|solana|ethereum|bitcoin|coin|web3|onchain|memecoin)\b/i.test(thesis);
+  const hasCryptoKeyword = /\b(crypto|token|chain|defi|dex|solana|ethereum|bitcoin|coin|web3|onchain|memecoin)\b/i.test(thesis);
+  // Crypto is "primary" only when the thesis is ABOUT crypto, not just mentioning it as context
+  // "Every Bugatti customer is a crypto bro" → crypto is context, not target
+  // "Solana will flip Ethereum" → crypto IS the target
+  const hasNonCryptoSector = /\b(luxury|brand|fashion|consumer|retail|car|automotive|real estate|housing|drug|pharma|defense|military|energy|oil|gold)\b/i.test(thesis);
+  const isCrypto = hasCryptoKeyword && !hasNonCryptoSector;
   const isDefense = /\b(defense|military|pentagon|warfare|weapons|dod|army|navy)\b/i.test(thesis);
   const isBiotech = /\b(drug|pharma|biotech|fda|clinical|ozempic|wegovy|peptide|glp|obesity|weight loss)\b/i.test(thesis);
   const isNuclear = /\b(nuclear|uranium)\b/i.test(thesis);
@@ -365,6 +370,33 @@ export async function discoverInstrumentsLive(thesis: string): Promise<Candidate
     });
   }
   
+  // ── 1b. Recognize bare uppercase words matching known crypto tickers ──
+  // Catches "BONK, WIF, PEPE" mentioned directly in thesis without $ prefix
+  const words = thesis.split(/[\s,;.!?]+/).filter(w => w === w.toUpperCase() && w.length >= 2 && w.length <= 6);
+  for (const word of words) {
+    if (KNOWN_CRYPTO.has(word) && !seen.has(word) && !FALSE_POSITIVE_TICKERS.has(word)) {
+      seen.add(word);
+      candidates.push({
+        ticker: word,
+        name: word,
+        asset_class: "crypto",
+        sub_themes: ["direct_mention"],
+        source: "thesis-crypto-mention",
+      });
+    }
+    // Also match known ETF tickers mentioned bare
+    if (KNOWN_ETFS.has(word) && !seen.has(word) && !FALSE_POSITIVE_TICKERS.has(word)) {
+      seen.add(word);
+      candidates.push({
+        ticker: word,
+        name: word,
+        asset_class: "etf",
+        sub_themes: ["direct_mention"],
+        source: "thesis-etf-mention",
+      });
+    }
+  }
+
   // ── 2. Extract known company/token names from text ──
   const KNOWN_NAMES: Record<string, { ticker: string; class: "stock" | "crypto" | "secondary" }> = {
     // Crypto
