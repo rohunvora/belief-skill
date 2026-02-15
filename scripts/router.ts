@@ -490,7 +490,7 @@ async function main() {
   // 4. Size
   console.error("4/4 Sizing positions...");
   const portfolio = loadPortfolio(portfolioPath);
-  const sized = sizePositions(ranked, portfolio, budget, thesis);
+  const sized = sizePositions(ranked, portfolio, budget, thesis.raw);
 
   // Output
   const output = formatTelegram(thesis, sized, portfolio, budget);
