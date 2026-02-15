@@ -10,6 +10,7 @@ import { discoverInstruments } from "../scripts/instruments";
 import { enrichInstruments } from "../scripts/research";
 import { rankInstruments } from "../scripts/rank";
 import { sizePositions } from "../scripts/size";
+import { decomposeThesis } from "../scripts/decompose";
 
 const PORTFOLIO_PATH = new URL("../../../examples/sample-state.json", import.meta.url).pathname;
 const tests = JSON.parse(await Bun.file(new URL("./test-theses.json", import.meta.url).pathname).text());
@@ -30,13 +31,35 @@ for (const test of tests as TestCase[]) {
   let foundTickers: string[] = [];
 
   try {
-    const candidates = await discoverInstruments(test.text);
-    const enriched = await enrichInstruments(candidates);
+    // LLM decomposition (Claude-as-router pattern — simulated via API for testing)
+    const decomposed = await decomposeThesis(test.text);
+    
+    // Build candidates from LLM suggestions + web search discovery
+    const CRYPTO_SET = new Set(["BTC","ETH","SOL","HYPE","TRUMP","PENGU","BONK","WIF","PYTH","JUP","RAY","JTO","ORCA","DYDX","AAVE","UNI","MKR","CRV","SNX","RNDR","AKT","TAO","ARB","OP","MATIC","GALA","IMX","AXS","SAND","MANA","VIRTUAL","AI16Z","FET","NEAR","AVAX","DOT","LINK","ATOM"]);
+    const llmCandidates = decomposed.instruments.map(inst => {
+      const ticker = inst.ticker.replace(/\$/g, "").toUpperCase();
+      let asset_class: "stock" | "etf" | "crypto" | "secondary" = "stock";
+      if (inst.asset_class?.includes("crypto") || CRYPTO_SET.has(ticker)) asset_class = "crypto";
+      else if (inst.asset_class?.includes("etf") || inst.asset_class?.includes("ETF")) asset_class = "etf";
+      else if (inst.asset_class?.includes("secondary") || inst.asset_class?.includes("pre-IPO")) asset_class = "secondary";
+      return { ticker, name: ticker, asset_class, sub_themes: ["llm"], source: "llm-decompose", _direction: inst.direction, _why: inst.why };
+    });
+    
+    const discoverCandidates = await discoverInstruments(test.text);
+    const seen = new Set(llmCandidates.map(c => c.ticker));
+    const allCandidates = [...llmCandidates, ...discoverCandidates.filter(c => !seen.has(c.ticker))];
+    
+    const enriched = await enrichInstruments(allCandidates);
     const ranked = rankInstruments(enriched, test.text);
+    // Apply LLM direction hints
+    for (const r of ranked) {
+      const llmInst = decomposed.instruments.find(i => i.ticker.replace(/\$/g, "").toUpperCase() === r.ticker.toUpperCase());
+      if (llmInst?.direction === "short") (r as any)._direction = "short";
+    }
     const sized = sizePositions(ranked, portfolio, 10000, test.text);
 
     foundTickers = sized.map(s => s.ticker.toUpperCase());
-    const foundAll = [...foundTickers, ...candidates.map(c => c.ticker.toUpperCase())];
+    const foundAll = [...foundTickers, ...allCandidates.map(c => c.ticker.toUpperCase())];
 
     // Check: did we find at least 2 of the ideal instruments (or valid alternatives)?
     // Normalize ideal instruments and expand aliases

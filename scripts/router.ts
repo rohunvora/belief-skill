@@ -1,6 +1,13 @@
 #!/usr/bin/env bun
 /**
- * Belief Router — Main orchestrator
+ * Belief Router — Standalone CLI for testing
+ * 
+ * In production (OpenClaw), Claude IS the router — it reads SKILL.md, decomposes
+ * the thesis naturally, then calls research.ts and size.ts as tools.
+ * 
+ * This file exists for automated test suites (run-tests.ts, run-tweet-tests.ts)
+ * and CLI demo mode. It uses an LLM API call to simulate what Claude does natively.
+ * 
  * Usage: bun run scripts/router.ts "thesis text" [--portfolio path] [--budget N]
  */
 
