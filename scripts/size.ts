@@ -362,3 +362,68 @@ function generateRationale(instrument: RankedInstrument, existingExposure: numbe
 
   return parts.join(" ") || `Direct ${instrument.sub_themes?.[0]?.replace(/_/g, " ") || instrument.asset_class} play.`;
 }
+
+// CLI mode: bun run size.ts --tickers "AAPL:long,RHI:short" --budget 20000 [--portfolio path] [--thesis "text"]
+if (import.meta.main) {
+  const args = process.argv.slice(2);
+  const tickerIdx = args.indexOf("--tickers");
+  const budgetIdx = args.indexOf("--budget");
+  const portfolioIdx = args.indexOf("--portfolio");
+  const thesisIdx = args.indexOf("--thesis");
+
+  if (tickerIdx < 0) {
+    console.error("Usage: bun run size.ts --tickers 'AAPL:long,RHI:short' --budget 20000 [--portfolio path] [--thesis text]");
+    process.exit(1);
+  }
+
+  const tickerPairs = args[tickerIdx + 1].split(",").map(t => {
+    const [ticker, dir = "long"] = t.trim().split(":");
+    return { ticker: ticker.toUpperCase(), direction: dir as "long" | "short" };
+  });
+
+  const budget = budgetIdx >= 0 ? parseInt(args[budgetIdx + 1]) : 20000;
+  const portfolioPath = portfolioIdx >= 0 ? args[portfolioIdx + 1] : new URL("../../../examples/sample-state.json", import.meta.url).pathname;
+  const thesis = thesisIdx >= 0 ? args[thesisIdx + 1] : undefined;
+
+  const portfolio = JSON.parse(await Bun.file(portfolioPath).text());
+
+  // Build fake ranked instruments from tickers
+  const { enrichInstruments } = await import("./research");
+  const { COINGECKO_IDS } = await import("./crypto-prices");
+  
+  const SECONDARIES_PATH = new URL("../references/secondaries.json", import.meta.url).pathname;
+  let secondaries: Record<string, any> = {};
+  try { secondaries = JSON.parse(await Bun.file(SECONDARIES_PATH).text()); } catch {}
+
+  const candidates = tickerPairs.map(({ ticker, direction }) => {
+    const lower = ticker.toLowerCase();
+    const asset_class = secondaries[lower] ? "secondary" as const
+      : COINGECKO_IDS[ticker] ? "crypto" as const
+      : "stock" as const;
+    return { ticker, name: ticker, asset_class, sub_themes: [] as string[], source: "claude" };
+  });
+
+  const enriched = await enrichInstruments(candidates);
+  
+  // Add direction flags and minimal scores
+  const ranked: RankedInstrument[] = enriched.map((e, i) => ({
+    ...e,
+    scores: { thesis_alignment: 80 - i * 5, valuation: 50, catalyst_proximity: 50, liquidity: 50, portfolio_fit: 50, composite: 70 - i * 3 },
+    rank: i + 1,
+    _direction: tickerPairs.find(tp => tp.ticker === e.ticker)?.direction || "long",
+  }));
+
+  const sized = sizePositions(ranked, portfolio, budget, thesis);
+  
+  // Output
+  console.log(JSON.stringify(sized.map(s => ({
+    ticker: s.ticker,
+    direction: s.direction,
+    allocation_usd: s.allocation_usd,
+    allocation_pct: s.allocation_pct,
+    price: s.price,
+    rationale: s.rationale,
+    existing_exposure: s.existing_exposure,
+    asset_class: s.asset_class,
+  })), null, 2));
+}

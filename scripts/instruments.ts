@@ -5,6 +5,7 @@
  */
 
 import type { CandidateInstrument } from "./types";
+import { expandThesis, extractMentionedTickers } from "./expand";
 
 const THEME_MAP_PATH = new URL("../references/theme-map.json", import.meta.url).pathname;
 const SECONDARIES_PATH = new URL("../references/secondaries.json", import.meta.url).pathname;
@@ -53,6 +54,18 @@ export async function discoverInstruments(thesis: string): Promise<CandidateInst
 
   // Sort by match strength
   matchedThemes.sort((a, b) => b.score - a.score);
+
+  // Semantic expansion: find themes that keyword matching misses
+  // Only add expansion themes if we have NO keyword matches (avoid dilution)
+  if (matchedThemes.length === 0) {
+    const expandedThemeNames = expandThesis(thesis);
+    for (const themeName of expandedThemeNames) {
+      if (themeMap[themeName] && !matchedThemes.some(m => m.theme === themeName)) {
+        matchedThemes.push({ theme: themeName, entry: themeMap[themeName], score: 0.5 });
+      }
+    }
+    matchedThemes.sort((a, b) => b.score - a.score);
+  }
 
   // Take top 5 themes — complex theses span multiple sectors
   const topThemes = matchedThemes.slice(0, 5);
@@ -128,6 +141,24 @@ export async function discoverInstruments(thesis: string): Promise<CandidateInst
         asset_class: "secondary",
         sub_themes: [sec.sector],
         source: "secondaries-registry",
+      });
+    }
+  }
+
+  // Extract explicitly mentioned tickers from thesis text
+  const mentionedTickers = extractMentionedTickers(thesis);
+  for (const ticker of mentionedTickers) {
+    if (!seen.has(ticker)) {
+      seen.add(ticker);
+      // Auto-classify: check if it's a known crypto or secondary
+      const isSecondary = secondaries[ticker.toLowerCase()];
+      const isCrypto = ["BTC", "ETH", "SOL", "HYPE", "TRUMP", "PENGU", "BONK", "WIF", "PYTH", "JUP", "RAY", "JTO", "ORCA", "DYDX", "AAVE", "UNI", "MKR", "CRV", "SNX", "RNDR", "AKT", "TAO", "ARB", "OP", "MATIC", "LDO", "RPL", "ENS", "FXS", "DEGEN", "AERO", "BRETT", "TOSHI"].includes(ticker);
+      candidates.push({
+        ticker,
+        name: isSecondary?.name || ticker,
+        asset_class: isSecondary ? "secondary" : isCrypto ? "crypto" : "stock",
+        sub_themes: topThemes.length > 0 ? [topThemes[0].theme] : ["direct_mention"],
+        source: "thesis-mention",
       });
     }
   }

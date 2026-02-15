@@ -97,3 +97,47 @@ export async function enrichInstruments(candidates: CandidateInstrument[]): Prom
     ...secondaryResults,
   ];
 }
+
+// CLI mode: bun run research.ts --tickers "AAPL,NVDA,SOL,ANDURIL" [--format json|table]
+if (import.meta.main) {
+  const args = process.argv.slice(2);
+  const tickerIdx = args.indexOf("--tickers");
+  const formatIdx = args.indexOf("--format");
+  const format = formatIdx >= 0 ? args[formatIdx + 1] : "table";
+
+  if (tickerIdx < 0) {
+    console.error("Usage: bun run research.ts --tickers 'AAPL,NVDA,SOL' [--format json|table]");
+    process.exit(1);
+  }
+
+  const tickers = args[tickerIdx + 1].split(",").map(t => t.trim().toUpperCase());
+  
+  // Auto-classify tickers
+  const KNOWN_CRYPTO = new Set(Object.keys((await import("./crypto-prices")).COINGECKO_IDS));
+  const DEX_TOKENS = new Set(["HYPE", "TRUMP", "PENGU", "BRETT", "TOSHI", "DEGEN", "AERO", "BONK", "WIF", "PYTH", "JTO", "ORCA"]);
+  const SECONDARIES_PATH = new URL("../references/secondaries.json", import.meta.url).pathname;
+  let secondaries: Record<string, any> = {};
+  try { secondaries = JSON.parse(await Bun.file(SECONDARIES_PATH).text()); } catch {}
+
+  const candidates: CandidateInstrument[] = tickers.map(t => {
+    const lower = t.toLowerCase();
+    if (secondaries[lower]) return { ticker: t, name: secondaries[lower].name || t, asset_class: "secondary" as const, sub_themes: [], source: "claude" };
+    if (KNOWN_CRYPTO.has(t) || DEX_TOKENS.has(t)) return { ticker: t, name: t, asset_class: "crypto" as const, sub_themes: [], source: "claude" };
+    return { ticker: t, name: t, asset_class: "stock" as const, sub_themes: [], source: "claude" };
+  });
+
+  const enriched = await enrichInstruments(candidates);
+
+  if (format === "json") {
+    console.log(JSON.stringify(enriched, null, 2));
+  } else {
+    for (const e of enriched) {
+      const parts = [e.ticker, e.asset_class];
+      if (e.price > 0) parts.push(`$${e.price.toFixed(2)}`);
+      if (e.market_cap) parts.push(`mcap: $${(e.market_cap / 1e9).toFixed(1)}B`);
+      if (e.pe_ratio) parts.push(`PE: ${e.pe_ratio.toFixed(1)}`);
+      if (e.risk_note) parts.push(e.risk_note);
+      console.log(parts.join(" | "));
+    }
+  }
+}
