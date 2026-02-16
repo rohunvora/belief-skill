@@ -174,9 +174,9 @@ function computeReturnProfile(params: {
   const fundingCostPct = dirMult * fundingRate * leverage * HOLDING_PERIOD_HOURS;
   const fundingAnnualizedPct = fundingRate * 24 * 365 * 100;
 
-  // Net returns after funding
+  // Net returns after funding (cap loss at -100% — liquidation prevents worse)
   const returnIfRightPct = (pnlIfRight - fundingCostPct) * 100;
-  const returnIfWrongPct = (pnlIfWrong - fundingCostPct) * 100;
+  const returnIfWrongPct = Math.max((pnlIfWrong - fundingCostPct) * 100, -100);
 
   // Liquidation prices
   const liqPriceLong = entryPrice * (1 - 1 / leverage);
