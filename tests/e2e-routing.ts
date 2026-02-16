@@ -344,7 +344,7 @@ async function runThesisTest(thesis: { id: string; input: string; shape: string;
               returnsCalculated++;
               const oExpr = optResult.expression;
               const oBeta = estimateThesisBeta(thesis.shape, inst.relevance || "proxy", "robinhood");
-              const oConv = oExpr.return_if_right_pct ? Math.max(oExpr.return_if_right_pct / 100, 0.1) : 1;
+              const oConv = Math.min(oExpr.return_if_right_pct ? Math.max(oExpr.return_if_right_pct / 100, 0.1) : 1, 20);
               const oTC = estimateTimeCost("robinhood", "option");
               const oScore = (oBeta * oConv) / (1 + oTC);
 
@@ -380,7 +380,10 @@ async function runThesisTest(thesis: { id: string; input: string; shape: string;
         returnsCalculated++;
         const expr = returnsResult.expression;
         const beta = estimateThesisBeta(thesis.shape, inst.relevance || "proxy", call.adapter);
-        const convexity = expr.return_if_right_pct ? Math.max(expr.return_if_right_pct / 100, 0.1) : 1;
+        const rawConvexity = expr.return_if_right_pct ? Math.max(expr.return_if_right_pct / 100, 0.1) : 1;
+        // Cap convexity at 20x for scoring — prevents 1¢ lottery tickets from dominating.
+        // Raw convexity still shown in output. Conviction breakeven handles probability in production.
+        const convexity = Math.min(rawConvexity, 20);
         const timeCost = estimateTimeCost(call.adapter, expr.execution_details?.type || "stock");
         const score = (beta * convexity) / (1 + timeCost);
 
