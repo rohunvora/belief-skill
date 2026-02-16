@@ -32,7 +32,8 @@ const CONCEPT_TICKERS: Record<string, string[]> = {
   "nvidia": ["NVDA"], "google": ["GOOG", "GOOGL"], "apple": ["AAPL"], "amazon": ["AMZN"],
   "microsoft": ["MSFT"], "meta": ["META"], "tesla": ["TSLA"],
   // Sectors/themes
-  "ozempic": ["NVO", "LLY", "DASH", "MDLZ", "PEP", "CAKE"],
+  "ozempic": ["NVO", "LLY", "DASH", "MDLZ", "PEP", "CAKE", "HIMS"],
+  "weight": ["NVO", "LLY", "WW"],
   "defense": ["BAH", "PLTR", "LMT", "RTX", "NOC", "DFEN", "ITA"],
   "oil": ["USO", "XLE", "OXY", "CVX"], "gold": ["GLD", "NEM", "GOLD"],
   // Macro instruments
@@ -313,10 +314,11 @@ async function runThesisTest(thesis: { id: string; input: string; shape: string;
       continue;
     }
 
-    // Step 2: Get returns for top instruments (limit to 2 per adapter to save API calls)
+    // Step 2: Get returns for top instruments (primary=4, secondary=2 to balance API calls vs coverage)
+    const pricingLimit = call.priority === "primary" ? 4 : 2;
     const topInstruments = instList
       .filter((i: any) => i.relevance === "direct" || i.relevance === "proxy" || i.mark_price)
-      .slice(0, 2);
+      .slice(0, pricingLimit);
 
     for (const inst of topInstruments) {
       let returnsResult: any = null;
