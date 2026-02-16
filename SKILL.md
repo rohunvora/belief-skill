@@ -18,7 +18,7 @@ description: >
 ## Defaults
 
 - **Ranking metric: `thesis beta × convexity / time cost`.** Purest expression of the thesis, with the most leverage, at the lowest cost to hold. This replaces any hardcoded instrument preference — the metric naturally surfaces the right instrument for each thesis shape.
-- **Bet size: $100,000.** Show payoff scenarios at this amount, not just $100 basis.
+- **Bet size: $100,000.** Default position size for scenarios and button quantities. Users can override by saying "I trade with $10K" or "size: $25K" — use that amount for all subsequent routings in the session. Adapt language: $10K positions don't buy 800 options contracts, they buy 25.
 - **Goal: one trade.** Find THE single best expression. Not a portfolio. Show 1-2 alternatives with genuinely different risk profiles, but lead with THE trade and commit to it.
 - **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in. See Phase 1 Time Horizon.
 
@@ -380,173 +380,139 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 
 ---
 
-## Phase 5: Format for the Screenshot
+## Phase 5: Output
 
-**Phases 1-4 are internal reasoning — do not output them. Only output Phase 5.**
+**Phases 1-4 are internal reasoning. Phase 5 is what the user sees.**
 
-**The viral moment is the screenshot.** A user screenshots your trade card in Telegram and shares it. The input (tweet/voice note + user message) sits at the top of the screenshot. Your output sits below. Both must fit in ONE iPhone screenshot (~35 lines total, ~20 lines for your output after the input).
+Output has two parts: **The Take** (streamed as your reply) and **The Card** (sent via message tool with buttons). They serve different purposes. The take is the experience — conviction, reasoning, the feeling of getting an edge. The card is the artifact — precise, screenshotable, actionable.
 
-**Your first character is 🎯. No preamble. No "interesting thesis." No "let me run this." The trade card IS the response.**
+### Part 1: The Take (streamed reply)
 
-### The Screenshot Rule
+Your reply text. This streams to the user via Telegram preview as you generate it. No preamble — start with the insight immediately.
 
-**≤18 lines of Telegram text.** Everything that matters fits in 18 lines. If it doesn't fit, cut it — not the scenario table, cut the prose.
+**Style: bold claims, not prose.** Each paragraph is one logical step: a bold claim + 1-2 sentences of evidence. The user can scan the bolds and trace the full reasoning in 5 seconds. Each bold is a verifiable statement.
 
-### Formatting Principles
+**Required elements:**
+- The non-obvious insight (what the market is missing)
+- Why the obvious play is wrong or already priced in
+- The probability gap: what the market prices vs what breakeven requires
+- "You need to believe X" — frame the user as the decision-maker
 
-1. **≤18 lines.** Non-negotiable. Count them. The screenshot is the product.
-2. **Zero preamble.** First character is 🎯. No "Running it through...", no Phase headers, no acknowledgment of the input.
-3. **Title ≤ 5 words.** "PQC MANDATE" not "PQC mandate = NIST buying your bags."
-4. **WHY in 2-3 sentences.** The one insight that makes someone go "oh shit." Weave in why the obvious play is wrong — rejections are the reasoning, not a separate section.
-5. **4 scenario rows max.** Worst, base, good, moon. Not 5. Asymmetric framing: downside as dollar losses, upside as multiples.
-6. **Kills + alt = 2 lines.** Compressed.
-7. **Buttons close the card.** The execute button with quantity is the proof of construction. It's the punchline of the screenshot.
-8. **Telegram-native.** Bold for headers, normal text for prose, monospace code block ONLY for scenario table.
+**Constraints:**
+- 4-6 paragraphs max. Tight, not rambling.
+- No section headers, no tables, no arrows, no ✓/✗ marks
+- Every claim backed by data from Phase 2 research
+- End with a clear statement of the edge
 
-### Output Template
+### Part 2: The Card (message tool)
+
+After the take, send the trade card via the `message` tool with inline buttons. The card is the spec sheet — pure information, no prose. Fixed format every time.
+
+**Card template:**
 
 ```
-🎯 [TITLE — ≤5 WORDS]
+[TICKER] · [INSTRUMENT] · [DIRECTION]
+[QTY] @ $[PRICE] · risk $[AMOUNT]
 
-[TICKER] $[PRICE] · [direction]
+$[price]   [lose/gain $XK]   [condition]
+$[price]   [lose/gain $XK]   [condition]
+$[price]   [+$XK (Nx)]       [condition]
+$[price]   [+$XK (Nx)]       [condition]
 
-[2-3 sentences. What, why mispriced, why not
-the obvious play. This IS the reasoning.]
-
-$100K → [quantity] [units]
-
-[price]  [lose $XK / Nx]  [condition]
-[price]  [lose $XK / Nx]  [condition]
-[price]  [lose $XK / Nx]  [condition]
-[price]  [lose $XK / Nx]  [condition]
-
-[X]% to be +EV · dies if: [k1], [k2], [k3]
++EV above [X]% · dies if [k1], [k2]
 Alt: [TICKER] $[price] [dir] ([1 sentence])
 ```
 
-Then attach inline buttons (see below). That's ≤16 lines of text + button row. Done.
+**≤10 lines.** The card is a spec sheet, not a story. The take already told the story.
 
-### Action Buttons
+**Card precision rules:**
+- **Equity:** target price = target MC ÷ shares outstanding. Multiple = target ÷ entry.
+- **Options:** state strike, expiry, premium. P&L = contracts × (intrinsic − premium) × 100. State breakeven price.
+- **Kalshi:** P&L = contracts × (payout − entry). State implied probability.
+- **Perps:** P&L = size × leverage × move %. State liquidation price in worst row.
+- **Kill conditions:** specific + observable. "NIST delays mandate" not "thesis is wrong."
 
-**Send the trade card via the `message` tool with inline buttons.** Do NOT output the card as a plain text reply — use the message tool so buttons render. Then respond with `NO_REPLY` to avoid a duplicate message.
-
-After Phases 1-4 are complete and you have the trade card text + routing facts, send it like this:
+### Sending the Card
 
 ```json
 {
   "action": "send",
   "channel": "telegram",
-  "message": "<the trade card text from the output template above>",
+  "message": "<card text>",
   "buttons": [
     [
-      {"text": "Buy [QTY] [TICKER] → [Platform]", "url": "[DEEP_LINK]", "style": "success"},
-      {"text": "📝 Track", "callback_data": "blr:track:[ROUTING_ID]", "style": "primary"}
+      {"text": "[Verb] [QTY] [INST] → [Platform]", "callback_data": "blr:exec:[ID]"},
+      {"text": "📝 Track", "callback_data": "blr:track:[ID]"}
     ]
   ]
 }
 ```
 
-**The execute button is a `url` button** — it opens the platform page directly. No callback, no confirmation step. The user taps → platform opens → they execute manually.
+**Button text by instrument type:**
 
-**The track button is a `callback_data` button** — when tapped, `blr:track:[ID]` arrives as the user's next message.
+| Type | Button text | Platform URL (for reference) |
+|------|------------|-----|
+| Stock | `Buy 1,923 BKNG → Robinhood` | `robinhood.com/stocks/BKNG` |
+| Put/Call | `Buy 800 MTCH $25P → Robinhood` | `robinhood.com/options/chains/MTCH` |
+| Kalshi | `Buy 3,225 FED-CUTS YES → Kalshi` | `kalshi.com/markets/[slug]` |
+| Perp | `Long SOL 3x → Hyperliquid` | `app.hyperliquid.xyz/trade/SOL` |
+| Polymarket | `Buy 4,545 YES → Polymarket` | `polymarket.com/event/[slug]` |
 
-**Button text templates by instrument type:**
-
-| Type | Execute button text | URL |
-|------|-------------------|-----|
-| Stock | `Buy 25,974 LAES → Robinhood` | `https://robinhood.com/stocks/LAES` |
-| Put/Call | `Buy 238 DJT $5P → Robinhood` | `https://robinhood.com/options/chains/DJT` |
-| Kalshi | `Buy 3,703 KXFED NO → Kalshi` | `https://kalshi.com/markets/KXFED` |
-| Perp | `Long SOL 3x → Hyperliquid` | `https://app.hyperliquid.xyz/trade/SOL` |
-| Polymarket | `Buy 1,538 YES → Polymarket` | `https://polymarket.com/event/[slug]` |
-
-**Button styles:** Execute = `"success"` (green), Track = `"primary"` (blue). Requires Bot API 9.4+.
+After sending the card, respond with `NO_REPLY` to avoid a duplicate message.
 
 ### Handling Button Callbacks
 
-When the user taps a button, its `callback_data` arrives as their message. Handle these prefixes:
-
-**`blr:track:[ID]`** — User wants to paper trade this routing.
-1. Run: `bun run scripts/track.ts record --input "<thesis>" --inst <INST> --px <PX> --dir <DIR> --plat <PLAT> --action paper --β <BETA> --conv <CONV> --tc <TC> --kills "<KILLS>" --alt "<ALT>"`
-2. Reply with confirmation + next buttons:
+**`blr:track:[ID]`** — Paper trade this routing.
+1. Run: `bun run scripts/track.ts record --input "<thesis>" --inst <INST> --px <PX> --dir <DIR> --plat <PLAT> --action paper --shape <SHAPE> --β <BETA> --conv <CONV> --tc <TC> --kills "<KILLS>" --alt "<ALT>"`
+2. Reply with confirmation + buttons:
 ```json
 {
   "action": "send",
-  "message": "📝 Tracked [INST] @ $[PX]. Portfolio updated.",
+  "message": "📝 Tracked [INST] @ $[PX].",
   "buttons": [
     [
-      {"text": "✅ I Took This", "callback_data": "blr:real:[ID]", "style": "success"},
+      {"text": "✅ I Took This", "callback_data": "blr:real:[ID]"},
       {"text": "📊 Portfolio", "callback_data": "blr:portfolio"}
     ]
   ]
 }
 ```
 
-**`blr:real:[ID]`** — User actually executed the trade.
-1. The routing was already recorded as paper from the Track step. Append a note: `bun run scripts/track.ts update --id [ID] --conviction [same] --reason "executed real"`
+**`blr:real:[ID]`** — Mark as real trade.
+1. `bun run scripts/track.ts update --id [ID] --conviction [same] --reason "executed real"`
 2. Reply: "💰 Marked as real. Good luck."
 
 **`blr:portfolio`** — Show portfolio.
-1. Run: `bun run scripts/track.ts portfolio --telegram`
-2. Send the output.
+1. `bun run scripts/track.ts portfolio --telegram`
 
 **`blr:close:[ID]`** — Close a position.
-1. Fetch live price for the instrument.
-2. Run: `bun run scripts/track.ts close --id [ID] --px [LIVE_PRICE]`
-3. Reply with P&L summary.
+1. Fetch live price. `bun run scripts/track.ts close --id [ID] --px [LIVE_PRICE]`
+2. Reply with P&L summary.
 
-### Recording Trades
-
-Trades are recorded when the user taps 📝 Track (not automatically on every routing). This keeps the belief log clean — only beliefs the user chose to track.
-
-**CLI reference for the Track callback handler:**
+### Recording CLI Reference
 
 ```bash
 bun run scripts/track.ts record \
   --input "<user's exact words>" \
   --inst "<TICKER or CONTRACT>" \
-  --px <entry price> \
-  --dir <long|short> \
+  --px <entry price> --dir <long|short> \
   --plat <robinhood|kalshi|polymarket|hyperliquid|bankr> \
-  --action paper \
-  --shape <binary|mispriced|sector|relative|vulnerability> \
-  --β <thesis beta 0-1> \
-  --conv <convexity multiple> \
-  --tc <annualized time cost> \
-  --kills "<kill1, kill2, kill3>" \
-  --alt "<ALT TICKER $price direction (1 sentence)>"
+  --action paper --shape <binary|mispriced|sector|relative|vulnerability> \
+  --β <thesis beta 0-1> --conv <convexity multiple> --tc <annualized time cost> \
+  --kills "<kill1, kill2, kill3>" --alt "<ALT TICKER $price direction>"
 ```
 
 Optional: `--src "tweet:@handle"`, `--claim "deeper claim"`, `--sector "defense"`, `--conviction <0-100>`.
 
-**Storage:** `data/beliefs.jsonl` — append-only, one JSON line per fact.
+**Storage:** `data/beliefs.jsonl` — append-only JSONL. One line per fact.
 
 ```bash
-bun run scripts/track.ts portfolio [--telegram]   # open beliefs + live P&L
-bun run scripts/track.ts close --id X --px <exit>  # close a position
+bun run scripts/track.ts portfolio [--telegram]
+bun run scripts/track.ts close --id X --px <exit>
 bun run scripts/track.ts update --id X --conviction 90 --reason "new data"
-bun run scripts/track.ts history                   # recent routings
-bun run scripts/track.ts check <keywords>          # find similar past beliefs
+bun run scripts/track.ts history
+bun run scripts/track.ts check <keywords>
 ```
-
-### Instrument-Type Adaptations
-
-The 2-3 sentence WHY adapts by type. The scenario table format stays the same.
-
-| Type | WHY includes | Table specifics |
-|------|-------------|-----------------|
-| Equity | MC, why mispriced, comparable | Nx with comparable context |
-| Options/puts | Strike, expiry, premium, breakeven | Max loss = premium |
-| Kalshi binary | Implied probability, your edge | Payout per contract |
-| Perps | Leverage, funding rate | Liquidation price in downside |
-
-### Output Precision Rules
-
-- **Equity:** target price = target MC ÷ shares. Multiple = target ÷ entry.
-- **Kalshi:** P&L = contracts × (payout − entry). State implied probability.
-- **Perps:** P&L = size × leverage × move %. State liquidation price.
-- **Options:** P&L = contracts × (intrinsic − premium) × 100. State breakeven.
-- **Kill conditions:** Specific + observable. "NIST delays mandate" not "thesis is wrong."
 
 ---
 

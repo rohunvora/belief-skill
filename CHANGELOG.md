@@ -1,8 +1,13 @@
 # Changelog
 
-## v2 — Current
+## v2.1 — Current
 
-### 2026-02-16
+### 2026-02-16 (v2.1)
+- **Two-part output: The Take + The Card.** Take streams as reply (conviction, reasoning, probability gap). Card sent via message tool with buttons (spec sheet, fixed format). Take = experience. Card = artifact.
+- **Prose style: bold claims, not templates.** Each paragraph = one bold verifiable claim + evidence. Scannable via bolds, readable as prose. No arrows, no ✓/✗, no section headers.
+- **Probability gap framing.** Every trade states: what the market prices, what probability breakeven requires, "you need to believe X." User is the decision-maker.
+- **Configurable bet size.** Default $100K. User can override per-session ("I trade with $10K"). Sizes flow through scenarios and button quantities.
+- **Card ≤10 lines.** Spec sheet only — ticker, position, scenarios, kills, alt. No prose (the Take already told the story).
 - **Cultural decoding in Phase 1** — when the subject is a person, brand, or community, decode the cultural movement it represents. "Long Clavicular" → looksmaxxing wave → HIMS. The thesis is about the wave, not the surfer. Uninvestable subjects trigger cultural signal extraction → publicly-traded infrastructure for that movement.
 - **Screenshot-optimized output** — ≤18 line rule. Zero preamble (first char is 🎯). Title ≤5 words. 4 scenario rows max. Designed for the Telegram screenshot moment.
 - **Telegram inline buttons** — every trade card sent via `message` tool with buttons. Green `url` button opens platform with quantity in text (proof of construction). Blue `callback` button tracks the belief.
