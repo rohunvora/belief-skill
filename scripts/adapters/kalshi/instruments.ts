@@ -45,6 +45,46 @@ const SERIES_MAP: [string[], string, string][] = [
   [["yield curve", "10y2y", "curve inversion", "inverted yield"], "KX10Y2Y", "10Y-2Y yield spread"],
   [["10y3m", "term spread"], "KX10Y3M", "10Y-3M yield spread"],
 
+  // S&P 500
+  [["s&p", "sp500", "s&p 500", "spy", "stock market"], "KXINXY", "S&P 500 yearly range"],
+  [["s&p monthly", "sp500 monthly"], "KXINXM", "S&P 500 monthly range"],
+  [["s&p weekly", "sp500 weekly"], "KXINXW", "S&P 500 weekly range"],
+  [["s&p above", "s&p below", "market crash", "market rally"], "KXINXAB", "S&P 500 above/below threshold"],
+  [["s&p max", "market high", "all time high", "ath"], "KXINXMAXY", "S&P 500 yearly max"],
+
+  // Oil / Energy
+  [["oil", "crude", "wti", "brent", "petroleum"], "KXOIL", "Oil price monthly range"],
+  [["oil weekly", "crude weekly"], "KXWTIW", "WTI oil weekly range"],
+  [["oil high", "oil peak", "oil max"], "KXWTIMAX", "WTI oil yearly high"],
+  [["oil low", "oil crash", "oil min"], "KXWTIMIN", "WTI oil yearly low"],
+
+  // Gold / Commodities
+  [["gold", "gold price", "xau"], "KXGOLD", "Gold price range"],
+  [["gold monthly"], "KXGOLDMON", "Gold monthly price range"],
+
+  // Jobs / Employment
+  [["unemployment", "jobs", "jobless"], "KXU3", "Unemployment rate"],
+  [["payrolls", "nonfarm", "jobs report", "employment"], "KXPAYROLLS", "Monthly jobs numbers"],
+  [["unemployment spike", "job losses"], "KXU3MAX", "Unemployment spike threshold"],
+
+  // Mortgage / Housing
+  [["mortgage", "mortgage rate", "housing"], "KXFRM", "30-year mortgage rate"],
+  [["mortgage high", "rate high"], "KXFRMMAX", "Mortgage rate yearly high"],
+  [["housing prices", "home prices"], "KXHOMEUSY", "US housing prices"],
+
+  // Currencies
+  [["euro", "eur/usd", "eurusd", "dollar euro"], "KXEURO", "EUR/USD exchange rate"],
+  [["yen", "usd/jpy", "usdjpy", "japan yen"], "KXJPY", "USD/JPY exchange rate"],
+  [["pound", "gbp", "sterling", "gbp/usd"], "KXGBP", "GBP/USD exchange rate"],
+  [["peso", "usd/mxn", "mexico"], "KXPESO", "USD/MXN exchange rate"],
+
+  // US Debt
+  [["national debt", "us debt", "debt ceiling"], "KXDEBTLEVEL", "US debt level thresholds"],
+  [["debt gdp", "debt ratio"], "KXUSDEBT", "US debt-to-GDP ratio"],
+
+  // Yield Curve
+  [["yield inversion", "inverted curve", "disinversion"], "KXYINVERT", "Yield curve inversion status"],
+
   // Defense
   [["defense spending", "defense budget", "military budget"], "KXDEFENSESPEND", "Defense budget magnitude"],
   [["military spending", "pentagon", "dod spending"], "KXMILSPEND", "Military spending changes"],
