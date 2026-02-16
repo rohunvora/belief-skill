@@ -397,7 +397,7 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 1. **≤18 lines.** Non-negotiable. Count them. The screenshot is the product.
 2. **Zero preamble.** First character is 🎯. No "Running it through...", no Phase headers, no acknowledgment of the input.
 3. **Title ≤ 5 words.** "PQC MANDATE" not "PQC mandate = NIST buying your bags."
-4. **WHY in 2-3 sentences.** The one insight that makes someone go "oh shit." Weave in why the obvious play is wrong — rejections are the reasoning, not a separate section.
+4. **WHY as construction chain.** Show how you got from the user's words to the trade using → arrows. Each step reveals something the user didn't think of. The chain IS the edge. Format: `"[their words]" → [decode] → [non-obvious insight] → [why THIS instrument]`. Weave in rejections as wrong paths (✗) so the user sees rigor.
 5. **4 scenario rows max.** Worst, base, good, moon. Not 5. Asymmetric framing: downside as dollar losses, upside as multiples.
 6. **Kills + alt = 2 lines.** Compressed.
 7. **Buttons close the card.** The execute button with quantity is the proof of construction. It's the punchline of the screenshot.
@@ -410,8 +410,9 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 
 [TICKER] $[PRICE] · [direction]
 
-[2-3 sentences. What, why mispriced, why not
-the obvious play. This IS the reasoning.]
+"[user's words]" → [decode]
+→ [who benefits/hurt] → [non-obvious insight]
+→ [why THIS, not obvious play ✗]
 
 $100K → [quantity] [units]
 
