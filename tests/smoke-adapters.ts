@@ -202,6 +202,20 @@ const tests: TestCase[] = [
     },
   },
 
+  {
+    name: "Robinhood returns: near-52wk-high option (IV target regression)",
+    command: `${SCRIPTS}/robinhood/returns.ts PEP long option`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      const expr = o.expression;
+      if (!expr) return "Missing expression";
+      // PEP strike often ≈ 52-week high. Before IV fix, this returned 0%.
+      if (expr.return_if_right_pct <= 0) return `Return still 0% — IV target fix not working (strike=${expr.execution_details?.strike})`;
+      if (!expr.execution_details?.expiration) return "Missing expiration";
+      return null;
+    },
+  },
+
   // === HYPERLIQUID ===
   {
     name: "Hyperliquid instruments: SOL BTC ETH",
