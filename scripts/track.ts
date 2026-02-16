@@ -83,6 +83,7 @@ function record(f: Record<string, string>) {
     ...(f["tc"] && { tc: parseFloat(f["tc"]) }),
     ...(f["kills"] && { kills: f["kills"] }),
     ...(f["alt"] && { alt: f["alt"] }),
+    ...(f["lev"] && { lev: parseFloat(f["lev"]) }),
     ...(f["link"] && { link: f["link"] }),
     ...(f["conviction"] && { conviction: parseFloat(f["conviction"]) }),
   };
@@ -172,8 +173,8 @@ function computePnl(r: RoutingFact, livePrice: number): number {
       return sideMul * ((livePrice - r.px) / r.px) * 100;
     }
     case "perp": {
-      // Apply leverage. Default 1x if not stored.
-      const leverage = 1; // TODO: store leverage in fact
+      // Apply leverage from stored fact, default 1x if not recorded.
+      const leverage = r.lev || 1;
       return dirMul * ((livePrice - r.px) / r.px) * leverage * 100;
     }
     default: {

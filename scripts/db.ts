@@ -31,6 +31,7 @@ export interface RoutingFact {
   dir: string;            // long | short
   plat: string;           // robinhood | kalshi | polymarket | hyperliquid | bankr
   qty?: number;           // position size in units
+  lev?: number;           // leverage (1 for stocks, 5-20x for perps)
   β?: number;             // thesis beta
   conv?: number;          // convexity
   tc?: number;            // time cost (annualized)
