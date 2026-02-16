@@ -115,8 +115,8 @@ interface KalshiEvent {
   category: string;
   series_ticker: string;
   mutually_exclusive: boolean;
-  strike_date?: string;
-  expected_expiration_time?: string;
+  strike_date?: string;          // When the event resolves (e.g., FOMC meeting date)
+  expected_expiration_time?: string;  // When markets close
   markets?: KalshiMarket[];
 }
 
@@ -227,9 +227,74 @@ async function fetchEvents(seriesTicker: string): Promise<KalshiEvent[]> {
   return events;
 }
 
+// Month name → abbreviation mapping for date-aware sorting
+const MONTH_ABBREVS: Record<string, string> = {
+  january: "JAN", february: "FEB", march: "MAR", april: "APR",
+  may: "MAY", june: "JUN", july: "JUL", august: "AUG",
+  september: "SEP", october: "OCT", november: "NOV", december: "DEC",
+  jan: "JAN", feb: "FEB", mar: "MAR", apr: "APR",
+  jun: "JUN", jul: "JUL", aug: "AUG", sep: "SEP",
+  oct: "OCT", nov: "NOV", dec: "DEC",
+};
+
+/**
+ * Extract date hints from keywords for event prioritization.
+ * Returns month abbreviations (e.g., ["MAR"]) and year strings (e.g., ["26", "2026"]).
+ */
+function extractDateHints(keywords: string[]): { months: string[]; years: string[] } {
+  const months: string[] = [];
+  const years: string[] = [];
+  for (const kw of keywords) {
+    const lower = kw.toLowerCase();
+    if (MONTH_ABBREVS[lower]) months.push(MONTH_ABBREVS[lower]);
+    // Year: 2-digit or 4-digit
+    if (/^20\d{2}$/.test(kw)) { years.push(kw.slice(2)); years.push(kw); }
+    if (/^\d{2}$/.test(kw) && parseInt(kw) >= 24 && parseInt(kw) <= 35) years.push(kw);
+  }
+  return { months, years };
+}
+
+/**
+ * Sort events: date-matching events first, then by proximity to now (nearest first).
+ * This ensures "Fed March" returns KXFED-26MAR before KXFED-27APR.
+ */
+function sortEventsByRelevance(events: KalshiEvent[], dateHints: { months: string[]; years: string[] }): KalshiEvent[] {
+  const now = Date.now();
+
+  return [...events].sort((a, b) => {
+    const aTicker = a.event_ticker.toUpperCase();
+    const bTicker = b.event_ticker.toUpperCase();
+
+    // Score: +10 for matching month, +5 for matching year, +1 for nearest expiration
+    let aScore = 0, bScore = 0;
+
+    for (const m of dateHints.months) {
+      if (aTicker.includes(m)) aScore += 10;
+      if (bTicker.includes(m)) bScore += 10;
+    }
+    for (const y of dateHints.years) {
+      if (aTicker.includes(y)) aScore += 5;
+      if (bTicker.includes(y)) bScore += 5;
+    }
+
+    // If date-matching scores differ, use that
+    if (aScore !== bScore) return bScore - aScore;
+
+    // Tie-break: nearest expiration/strike date first
+    const aExp = (a.expected_expiration_time || a.strike_date) ? new Date(a.expected_expiration_time || a.strike_date!).getTime() : Infinity;
+    const bExp = (b.expected_expiration_time || b.strike_date) ? new Date(b.expected_expiration_time || b.strike_date!).getTime() : Infinity;
+    // Prefer events that haven't expired yet, nearest first
+    const aFuture = aExp > now ? aExp - now : Infinity;
+    const bFuture = bExp > now ? bExp - now : Infinity;
+    return aFuture - bFuture;
+  });
+}
+
 /**
  * Build InstrumentMatch[] from matched series.
  * Fetches live events from the API, then creates one match per event.
+ * Events are sorted by date relevance (matching thesis date keywords first,
+ * then nearest expiration).
  */
 async function findInstruments(keywords: string[]): Promise<AdapterInstrumentResult> {
   const seriesMatches = matchSeries(keywords);
@@ -238,6 +303,7 @@ async function findInstruments(keywords: string[]): Promise<AdapterInstrumentRes
     return { platform: "kalshi", instruments: [], search_method: "series_ticker" };
   }
 
+  const dateHints = extractDateHints(keywords);
   const instruments: InstrumentMatch[] = [];
 
   // Fetch top series sequentially with delay to avoid Kalshi 429s
@@ -259,21 +325,35 @@ async function findInstruments(keywords: string[]): Promise<AdapterInstrumentRes
     fetchResults.push({ ...s, events });
   }
 
+  // Collect all events with metadata for unified sorting
+  const allEvents: { event: KalshiEvent; desc: string; relevance: "direct" | "proxy" | "lateral" }[] = [];
+
   for (const { ticker: seriesTicker, desc, relevance, events } of fetchResults) {
     if (events.length === 0) {
-      // Series exists but no open events — log it but don't include as tradeable
       console.error(`[kalshi/instruments] Series ${seriesTicker} matched but has no open events — skipping`);
       continue;
     }
-
     for (const event of events) {
-      instruments.push({
-        ticker: event.event_ticker,
-        name: event.title,
-        relevance,
-        why: `${desc} -- ${event.title}`,
-      });
+      allEvents.push({ event, desc, relevance });
     }
+  }
+
+  // Sort ALL events across series by date relevance (matching months first, then nearest)
+  const sortedEvents = sortEventsByRelevance(
+    allEvents.map(e => e.event),
+    dateHints
+  );
+
+  // Map sorted events back to InstrumentMatch with metadata
+  const eventMap = new Map(allEvents.map(e => [e.event.event_ticker, e]));
+  for (const event of sortedEvents) {
+    const meta = eventMap.get(event.event_ticker)!;
+    instruments.push({
+      ticker: event.event_ticker,
+      name: event.title,
+      relevance: meta.relevance,
+      why: `${meta.desc} -- ${event.title}`,
+    });
   }
 
   return {
