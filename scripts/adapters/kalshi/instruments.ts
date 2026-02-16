@@ -55,6 +55,10 @@ const SERIES_MAP: [string[], string, string][] = [
   [["solana", "sol"], "KXSOLMAXY", "Solana price range (annual)"],
   [["crypto returns", "crypto performance", "crypto market"], "KXCRYPTORETURNY", "Annual crypto returns"],
   [["eth btc", "flippening", "ethereum vs bitcoin"], "BTCETHATH", "ETH vs BTC relative performance"],
+
+  // Daily spot price ranges
+  [["bitcoin price today", "btc daily", "bitcoin daily"], "KXBTC", "Bitcoin daily price range"],
+  [["ethereum price today", "eth daily", "ethereum daily"], "KXETH", "Ethereum daily price range"],
 ];
 
 // Simple in-memory cache: series_ticker -> { data, fetchedAt }
