@@ -138,9 +138,36 @@ async function fetchNearestOption(
   ticker: string,
   direction: "long" | "short"
 ): Promise<{ call: OptionData | null; put: OptionData | null; expirationDate: string }> {
-  const opts = await yahooFinance.options(ticker);
-  if (!opts || !opts.options || opts.options.length === 0) {
+  // First fetch to get available expiration dates
+  const initial = await yahooFinance.options(ticker);
+  if (!initial || !initial.options || initial.options.length === 0) {
     throw new Error(`No options data for ${ticker}`);
+  }
+
+  // Pick an expiration 30-45 days out (sweet spot for directional trades).
+  // Falls back to nearest if nothing in that range.
+  const now = Date.now();
+  const TARGET_MIN_DAYS = 25;
+  const TARGET_MAX_DAYS = 60;
+  let targetDate: Date | null = null;
+
+  if (initial.expirationDates && initial.expirationDates.length > 0) {
+    const candidates = initial.expirationDates.filter((d: Date) => {
+      const days = (d.getTime() - now) / 86400000;
+      return days >= TARGET_MIN_DAYS && days <= TARGET_MAX_DAYS;
+    });
+    if (candidates.length > 0) {
+      // Pick the one closest to 35 days out
+      const idealMs = now + 35 * 86400000;
+      candidates.sort((a: Date, b: Date) => Math.abs(a.getTime() - idealMs) - Math.abs(b.getTime() - idealMs));
+      targetDate = candidates[0];
+    }
+  }
+
+  // Fetch the chain for the target date (or use the initial fetch if no better date found)
+  let opts = initial;
+  if (targetDate) {
+    opts = await yahooFinance.options(ticker, { date: targetDate });
   }
 
   const chain = opts.options[0];
@@ -410,7 +437,7 @@ async function buildOptionExpression(
   }
 
   const premium = option.ask > 0 ? option.ask : option.lastPrice;
-  const premiumPerContract = premium * 100; // Options are per 100 shares
+  const premiumPerContract = Math.round(premium * 100 * 100) / 100; // Options are per 100 shares, round to cents
   const strike = option.strike;
 
   let return_if_right_pct: number;
