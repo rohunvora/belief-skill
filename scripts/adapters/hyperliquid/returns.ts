@@ -252,7 +252,9 @@ function formatPrice(price: number): string {
 // ── Main ────────────────────────────────────────────────────────────
 
 async function main() {
-  const coin = process.argv[2]?.toUpperCase();
+  // Preserve original casing for k-prefixed coins (kPEPE, kBONK, kSHIB)
+  const rawCoin = process.argv[2]?.replace(/-PERP$/i, "") ?? "";
+  const coin = rawCoin.startsWith("k") ? rawCoin : rawCoin.toUpperCase();
   const direction = process.argv[3]?.toLowerCase() as "long" | "short";
   const leverage = parseFloat(process.argv[4] || "1");
 
