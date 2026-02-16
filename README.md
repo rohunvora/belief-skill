@@ -196,11 +196,11 @@ Requires [Bun](https://bun.sh) and [OpenClaw](https://github.com/openclaw/opencl
 
 ```bash
 git clone https://github.com/rohunvora/belief-skill.git
-cd belief-skill/v2/belief-router
+cd belief-skill
 bun install
 ```
 
-Point your OpenClaw skill path to `v2/belief-router`. Activates automatically when you express a belief — no commands, just talk.
+Point your OpenClaw skill path to the repo root. Activates automatically when you express a belief — no commands, just talk.
 
 No API keys required. Uses public APIs (Yahoo Finance, Polymarket, Kalshi, DexScreener).
 

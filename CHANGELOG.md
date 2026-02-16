@@ -26,12 +26,6 @@
 - **v2 rewrite** — 6-phase architecture replacing v1's generate-and-filter approach
 - **Minto Pyramid output** — answer first, supporting logic below
 
-## v1 — Legacy
-
-- Keyword-based theme matching → instrument discovery → composite scoring → Kelly sizing
-- Automated test suite: 48/48 theses passing (99 avg score)
-- Archived in `v1/`
-
 ## Roadmap
 
 - **Calibration engine** — SQLite-backed belief tracking. Three entities (Thesis, Routing, Trade). Edge Profile shows where your predictions beat the market. Architecture designed, build pending.
