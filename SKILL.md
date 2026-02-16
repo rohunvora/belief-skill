@@ -137,20 +137,20 @@ Example — Fed holds March (event-driven):
 
 **This is the step that makes the difference between a stale ChatGPT answer and an actionable trade.** You must ground the thesis in live data before touching any instruments.
 
-### Check Trade History
+### Check Past Beliefs
 
-Before researching, check for past trades on similar theses:
+Before researching, check if the user has expressed similar beliefs before:
 
 ```bash
-bun run scripts/track.ts check
+bun run scripts/track.ts check <keywords from thesis>
 ```
 
-If similar past trades exist:
-- **Still open:** "You already have exposure to this thesis via [TRADE]. Consider whether this adds or overlaps." Don't recommend a correlated position without flagging it.
-- **Closed at a loss:** "A similar thesis led to [TRADE] on [DATE], closed at [LOSS]. What's different this time?" Surface the context — don't auto-block, but make the user think.
+If similar past beliefs exist:
+- **Still open:** "You already have exposure to this thesis via [INSTRUMENT]. Consider whether this adds or overlaps."
+- **Closed at a loss:** "A similar thesis led to [INSTRUMENT] on [DATE], closed at [LOSS]. What's different this time?"
 - **Closed at a gain:** Reference it briefly and move on.
 
-If `track.ts` has no data or no similar trades, skip silently. Don't add friction when there's nothing to surface.
+If no similar beliefs found, skip silently.
 
 ### What to Research
 
@@ -447,17 +447,38 @@ Every trade card includes inline buttons. The execute button includes the **quan
 - Kalshi: `https://kalshi.com/markets/[SERIES]`
 - Hyperliquid: `https://app.hyperliquid.xyz/trade/[TICKER]`
 
-### Trade Storage
+### Record Every Routing (MANDATORY)
 
-Every skill invocation auto-records to SQLite (`data/beliefs.db`):
-- **On route:** thesis + routing rows written (input, deeper claim, shape, instrument, score)
-- **On Track/Execute:** trade row created (paper or real, entry price, qty)
-- **On close:** exit price, realized P&L
+**After outputting the trade card, ALWAYS record the routing facts.** This is not optional. The belief log is how the user builds a track record.
 
 ```bash
-bun run scripts/track.ts portfolio     # all open beliefs + live P&L
-bun run scripts/track.ts close --id X  # close with exit price
-bun run scripts/card.ts --id X         # shareable trade card
+bun run scripts/track.ts record \
+  --input "<user's exact words>" \
+  --inst "<TICKER or CONTRACT>" \
+  --px <entry price> \
+  --dir <long|short> \
+  --plat <robinhood|kalshi|polymarket|hyperliquid|bankr> \
+  --action none \
+  --shape <binary|mispriced|sector|relative|vulnerability> \
+  --β <thesis beta 0-1> \
+  --conv <convexity multiple> \
+  --tc <annualized time cost> \
+  --kills "<kill1, kill2, kill3>" \
+  --alt "<ALT TICKER $price direction (1 sentence)>" \
+  --conviction <0-100 if user stated>
+```
+
+Optional flags: `--src "tweet:@handle"`, `--claim "deeper claim"`, `--sector "defense"`, `--link "https://..."`.
+
+The `--action` starts as `none` (routed but not traded). When the user taps 📝 Track, update to `paper`. When they tap Execute, update to `real`.
+
+**Storage:** `data/beliefs.jsonl` — append-only, one JSON line per fact. No database, no migrations.
+
+```bash
+bun run scripts/track.ts portfolio [--telegram]   # open beliefs + live P&L
+bun run scripts/track.ts close --id X --px <exit>  # close a position
+bun run scripts/track.ts update --id X --conviction 90 --reason "new data"
+bun run scripts/track.ts history                   # recent routings
 ```
 
 ### Instrument-Type Adaptations
