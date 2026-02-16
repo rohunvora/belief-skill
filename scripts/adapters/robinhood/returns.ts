@@ -25,20 +25,31 @@ const LEVERAGED_ETFS: Record<string, { leverage: number; inverse: boolean }> = {
   SOXL: { leverage: 3, inverse: false },
   TQQQ: { leverage: 3, inverse: false },
   SPXL: { leverage: 3, inverse: false },
+  UPRO: { leverage: 3, inverse: false },
   TMF:  { leverage: 3, inverse: false },
   LABU: { leverage: 3, inverse: false },
   YINN: { leverage: 3, inverse: false },
   DRN:  { leverage: 3, inverse: false },
+  TNA:  { leverage: 3, inverse: false },
+  TECL: { leverage: 3, inverse: false },
+  FAS:  { leverage: 3, inverse: false },
+  UDOW: { leverage: 3, inverse: false },
   // 3x bear
   SQQQ: { leverage: 3, inverse: true },
   SPXS: { leverage: 3, inverse: true },
+  SPXU: { leverage: 3, inverse: true },
   TMV:  { leverage: 3, inverse: true },
   YANG: { leverage: 3, inverse: true },
   LABD: { leverage: 3, inverse: true },
   DRV:  { leverage: 3, inverse: true },
+  TZA:  { leverage: 3, inverse: true },
+  TECS: { leverage: 3, inverse: true },
+  FAZ:  { leverage: 3, inverse: true },
+  SDOW: { leverage: 3, inverse: true },
+  SOXS: { leverage: 3, inverse: true },
+  // 2x
   ERY:  { leverage: 2, inverse: true },
   DUST: { leverage: 2, inverse: true },
-  // 2x
   TBT:  { leverage: 2, inverse: true },
   SRS:  { leverage: 2, inverse: true },
   ERX:  { leverage: 2, inverse: false },
@@ -50,13 +61,15 @@ const LEVERAGED_ETFS: Record<string, { leverage: number; inverse: boolean }> = {
 
 // Inverse ETF pairs: when direction is "short", swap to the inverse and go long
 const INVERSE_PAIRS: Record<string, string> = {
-  SOXL: "SOXS", TQQQ: "SQQQ", SPXL: "SPXS",
+  SOXL: "SOXS", TQQQ: "SQQQ", SPXL: "SPXS", UPRO: "SPXU",
   YINN: "YANG", TMF: "TMV", LABU: "LABD",
   DRN: "DRV", ERX: "ERY", NUGT: "DUST",
+  TNA: "TZA", TECL: "TECS", FAS: "FAZ", UDOW: "SDOW",
   // Reverse mappings
-  SOXS: "SOXL", SQQQ: "TQQQ", SPXS: "SPXL",
+  SOXS: "SOXL", SQQQ: "TQQQ", SPXS: "SPXL", SPXU: "UPRO",
   YANG: "YINN", TMV: "TMF", LABD: "LABU",
   DRV: "DRN", ERY: "ERX", DUST: "NUGT",
+  TZA: "TNA", TECS: "TECL", FAZ: "FAS", SDOW: "UDOW",
 };
 
 type InstrumentType = "stock" | "etf" | "option";
