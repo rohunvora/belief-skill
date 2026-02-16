@@ -386,137 +386,65 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 
 ### Formatting Principles
 
-1. **Minto Pyramid structure.** Belief → Context intro → Trade line → Why (flowing into scenarios) → Kills → Rejected → Deeper claim → Alt → Execute. Each section meets the reader at their current understanding.
-2. **Context before ticker.** The reader must know WHAT they're buying/selling before they see the ticker. For equities: company in plain English ("There's a $688M Swiss chip company..."). For Kalshi: the contract and what it resolves ("There's a binary on whether the Fed cuts in March..."). For perps: the position and what drives it. The ticker line becomes confirmation, not introduction.
-3. **WHY flows into scenarios.** Build understanding progressively toward the payoff table. The p3 anchor adapts by instrument type — see Instrument-Type Adaptations table.
-4. **Asymmetric framing.** Upside rows: multiples (3x, 5x, 10x). Downside rows: dollar losses (lose $60K). Losses as dollar pain, gains as multiple excitement (prospect theory). For equities, upside labels use → [COMP]-size as context; for other types, use the relevant math (see adaptations table).
-5. **Comparable legend when applicable.** For equity trades with MC comparables, add one line each below the table, sorted by size: `QUBT  $2.1B  Quantum Computing Inc`. Skip for Kalshi, perps, and options.
-6. **Price included.** Price appears on the trade line and in the scenario table header for brokerage checking ("am I winning?"). MC appears in the company intro. Comparable gives MC meaning.
-7. **Telegram-native formatting.** Entire output is a single monospace code block. No markdown tables (they break on mobile). Use `────` dividers between sections. Align columns with spaces. Target ~4096 chars max for a single Telegram message.
-8. **Eliminations are compressed.** One line per rejected instrument with ticker, key data point, and reason. Column-aligned for scannability. A framing sentence before the table turns rejections into evidence for the winning trade.
-9. **Time-aware scenarios.** Each scenario row includes a rough timeline as first column. Downside resolves faster than upside. Use ranges (< 1yr, 2-3yr, 5yr+) based on catalyst dates and comparable precedents. Scripts provide price levels, not time — Claude estimates timelines from catalysts, comparable growth rates, and market pricing dynamics.
-10. **Temporal origin.** For single-company theses, intro includes WHEN they built the thing — "hit production the year Y mandated it" is due diligence about timing risk in one sentence. Skip for ETFs, indices, Kalshi binaries, perp pairs, and commodity instruments.
+1. **One screen on mobile.** The entire output must fit in a single scroll on a phone. Target ~1500 chars. Cut ruthlessly.
+2. **Answer first.** Emoji + thesis title → instrument + price → why in 2-3 sentences → scenario table → execute. No preamble.
+3. **Asymmetric framing.** Downside rows: dollar losses. Upside rows: multiples. Losses as pain, gains as excitement.
+4. **Telegram-native.** Bold for headers, normal text for prose, monospace code block ONLY for the scenario table. No full-message code blocks.
+5. **No rejected section.** Nobody needs to see what you didn't pick. The reasoning lives in Phases 1-4 (internal). If the user asks "why not X?" — answer then.
+6. **Kills compress to one line.** "Dies if: X, Y, Z" — not a bulleted list.
+7. **Alt is one line.** Different class, brief tradeoff.
+8. **Private market section** only if Step 2.5 triggered and found results. 2-3 lines max.
 
 ### Output Template
 
-The entire output goes inside a single code block (triple backticks). Use this structure:
+Use Telegram formatting (bold, normal text, inline code, code blocks for tables only):
 
 ```
-BELIEF
-[The insight as a claim — what's mispriced and why.
-Not a logic flowchart, but the bet stated plainly.]
-────────────────────────────────────
+🎯 **[THESIS TITLE]**
 
-There's a [MC] [country/descriptor] [company type] [making/that]
-[temporal beat — WHEN they built it + why timing is now].
+[INSTRUMENT] · $[PRICE]
 
-[COMPANY NAME] ([TICKER]) · $[PRICE] · [DIRECTION]
+[2-3 sentences: what it is, why it's mispriced,
+thesis beta and convexity in plain language.
+The reader should understand the trade after
+reading this and nothing else.]
 
-────────────────────────────────────
+`$100K → [quantity] [units]`
 
-WHY
+\```
+[price/level]  lose $XXK   [condition]
+[price/level]  lose $XXK   [condition]
+[price/level]     Nx       [condition]
+[price/level]     Nx       [condition]
+[price/level]     Nx       [condition]
+\```
 
-[Paragraph 1: The catalyst/mandate/force. What happened,
-what's the deadline, why there's no opt-out. Facts only.]
+>[X]% to be +EV · dies if: [kill1], [kill2], [kill3]
 
-[Paragraph 2: The company's specific product/position.
-Revenue, cash, key differentiator. Why purest play.]
+Alt: [TICKER] [price] [direction] ([1 sentence])
 
-[Paragraph 3: The anchoring number. State the gap between
-current MC and the addressable market. "At $[MC], the market
-is pricing [what's implied — usually zero/minimal adoption].
-That's the floor. [What changes above that floor]:"
-→ flows directly into the scenario table]
+[PRIVATE MARKET — only if Step 2.5 triggered:
+· [category] — [stage] · $[size] · [convexity]
+  [Platform] → "[search terms]"]
 
-── $100K in [TICKER] at $[PRICE] ─────
+[Platform] → [TICKER] → [action details]
 
- [time]   lose $XXK   [condition]
- [time]   lose $XXK   [condition]
- [time]      Nx       → [COMP1]-size
- [time]      Nx       → [COMP2]-size
- [time]      Nx       → [COMP3]-size
-
-[COMP1]  [MC]  [Full Name]
-[COMP2]  [MC]  [Full Name]
-[COMP3]  [MC]  [Full Name]
-
-[shares] sh · [trade horizon] · >[X]% +EV
-
-────────────────────────────────────
-
-KILLS
-
-· [time]   [kill condition — specific, observable]
-· [time]   [kill condition]
-· [time]   [kill condition]
-· [time]   [kill condition]
-
-Next: [nearest catalyst with date]
-
-────────────────────────────────────
-
-REJECTED
-
-[Optional: one sentence framing if rejections share a theme.]
-
-[TICKER1]       [key data point], [reason]
-[TICKER2]       [key data point], [reason]
-[TICKER3]       [key data point], [reason]
-[TICKER4]       [key data point], [reason]
-[TICKER5]       [key data point], [reason]
-[TICKER6]       [key data point], [reason]
-
-────────────────────────────────────
-
-DEEPER CLAIM
-
-[2-4 sentences. Surface claim vs deeper claim.
-Why the obvious trade path has more assumptions.
-Why this specific angle needs fewer steps.
-What makes the thesis work even if other legs fail.]
-
-────────────────────────────────────
-
-ALT
-[INSTRUMENT from a DIFFERENT class] — [1-2 sentences.
-State the metric tradeoff: "Higher convexity but 35%
-thesis beta" or "Zero carry but capped at 1.2x."]
-
-PRIVATE MARKET (only if Step 2.5 triggered)
-
-Public winner has [X]% thesis beta. Private markets
-offer higher-purity exposure:
-
-· [Company/category description]
-  [Stage] · $[check size range] · [convexity range]
-  [Platform] → "[search terms]"
-
-· [Company/category description]
-  [Stage] · $[check size range] · [convexity range]
-  [Platform] → "[search terms]"
-
-⚠️ [lockup]yr lockup, illiquid, binary outcomes
-
-EXECUTE
-[Platform] → [TICKER] → [Action] → [Type]
-→ $[AMOUNT] → [Order type] ([gotcha if any])
-
-Market data for informational purposes.
+_Market data for informational purposes._
 ```
+
+**That's it.** No REJECTED section, no DEEPER CLAIM section, no multi-paragraph WHY. The thesis IS the deeper claim (Phase 1 already extracted it). The rejections are internal work. The reader gets: what, why, math, risk, how.
 
 ### Instrument-Type Adaptations
 
-The template above is the reference implementation (equity-long). For other instrument types, adapt these sections — the skeleton (BELIEF → intro → WHY → table → KILLS → REJECTED → DEEPER CLAIM → ALT → EXECUTE) stays identical:
+The 2-3 sentence intro adapts by type. The scenario table format stays the same (price level / loss or multiple / condition).
 
-| Section | Equity (default) | Kalshi binary | Perp / leveraged | Options / puts |
-|---------|-----------------|---------------|------------------|----------------|
-| Intro | Company desc + MC + temporal | Contract + resolution date + market probability | Position + leverage + funding rate | Underlying + strike + expiry + IV |
-| WHY p3 anchor | MC gap vs addressable market | Probability mispricing: "market says X%, should be Y%" | Ratio divergence or momentum + carry cost | Premium vs expected move + IV vs realized |
-| Table upside | Nx → [COMP]-size | Payout at $1/contract (show # contracts) | Nx at leverage (show liquidation price) | Nx on premium (show breakeven price) |
-| Table downside | lose $XXK | lose $XXK (premium = max loss) | lose $XXK or "liquidated at $X" | lose $XXK (premium = max loss) |
-| Summary line | [shares] sh · horizon · >X% +EV | [contracts] ct · resolves [date] · >X% +EV | [size] @ [leverage]x · [funding]/yr · >X% +EV | [contracts] · [expiry] · >X% +EV |
-
-Comparables and comparable legend: use for equities and equity-like instruments. For Kalshi, perps, and options, replace with the relevant math context (payout structure, leverage math, greeks).
+| Type | Intro includes | Table specifics |
+|------|---------------|-----------------|
+| Equity | Company desc, MC, why mispriced | Nx → comparable-size for upside |
+| Options/puts | Underlying, strike, expiry, premium, breakeven | Max loss = premium, Nx on premium |
+| Kalshi binary | Contract, resolution date, implied probability | Payout at $1/contract, # contracts |
+| Perps | Position, leverage, funding rate | Liquidation price in downside rows |
+| Angel/private | Category, stage, platform | Convexity range, lockup, failure rate |
 
 ### Output Precision Rules
 
