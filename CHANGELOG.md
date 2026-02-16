@@ -2,6 +2,15 @@
 
 ## v2 — Current
 
+### 2026-02-16
+- **Screenshot-optimized output** — ≤18 line rule. Zero preamble (first char is 🎯). Title ≤5 words. 4 scenario rows max. Designed for the Telegram screenshot moment.
+- **Telegram inline buttons** — every trade card sent via `message` tool with buttons. Green `url` button opens platform with quantity in text (proof of construction). Blue `callback` button tracks the belief.
+- **Callback handler spec** — `blr:track`, `blr:real`, `blr:portfolio`, `blr:close` prefixes. Full flow: card → track → confirm → portfolio.
+- **JSONL fact store** — replaced SQLite with append-only `data/beliefs.jsonl`. One line per fact (route, conviction update, close, note). Store atoms, compute molecules.
+- **Instrument-aware P&L** — options compute intrinsic value from underlying price. Kalshi tracks contract price. Perps apply leverage. Stocks use after-hours/pre-market prices when markets closed.
+- **Repo flattened** — v1 deleted, v2 moved to root. MIT license. Clean `git clone && bun install`.
+- **README with real example** — @marginsmall PQC tweet screenshot → trade card output → explanation of deeper claim routing.
+
 ### 2026-02-15
 - **Position structuring** (Step 1.5) — direction theses decompose into independently-resolving bets. All-or-nothing payoff treated as hidden cost.
 - **9 SKILL.md blindspot fixes** — deeper claim before shape classification, prediction markets unconditional in Phase 2, metric denominator fix (`/(1+time cost)`), thesis beta <20% disqualifier, compound thesis decomposition moved to Phase 1.
@@ -28,8 +37,9 @@
 
 ## Roadmap
 
-- **Calibration engine** — SQLite-backed belief tracking. Three entities (Thesis, Routing, Trade). Edge Profile shows where your predictions beat the market. Architecture designed, build pending.
-- **Visual frontend** — localhost dashboard for live trade monitoring and thesis history
-- **Social trade cards** — shareable cards with thesis + instrument + P&L for viral distribution
-- **Execution guidance** — step-by-step visual guides for non-API brokerages (Robinhood). Screenshot confirmation to book trades.
-- **Multi-wallet awareness** — automatic chain/exchange routing based on your wallet setup
+See [V2-ROADMAP.md](V2-ROADMAP.md) for the full build plan. Key next items:
+
+- **Execution layer** — Kalshi/Polymarket/Hyperliquid API integration for one-tap trades
+- **Calibration engine** — edge profile from resolved beliefs (what thesis shapes are you good at?)
+- **Trade cards** — shareable "I Called It" cards with thesis + P&L for viral distribution
+- **Visual frontend** — localhost dashboard for portfolio + thesis history
