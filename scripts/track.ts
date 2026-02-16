@@ -91,6 +91,97 @@ function record(f: Record<string, string>) {
   console.log(`\n${mode} ${id} | ${inst.toUpperCase()} $${px} ${dir} | ${plat} | "${input.slice(0, 50)}"`);
 }
 
+/**
+ * Parse instrument string to extract type and components.
+ * Formats:
+ *   "LAES"                → stock, ticker=LAES
+ *   "DJT $5P JAN27"       → option, ticker=DJT, strike=5, type=P(ut), exp=JAN27
+ *   "KXFED-26JUL NO"      → kalshi, contract=KXFED-26JUL, side=NO
+ *   "SOL-PERP"            → perp, ticker=SOL
+ *   anything else          → unknown, use first word as ticker
+ */
+function parseInstrument(inst: string): {
+  kind: "stock" | "option" | "kalshi" | "perp" | "polymarket" | "unknown";
+  ticker: string;
+  strike?: number;
+  optionType?: "C" | "P";
+  expiry?: string;
+  side?: string;
+} {
+  // Option: "DJT $5P JAN27" or "GOOG $150P Jan27"
+  const optMatch = inst.match(/^(\w+)\s+\$(\d+(?:\.\d+)?)(P|C)\s+(\S+)/i);
+  if (optMatch) {
+    return {
+      kind: "option",
+      ticker: optMatch[1],
+      strike: parseFloat(optMatch[2]),
+      optionType: optMatch[3].toUpperCase() as "C" | "P",
+      expiry: optMatch[4],
+    };
+  }
+
+  // Kalshi: "KXFED-26JUL NO" or "KXFED-26JUL-T3.50 NO"
+  if (inst.match(/^KX/) || inst.match(/\s+(YES|NO)$/i)) {
+    const parts = inst.split(/\s+/);
+    return { kind: "kalshi", ticker: parts[0], side: parts[parts.length - 1].toUpperCase() };
+  }
+
+  // Perp: "SOL-PERP" or "ETH-PERP"
+  if (inst.includes("-PERP")) {
+    return { kind: "perp", ticker: inst.replace(/-PERP$/i, "") };
+  }
+
+  // Stock: single ticker
+  return { kind: "stock", ticker: inst.split(" ")[0] };
+}
+
+/**
+ * Compute P&L % based on instrument type.
+ *
+ * Stock:   (live - entry) / entry
+ * Option:  (intrinsic_value - premium) / premium. OTM = -100%.
+ * Kalshi:  (live_price - entry) / entry (prices in cents 0-100)
+ * Perp:    (live - entry) / entry × leverage
+ */
+function computePnl(r: RoutingFact, livePrice: number): number {
+  const parsed = parseInstrument(r.inst);
+  const dirMul = r.dir === "short" ? -1 : 1;
+
+  switch (parsed.kind) {
+    case "option": {
+      // livePrice = underlying stock price. Compute intrinsic.
+      const strike = parsed.strike || 0;
+      let intrinsic: number;
+      if (parsed.optionType === "P") {
+        intrinsic = Math.max(strike - livePrice, 0); // put
+      } else {
+        intrinsic = Math.max(livePrice - strike, 0); // call
+      }
+      // P&L on premium paid. If OTM, intrinsic=0, loss = -100% (ignoring time value)
+      if (r.px <= 0) return 0;
+      // For puts we bought (dir=short means bearish), dirMul is already -1
+      // but options P&L is always (intrinsic - premium) / premium regardless of dir
+      // because buying a put IS the bearish expression
+      return ((intrinsic - r.px) / r.px) * 100;
+    }
+    case "kalshi": {
+      // Kalshi prices are in cents (0-100). Entry and live are both cents.
+      // For YES: profit if price goes up. For NO: profit if price goes down.
+      const sideMul = parsed.side === "NO" ? -1 : 1;
+      return sideMul * ((livePrice - r.px) / r.px) * 100;
+    }
+    case "perp": {
+      // Apply leverage. Default 1x if not stored.
+      const leverage = 1; // TODO: store leverage in fact
+      return dirMul * ((livePrice - r.px) / r.px) * leverage * 100;
+    }
+    default: {
+      // Stock / ETF
+      return dirMul * ((livePrice - r.px) / r.px) * 100;
+    }
+  }
+}
+
 async function portfolio(telegram: boolean) {
   const open = getOpenRoutes();
   if (open.length === 0) { console.log("No open positions."); return; }
@@ -100,15 +191,22 @@ async function portfolio(telegram: boolean) {
   let totalCap = 0;
 
   for (const r of open) {
-    const ticker = r.inst.split(" ")[0];
-    const live = await fetchPrice(r.plat, ticker);
+    const parsed = parseInstrument(r.inst);
+    const live = await fetchPrice(r.plat, parsed.ticker);
     const days = Math.floor((Date.now() - new Date(r.t).getTime()) / 86400000);
     const cap = r.px * (r.qty || 0);
-    const dirMul = r.dir === "short" ? -1 : 1;
+
     let pnl = 0;
+    let liveStr = "—";
 
     if (live !== null) {
-      pnl = dirMul * ((live - r.px) / r.px) * 100;
+      pnl = computePnl(r, live);
+      if (parsed.kind === "option") {
+        // Show underlying price, not option price
+        liveStr = `${parsed.ticker}@$${live.toFixed(2)}`;
+      } else {
+        liveStr = `$${live.toFixed(2)}`;
+      }
     }
 
     const pnlDollars = (pnl / 100) * cap;
@@ -117,10 +215,9 @@ async function portfolio(telegram: boolean) {
 
     const mode = r.action === "real" ? "💰" : "📝";
     const sign = pnl >= 0 ? "+" : "";
-    const conv = getLatestConviction(r.id);
-    const convStr = conv ? ` c=${conv}` : "";
+    const label = r.inst.length > 14 ? r.inst.slice(0, 14) : r.inst.padEnd(14);
 
-    rows.push(`${mode} ${ticker.padEnd(10)} ${(sign + pnl.toFixed(1) + "%").padStart(7)} ${String(days).padStart(3)}d${convStr}  ${r.input.slice(0, 20)}`);
+    rows.push(`${mode} ${label} ${(sign + pnl.toFixed(1) + "%").padStart(8)} ${String(days).padStart(3)}d  ${r.input.slice(0, 18)}`);
   }
 
   const totalSign = totalPnl >= 0 ? "+" : "";
@@ -130,13 +227,13 @@ async function portfolio(telegram: boolean) {
     console.log(`🎯 **Belief Portfolio** (${open.length} open)\n`);
     console.log("```");
     for (const row of rows) console.log(row);
-    console.log("─".repeat(42));
-    console.log(`   TOTAL      ${totalSign}${totalPct.toFixed(1)}%       ${totalSign}$${totalPnl.toFixed(0)}`);
+    console.log("─".repeat(44));
+    console.log(`   TOTAL         ${totalSign}${totalPct.toFixed(1)}%      ${totalSign}$${Math.abs(totalPnl).toFixed(0)}`);
     console.log("```");
   } else {
     console.log(`\nBelief Portfolio — ${open.length} open\n`);
     for (const row of rows) console.log(row);
-    console.log("─".repeat(45));
+    console.log("─".repeat(50));
     console.log(`TOTAL: ${totalSign}${totalPct.toFixed(1)}% (${totalSign}$${totalPnl.toFixed(0)} on $${totalCap.toFixed(0)})`);
   }
 }
