@@ -378,112 +378,106 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 
 ---
 
-## Phase 5: Format for Reader
+## Phase 5: Format for the Screenshot
 
 **Phases 1-4 are internal reasoning — do not output them. Only output Phase 5.**
 
-**The reader has ADHD but is a sharp trader. The output must be self-contained — no Googling, no leaving the message to understand it.** Structure as Minto Pyramid: answer first, supporting logic below, details last.
+**The viral moment is the screenshot.** A user screenshots your trade card in Telegram and shares it. The input (tweet/voice note + user message) sits at the top of the screenshot. Your output sits below. Both must fit in ONE iPhone screenshot (~35 lines total, ~20 lines for your output after the input).
+
+**Your first character is 🎯. No preamble. No "interesting thesis." No "let me run this." The trade card IS the response.**
+
+### The Screenshot Rule
+
+**≤18 lines of Telegram text.** Everything that matters fits in 18 lines. If it doesn't fit, cut it — not the scenario table, cut the prose.
 
 ### Formatting Principles
 
-1. **One screen on mobile.** The entire output must fit in a single scroll on a phone. Target ~1500 chars. Cut ruthlessly.
-2. **Answer first.** Emoji + thesis title → instrument + price → why in 2-3 sentences → scenario table → execute. No preamble.
-3. **Asymmetric framing.** Downside rows: dollar losses. Upside rows: multiples. Losses as pain, gains as excitement.
-4. **Telegram-native.** Bold for headers, normal text for prose, monospace code block ONLY for the scenario table. No full-message code blocks.
-5. **No rejected section.** Nobody needs to see what you didn't pick. The reasoning lives in Phases 1-4 (internal). If the user asks "why not X?" — answer then.
-6. **Kills compress to one line.** "Dies if: X, Y, Z" — not a bulleted list.
-7. **Alt is one line.** Different class, brief tradeoff.
-8. **Private market section** only if Step 2.5 triggered and found results. 2-3 lines max.
+1. **≤18 lines.** Non-negotiable. Count them. The screenshot is the product.
+2. **Zero preamble.** First character is 🎯. No "Running it through...", no Phase headers, no acknowledgment of the input.
+3. **Title ≤ 5 words.** "PQC MANDATE" not "PQC mandate = NIST buying your bags."
+4. **WHY in 2-3 sentences.** The one insight that makes someone go "oh shit." Weave in why the obvious play is wrong — rejections are the reasoning, not a separate section.
+5. **4 scenario rows max.** Worst, base, good, moon. Not 5. Asymmetric framing: downside as dollar losses, upside as multiples.
+6. **Kills + alt = 2 lines.** Compressed.
+7. **Buttons close the card.** The execute button with quantity is the proof of construction. It's the punchline of the screenshot.
+8. **Telegram-native.** Bold for headers, normal text for prose, monospace code block ONLY for scenario table.
 
 ### Output Template
 
-Use Telegram formatting (bold, normal text, inline code, code blocks for tables only):
-
 ```
-🎯 **[THESIS TITLE]**
+🎯 [TITLE — ≤5 WORDS]
 
-[INSTRUMENT] · $[PRICE]
+[TICKER] $[PRICE] · [direction]
 
-[2-3 sentences: what it is, why it's mispriced,
-thesis beta and convexity in plain language.
-The reader should understand the trade after
-reading this and nothing else.]
+[2-3 sentences. What, why mispriced, why not
+the obvious play. This IS the reasoning.]
 
-`$100K → [quantity] [units]`
+$100K → [quantity] [units]
 
-\```
-[price/level]  lose $XXK   [condition]
-[price/level]  lose $XXK   [condition]
-[price/level]     Nx       [condition]
-[price/level]     Nx       [condition]
-[price/level]     Nx       [condition]
-\```
+[price]  [lose $XK / Nx]  [condition]
+[price]  [lose $XK / Nx]  [condition]
+[price]  [lose $XK / Nx]  [condition]
+[price]  [lose $XK / Nx]  [condition]
 
->[X]% to be +EV · dies if: [kill1], [kill2], [kill3]
-
-Alt: [TICKER] [price] [direction] ([1 sentence])
-
-[PRIVATE MARKET — only if Step 2.5 triggered:
-· [category] — [stage] · $[size] · [convexity]
-  [Platform] → "[search terms]"]
-
-[Platform] → [TICKER] → [action details]
-
-_Market data for informational purposes._
+[X]% to be +EV · dies if: [k1], [k2], [k3]
+Alt: [TICKER] $[price] [dir] ([1 sentence])
 ```
 
-**That's it.** No REJECTED section, no DEEPER CLAIM section, no multi-paragraph WHY. The thesis IS the deeper claim (Phase 1 already extracted it). The rejections are internal work. The reader gets: what, why, math, risk, how.
+Then attach inline buttons (see below). That's ≤16 lines of text + button row. Done.
 
 ### Action Buttons
 
-Every trade card includes inline buttons (on platforms that support them):
+Every trade card includes inline buttons. The execute button includes the **quantity** — this proves construction and makes the screenshot.
 
-| Button | Action |
-|--------|--------|
-| 📝 Paper Trade | Records to `track.ts` with `--mode paper` at current price |
-| ✅ I Took This | Records to `track.ts` with `--mode real` at current price |
-| 🔗 Open in [Platform] | Deep link to the instrument page |
+**Button templates by instrument type:**
 
-Deep link formats:
-- **Robinhood:** `https://robinhood.com/stocks/[TICKER]` (stocks) or search for options
-- **Kalshi:** `https://kalshi.com/markets/[SERIES]`
-- **Hyperliquid:** `https://app.hyperliquid.xyz/trade/[TICKER]`
-- **Republic:** Direct URL from adapter results
-- **Wefunder:** Direct URL from adapter results
+| Type | Execute button | Track button |
+|------|---------------|-------------|
+| Stock | `Buy [QTY] [TICKER] → Robinhood` | `📝 Track` |
+| Put/Call | `Buy [QTY] [TICKER] [STRIKE][P/C] [EXP] → Robinhood` | `📝 Track` |
+| Kalshi | `Buy [QTY] [CONTRACT] → Kalshi` | `📝 Track` |
+| Perp | `[Long/Short] [TICKER] [LEV]x → Hyperliquid` | `📝 Track` |
+| Polymarket | `Buy [QTY] [YES/NO] → Polymarket` | `📝 Track` |
 
-After recording (paper or real), the trade enters the portfolio tracked by `track.ts`. Use `bun run scripts/track.ts portfolio --telegram` to show live P&L for all open trades.
+**What happens on tap:**
+- **Execute button:** Opens confirmation flow → "Confirm: [qty] [instrument] @ $[price] (~$[total])?" with `[✅ Confirm]` `[❌ Cancel]`. On confirm: places order (Kalshi/Polymarket/HL) or opens deep link (Robinhood) + auto-records trade.
+- **📝 Track button:** Records paper trade at current price → trade appears in portfolio.
 
-### Post-Trade Loop
+**Deep link formats (for platforms without execution API):**
+- Robinhood: `https://robinhood.com/stocks/[TICKER]`
+- Kalshi: `https://kalshi.com/markets/[SERIES]`
+- Hyperliquid: `https://app.hyperliquid.xyz/trade/[TICKER]`
 
-Once a trade is recorded:
-1. **Price alerts** — set monitoring for kill conditions and target levels from the scenario table
-2. **Portfolio view** — `bun run scripts/track.ts portfolio` shows all open beliefs with live P&L
-3. **Close trigger** — when a kill condition fires or target hits, alert the user with the original thesis context
-4. **Trade card** — `bun run scripts/card.ts --id [ID]` generates a shareable "I Called It" card with entry, current price, and P&L
+### Trade Storage
+
+Every skill invocation auto-records to SQLite (`data/beliefs.db`):
+- **On route:** thesis + routing rows written (input, deeper claim, shape, instrument, score)
+- **On Track/Execute:** trade row created (paper or real, entry price, qty)
+- **On close:** exit price, realized P&L
+
+```bash
+bun run scripts/track.ts portfolio     # all open beliefs + live P&L
+bun run scripts/track.ts close --id X  # close with exit price
+bun run scripts/card.ts --id X         # shareable trade card
+```
 
 ### Instrument-Type Adaptations
 
-The 2-3 sentence intro adapts by type. The scenario table format stays the same (price level / loss or multiple / condition).
+The 2-3 sentence WHY adapts by type. The scenario table format stays the same.
 
-| Type | Intro includes | Table specifics |
-|------|---------------|-----------------|
-| Equity | Company desc, MC, why mispriced | Nx → comparable-size for upside |
-| Options/puts | Underlying, strike, expiry, premium, breakeven | Max loss = premium, Nx on premium |
-| Kalshi binary | Contract, resolution date, implied probability | Payout at $1/contract, # contracts |
-| Perps | Position, leverage, funding rate | Liquidation price in downside rows |
-| Angel/private | Category, stage, platform | Convexity range, lockup, failure rate |
+| Type | WHY includes | Table specifics |
+|------|-------------|-----------------|
+| Equity | MC, why mispriced, comparable | Nx with comparable context |
+| Options/puts | Strike, expiry, premium, breakeven | Max loss = premium |
+| Kalshi binary | Implied probability, your edge | Payout per contract |
+| Perps | Leverage, funding rate | Liquidation price in downside |
 
 ### Output Precision Rules
 
-**Scenario table math by type:**
-- **Equity:** Implied price = target MC ÷ shares outstanding. Multiple = target price ÷ entry price. MC comparables must be real, recognizable companies — ideally same sector.
-- **Kalshi:** P&L = contracts × (payout − entry price). State # contracts at $100K and implied probability.
-- **Perps:** P&L = position size × leverage × price move %. State liquidation price in every scenario.
-- **Options:** P&L = contracts × (intrinsic value at target − premium paid) × 100. State breakeven price and expiry.
-
-**Kill conditions:** Specific, observable, with time column. Not "if the thesis is wrong" but "2026  QS7001 misses mass production" or "policy  NIST delays or softens mandate." `Next:` highlights nearest catalyst.
-
-**Rejections:** One line per instrument with one data point each. If rejections share a common theme, add a framing sentence that turns them into evidence for the winner. If they're heterogeneous (different elimination reasons), skip the framing — the data speaks.
+- **Equity:** target price = target MC ÷ shares. Multiple = target ÷ entry.
+- **Kalshi:** P&L = contracts × (payout − entry). State implied probability.
+- **Perps:** P&L = size × leverage × move %. State liquidation price.
+- **Options:** P&L = contracts × (intrinsic − premium) × 100. State breakeven.
+- **Kill conditions:** Specific + observable. "NIST delays mandate" not "thesis is wrong."
 
 ---
 

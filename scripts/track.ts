@@ -1,77 +1,42 @@
 /**
- * Trade tracker CLI — record beliefs, check PnL, close trades.
+ * Trade tracker CLI — SQLite-backed belief portfolio.
  *
  * Usage:
- *   bun run scripts/track.ts record --thesis "AI defense spending will boom" --platform robinhood --instrument BAH --direction long --entry-price 79.32
- *   bun run scripts/track.ts list
+ *   bun run scripts/track.ts record --thesis "..." --platform robinhood --instrument LAES --direction long --entry-price 3.85 [--mode paper] [--qty 25974] [--shape mispriced] [--deeper-claim "..."] [--thesis-beta 0.85] [--convexity 3.9] [--time-cost 0] [--kills "NIST delays, cash burn"] [--alt "ARQQ $17 (quantum encryption)"]
+ *   bun run scripts/track.ts portfolio [--telegram]
+ *   bun run scripts/track.ts close --id <trade-id> --exit-price 8.70
+ *   bun run scripts/track.ts history [--limit 20]
  *   bun run scripts/track.ts check
- *   bun run scripts/track.ts close --id <trade-id> --exit-price 103.12
  */
 
-import { join } from "path";
-import { homedir } from "os";
-import type { TrackedTrade, Platform, Direction } from "./types";
+import {
+  recordRouting, openTrade, closeTrade as dbClose,
+  getOpenTrades, getClosedTrades, getRecentRoutings,
+  findSimilarTheses, getDb
+} from "./db";
 
-const DATA_DIR = join(homedir(), ".belief-router");
-const TRADES_FILE = join(DATA_DIR, "trades.json");
+// ── Price fetchers ──────────────────────────────────────────────────
 
-// ── Storage helpers ─────────────────────────────────────────────────
-
-async function ensureDataDir(): Promise<void> {
-  const dir = Bun.file(DATA_DIR);
-  try {
-    await Bun.write(join(DATA_DIR, ".keep"), "");
-  } catch {
-    // Directory may already exist
-  }
-}
-
-async function loadTrades(): Promise<TrackedTrade[]> {
-  const file = Bun.file(TRADES_FILE);
-  if (await file.exists()) {
-    return (await file.json()) as TrackedTrade[];
-  }
-  return [];
-}
-
-async function saveTrades(trades: TrackedTrade[]): Promise<void> {
-  await ensureDataDir();
-  await Bun.write(TRADES_FILE, JSON.stringify(trades, null, 2));
-}
-
-// ── Price fetchers (per platform) ───────────────────────────────────
-
-async function fetchPrice(platform: Platform, instrument: string): Promise<number | null> {
+async function fetchPrice(platform: string, instrument: string): Promise<number | null> {
   try {
     switch (platform) {
-      case "robinhood":
-        return await fetchYahooPrice(instrument);
-      case "hyperliquid":
-        return await fetchHyperliquidPrice(instrument);
-      case "kalshi":
-        return await fetchKalshiPrice(instrument);
-      case "bankr":
-        return await fetchCoinGeckoPrice(instrument);
-      default:
-        console.error(`  Unknown platform: ${platform}`);
-        return null;
+      case "robinhood": return await fetchYahooPrice(instrument);
+      case "hyperliquid": return await fetchHLPrice(instrument);
+      case "kalshi": return await fetchKalshiPrice(instrument);
+      case "polymarket": return null; // TODO: fetch from gamma-api
+      default: return null;
     }
-  } catch (err: any) {
-    console.error(`  Failed to fetch price for ${instrument} on ${platform}: ${err.message}`);
-    return null;
-  }
+  } catch { return null; }
 }
 
 async function fetchYahooPrice(ticker: string): Promise<number | null> {
-  // Use yahoo-finance2 via dynamic import
-  const YahooFinance = (await import("yahoo-finance2")).default;
-  const yahooFinance = new YahooFinance({ suppressNotices: ["yahooSurvey"] });
-  const q = await yahooFinance.quote(ticker);
+  const YF = (await import("yahoo-finance2")).default;
+  const yf = new YF({ suppressNotices: ["yahooSurvey"] });
+  const q = await yf.quote(ticker.replace(/-PERP$/i, ""));
   return q?.regularMarketPrice ?? null;
 }
 
-async function fetchHyperliquidPrice(instrument: string): Promise<number | null> {
-  // Strip "-PERP" suffix if present
+async function fetchHLPrice(instrument: string): Promise<number | null> {
   const coin = instrument.replace(/-PERP$/i, "");
   const res = await fetch("https://api.hyperliquid.xyz/info", {
     method: "POST",
@@ -80,289 +45,186 @@ async function fetchHyperliquidPrice(instrument: string): Promise<number | null>
   });
   if (!res.ok) return null;
   const mids = (await res.json()) as Record<string, string>;
-  const mid = mids[coin];
-  return mid ? parseFloat(mid) : null;
+  return mids[coin] ? parseFloat(mids[coin]) : null;
 }
 
 async function fetchKalshiPrice(ticker: string): Promise<number | null> {
   const res = await fetch(`https://api.elections.kalshi.com/trade-api/v2/markets/${ticker}`);
   if (!res.ok) return null;
   const data = (await res.json()) as any;
-  // last_price is in cents (0-100 representing probability)
-  const lastPrice = data?.market?.last_price;
-  return typeof lastPrice === "number" ? lastPrice : null;
-}
-
-async function fetchCoinGeckoPrice(tokenId: string): Promise<number | null> {
-  // Try as coingecko ID first, then as symbol search
-  const id = tokenId.toLowerCase();
-  const res = await fetch(
-    `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`
-  );
-  if (!res.ok) return null;
-  const data = (await res.json()) as any;
-  if (data[id]?.usd) return data[id].usd;
-
-  // Fallback: search by symbol
-  const searchRes = await fetch(
-    `https://api.coingecko.com/api/v3/search?query=${id}`
-  );
-  if (!searchRes.ok) return null;
-  const searchData = (await searchRes.json()) as any;
-  const coin = searchData?.coins?.[0];
-  if (!coin?.id) return null;
-
-  const priceRes = await fetch(
-    `https://api.coingecko.com/api/v3/simple/price?ids=${coin.id}&vs_currencies=usd`
-  );
-  if (!priceRes.ok) return null;
-  const priceData = (await priceRes.json()) as any;
-  return priceData[coin.id]?.usd ?? null;
+  return data?.market?.last_price ?? null;
 }
 
 // ── Commands ────────────────────────────────────────────────────────
 
-async function recordTrade(args: string[]): Promise<void> {
-  const flags = parseFlags(args);
-  const thesis = flags["thesis"];
-  const platform = flags["platform"] as Platform;
-  const instrument = flags["instrument"];
-  const direction = flags["direction"] as Direction;
-  const entryPrice = parseFloat(flags["entry-price"] || "");
+async function record(args: string[]) {
+  const f = parseFlags(args);
+  const thesis = f["thesis"];
+  const platform = f["platform"];
+  const instrument = f["instrument"];
+  const direction = f["direction"];
+  const entryPrice = parseFloat(f["entry-price"] || "");
+  const mode = (f["mode"] || "paper") as "paper" | "real";
 
   if (!thesis || !platform || !instrument || !direction || isNaN(entryPrice)) {
-    console.error("Usage: bun run scripts/track.ts record \\");
-    console.error('  --thesis "AI defense spending will boom" \\');
-    console.error("  --platform robinhood \\");
-    console.error("  --instrument BAH \\");
-    console.error("  --direction long \\");
-    console.error("  --entry-price 79.32");
+    console.error("Usage: bun run scripts/track.ts record --thesis \"...\" --platform robinhood --instrument LAES --direction long --entry-price 3.85");
     process.exit(1);
   }
 
-  const trades = await loadTrades();
-  const id = crypto.randomUUID().slice(0, 8);
-  const now = new Date().toISOString();
+  const qty = parseFloat(f["qty"] || "0") || Math.floor(100000 / entryPrice);
 
-  const trade: TrackedTrade = {
-    id,
-    thesis,
-    thesis_timestamp: now,
-    expression: {
-      platform,
-      instrument: instrument.toUpperCase(),
-      instrument_name: instrument.toUpperCase(),
-      direction,
-      capital_required: 100,
-      return_if_right_pct: 0,
-      return_if_wrong_pct: 0,
-      time_horizon: "",
-      leverage: 1,
-      liquidity: "medium",
-      conviction_breakeven_pct: 0,
-      platform_risk_tier: platform === "hyperliquid" ? "dex" : platform === "bankr" ? "new" : "regulated",
-      execution_details: {},
-    },
-    entry_price: entryPrice,
-    entry_date: now,
-    status: "open",
-  };
+  const { thesisId, routingId } = recordRouting({
+    rawInput: thesis,
+    deeperClaim: f["deeper-claim"],
+    shape: f["shape"] as any,
+    timeHorizon: f["time-horizon"],
+    instrument: instrument.toUpperCase(),
+    platform,
+    direction,
+    instrumentType: f["type"],
+    entryPrice,
+    qty,
+    strike: f["strike"] ? parseFloat(f["strike"]) : undefined,
+    expiry: f["expiry"],
+    leverage: f["leverage"] ? parseFloat(f["leverage"]) : undefined,
+    thesisBeta: f["thesis-beta"] ? parseFloat(f["thesis-beta"]) : undefined,
+    convexity: f["convexity"] ? parseFloat(f["convexity"]) : undefined,
+    timeCost: f["time-cost"] ? parseFloat(f["time-cost"]) : undefined,
+    killConditions: f["kills"],
+    altInstrument: f["alt"],
+    deepLink: f["deep-link"],
+  });
 
-  trades.push(trade);
-  await saveTrades(trades);
+  const tradeId = openTrade(routingId, mode);
 
-  console.log(`\nRecorded trade ${id}:`);
+  console.log(`\n✅ Recorded ${mode === "real" ? "💰" : "📝"} trade ${tradeId}:`);
   console.log(`  Thesis:     "${thesis}"`);
-  console.log(`  Platform:   ${platform}`);
-  console.log(`  Instrument: ${instrument.toUpperCase()}`);
+  console.log(`  Instrument: ${instrument.toUpperCase()} (${platform})`);
   console.log(`  Direction:  ${direction}`);
   console.log(`  Entry:      $${entryPrice}`);
-  console.log(`  Date:       ${now.split("T")[0]}`);
-  console.log(`\nStored at: ${TRADES_FILE}`);
+  console.log(`  Qty:        ${qty}`);
+  console.log(`  IDs:        thesis=${thesisId} routing=${routingId} trade=${tradeId}`);
 }
 
-async function listTrades(): Promise<void> {
-  const trades = await loadTrades();
-  const open = trades.filter((t) => t.status === "open");
-  const closed = trades.filter((t) => t.status === "closed");
+async function portfolio(args: string[]) {
+  const telegram = args.includes("--telegram");
+  const trades = getOpenTrades();
 
   if (trades.length === 0) {
-    console.log("No trades recorded yet. Use 'record' to add one.");
+    console.log("No open trades. Use 'record' to add one.");
     return;
   }
 
-  if (open.length > 0) {
-    console.log(`\nOpen Trades (${open.length}):`);
-    console.log("─".repeat(90));
-    console.log(
-      padR("ID", 10) +
-        padR("Thesis", 35) +
-        padR("Instrument", 12) +
-        padR("Entry", 10) +
-        padR("Direction", 10) +
-        "Days"
-    );
-    console.log("─".repeat(90));
-    for (const t of open) {
-      const days = Math.floor(
-        (Date.now() - new Date(t.entry_date).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      console.log(
-        padR(t.id, 10) +
-          padR(truncate(t.thesis, 33), 35) +
-          padR(t.expression.instrument, 12) +
-          padR(`$${t.entry_price.toFixed(2)}`, 10) +
-          padR(t.expression.direction, 10) +
-          days.toString()
-      );
+  const rows: string[] = [];
+  let totalPnl = 0;
+  let totalCapital = 0;
+
+  for (const t of trades) {
+    const livePrice = await fetchPrice(t.platform, t.instrument);
+    const days = Math.floor((Date.now() - new Date(t.opened_at).getTime()) / 86400000);
+    const capital = t.entry_price * t.qty;
+
+    let pnlPct = 0;
+    if (livePrice !== null) {
+      const dir = t.direction === "long" ? 1 : -1;
+      pnlPct = dir * ((livePrice - t.entry_price) / t.entry_price) * 100;
     }
+
+    const pnlDollars = (pnlPct / 100) * capital;
+    totalPnl += pnlDollars;
+    totalCapital += capital;
+
+    const mode = t.mode === "real" ? "💰" : "📝";
+    const sign = pnlPct >= 0 ? "+" : "";
+    const ticker = t.instrument.slice(0, 10).padEnd(10);
+    const thesis = (t.raw_input || "").slice(0, 22);
+
+    rows.push(`${mode} ${ticker} ${sign}${pnlPct.toFixed(1).padStart(6)}% ${String(days).padStart(3)}d  ${thesis}`);
   }
 
-  if (closed.length > 0) {
-    console.log(`\nClosed Trades (${closed.length}):`);
-    console.log("─".repeat(100));
-    console.log(
-      padR("ID", 10) +
-        padR("Thesis", 35) +
-        padR("Instrument", 12) +
-        padR("Entry", 10) +
-        padR("PnL", 12) +
-        "Days"
-    );
-    console.log("─".repeat(100));
-    for (const t of closed) {
-      const days = Math.floor(
-        (Date.now() - new Date(t.entry_date).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const pnl = t.pnl_pct != null ? `${t.pnl_pct >= 0 ? "+" : ""}${t.pnl_pct.toFixed(1)}%` : "—";
-      console.log(
-        padR(t.id, 10) +
-          padR(truncate(t.thesis, 33), 35) +
-          padR(t.expression.instrument, 12) +
-          padR(`$${t.entry_price.toFixed(2)}`, 10) +
-          padR(pnl, 12) +
-          days.toString()
-      );
-    }
+  const totalSign = totalPnl >= 0 ? "+" : "";
+  const totalPct = totalCapital > 0 ? (totalPnl / totalCapital) * 100 : 0;
+
+  if (telegram) {
+    console.log(`🎯 **Belief Portfolio** (${trades.length} open)\n`);
+    console.log("```");
+    for (const r of rows) console.log(r);
+    console.log("─".repeat(42));
+    console.log(`   TOTAL      ${totalSign}${totalPct.toFixed(1)}%       ${totalSign}$${totalPnl.toFixed(0)}`);
+    console.log("```");
+    console.log(`\n📝 paper · 💰 real`);
+  } else {
+    console.log(`\nBelief Portfolio — ${trades.length} open\n`);
+    for (const r of rows) console.log(r);
+    console.log("─".repeat(45));
+    console.log(`TOTAL: ${totalSign}${totalPct.toFixed(1)}% (${totalSign}$${totalPnl.toFixed(0)} on $${totalCapital.toFixed(0)})`);
   }
 }
 
-async function checkTrades(): Promise<void> {
-  const trades = await loadTrades();
-  const open = trades.filter((t) => t.status === "open");
-
-  if (open.length === 0) {
-    console.log("No open trades to check.");
-    return;
-  }
-
-  console.log(`\nChecking ${open.length} open trade(s)...\n`);
-  console.log("─".repeat(100));
-  console.log(
-    padR("ID", 10) +
-      padR("Instrument", 12) +
-      padR("Entry", 10) +
-      padR("Current", 10) +
-      padR("PnL $", 10) +
-      padR("PnL %", 10) +
-      padR("Days", 6) +
-      "Thesis"
-  );
-  console.log("─".repeat(100));
-
-  for (const trade of open) {
-    const currentPrice = await fetchPrice(
-      trade.expression.platform,
-      trade.expression.instrument
-    );
-
-    if (currentPrice != null) {
-      const dirMult = trade.expression.direction === "short" || trade.expression.direction === "no" ? -1 : 1;
-      const pnlPct = dirMult * ((currentPrice - trade.entry_price) / trade.entry_price) * 100;
-      // Assume $100 capital for dollar PnL
-      const pnlDollars = pnlPct;
-
-      trade.current_price = currentPrice;
-      trade.pnl_pct = Math.round(pnlPct * 100) / 100;
-      trade.pnl_dollars = Math.round(pnlDollars * 100) / 100;
-
-      const days = Math.floor(
-        (Date.now() - new Date(trade.entry_date).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const pnlSign = pnlPct >= 0 ? "+" : "";
-      console.log(
-        padR(trade.id, 10) +
-          padR(trade.expression.instrument, 12) +
-          padR(`$${trade.entry_price.toFixed(2)}`, 10) +
-          padR(`$${currentPrice.toFixed(2)}`, 10) +
-          padR(`${pnlSign}$${pnlDollars.toFixed(2)}`, 10) +
-          padR(`${pnlSign}${pnlPct.toFixed(1)}%`, 10) +
-          padR(days.toString(), 6) +
-          truncate(trade.thesis, 30)
-      );
-    } else {
-      console.log(
-        padR(trade.id, 10) +
-          padR(trade.expression.instrument, 12) +
-          padR(`$${trade.entry_price.toFixed(2)}`, 10) +
-          padR("ERR", 10) +
-          padR("—", 10) +
-          padR("—", 10) +
-          padR("—", 6) +
-          truncate(trade.thesis, 30)
-      );
-    }
-  }
-
-  await saveTrades(trades);
-  console.log(`\nUpdated ${TRADES_FILE}`);
-}
-
-async function closeTrade(args: string[]): Promise<void> {
-  const flags = parseFlags(args);
-  const id = flags["id"];
-  const exitPrice = parseFloat(flags["exit-price"] || "");
+async function close(args: string[]) {
+  const f = parseFlags(args);
+  const id = f["id"];
+  const exitPrice = parseFloat(f["exit-price"] || "");
 
   if (!id || isNaN(exitPrice)) {
-    console.error("Usage: bun run scripts/track.ts close --id <trade-id> --exit-price 103.12");
+    console.error("Usage: bun run scripts/track.ts close --id <trade-id> --exit-price 8.70");
     process.exit(1);
   }
 
-  const trades = await loadTrades();
-  const trade = trades.find((t) => t.id === id);
+  dbClose(id, exitPrice);
+  console.log(`\n✅ Closed trade ${id} at $${exitPrice}`);
+}
 
-  if (!trade) {
-    console.error(`Trade "${id}" not found.`);
-    process.exit(1);
+async function history(args: string[]) {
+  const f = parseFlags(args);
+  const limit = parseInt(f["limit"] || "20");
+  const routings = getRecentRoutings(limit);
+
+  if (routings.length === 0) {
+    console.log("No routing history yet.");
+    return;
   }
-  if (trade.status === "closed") {
-    console.error(`Trade "${id}" is already closed.`);
-    process.exit(1);
+
+  console.log(`\nRecent Routings (${routings.length}):\n`);
+  for (const r of routings) {
+    const trades = r.trade_count > 0 ? `${r.trade_count} trade(s)` : "not tracked";
+    const beta = r.thesis_beta ? `β=${r.thesis_beta.toFixed(2)}` : "";
+    console.log(`  ${r.id}  ${r.instrument.padEnd(12)} ${r.platform.padEnd(12)} ${beta.padEnd(8)} ${trades}`);
+    console.log(`         "${(r.raw_input || "").slice(0, 60)}"`);
+    if (r.deeper_claim) console.log(`         → ${r.deeper_claim.slice(0, 60)}`);
+    console.log();
   }
+}
 
-  const dirMult = trade.expression.direction === "short" || trade.expression.direction === "no" ? -1 : 1;
-  const pnlPct = dirMult * ((exitPrice - trade.entry_price) / trade.entry_price) * 100;
-  const pnlDollars = pnlPct; // $100 capital
+async function check(args: string[]) {
+  const keywords = args.filter(a => !a.startsWith("--"));
+  if (keywords.length === 0) {
+    // Check all open trades for P&L
+    const trades = getOpenTrades();
+    if (trades.length === 0) { console.log("No open trades."); return; }
 
-  trade.status = "closed";
-  trade.current_price = exitPrice;
-  trade.pnl_pct = Math.round(pnlPct * 100) / 100;
-  trade.pnl_dollars = Math.round(pnlDollars * 100) / 100;
-
-  await saveTrades(trades);
-
-  const days = Math.floor(
-    (Date.now() - new Date(trade.entry_date).getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const sign = pnlPct >= 0 ? "+" : "";
-
-  console.log(`\nClosed trade ${id}:`);
-  console.log(`  Thesis:     "${trade.thesis}"`);
-  console.log(`  Instrument: ${trade.expression.instrument} (${trade.expression.platform})`);
-  console.log(`  Entry:      $${trade.entry_price.toFixed(2)}`);
-  console.log(`  Exit:       $${exitPrice.toFixed(2)}`);
-  console.log(`  PnL:        ${sign}${pnlPct.toFixed(1)}% (${sign}$${pnlDollars.toFixed(2)} on $100)`);
-  console.log(`  Held:       ${days} days`);
+    console.log(`\nChecking ${trades.length} open trades...\n`);
+    for (const t of trades) {
+      const livePrice = await fetchPrice(t.platform, t.instrument);
+      if (livePrice === null) { console.log(`  ${t.instrument}: price unavailable`); continue; }
+      const dir = t.direction === "long" ? 1 : -1;
+      const pnl = dir * ((livePrice - t.entry_price) / t.entry_price) * 100;
+      const sign = pnl >= 0 ? "+" : "";
+      console.log(`  ${t.instrument.padEnd(10)} $${t.entry_price} → $${livePrice.toFixed(2)} (${sign}${pnl.toFixed(1)}%)`);
+    }
+  } else {
+    // Check for similar past theses
+    const similar = findSimilarTheses(keywords);
+    if (similar.length === 0) {
+      console.log("No similar past theses found.");
+    } else {
+      console.log(`\nFound ${similar.length} similar past theses:\n`);
+      for (const th of similar) {
+        console.log(`  ${th.id}  ${th.created_at.split("T")[0]}  "${th.raw_input.slice(0, 60)}"`);
+        if (th.deeper_claim) console.log(`         → ${th.deeper_claim.slice(0, 60)}`);
+      }
+    }
+  }
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────
@@ -373,125 +235,29 @@ function parseFlags(args: string[]): Record<string, string> {
     if (args[i].startsWith("--")) {
       const key = args[i].slice(2);
       const val = args[i + 1];
-      if (val && !val.startsWith("--")) {
-        flags[key] = val;
-        i++;
-      }
+      if (val && !val.startsWith("--")) { flags[key] = val; i++; }
     }
   }
   return flags;
 }
 
-function padR(s: string, len: number): string {
-  return s.length >= len ? s.slice(0, len) : s + " ".repeat(len - s.length);
-}
-
-function truncate(s: string, len: number): string {
-  return s.length > len ? s.slice(0, len - 1) + "…" : s;
-}
-
 // ── Main ────────────────────────────────────────────────────────────
 
-const command = process.argv[2];
-const restArgs = process.argv.slice(3);
+const cmd = process.argv[2];
+const rest = process.argv.slice(3);
 
-switch (command) {
-  case "record":
-    await recordTrade(restArgs);
-    break;
-  case "list":
-    await listTrades();
-    break;
-  case "check":
-    await checkTrades();
-    break;
-  case "close":
-    await closeTrade(restArgs);
-    break;
-  case "portfolio":
-    await showPortfolio(restArgs);
-    break;
+switch (cmd) {
+  case "record": await record(rest); break;
+  case "portfolio": await portfolio(rest); break;
+  case "close": await close(rest); break;
+  case "history": await history(rest); break;
+  case "check": await check(rest); break;
   default:
-    console.error("Usage: bun run scripts/track.ts <record|list|check|close|portfolio> [options]");
-    console.error("");
-    console.error("Commands:");
-    console.error("  record     --thesis ... --platform ... --instrument ... --direction ... --entry-price ... [--mode paper|real]");
-    console.error("  list       Show all trades");
-    console.error("  check      Fetch live prices and show PnL for open trades");
-    console.error("  close      --id <trade-id> --exit-price ...");
-    console.error("  portfolio  [--telegram] Show portfolio summary with live P&L");
+    console.error("Usage: bun run scripts/track.ts <record|portfolio|close|history|check> [options]");
+    console.error("\n  record     Record a routed belief + open trade");
+    console.error("  portfolio  Show open beliefs with live P&L [--telegram]");
+    console.error("  close      Close a trade --id X --exit-price Y");
+    console.error("  history    Show recent routings [--limit N]");
+    console.error("  check      Check open trade P&L, or search past theses: check <keywords>");
     process.exit(1);
-}
-
-// ── Portfolio summary ───────────────────────────────────────────────
-
-async function showPortfolio(args: string[]): Promise<void> {
-  const flags = parseFlags(args);
-  const telegram = args.includes("--telegram");
-  const trades = await loadTrades();
-  const open = trades.filter((t) => t.status === "open");
-
-  if (open.length === 0) {
-    console.log("No open trades.");
-    return;
-  }
-
-  // Fetch all live prices
-  let totalPnl = 0;
-  let totalCapital = 0;
-  const rows: string[] = [];
-
-  for (const t of open) {
-    const livePrice = await fetchPrice(t.expression.platform, t.expression.instrument);
-    const days = Math.floor(
-      (Date.now() - new Date(t.entry_date).getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    let pnlPct = 0;
-    if (livePrice !== null) {
-      if (t.expression.direction === "long" || t.expression.direction === "yes") {
-        pnlPct = ((livePrice - t.entry_price) / t.entry_price) * 100;
-      } else {
-        pnlPct = ((t.entry_price - livePrice) / t.entry_price) * 100;
-      }
-    }
-
-    const capital = t.expression.capital_required || 100;
-    const pnlDollars = (pnlPct / 100) * capital;
-    totalPnl += pnlDollars;
-    totalCapital += capital;
-
-    const mode = (t as any).mode === "real" ? "💰" : "📝";
-    const sign = pnlPct >= 0 ? "+" : "";
-    const ticker = t.expression.instrument.slice(0, 10);
-    const thesis = truncate(t.thesis, 25);
-
-    rows.push(
-      `${mode} ${padR(ticker, 10)} ${sign}${pnlPct.toFixed(1)}% ${padR(days + "d", 5)} ${thesis}`
-    );
-  }
-
-  const totalSign = totalPnl >= 0 ? "+" : "";
-  const totalPct = totalCapital > 0 ? (totalPnl / totalCapital) * 100 : 0;
-
-  if (telegram) {
-    console.log(`🎯 **Belief Portfolio** (${open.length} open)\n`);
-    console.log("```");
-    for (const r of rows) console.log(r);
-    console.log("─".repeat(40));
-    console.log(
-      `   TOTAL    ${totalSign}${totalPct.toFixed(1)}%       ${totalSign}$${totalPnl.toFixed(0)}`
-    );
-    console.log("```");
-    console.log(
-      `\n📝 = paper · 💰 = real`
-    );
-  } else {
-    console.log(`\nBelief Portfolio — ${open.length} open trades\n`);
-    for (const r of rows) console.log(r);
-    console.log("─".repeat(45));
-    console.log(
-      `TOTAL: ${totalSign}${totalPct.toFixed(1)}% (${totalSign}$${totalPnl.toFixed(0)} on $${totalCapital.toFixed(0)})`
-    );
-  }
 }
