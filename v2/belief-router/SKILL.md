@@ -390,7 +390,7 @@ This is the decision gate. If conviction breakeven is 80% on a contrarian thesis
 2. **Answer first.** Emoji + thesis title → instrument + price → why in 2-3 sentences → scenario table → execute. No preamble.
 3. **Asymmetric framing.** Downside rows: dollar losses. Upside rows: multiples. Losses as pain, gains as excitement.
 4. **Telegram-native.** Bold for headers, normal text for prose, monospace code block ONLY for the scenario table. No full-message code blocks.
-5. **No rejected section.** Nobody needs to see what you didn't pick. The reasoning lives in Phases 1-4 (internal). If the user asks "why not X?" — answer then.
+5. **Rejections are the reasoning.** Don't hide rejected instruments — weave them into the WHY as contrast. "The obvious play is LLY, but it's at 55x — NVO does the same thing at 18x" teaches the reader more than either ticker alone. The rejected instrument explains the winning one.
 6. **Kills compress to one line.** "Dies if: X, Y, Z" — not a bulleted list.
 7. **Alt is one line.** Different class, brief tradeoff.
 8. **Private market section** only if Step 2.5 triggered and found results. 2-3 lines max.
@@ -404,10 +404,15 @@ Use Telegram formatting (bold, normal text, inline code, code blocks for tables 
 
 [INSTRUMENT] · $[PRICE]
 
-[2-3 sentences: what it is, why it's mispriced,
-thesis beta and convexity in plain language.
-The reader should understand the trade after
-reading this and nothing else.]
+[2-3 sentences that:
+1. Start from the user's words — echo their
+   language, then show where it leads
+2. Name the obvious play and why it's wrong —
+   the rejected instrument IS the argument
+   for the winning one
+3. Land on why THIS instrument captures the
+   thesis better than what they were probably
+   already thinking]
 
 `$100K → [quantity] [units]`
 
