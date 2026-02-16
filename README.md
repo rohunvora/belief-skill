@@ -1,76 +1,67 @@
 # Belief Router
 
-An [OpenClaw](https://github.com/openclaw/openclaw) skill that routes natural language beliefs into specific trades.
+You have opinions about the world. You probably don't know the best way to bet on them.
 
-Say what you think will happen → get the single highest-upside way to express that belief across prediction markets, options, equities, crypto perps, and private markets.
+*"Everyone's on Ozempic"* — do you buy Novo Nordisk? Short DoorDash? Buy Kalshi contracts on FDA approval? The answer depends on where the asymmetry actually is, and most people never find it because the research takes hours and spans platforms they've never used.
+
+**Belief Router is an [OpenClaw](https://github.com/openclaw/openclaw) skill that turns any belief into a specific trade.** Say what you think will happen in plain English — voice note, text, pasted tweet — and get back the single highest-upside way to express it across prediction markets, options, equities, crypto, and private markets.
+
+## What You Can Do With It
+
+**Trade your worldview, not just tickers.** You don't need to know what a put option is or how Kalshi works. You just need an opinion.
+
+- *"Meme politics are dead"* → DJT Jan 2027 $5 puts, 11x if right, $100K max loss
+- *"China is catching up in AI — that means defense spending booms"* → PLTR + CRWD basket with specific entry prices and sizing
+- *"Kevin Warsh will run the economy hot"* → Kalshi per-meeting rate cut contracts, 3 independent bets, 3.3x max, partial wins possible
+- *"Long peptides"* → NVO at $49 (down 47% from highs, 18x PE vs Eli Lilly at 55x)
+- *"St. John's wins tonight"* → Polymarket moneyline at 69¢, better odds than DraftKings with no house edge
+- *"I want to monetize US-China geopolitical risk"* → KWEB Jan 2027 $22 puts, 9-16x on major escalation
+
+**Works for anything with a direction:** macro, politics, crypto, sports, culture, tech, geopolitics. If you can say *"I think X will happen"*, it can route it.
 
 ## How It Works
 
-You say something like *"meme politics are dead"* or *"long peptides"* or *"China catching up in AI means defense spending booms."*
+1. **Finds the real trade** — the obvious instrument is usually priced in. The skill traces your belief to the second- or third-order consequence where the asymmetry lives. *"Everyone's on Ozempic"* → the play isn't pharma (consensus), it's shorting food delivery (the victim).
 
-The skill:
+2. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that literally resolves on your thesis, everything else has to beat it. Why buy an ETF at 30% thesis beta when a binary contract gives you 100%?
 
-1. **Extracts the deeper claim** — the obvious trade is usually priced in. The skill finds the second- or third-order consequence where the asymmetry actually lives.
-2. **Classifies the thesis shape** — binary event, mispriced company, sector/theme, relative value, or vulnerability. Shape determines which instruments are natural candidates.
-3. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that directly resolves on your thesis, it sets the ceiling. Everything else has to beat ~100% thesis beta with zero carry cost.
-4. **Finds the best instrument within the matched class**, then **cross-checks against other classes** on a normalized metric.
-5. **Structures the position** — direction theses get decomposed into independently-resolving pieces (partial wins > all-or-nothing). Scopes to the thesis window.
-6. **Outputs a single trade card** — one screen on mobile, scenario table with $100K sizing, kill conditions, conviction breakeven, and an alternative from a different instrument class.
+3. **Scores every candidate on one metric** — `thesis beta × convexity / (1 + time cost)`. No gut feel, no defaults. A Kalshi binary at 12x with 100% thesis beta beats a sector ETF at 1.3x with 30% thesis beta every time.
 
-### The Metric
-
-Every candidate is scored on:
-
-```
-thesis beta × convexity / (1 + time cost)
-```
-
-- **Thesis beta** — what % of this instrument's price movement is driven by THIS thesis? Kalshi binary ≈ 100%. Sector ETF ≈ 30-60%.
-- **Convexity** — raw upside multiple at $100K.
-- **Time cost** — annualized carry (options theta, perp funding, zero for shares/prediction markets).
-
-This replaces any hardcoded instrument preference. The metric naturally surfaces the right instrument for each thesis.
-
-## Example
-
-**Input:** *"Kevin Warsh will run the economy hot, AI thrives"*
-
-**Old approach:** Route to SOXL (3x semis ETF) — 25% thesis beta, 1.3x upside. Most of the move comes from factors unrelated to Warsh.
-
-**Belief Router:** Decomposes into two legs (rates = contrarian, AI = consensus). Routes the contrarian leg. Finds Kalshi per-meeting rate cut contracts for Jul/Oct/Dec 2026 — 3 independent bets, partial wins possible, 90% thesis beta, 3.3x max, scoped to Warsh's actual tenure.
+4. **Gives you one trade, one screen** — scenario table at $100K sizing, kill conditions, conviction breakeven ("you need to be right >25% of the time for this to be +EV"), and an alternative from a different instrument class. Fits on your phone.
 
 ## Platforms
 
-The skill searches across 6 platforms via adapter scripts:
+Searches across 6 platforms automatically:
 
-| Platform | What | Adapter |
-|----------|------|---------|
-| **Kalshi** | Prediction markets (politics, macro, events) | `scripts/adapters/kalshi/` |
-| **Polymarket** | Prediction markets (politics, crypto, sports) | `scripts/adapters/polymarket/` |
-| **Robinhood** | Stocks, ETFs, options | `scripts/adapters/robinhood/` |
-| **Hyperliquid** | Crypto perps (leverage, pair trades) | `scripts/adapters/hyperliquid/` |
-| **Bankr** | AI agent tokens | `scripts/adapters/bankr/` |
-| **Angel** | Private markets (Republic, Wefunder, Crunchbase) | `scripts/adapters/angel/` |
+| Platform | What |
+|----------|------|
+| **Kalshi** | Prediction markets — politics, macro, events |
+| **Polymarket** | Prediction markets — politics, crypto, sports (NBA, NFL, MLB, NHL, NCAAB) |
+| **Robinhood** | Stocks, ETFs, options |
+| **Hyperliquid** | Crypto perps with leverage, pair trades |
+| **Bankr** | AI agent tokens |
+| **Angel** | Private markets — Republic, Wefunder, Crunchbase |
 
-Polymarket adapter is zero-dependency (just `fetch`). Sports markets work via slug construction — NBA, NFL, MLB, NHL, NCAAB.
+You don't pick the platform. The skill picks it based on where the best expression of your thesis lives.
 
 ## Paper Trading
 
-Every trade card has action buttons:
+Every trade card comes with buttons:
 
-- 📝 **Paper Trade** — record at current price, track P&L
+- 📝 **Paper Trade** — record at current price, track P&L over time
 - ✅ **I Took This** — record as real
-- 🔗 **Open in Platform** — deep link to the instrument
+- 🔗 **Open in Platform** — deep link to execute
 
 ```bash
 bun run scripts/track.ts portfolio --telegram   # live P&L for all open beliefs
-bun run scripts/track.ts check                   # check for similar past trades
-bun run scripts/card.ts --id <ID> --telegram     # shareable trade card
+bun run scripts/card.ts --id <ID> --telegram     # shareable trade card with results
 ```
+
+Track your beliefs like a portfolio. See which types of theses you're good at predicting and which ones you're not.
 
 ## Install
 
-Requires [Bun](https://bun.sh) and an [OpenClaw](https://github.com/openclaw/openclaw) instance.
+Requires [Bun](https://bun.sh) and [OpenClaw](https://github.com/openclaw/openclaw).
 
 ```bash
 git clone https://github.com/rohunvora/belief-skill.git
@@ -78,60 +69,28 @@ cd belief-skill/v2/belief-router
 bun install
 ```
 
-Point your OpenClaw skill path to the `v2/belief-router` directory. The skill activates automatically when you express a belief with trading implications.
+Point your OpenClaw skill path to the `v2/belief-router` directory. The skill activates automatically when you express a belief with trading implications — no slash commands, no special syntax.
 
-### API Keys
-
-The skill uses web search for live research. Your OpenClaw instance handles search. Adapter scripts call public APIs (Yahoo Finance, DexScreener, Polymarket) — no additional keys required for basic usage.
-
-Kalshi adapter uses their public API. Angel adapter searches Republic/Wefunder/Crunchbase public listings.
+**No API keys required for basic usage.** Adapters call public APIs (Yahoo Finance, DexScreener, Polymarket, Kalshi). Your OpenClaw instance handles web search for live research.
 
 ## Repo Structure
 
 ```
-v2/belief-router/          ← current version (use this)
-  SKILL.md                 ← the skill spec (500 lines, the brain)
+v2/belief-router/          ← current version
+  SKILL.md                 ← the routing spec (500 lines)
   scripts/
-    track.ts               ← paper/real trade tracking + portfolio
+    track.ts               ← trade tracking + portfolio
     card.ts                ← shareable trade cards
-    types.ts               ← TypeScript types
     adapters/
-      kalshi/              ← prediction market instruments + returns
-      polymarket/          ← zero-dep prediction market + sports
-      robinhood/           ← stocks, ETFs, options via Yahoo Finance
+      kalshi/              ← prediction markets
+      polymarket/          ← prediction markets + sports
+      robinhood/           ← stocks, ETFs, options
       hyperliquid/         ← crypto perps
       bankr/               ← AI agent tokens
-      angel/               ← private markets (Republic, Wefunder, Crunchbase)
-  references/
-    blindspots.md          ← platform risk tiers
-    instrument-reasoning.md
-    portfolio-construction.md
-    ticker-context.json
-    secondaries.json
+      angel/               ← private markets
 
-v1/                        ← legacy version (auto-graded, 48/48 test suite)
+v1/                        ← legacy version (48/48 automated test suite)
 ```
-
-## Where It Stands
-
-### Done
-- Full 6-phase routing pipeline (SKILL.md)
-- Thesis shape classification (binary, mispriced, sector, relative value, vulnerability)
-- Ranking metric with thesis beta, convexity, time cost
-- 6 platform adapters (Kalshi, Polymarket, Robinhood, Hyperliquid, Bankr, Angel)
-- Position structuring (direction vs magnitude decomposition)
-- Paper trading with portfolio tracking and trade cards
-- Prediction markets as first-class (checked before traditional instruments)
-- Polymarket sports betting support (NBA, NFL, MLB, NHL, NCAAB)
-- Tested on 48 real theses from tweets — v1 scores 48/48
-
-### Next
-
-- **Calibration engine** — SQLite-backed belief tracking. Three entities: Thesis (the belief), Routing (the skill's work), Trade (the position). Separates thesis accuracy from instrument accuracy from timing. Edge Profile reveals where your model beats the market. Architecture designed, not yet built.
-- **Visual frontend** — localhost dashboard (like Remotion's Claude skill pattern). Monitor trades live, portfolio view, thesis history.
-- **Social trade cards** — shareable cards with AI-generated thesis blurb + instrument logic + P&L. The distribution mechanism — people share beliefs with results.
-- **Execution guidance** — for non-API brokerages (Robinhood), visual step-by-step matching their UI. Screenshot confirmation to "book" trades.
-- **Multi-wallet awareness** — knows which wallet is for which chain/exchange.
 
 ## License
 
