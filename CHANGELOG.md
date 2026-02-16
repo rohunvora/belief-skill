@@ -3,6 +3,7 @@
 ## v2 — Current
 
 ### 2026-02-16
+- **Cultural decoding in Phase 1** — when the subject is a person, brand, or community, decode the cultural movement it represents. "Long Clavicular" → looksmaxxing wave → HIMS. The thesis is about the wave, not the surfer. Uninvestable subjects trigger cultural signal extraction → publicly-traded infrastructure for that movement.
 - **Screenshot-optimized output** — ≤18 line rule. Zero preamble (first char is 🎯). Title ≤5 words. 4 scenario rows max. Designed for the Telegram screenshot moment.
 - **Telegram inline buttons** — every trade card sent via `message` tool with buttons. Green `url` button opens platform with quantity in text (proof of construction). Blue `callback` button tracks the belief.
 - **Callback handler spec** — `blr:track`, `blr:real`, `blr:portfolio`, `blr:close` prefixes. Full flow: card → track → confirm → portfolio.
