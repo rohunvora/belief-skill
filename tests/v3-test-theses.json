@@ -1,0 +1,106 @@
+[
+  {
+    "id": "v3-1",
+    "shape": "binary_event",
+    "input": "Fed won't cut rates at the March meeting",
+    "expected": {
+      "deeper_claim": "March FOMC holds rates steady — market overpricing the cut",
+      "primary_platform": "kalshi",
+      "series": "KXFED",
+      "direction": "Market-implied direction on the hold",
+      "should_find": ["KXFED-26MAR", "KXFEDDECISION"],
+      "thesis_beta_min": 0.8,
+      "notes": "Binary event with clear date (Mar 18, 2026). Kalshi is natural home. Should NOT suggest stocks."
+    }
+  },
+  {
+    "id": "v3-2",
+    "shape": "mispriced_company",
+    "input": "NVIDIA is going to $300 on the back of inference demand",
+    "expected": {
+      "deeper_claim": "AI inference scaling creates sustained GPU demand beyond training — NVDA earnings beat",
+      "primary_platform": "robinhood",
+      "instrument_type": "option",
+      "direction": "long",
+      "should_find": ["NVDA"],
+      "option_expiry_range": "30-45 days",
+      "notes": "Mispriced company with magnitude thesis. Options are natural (leverage + defined risk). Should pick 30-45d expiry per latest fix."
+    }
+  },
+  {
+    "id": "v3-3",
+    "shape": "sector_theme",
+    "input": "Everyone's on Ozempic — the weight loss drug wave is unstoppable",
+    "expected": {
+      "deeper_claim": "GLP-1 adoption shrinks food consumption at scale — second-order losers are mispriced",
+      "primary_platform": "robinhood",
+      "direction": "short",
+      "should_find": ["DASH", "MDLZ", "PEP", "CAKE"],
+      "should_not_find_as_primary": ["NVO", "LLY"],
+      "notes": "Surface claim is long pharma. Deeper claim is short food/delivery — the second-order losers. Tests deeper claim extraction."
+    }
+  },
+  {
+    "id": "v3-4",
+    "shape": "relative_value",
+    "input": "SOL is going to flip ETH in market cap",
+    "expected": {
+      "deeper_claim": "SOL/ETH ratio increases — isolate the spread from market direction",
+      "primary_platform": "hyperliquid",
+      "direction": "long SOL / short ETH",
+      "should_find": ["SOL-PERP", "ETH-PERP"],
+      "notes": "Relative value thesis. Should suggest pair trade (long SOL perp / short ETH perp) to isolate the ratio. NOT just 'buy SOL'."
+    }
+  },
+  {
+    "id": "v3-5",
+    "shape": "vulnerability",
+    "input": "AI will replace Google search — their ad monopoly is the real casualty",
+    "expected": {
+      "deeper_claim": "Google's search ad revenue declines as AI alternatives capture intent — the victim is more mispriced than the winner",
+      "primary_platform": "robinhood",
+      "direction": "short",
+      "instrument_type": "option",
+      "should_find": ["GOOG", "GOOGL"],
+      "should_not_find_as_primary": ["MSFT", "META"],
+      "notes": "Vulnerability thesis. Should suggest GOOG puts, not 'buy AI stocks'. Tests whether the deeper trade (short the victim) beats the surface trade (long the winner)."
+    }
+  },
+  {
+    "id": "v3-6",
+    "shape": "binary_event",
+    "input": "There's going to be a recession this year — tariffs + sticky inflation = demand destruction",
+    "expected": {
+      "deeper_claim": "US enters NBER recession in 2026 — market underpricing the probability",
+      "primary_platform": "kalshi",
+      "series": "KXRECSSNBER",
+      "direction": "yes",
+      "should_find": ["KXRECSSNBER-26"],
+      "notes": "Binary event (recession yes/no) with compound justification. Should route to Kalshi recession market, not generic 'short SPY'."
+    }
+  },
+  {
+    "id": "v3-7",
+    "shape": "sector_theme",
+    "input": "AI defense spending is about to boom — everyone's rearming",
+    "expected": {
+      "deeper_claim": "Military AI procurement creates sustained demand for defense contractors with AI integration capabilities",
+      "primary_platform": "robinhood",
+      "direction": "long",
+      "should_find": ["BAH", "PLTR", "LMT", "RTX", "DFEN"],
+      "notes": "Sector theme. Should find highest-beta defense name or DFEN (3x leveraged ETF). Tests whether it picks the highest thesis-beta instrument."
+    }
+  },
+  {
+    "id": "v3-8",
+    "shape": "compound",
+    "input": "Trump tariffs will crush China but Bitcoin goes to $200K as a hedge",
+    "expected": {
+      "deeper_claim_leg1": "US tariffs damage Chinese export economy — short China exposure",
+      "deeper_claim_leg2": "Bitcoin reprices as macro hedge against trade war uncertainty",
+      "should_decompose": true,
+      "should_route_strongest_leg": true,
+      "notes": "Compound thesis with two distinct legs. Should decompose, route the strongest/most contrarian leg, and mention the other as alternative."
+    }
+  }
+]
