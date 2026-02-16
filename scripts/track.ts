@@ -22,7 +22,8 @@ async function fetchPrice(plat: string, inst: string): Promise<number | null> {
         const YF = (await import("yahoo-finance2")).default;
         const yf = new YF({ suppressNotices: ["yahooSurvey"] });
         const q = await yf.quote(ticker);
-        return q?.regularMarketPrice ?? null;
+        // Use post/pre market price when available, fall back to regular
+        return q?.postMarketPrice ?? q?.preMarketPrice ?? q?.regularMarketPrice ?? null;
       }
       case "hyperliquid": {
         const res = await fetch("https://api.hyperliquid.xyz/info", {
