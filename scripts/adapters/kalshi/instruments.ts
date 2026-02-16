@@ -261,13 +261,8 @@ async function findInstruments(keywords: string[]): Promise<AdapterInstrumentRes
 
   for (const { ticker: seriesTicker, desc, relevance, events } of fetchResults) {
     if (events.length === 0) {
-      // Series exists but no open events -- still report it
-      instruments.push({
-        ticker: seriesTicker,
-        name: desc,
-        relevance,
-        why: `Series ${seriesTicker} matched but has no currently open events`,
-      });
+      // Series exists but no open events — log it but don't include as tradeable
+      console.error(`[kalshi/instruments] Series ${seriesTicker} matched but has no open events — skipping`);
       continue;
     }
 
