@@ -1,233 +1,197 @@
 /**
- * Trade tracker CLI — SQLite-backed belief portfolio.
+ * Belief tracker CLI — append-only JSONL fact log.
  *
  * Usage:
- *   bun run scripts/track.ts record --thesis "..." --platform robinhood --instrument LAES --direction long --entry-price 3.85 [--mode paper] [--qty 25974] [--shape mispriced] [--deeper-claim "..."] [--thesis-beta 0.85] [--convexity 3.9] [--time-cost 0] [--kills "NIST delays, cash burn"] [--alt "ARQQ $17 (quantum encryption)"]
+ *   bun run scripts/track.ts record --input "..." --inst LAES --px 3.85 --dir long --plat robinhood [--action paper] [--shape mispriced] [--β 0.85] [--conv 3.9] [--tc 0] [--kills "..."] [--alt "..."] [--claim "..."] [--src "tweet:@marginsmall"] [--conviction 80]
  *   bun run scripts/track.ts portfolio [--telegram]
- *   bun run scripts/track.ts close --id <trade-id> --exit-price 8.70
+ *   bun run scripts/track.ts close --id X --px 8.70 [--reason "target hit"]
+ *   bun run scripts/track.ts update --id X --conviction 92 --reason "NIST accelerated"
  *   bun run scripts/track.ts history [--limit 20]
- *   bun run scripts/track.ts check
+ *   bun run scripts/track.ts check <keywords>
  */
 
-import {
-  recordRouting, openTrade, closeTrade as dbClose,
-  getOpenTrades, getClosedTrades, getRecentRoutings,
-  findSimilarTheses, getDb
-} from "./db";
+import { append, genId, now, readAll, getRoutes, getOpenRoutes, getLatestConviction, findSimilar, type RoutingFact, type CloseFact, type ConvictionFact } from "./db";
 
 // ── Price fetchers ──────────────────────────────────────────────────
 
-async function fetchPrice(platform: string, instrument: string): Promise<number | null> {
+async function fetchPrice(plat: string, inst: string): Promise<number | null> {
   try {
-    switch (platform) {
-      case "robinhood": return await fetchYahooPrice(instrument);
-      case "hyperliquid": return await fetchHLPrice(instrument);
-      case "kalshi": return await fetchKalshiPrice(instrument);
-      case "polymarket": return null; // TODO: fetch from gamma-api
+    const ticker = inst.split(" ")[0].replace(/-PERP$/i, "");
+    switch (plat) {
+      case "robinhood": {
+        const YF = (await import("yahoo-finance2")).default;
+        const yf = new YF({ suppressNotices: ["yahooSurvey"] });
+        const q = await yf.quote(ticker);
+        return q?.regularMarketPrice ?? null;
+      }
+      case "hyperliquid": {
+        const res = await fetch("https://api.hyperliquid.xyz/info", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "allMids" }),
+        });
+        if (!res.ok) return null;
+        const mids = (await res.json()) as Record<string, string>;
+        return mids[ticker] ? parseFloat(mids[ticker]) : null;
+      }
+      case "kalshi": {
+        const res = await fetch(`https://api.elections.kalshi.com/trade-api/v2/markets/${ticker}`);
+        if (!res.ok) return null;
+        const data = (await res.json()) as any;
+        return data?.market?.last_price ?? null;
+      }
       default: return null;
     }
   } catch { return null; }
 }
 
-async function fetchYahooPrice(ticker: string): Promise<number | null> {
-  const YF = (await import("yahoo-finance2")).default;
-  const yf = new YF({ suppressNotices: ["yahooSurvey"] });
-  const q = await yf.quote(ticker.replace(/-PERP$/i, ""));
-  return q?.regularMarketPrice ?? null;
-}
-
-async function fetchHLPrice(instrument: string): Promise<number | null> {
-  const coin = instrument.replace(/-PERP$/i, "");
-  const res = await fetch("https://api.hyperliquid.xyz/info", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "allMids" }),
-  });
-  if (!res.ok) return null;
-  const mids = (await res.json()) as Record<string, string>;
-  return mids[coin] ? parseFloat(mids[coin]) : null;
-}
-
-async function fetchKalshiPrice(ticker: string): Promise<number | null> {
-  const res = await fetch(`https://api.elections.kalshi.com/trade-api/v2/markets/${ticker}`);
-  if (!res.ok) return null;
-  const data = (await res.json()) as any;
-  return data?.market?.last_price ?? null;
-}
-
 // ── Commands ────────────────────────────────────────────────────────
 
-async function record(args: string[]) {
-  const f = parseFlags(args);
-  const thesis = f["thesis"];
-  const platform = f["platform"];
-  const instrument = f["instrument"];
-  const direction = f["direction"];
-  const entryPrice = parseFloat(f["entry-price"] || "");
-  const mode = (f["mode"] || "paper") as "paper" | "real";
+function record(f: Record<string, string>) {
+  const input = f["input"];
+  const inst = f["inst"];
+  const px = parseFloat(f["px"] || "");
+  const dir = f["dir"];
+  const plat = f["plat"];
 
-  if (!thesis || !platform || !instrument || !direction || isNaN(entryPrice)) {
-    console.error("Usage: bun run scripts/track.ts record --thesis \"...\" --platform robinhood --instrument LAES --direction long --entry-price 3.85");
+  if (!input || !inst || isNaN(px) || !dir || !plat) {
+    console.error("Usage: bun run scripts/track.ts record --input \"...\" --inst LAES --px 3.85 --dir long --plat robinhood");
     process.exit(1);
   }
 
-  const qty = parseFloat(f["qty"] || "0") || Math.floor(100000 / entryPrice);
+  const id = genId();
+  const qty = f["qty"] ? parseFloat(f["qty"]) : Math.floor(100000 / px);
 
-  const { thesisId, routingId } = recordRouting({
-    rawInput: thesis,
-    deeperClaim: f["deeper-claim"],
-    shape: f["shape"] as any,
-    timeHorizon: f["time-horizon"],
-    instrument: instrument.toUpperCase(),
-    platform,
-    direction,
-    instrumentType: f["type"],
-    entryPrice,
+  const fact: RoutingFact = {
+    type: "route",
+    id,
+    t: now(),
+    input,
+    inst: inst.toUpperCase(),
+    px,
+    dir,
+    plat,
     qty,
-    strike: f["strike"] ? parseFloat(f["strike"]) : undefined,
-    expiry: f["expiry"],
-    leverage: f["leverage"] ? parseFloat(f["leverage"]) : undefined,
-    thesisBeta: f["thesis-beta"] ? parseFloat(f["thesis-beta"]) : undefined,
-    convexity: f["convexity"] ? parseFloat(f["convexity"]) : undefined,
-    timeCost: f["time-cost"] ? parseFloat(f["time-cost"]) : undefined,
-    killConditions: f["kills"],
-    altInstrument: f["alt"],
-    deepLink: f["deep-link"],
-  });
+    action: f["action"] || "paper",
+    ...(f["src"] && { src: f["src"] }),
+    ...(f["claim"] && { claim: f["claim"] }),
+    ...(f["shape"] && { shape: f["shape"] }),
+    ...(f["sector"] && { sector: f["sector"] }),
+    ...(f["β"] && { "β": parseFloat(f["β"]) }),
+    ...(f["conv"] && { conv: parseFloat(f["conv"]) }),
+    ...(f["tc"] && { tc: parseFloat(f["tc"]) }),
+    ...(f["kills"] && { kills: f["kills"] }),
+    ...(f["alt"] && { alt: f["alt"] }),
+    ...(f["link"] && { link: f["link"] }),
+    ...(f["conviction"] && { conviction: parseFloat(f["conviction"]) }),
+  };
 
-  const tradeId = openTrade(routingId, mode);
-
-  console.log(`\n✅ Recorded ${mode === "real" ? "💰" : "📝"} trade ${tradeId}:`);
-  console.log(`  Thesis:     "${thesis}"`);
-  console.log(`  Instrument: ${instrument.toUpperCase()} (${platform})`);
-  console.log(`  Direction:  ${direction}`);
-  console.log(`  Entry:      $${entryPrice}`);
-  console.log(`  Qty:        ${qty}`);
-  console.log(`  IDs:        thesis=${thesisId} routing=${routingId} trade=${tradeId}`);
+  append(fact);
+  const mode = fact.action === "real" ? "💰" : fact.action === "paper" ? "📝" : "👁";
+  console.log(`\n${mode} ${id} | ${inst.toUpperCase()} $${px} ${dir} | ${plat} | "${input.slice(0, 50)}"`);
 }
 
-async function portfolio(args: string[]) {
-  const telegram = args.includes("--telegram");
-  const trades = getOpenTrades();
-
-  if (trades.length === 0) {
-    console.log("No open trades. Use 'record' to add one.");
-    return;
-  }
+async function portfolio(telegram: boolean) {
+  const open = getOpenRoutes();
+  if (open.length === 0) { console.log("No open positions."); return; }
 
   const rows: string[] = [];
   let totalPnl = 0;
-  let totalCapital = 0;
+  let totalCap = 0;
 
-  for (const t of trades) {
-    const livePrice = await fetchPrice(t.platform, t.instrument);
-    const days = Math.floor((Date.now() - new Date(t.opened_at).getTime()) / 86400000);
-    const capital = t.entry_price * t.qty;
+  for (const r of open) {
+    const ticker = r.inst.split(" ")[0];
+    const live = await fetchPrice(r.plat, ticker);
+    const days = Math.floor((Date.now() - new Date(r.t).getTime()) / 86400000);
+    const cap = r.px * (r.qty || 0);
+    const dirMul = r.dir === "short" ? -1 : 1;
+    let pnl = 0;
 
-    let pnlPct = 0;
-    if (livePrice !== null) {
-      const dir = t.direction === "long" ? 1 : -1;
-      pnlPct = dir * ((livePrice - t.entry_price) / t.entry_price) * 100;
+    if (live !== null) {
+      pnl = dirMul * ((live - r.px) / r.px) * 100;
     }
 
-    const pnlDollars = (pnlPct / 100) * capital;
+    const pnlDollars = (pnl / 100) * cap;
     totalPnl += pnlDollars;
-    totalCapital += capital;
+    totalCap += cap;
 
-    const mode = t.mode === "real" ? "💰" : "📝";
-    const sign = pnlPct >= 0 ? "+" : "";
-    const ticker = t.instrument.slice(0, 10).padEnd(10);
-    const thesis = (t.raw_input || "").slice(0, 22);
+    const mode = r.action === "real" ? "💰" : "📝";
+    const sign = pnl >= 0 ? "+" : "";
+    const conv = getLatestConviction(r.id);
+    const convStr = conv ? ` c=${conv}` : "";
 
-    rows.push(`${mode} ${ticker} ${sign}${pnlPct.toFixed(1).padStart(6)}% ${String(days).padStart(3)}d  ${thesis}`);
+    rows.push(`${mode} ${ticker.padEnd(10)} ${(sign + pnl.toFixed(1) + "%").padStart(7)} ${String(days).padStart(3)}d${convStr}  ${r.input.slice(0, 20)}`);
   }
 
   const totalSign = totalPnl >= 0 ? "+" : "";
-  const totalPct = totalCapital > 0 ? (totalPnl / totalCapital) * 100 : 0;
+  const totalPct = totalCap > 0 ? (totalPnl / totalCap) * 100 : 0;
 
   if (telegram) {
-    console.log(`🎯 **Belief Portfolio** (${trades.length} open)\n`);
+    console.log(`🎯 **Belief Portfolio** (${open.length} open)\n`);
     console.log("```");
-    for (const r of rows) console.log(r);
+    for (const row of rows) console.log(row);
     console.log("─".repeat(42));
     console.log(`   TOTAL      ${totalSign}${totalPct.toFixed(1)}%       ${totalSign}$${totalPnl.toFixed(0)}`);
     console.log("```");
-    console.log(`\n📝 paper · 💰 real`);
   } else {
-    console.log(`\nBelief Portfolio — ${trades.length} open\n`);
-    for (const r of rows) console.log(r);
+    console.log(`\nBelief Portfolio — ${open.length} open\n`);
+    for (const row of rows) console.log(row);
     console.log("─".repeat(45));
-    console.log(`TOTAL: ${totalSign}${totalPct.toFixed(1)}% (${totalSign}$${totalPnl.toFixed(0)} on $${totalCapital.toFixed(0)})`);
+    console.log(`TOTAL: ${totalSign}${totalPct.toFixed(1)}% (${totalSign}$${totalPnl.toFixed(0)} on $${totalCap.toFixed(0)})`);
   }
 }
 
-async function close(args: string[]) {
-  const f = parseFlags(args);
+function close(f: Record<string, string>) {
   const id = f["id"];
-  const exitPrice = parseFloat(f["exit-price"] || "");
-
-  if (!id || isNaN(exitPrice)) {
-    console.error("Usage: bun run scripts/track.ts close --id <trade-id> --exit-price 8.70");
+  const px = parseFloat(f["px"] || "");
+  if (!id || isNaN(px)) {
+    console.error("Usage: bun run scripts/track.ts close --id X --px 8.70");
     process.exit(1);
   }
-
-  dbClose(id, exitPrice);
-  console.log(`\n✅ Closed trade ${id} at $${exitPrice}`);
+  append({ type: "close", id, t: now(), px, reason: f["reason"] });
+  console.log(`\n✅ Closed ${id} at $${px}`);
 }
 
-async function history(args: string[]) {
-  const f = parseFlags(args);
+function update(f: Record<string, string>) {
+  const id = f["id"];
+  const conviction = parseFloat(f["conviction"] || "");
+  const reason = f["reason"];
+  if (!id || isNaN(conviction) || !reason) {
+    console.error("Usage: bun run scripts/track.ts update --id X --conviction 92 --reason \"NIST accelerated\"");
+    process.exit(1);
+  }
+  const prev = getLatestConviction(id) || 0;
+  append({ type: "conviction", id, t: now(), from: prev, to: conviction, reason });
+  console.log(`\n📊 ${id} conviction ${prev} → ${conviction} | ${reason}`);
+}
+
+function history(f: Record<string, string>) {
   const limit = parseInt(f["limit"] || "20");
-  const routings = getRecentRoutings(limit);
+  const routes = getRoutes().slice(-limit);
+  if (routes.length === 0) { console.log("No history."); return; }
 
-  if (routings.length === 0) {
-    console.log("No routing history yet.");
-    return;
-  }
-
-  console.log(`\nRecent Routings (${routings.length}):\n`);
-  for (const r of routings) {
-    const trades = r.trade_count > 0 ? `${r.trade_count} trade(s)` : "not tracked";
-    const beta = r.thesis_beta ? `β=${r.thesis_beta.toFixed(2)}` : "";
-    console.log(`  ${r.id}  ${r.instrument.padEnd(12)} ${r.platform.padEnd(12)} ${beta.padEnd(8)} ${trades}`);
-    console.log(`         "${(r.raw_input || "").slice(0, 60)}"`);
-    if (r.deeper_claim) console.log(`         → ${r.deeper_claim.slice(0, 60)}`);
-    console.log();
+  console.log(`\nLast ${routes.length} beliefs:\n`);
+  for (const r of routes) {
+    const date = r.t.split("T")[0];
+    const beta = r["β"] ? `β=${r["β"]}` : "";
+    const mode = r.action === "real" ? "💰" : r.action === "paper" ? "📝" : "👁";
+    console.log(`  ${mode} ${r.id}  ${date}  ${r.inst.padEnd(14)} ${r.plat.padEnd(10)} ${beta}`);
+    console.log(`    "${r.input.slice(0, 65)}"`);
+    if (r.claim) console.log(`    → ${r.claim.slice(0, 65)}`);
   }
 }
 
-async function check(args: string[]) {
-  const keywords = args.filter(a => !a.startsWith("--"));
-  if (keywords.length === 0) {
-    // Check all open trades for P&L
-    const trades = getOpenTrades();
-    if (trades.length === 0) { console.log("No open trades."); return; }
-
-    console.log(`\nChecking ${trades.length} open trades...\n`);
-    for (const t of trades) {
-      const livePrice = await fetchPrice(t.platform, t.instrument);
-      if (livePrice === null) { console.log(`  ${t.instrument}: price unavailable`); continue; }
-      const dir = t.direction === "long" ? 1 : -1;
-      const pnl = dir * ((livePrice - t.entry_price) / t.entry_price) * 100;
-      const sign = pnl >= 0 ? "+" : "";
-      console.log(`  ${t.instrument.padEnd(10)} $${t.entry_price} → $${livePrice.toFixed(2)} (${sign}${pnl.toFixed(1)}%)`);
-    }
-  } else {
-    // Check for similar past theses
-    const similar = findSimilarTheses(keywords);
-    if (similar.length === 0) {
-      console.log("No similar past theses found.");
-    } else {
-      console.log(`\nFound ${similar.length} similar past theses:\n`);
-      for (const th of similar) {
-        console.log(`  ${th.id}  ${th.created_at.split("T")[0]}  "${th.raw_input.slice(0, 60)}"`);
-        if (th.deeper_claim) console.log(`         → ${th.deeper_claim.slice(0, 60)}`);
-      }
-    }
+function check(keywords: string[]) {
+  if (keywords.length === 0) { console.log("Usage: check <keywords>"); return; }
+  const similar = findSimilar(keywords);
+  if (similar.length === 0) { console.log("No similar beliefs found."); return; }
+  console.log(`\nFound ${similar.length} similar:\n`);
+  for (const r of similar) {
+    console.log(`  ${r.id}  ${r.t.split("T")[0]}  ${r.inst}  "${r.input.slice(0, 50)}"`);
   }
 }
 
-// ── Helpers ─────────────────────────────────────────────────────────
+// ── CLI ─────────────────────────────────────────────────────────────
 
 function parseFlags(args: string[]): Record<string, string> {
   const flags: Record<string, string> = {};
@@ -241,23 +205,18 @@ function parseFlags(args: string[]): Record<string, string> {
   return flags;
 }
 
-// ── Main ────────────────────────────────────────────────────────────
-
 const cmd = process.argv[2];
 const rest = process.argv.slice(3);
+const flags = parseFlags(rest);
 
 switch (cmd) {
-  case "record": await record(rest); break;
-  case "portfolio": await portfolio(rest); break;
-  case "close": await close(rest); break;
-  case "history": await history(rest); break;
-  case "check": await check(rest); break;
+  case "record": record(flags); break;
+  case "portfolio": await portfolio(rest.includes("--telegram")); break;
+  case "close": close(flags); break;
+  case "update": update(flags); break;
+  case "history": history(flags); break;
+  case "check": check(rest.filter(a => !a.startsWith("--"))); break;
   default:
-    console.error("Usage: bun run scripts/track.ts <record|portfolio|close|history|check> [options]");
-    console.error("\n  record     Record a routed belief + open trade");
-    console.error("  portfolio  Show open beliefs with live P&L [--telegram]");
-    console.error("  close      Close a trade --id X --exit-price Y");
-    console.error("  history    Show recent routings [--limit N]");
-    console.error("  check      Check open trade P&L, or search past theses: check <keywords>");
+    console.error("Usage: bun run scripts/track.ts <record|portfolio|close|update|history|check>");
     process.exit(1);
 }
