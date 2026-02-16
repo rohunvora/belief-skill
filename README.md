@@ -2,193 +2,78 @@
 
 You already have beliefs about the world. You just don't realize they're trades.
 
-*"Everyone's on Ozempic." "AI is going to replace search." "This Trump stuff is jumping the shark."*
+## Example
 
-These aren't just observations — each one is a directional bet. The problem isn't conviction. It's that you've never connected your worldview to the instruments that let you profit from it.
+Someone posts this on X:
 
-**Belief Router is an [OpenClaw](https://github.com/openclaw/openclaw) skill that turns what you think into what you trade.** Voice note, text, pasted tweet — say what you believe and get the single best way to express it.
+![tweet about AI overbuild and PQC](examples/pqc-tweet.jpg)
 
----
+You forward it to your agent. The skill returns:
 
-## Examples
+```
+🎯 PQC MANDATE
 
-Real outputs from the skill. Each started as a casual observation.
+LAES $3.85 · long
 
----
+Only public PQC chip maker. NIST 2030 = gov
+has to buy. Down 56%. The obvious play (IONQ)
+is quantum hardware — this is quantum security.
 
-**"Everyone's on Ozempic"**
+$100K → 25,974 shares
 
-> 🎯 **GLP-1 kills food delivery**
->
-> DASH $160 · Jan '27 $140 Put @ $10.70
->
-> Ozempic/GLP-1 adoption is accelerating — 6% of US adults on it, projected 13% by 2027. The obvious play (long NVO/LLY) is priced in at 55x PE. The victim isn't. DoorDash gets 78% of revenue from food delivery. Every GLP-1 patient reduces caloric intake ~30%. DASH is down 44% from highs but still trading at 150x PE on shrinking unit economics.
->
-> `$100K → 93 contracts`
->
-> ```
-> DASH $180   lose $100K   GLP-1 adoption slows
-> DASH $160   lose $60K    nothing changes
-> DASH $120      2.9x      adoption accelerates
-> DASH $100      4.7x      food delivery recession
-> DASH $80       7.5x      structural decline
-> ```
->
-> 38% to be +EV · dies if: GLP-1 side effects scare, DASH pivots to grocery, FDA restrictions
->
-> Alt: NVO $49.57 long (down 47% from highs, 18x PE — same thesis, buy the winner instead of shorting the loser)
->
-> Robinhood → DASH → Options → Jan 2027 $140 Put
+$2     -$48K   mandate delays
+$5.80   1.5x   52w high
+$8.70   2.3x   ATH
+$15     3.9x   gov contracts land
+
+40% to be +EV · dies if: NIST delays, cash burn
+Alt: ARQQ $17 (quantum encryption)
+
+[Buy 25,974 LAES → Robinhood]  [📝 Track]
+```
+
+The tweet said "AI overbuild → quantum plugs into subsidized infra for NIST deadline." The skill traced that to the deeper claim: the NIST post-quantum cryptography mandate creates a government-backed buyer for quantum-safe chips regardless of what happens to SaaS. It found LAES — the only public company making PQC semiconductors — down 56% from highs at $689M market cap. The obvious play (IONQ, quantum hardware) has 40% thesis beta. LAES has 85%.
+
+Tap the green button → Robinhood opens. Tap Track → it's in your portfolio with live P&L.
 
 ---
 
-**"Warsh will run the economy hot"**
+## More Examples
 
-> 🎯 **Warsh means rate cuts**
->
-> Kalshi KXFED-26JUL-T3.50 NO @ $0.27 + KXFED-26OCT-T3.50 NO @ $0.27 + KXFED-26DEC-T3.50 NO @ $0.31
->
-> Warsh is 96% confirmed as Fed chair. His thesis: keep money loose so American AI dominates. The obvious trade (buy semis ETF) has 25% thesis beta — mostly moves on earnings, not Fed policy. Kalshi per-meeting rate contracts are 90% thesis beta. You're betting on 3 independent meetings — partial wins possible. Each contract pays $1 if rates drop below 3.50% by that meeting.
->
-> `$100K → ~$33K per meeting × 3`
->
-> ```
-> 0/3 hit    lose $100K   Warsh is hawkish
-> 1/3 hit       1.2x      one cut comes through
-> 2/3 hit       2.2x      two cuts
-> 3/3 hit       3.3x      full dovish pivot
-> ```
->
-> 30% to be +EV · dies if: inflation re-accelerates, Warsh pivots hawkish, Senate blocks
->
-> Alt: TLT $87 long (rates down = bonds up, but only 35% thesis beta — moves on everything, not just Warsh)
->
-> Kalshi → KXFED-26JUL / 26OCT / 26DEC → NO on "above 3.50%"
+| You say | Skill finds | Why not the obvious play |
+|---------|------------|------------------------|
+| *"Everyone's on Ozempic"* | DASH puts, 7.5x | Pharma (NVO/LLY) is consensus. The victim (food delivery) is mispriced. |
+| *"Meme politics are dead"* | DJT $5 puts, 11x | No pure "short political entertainment" ETF exists. DJT is a sentiment stock with $1M/quarter revenue at $2.3B mcap. |
+| *"Warsh will run the economy hot"* | Kalshi rate cut contracts, 3.3x | Semis ETF (SOXL) has 25% thesis beta. Kalshi per-meeting contracts have 90% — and you can win partially. |
+| *"SOL flips ETH"* | Long SOL / short ETH perps on Hyperliquid | Buying SOL spot exposes you to market-wide crashes. The ratio trade isolates the thesis. |
+| *"AI replaces search"* | GOOG $150 puts, 7.1x | Buying AI companies is consensus and unclear. Shorting the victim (57% of Google's revenue = search ads) has more convexity. |
+| *"China AI = defense boom"* | PLTR long + Anduril secondary | Defense ETF has 30% thesis beta. PLTR (55% gov revenue, 40% YoY growth) has 80%. |
 
----
-
-**"Meme politics are dead"**
-
-> 🎯 **Trump media collapse**
->
-> DJT $10.98 · Jan '27 $5 Put @ $0.42
->
-> The Trump admin meme governance era is hitting cultural fatigue — Pokémon ICE content, Obama calling it a "clown show." DJT (Trump Media) is a pure sentiment stock with no real revenue ($1M/quarter). It's down 64% from highs but still trades at $2.3B market cap on vibes alone. If the political entertainment value fades, the floor drops out.
->
-> `$100K → 2,380 contracts`
->
-> ```
-> DJT $15    lose $100K   meme politics revive
-> DJT $11    lose $85K    status quo
-> DJT $5        1.0x      cultural fatigue plays out
-> DJT $3        5.7x      full collapse
-> DJT $1       11.0x      delistable
-> ```
->
-> 25% to be +EV · dies if: Trump rally, new viral political moment, DJT acquisition
->
-> Alt: KWEB $32.79 long (bet on the geopolitical beneficiary instead — but only 25% thesis beta)
->
-> Robinhood → DJT → Options → Jan 2027 $5 Put
-
----
-
-**"SOL is going to flip ETH"**
-
-> 🎯 **SOL/ETH ratio trade**
->
-> Hyperliquid · Long SOL-PERP / Short ETH-PERP · 3x leverage
->
-> You're betting on the ratio, not the market. If both crash 50%, you're flat. If SOL outperforms ETH by 40%, you make 40% × 3x = 120% regardless of market direction. Current ratio: 0.0435. SOL at $84.88, ETH at $1,952. Funding cost ~8%/yr net — acceptable for a 6-month thesis.
->
-> `$100K → $50K long SOL / $50K short ETH @ 3x`
->
-> ```
-> ratio -30%   lose $90K    ETH rallies harder
-> ratio -10%   lose $30K    mean reversion
-> ratio +20%      1.6x      SOL gains ground
-> ratio +50%      2.5x      SOL approaches flip
-> ratio +100%     4.0x      ratio doubles
-> ```
->
-> 40% to be +EV · dies if: ETH ships scaling breakthrough, SOL has extended outage, funding flips negative
->
-> Alt: SOL spot long (simpler, but exposed to market-wide drawdowns — ratio trade isolates the thesis)
->
-> Hyperliquid → SOL-PERP long + ETH-PERP short → 3x
-
----
-
-**"AI is going to replace search"**
-
-> 🎯 **Google is the victim**
->
-> GOOG $178 · Jan '27 $150 Put @ $8.20
->
-> Everyone's buying AI companies. But the obvious winner (who?) is unclear and consensus. The obvious loser is Google — 57% of revenue from search ads, and AI answers skip the ad. GOOG is down 28% from highs, analysts still rate it a buy, and the options market implies only 30% chance of breaking $150. If AI search hits 20%+ market share by end of 2026, Google's ad pricing power collapses.
->
-> `$100K → 121 contracts`
->
-> ```
-> GOOG $200   lose $100K   search moat holds
-> GOOG $178   lose $75K    slow bleed
-> GOOG $140      2.2x      AI search at 15%+
-> GOOG $120      4.6x      advertiser exodus
-> GOOG $100      7.1x      structural decline
-> ```
->
-> 30% to be +EV · dies if: Google's AI integration retains ad model, ChatGPT/Perplexity monetization fails, antitrust breakup unlocks value
->
-> Alt: Long MSFT (AI search winner via Copilot — but only ~15% of rev from search, low thesis beta)
->
-> Robinhood → GOOG → Options → Jan 2027 $150 Put
-
----
-
-**"China catching up in AI means defense spending booms"**
-
-> 🎯 **AI defense spending**
->
-> PLTR $113 · long
->
-> China is closing the AI gap — DeepSeek R1 matched GPT-4 at 3% the cost. The US response isn't commercial AI competition, it's military AI spending. PLTR gets 55% of revenue from government/defense, growing 40% YoY. It's the highest-beta public stock to AI defense budgets. Expensive at 208x PE, but defense AI budgets don't care about PE ratios — they care about capability.
->
-> `$100K → 884 shares`
->
-> ```
-> PLTR $80    lose $29K    defense AI budget cuts
-> PLTR $100   lose $11K    growth slows
-> PLTR $150      1.3x      steady growth
-> PLTR $200      1.8x      major DOD contracts
-> PLTR $300      2.7x      AI Manhattan Project
-> ```
->
-> 45% to be +EV · dies if: DOGE cuts defense tech budgets, PLTR loses contracts to Anduril, China de-escalation
->
-> Alt: Anduril secondary @ $102.50/share ($70B implied) — pure-play defense AI, but illiquid, 2-4yr lockup
->
-> Robinhood → PLTR → Buy
+Every example follows the same pattern: find the deeper claim → check prediction markets first → score on `thesis beta × convexity / (1 + time cost)` → output one trade with scenario table and buttons.
 
 ---
 
 ## How It Works
 
-1. **Finds the deeper claim** — *"everyone's on Ozempic"* → the play isn't pharma (consensus), it's shorting food delivery (the victim)
-2. **Checks prediction markets first** — if Kalshi or Polymarket has a direct contract, everything else has to beat 100% thesis beta
-3. **Scores on one metric** — `thesis beta × convexity / (1 + time cost)` — no gut feel, no defaults
-4. **Structures the position** — direction theses decompose into independent bets (partial wins > all-or-nothing)
-5. **One trade, one screen** — scenario table, kill conditions, conviction breakeven, alt from a different class
+1. **Finds the deeper claim** — your surface observation traces to a specific mechanism. That mechanism points to the real trade.
+2. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that directly resolves on your thesis, everything else has to beat 100% thesis beta with zero carry.
+3. **Scores on one metric** — `thesis beta × convexity / (1 + time cost)`. No gut feel, no defaults.
+4. **Structures the position** — direction theses decompose into independent bets (partial wins > all-or-nothing).
+5. **One trade, one screen** — ≤18 lines on Telegram. Scenario table, kill conditions, conviction breakeven, and buttons to execute or track.
 
-Searches Kalshi, Polymarket, Robinhood, Hyperliquid, Bankr, and private markets automatically. You don't pick the platform.
+Searches Kalshi, Polymarket, Robinhood, Hyperliquid, Bankr, and private markets automatically.
 
-## Paper Trading
+## Track Your Beliefs
 
-Not ready for real money? Every trade card has a 📝 **Paper Trade** button. Track beliefs like a portfolio.
+Every trade card has a 📝 Track button. Tap it → belief goes into your portfolio with live P&L from 24/7 sources (crypto perps, prediction markets, after-hours stocks).
 
 ```bash
-bun run scripts/track.ts portfolio    # all open beliefs + live P&L
-bun run scripts/card.ts --id <ID>     # shareable trade card
+bun run scripts/track.ts portfolio --telegram   # open beliefs + live P&L
+bun run scripts/track.ts history                 # past routings
+bun run scripts/track.ts close --id X --px Y     # close + realize P&L
 ```
+
+Storage is a single append-only file: `data/beliefs.jsonl`. One line per fact.
 
 ## Install
 
@@ -200,11 +85,11 @@ cd belief-skill
 bun install
 ```
 
-Point your OpenClaw skill path to the repo root. Activates automatically when you express a belief — no commands, just talk.
+Point your OpenClaw skill path to the repo root. Activates automatically when you express a belief — no commands, just talk. Or forward a tweet. Or send a voice note.
 
-No API keys required. Uses public APIs (Yahoo Finance, Polymarket, Kalshi, DexScreener).
+No API keys required. Uses public APIs (Yahoo Finance, Polymarket, Kalshi, DexScreener, Hyperliquid).
 
-See [CHANGELOG.md](CHANGELOG.md) for version history and roadmap.
+See [CHANGELOG.md](CHANGELOG.md) for version history and [V2-ROADMAP.md](V2-ROADMAP.md) for what's next.
 
 ## License
 
