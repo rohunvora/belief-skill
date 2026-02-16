@@ -314,8 +314,10 @@ async function runThesisTest(thesis: { id: string; input: string; shape: string;
       continue;
     }
 
-    // Step 2: Get returns for top instruments (primary=4, secondary=2 to balance API calls vs coverage)
-    const pricingLimit = call.priority === "primary" ? 4 : 2;
+    // Step 2: Get returns for top instruments
+    // Sector/compound themes need more coverage (many relevant tickers); others 4 primary, 2 secondary
+    const basePrimary = (thesis.shape === "sector_theme" || thesis.shape === "compound") ? 6 : 4;
+    const pricingLimit = call.priority === "primary" ? basePrimary : 2;
     const topInstruments = instList
       .filter((i: any) => i.relevance === "direct" || i.relevance === "proxy" || i.mark_price)
       .slice(0, pricingLimit);
