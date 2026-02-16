@@ -456,17 +456,29 @@ async function buildOptionExpression(
   let return_if_right_pct: number;
   let breakeven: number;
 
+  // Use IV-derived target (1σ expected move) instead of 52-week extremes.
+  // 52-week high/low fails when strike ≈ 52-week high (PEP, LMT, RTX → 0% return).
+  // Falls back to 52-week extreme if IV-derived target is worse.
+  const iv = option.impliedVolatility || 0.3;
+  const daysToExpiry = Math.max(
+    (new Date(expirationDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    7
+  );
+  const expectedMovePct = iv * Math.sqrt(daysToExpiry / 365);
+  const expectedMove = quote.price * expectedMovePct;
+
   if (direction === "long") {
-    // Call option: profit if price > strike + premium
     breakeven = strike + premium;
-    // Target: 52-week high
-    const target = quote.fiftyTwoWeekHigh;
+    // Target: max of (IV-derived 1σ move, 52-week high)
+    const ivTarget = quote.price + expectedMove;
+    const target = Math.max(ivTarget, quote.fiftyTwoWeekHigh);
     const profitPerShare = Math.max(target - strike - premium, 0);
     return_if_right_pct = premium > 0 ? Math.round((profitPerShare / premium) * 100 * 100) / 100 : 0;
   } else {
-    // Put option: profit if price < strike - premium
     breakeven = strike - premium;
-    const target = quote.fiftyTwoWeekLow;
+    // Target: min of (IV-derived 1σ move, 52-week low)
+    const ivTarget = quote.price - expectedMove;
+    const target = Math.min(ivTarget, quote.fiftyTwoWeekLow);
     const profitPerShare = Math.max(strike - premium - target, 0);
     return_if_right_pct = premium > 0 ? Math.round((profitPerShare / premium) * 100 * 100) / 100 : 0;
   }
