@@ -1,63 +1,77 @@
 # Belief Router
 
-You have opinions about the world. You probably don't know the best way to bet on them.
+You already have beliefs about the world. You just don't realize they're trades.
 
-*"Everyone's on Ozempic"* — do you buy Novo Nordisk? Short DoorDash? Buy Kalshi contracts on FDA approval? The answer depends on where the asymmetry actually is, and most people never find it because the research takes hours and spans platforms they've never used.
+Every day you say things like:
 
-**Belief Router is an [OpenClaw](https://github.com/openclaw/openclaw) skill that turns any belief into a specific trade.** Say what you think will happen in plain English — voice note, text, pasted tweet — and get back the single highest-upside way to express it across prediction markets, options, equities, crypto, and private markets.
+- *"Everyone's on Ozempic"*
+- *"My rent just spiked 40%"*
+- *"AI is going to replace Google search"*
+- *"This Trump stuff feels like it's jumping the shark"*
+- *"Nobody I know uses Uber Eats anymore"*
 
-## What You Can Do With It
+These aren't just observations. Each one is a directional bet on something specific — a company, a commodity, a trend, a policy outcome. The problem isn't that you lack conviction. It's that you've never connected your worldview to the instruments that let you profit from it.
 
-**Trade your worldview, not just tickers.** You don't need to know what a put option is or how Kalshi works. You just need an opinion.
+**Most people's beliefs die as tweets.** The few who do act usually buy the obvious ticker — and the obvious ticker is already priced in.
 
-- *"Meme politics are dead"* → DJT Jan 2027 $5 puts, 11x if right, $100K max loss
-- *"China is catching up in AI — that means defense spending booms"* → PLTR + CRWD basket with specific entry prices and sizing
-- *"Kevin Warsh will run the economy hot"* → Kalshi per-meeting rate cut contracts, 3 independent bets, 3.3x max, partial wins possible
-- *"Long peptides"* → NVO at $49 (down 47% from highs, 18x PE vs Eli Lilly at 55x)
-- *"St. John's wins tonight"* → Polymarket moneyline at 69¢, better odds than DraftKings with no house edge
-- *"I want to monetize US-China geopolitical risk"* → KWEB Jan 2027 $22 puts, 9-16x on major escalation
+## What If You Could Just... Say It?
 
-**Works for anything with a direction:** macro, politics, crypto, sports, culture, tech, geopolitics. If you can say *"I think X will happen"*, it can route it.
+Belief Router is an [OpenClaw](https://github.com/openclaw/openclaw) skill. You talk to it like a person — voice note, text, pasted tweet, whatever — and it finds the single highest-upside way to express your belief across prediction markets, options, equities, crypto, and private markets.
+
+The key insight: **the best trade is almost never the obvious one.**
+
+| You say | Obvious trade | What the skill finds |
+|---------|--------------|---------------------|
+| *"Everyone's on Ozempic"* | Buy Novo Nordisk | Short DoorDash — the second-order victim is more mispriced than the winner |
+| *"Meme politics are dead"* | Short... something? | DJT Jan '27 $5 puts — 11x if right, defined $100K max loss |
+| *"Warsh will run the economy hot"* | Buy semis ETF (1.3x) | Kalshi per-meeting rate cuts — 3 independent bets, 3.3x, 90% thesis beta |
+| *"China catching up in AI = military threat"* | Buy defense ETF | PLTR + CRWD at specific entries — highest beta to AI defense spending |
+| *"St. John's wins tonight"* | DraftKings bet | Polymarket moneyline — better odds, no house edge, can exit early |
+| *"Long peptides"* | Buy Eli Lilly | NVO at $49, down 47%, 18x PE vs LLY at 55x — same thesis, third the price |
+
+The skill traces your belief through its causal chain — who benefits, who gets hurt, what infrastructure is needed, what breaks — and finds where the asymmetry actually lives. Then it scores every candidate on one metric:
+
+```
+thesis beta × convexity / (1 + time cost)
+```
+
+No gut feel. No defaults. The math picks the instrument.
+
+## Try It
+
+Think about something you believe is true that most people don't. Or something everyone knows but nobody's acting on. Say it out loud.
+
+That's a thesis. And there's probably a trade on it.
+
+Some starting points:
+
+- A product you love that nobody talks about
+- An industry you think is dying
+- A technology that's about to break through
+- A country that's underestimated
+- A policy that's going to backfire
+- A person whose stock (literal or figurative) is mispriced
+- A sports team that's better than their odds suggest
+- A trend you noticed before your friends did
 
 ## How It Works
 
-1. **Finds the real trade** — the obvious instrument is usually priced in. The skill traces your belief to the second- or third-order consequence where the asymmetry lives. *"Everyone's on Ozempic"* → the play isn't pharma (consensus), it's shorting food delivery (the victim).
+1. **Finds the deeper claim** — your surface observation traces to a specific mechanism. That mechanism points to the real trade.
+2. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that directly resolves on your thesis, everything else has to beat 100% thesis beta with zero carry cost.
+3. **Scores every candidate** — thesis beta (how much of the move comes from YOUR thesis), convexity (upside multiple), time cost (what it costs to hold). One metric, no bias toward any instrument type.
+4. **Structures the position** — decomposes direction theses into independent bets so you can win partially, not all-or-nothing.
+5. **One trade, one screen** — scenario table at $100K, kill conditions, conviction breakeven, and an alt from a different instrument class. Fits on your phone.
 
-2. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that literally resolves on your thesis, everything else has to beat it. Why buy an ETF at 30% thesis beta when a binary contract gives you 100%?
-
-3. **Scores every candidate on one metric** — `thesis beta × convexity / (1 + time cost)`. No gut feel, no defaults. A Kalshi binary at 12x with 100% thesis beta beats a sector ETF at 1.3x with 30% thesis beta every time.
-
-4. **Gives you one trade, one screen** — scenario table at $100K sizing, kill conditions, conviction breakeven ("you need to be right >25% of the time for this to be +EV"), and an alternative from a different instrument class. Fits on your phone.
-
-## Platforms
-
-Searches across 6 platforms automatically:
-
-| Platform | What |
-|----------|------|
-| **Kalshi** | Prediction markets — politics, macro, events |
-| **Polymarket** | Prediction markets — politics, crypto, sports (NBA, NFL, MLB, NHL, NCAAB) |
-| **Robinhood** | Stocks, ETFs, options |
-| **Hyperliquid** | Crypto perps with leverage, pair trades |
-| **Bankr** | AI agent tokens |
-| **Angel** | Private markets — Republic, Wefunder, Crunchbase |
-
-You don't pick the platform. The skill picks it based on where the best expression of your thesis lives.
+Searches 6 platforms automatically — Kalshi, Polymarket, Robinhood, Hyperliquid, Bankr, and private markets (Republic, Wefunder, Crunchbase). You don't pick the platform. The skill picks it based on where your thesis is best expressed.
 
 ## Paper Trading
 
-Every trade card comes with buttons:
-
-- 📝 **Paper Trade** — record at current price, track P&L over time
-- ✅ **I Took This** — record as real
-- 🔗 **Open in Platform** — deep link to execute
+Not ready to put real money down? Every trade card has a 📝 **Paper Trade** button. Track your beliefs like a portfolio and see which types of predictions you're actually good at.
 
 ```bash
-bun run scripts/track.ts portfolio --telegram   # live P&L for all open beliefs
-bun run scripts/card.ts --id <ID> --telegram     # shareable trade card with results
+bun run scripts/track.ts portfolio    # see all your open beliefs + live P&L
+bun run scripts/card.ts --id <ID>     # shareable trade card with results
 ```
-
-Track your beliefs like a portfolio. See which types of theses you're good at predicting and which ones you're not.
 
 ## Install
 
@@ -69,28 +83,25 @@ cd belief-skill/v2/belief-router
 bun install
 ```
 
-Point your OpenClaw skill path to the `v2/belief-router` directory. The skill activates automatically when you express a belief with trading implications — no slash commands, no special syntax.
+Point your OpenClaw skill path to `v2/belief-router`. The skill activates automatically when you express a belief — no slash commands, no special syntax. Just talk.
 
-**No API keys required for basic usage.** Adapters call public APIs (Yahoo Finance, DexScreener, Polymarket, Kalshi). Your OpenClaw instance handles web search for live research.
+No API keys required. Adapters use public APIs (Yahoo Finance, Polymarket, Kalshi, DexScreener).
 
 ## Repo Structure
 
 ```
 v2/belief-router/          ← current version
-  SKILL.md                 ← the routing spec (500 lines)
+  SKILL.md                 ← the routing brain (500 lines)
   scripts/
     track.ts               ← trade tracking + portfolio
     card.ts                ← shareable trade cards
-    adapters/
-      kalshi/              ← prediction markets
-      polymarket/          ← prediction markets + sports
-      robinhood/           ← stocks, ETFs, options
-      hyperliquid/         ← crypto perps
-      bankr/               ← AI agent tokens
-      angel/               ← private markets
+    adapters/              ← kalshi, polymarket, robinhood,
+                              hyperliquid, bankr, angel
 
-v1/                        ← legacy version (48/48 automated test suite)
+v1/                        ← legacy (48/48 automated test suite)
 ```
+
+See [CHANGELOG.md](CHANGELOG.md) for version history and roadmap.
 
 ## License
 
