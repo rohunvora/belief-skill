@@ -434,6 +434,33 @@ _Market data for informational purposes._
 
 **That's it.** No REJECTED section, no DEEPER CLAIM section, no multi-paragraph WHY. The thesis IS the deeper claim (Phase 1 already extracted it). The rejections are internal work. The reader gets: what, why, math, risk, how.
 
+### Action Buttons
+
+Every trade card includes inline buttons (on platforms that support them):
+
+| Button | Action |
+|--------|--------|
+| 📝 Paper Trade | Records to `track.ts` with `--mode paper` at current price |
+| ✅ I Took This | Records to `track.ts` with `--mode real` at current price |
+| 🔗 Open in [Platform] | Deep link to the instrument page |
+
+Deep link formats:
+- **Robinhood:** `https://robinhood.com/stocks/[TICKER]` (stocks) or search for options
+- **Kalshi:** `https://kalshi.com/markets/[SERIES]`
+- **Hyperliquid:** `https://app.hyperliquid.xyz/trade/[TICKER]`
+- **Republic:** Direct URL from adapter results
+- **Wefunder:** Direct URL from adapter results
+
+After recording (paper or real), the trade enters the portfolio tracked by `track.ts`. Use `bun run scripts/track.ts portfolio --telegram` to show live P&L for all open trades.
+
+### Post-Trade Loop
+
+Once a trade is recorded:
+1. **Price alerts** — set monitoring for kill conditions and target levels from the scenario table
+2. **Portfolio view** — `bun run scripts/track.ts portfolio` shows all open beliefs with live P&L
+3. **Close trigger** — when a kill condition fires or target hits, alert the user with the original thesis context
+4. **Trade card** — `bun run scripts/card.ts --id [ID]` generates a shareable "I Called It" card with entry, current price, and P&L
+
 ### Instrument-Type Adaptations
 
 The 2-3 sentence intro adapts by type. The scenario table format stays the same (price level / loss or multiple / condition).

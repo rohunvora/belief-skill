@@ -408,13 +408,90 @@ switch (command) {
   case "close":
     await closeTrade(restArgs);
     break;
+  case "portfolio":
+    await showPortfolio(restArgs);
+    break;
   default:
-    console.error("Usage: bun run scripts/track.ts <record|list|check|close> [options]");
+    console.error("Usage: bun run scripts/track.ts <record|list|check|close|portfolio> [options]");
     console.error("");
     console.error("Commands:");
-    console.error("  record  --thesis ... --platform ... --instrument ... --direction ... --entry-price ...");
-    console.error("  list    Show all trades");
-    console.error("  check   Fetch live prices and show PnL for open trades");
-    console.error("  close   --id <trade-id> --exit-price ...");
+    console.error("  record     --thesis ... --platform ... --instrument ... --direction ... --entry-price ... [--mode paper|real]");
+    console.error("  list       Show all trades");
+    console.error("  check      Fetch live prices and show PnL for open trades");
+    console.error("  close      --id <trade-id> --exit-price ...");
+    console.error("  portfolio  [--telegram] Show portfolio summary with live P&L");
     process.exit(1);
+}
+
+// ── Portfolio summary ───────────────────────────────────────────────
+
+async function showPortfolio(args: string[]): Promise<void> {
+  const flags = parseFlags(args);
+  const telegram = args.includes("--telegram");
+  const trades = await loadTrades();
+  const open = trades.filter((t) => t.status === "open");
+
+  if (open.length === 0) {
+    console.log("No open trades.");
+    return;
+  }
+
+  // Fetch all live prices
+  let totalPnl = 0;
+  let totalCapital = 0;
+  const rows: string[] = [];
+
+  for (const t of open) {
+    const livePrice = await fetchPrice(t.expression.platform, t.expression.instrument);
+    const days = Math.floor(
+      (Date.now() - new Date(t.entry_date).getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    let pnlPct = 0;
+    if (livePrice !== null) {
+      if (t.expression.direction === "long" || t.expression.direction === "yes") {
+        pnlPct = ((livePrice - t.entry_price) / t.entry_price) * 100;
+      } else {
+        pnlPct = ((t.entry_price - livePrice) / t.entry_price) * 100;
+      }
+    }
+
+    const capital = t.expression.capital_required || 100;
+    const pnlDollars = (pnlPct / 100) * capital;
+    totalPnl += pnlDollars;
+    totalCapital += capital;
+
+    const mode = (t as any).mode === "real" ? "💰" : "📝";
+    const sign = pnlPct >= 0 ? "+" : "";
+    const ticker = t.expression.instrument.slice(0, 10);
+    const thesis = truncate(t.thesis, 25);
+
+    rows.push(
+      `${mode} ${padR(ticker, 10)} ${sign}${pnlPct.toFixed(1)}% ${padR(days + "d", 5)} ${thesis}`
+    );
+  }
+
+  const totalSign = totalPnl >= 0 ? "+" : "";
+  const totalPct = totalCapital > 0 ? (totalPnl / totalCapital) * 100 : 0;
+
+  if (telegram) {
+    console.log(`🎯 **Belief Portfolio** (${open.length} open)\n`);
+    console.log("```");
+    for (const r of rows) console.log(r);
+    console.log("─".repeat(40));
+    console.log(
+      `   TOTAL    ${totalSign}${totalPct.toFixed(1)}%       ${totalSign}$${totalPnl.toFixed(0)}`
+    );
+    console.log("```");
+    console.log(
+      `\n📝 = paper · 💰 = real`
+    );
+  } else {
+    console.log(`\nBelief Portfolio — ${open.length} open trades\n`);
+    for (const r of rows) console.log(r);
+    console.log("─".repeat(45));
+    console.log(
+      `TOTAL: ${totalSign}${totalPct.toFixed(1)}% (${totalSign}$${totalPnl.toFixed(0)} on $${totalCapital.toFixed(0)})`
+    );
+  }
 }

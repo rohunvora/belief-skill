@@ -4,7 +4,7 @@
  * enabling cross-platform comparison.
  */
 
-export type Platform = "hyperliquid" | "kalshi" | "robinhood" | "bankr";
+export type Platform = "hyperliquid" | "kalshi" | "robinhood" | "bankr" | "angel";
 export type Direction = "long" | "short" | "yes" | "no";
 export type Liquidity = "high" | "medium" | "low";
 export type ThesisDirection = "bullish" | "bearish" | "neutral";
@@ -84,6 +84,16 @@ export interface TrackedTrade {
   pnl_pct?: number;
   pnl_dollars?: number;
   status: "open" | "closed" | "expired";
+  mode: "paper" | "real";          // Paper trade or actually executed
+  kill_conditions?: string[];      // From the trade card — monitor these
+  targets?: TradeTarget[];         // Price levels to alert on
+}
+
+export interface TradeTarget {
+  price: number;
+  label: string;                   // "1.4x", "52w high", "liquidation"
+  direction: "above" | "below";
+  triggered?: boolean;
 }
 
 /** Platform risk metadata — surfaced on every card */
@@ -92,4 +102,5 @@ export const PLATFORM_RISK: Record<Platform, { tier: PlatformRiskTier; note: str
   robinhood: { tier: "regulated", note: "FINRA/SEC regulated broker-dealer" },
   hyperliquid: { tier: "dex", note: "DEX on Arbitrum — 3 withdrawal freezes in 2025 (JELLY, July, POPCAT)" },
   bankr: { tier: "new", note: "Non-custodial, alpha-stage SDK, limited track record" },
+  angel: { tier: "new", note: "Private market — illiquid, 5-7yr lockup, binary outcomes" },
 };
