@@ -111,7 +111,7 @@ async function fetchQuote(ticker: string): Promise<QuoteData> {
   }
   return {
     price: q.regularMarketPrice,
-    name: q.shortName || q.longName || ticker,
+    name: q.longName || q.shortName || ticker,
     marketCap: q.marketCap ?? null,
     fiftyTwoWeekHigh: q.fiftyTwoWeekHigh ?? q.regularMarketPrice * 1.2,
     fiftyTwoWeekLow: q.fiftyTwoWeekLow ?? q.regularMarketPrice * 0.8,
