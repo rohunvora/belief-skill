@@ -46,6 +46,10 @@ const ALIASES: Record<string, string> = {
   PEPE: "kPEPE",
   SHIB: "kSHIB",
   BONK: "kBONK",
+  FLOKI: "kFLOKI",
+  DOGS: "kDOGS",
+  LUNC: "kLUNC",
+  NEIRO: "kNEIRO",
 };
 
 // ---------------------------------------------------------------------------
