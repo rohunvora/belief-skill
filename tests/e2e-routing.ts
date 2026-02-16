@@ -34,7 +34,7 @@ const CONCEPT_TICKERS: Record<string, string[]> = {
   // Sectors/themes
   "ozempic": ["NVO", "LLY", "DASH", "MDLZ", "PEP", "CAKE", "HIMS"],
   "weight": ["NVO", "LLY", "WW"],
-  "defense": ["BAH", "PLTR", "LMT", "RTX", "NOC", "DFEN", "ITA"],
+  "defense": ["DFEN", "ITA", "BAH", "PLTR", "LMT", "RTX", "NOC"],  // DFEN first (3x leveraged)
   "oil": ["USO", "XLE", "OXY", "CVX"], "gold": ["GLD", "NEM", "GOLD"],
   // Macro instruments
   "fed": ["TLT", "TBT", "SHY", "IEF"], "rates": ["TLT", "TBT"],
@@ -335,8 +335,8 @@ async function runThesisTest(thesis: { id: string; input: string; shape: string;
           const type = ticker.length <= 5 ? "stock" : "etf";
           returnsResult = runAdapter("robinhood", "returns", [ticker, dir, type]);
 
-          // For vulnerability and mispriced theses, ALSO price options (much higher convexity)
-          if (["vulnerability", "mispriced_company", "compound"].includes(thesis.shape) && type === "stock") {
+          // For these shapes, ALSO price options (much higher convexity per SKILL.md thesis beta floor)
+          if (["vulnerability", "mispriced_company", "sector_theme", "compound"].includes(thesis.shape) && type === "stock") {
             const optResult = runAdapter("robinhood", "returns", [ticker, dir, "option"]);
             if (optResult && !optResult.__error && optResult.expression) {
               returnsCalculated++;
