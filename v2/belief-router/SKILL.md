@@ -17,7 +17,7 @@ description: >
 
 ## Defaults
 
-- **Ranking metric: `thesis beta × convexity / time cost`.** Purest expression of the thesis, with the most leverage, at the lowest cost to hold. This replaces any hardcoded instrument preference — the metric naturally surfaces the right instrument for each thesis shape.
+- **Ranking metric: `thesis beta × convexity / (1 + time cost)`.** Purest expression of the thesis, with the most leverage, at the lowest cost to hold. Time cost is annualized carry over the trade horizon (options theta, perp funding, leveraged ETF decay). Zero-carry instruments (shares, Kalshi, Polymarket) score `thesis beta × convexity` — the denominator floors at 1, not 0. This replaces any hardcoded instrument preference — the metric naturally surfaces the right instrument for each thesis shape.
 - **Bet size: $100,000.** Show payoff scenarios at this amount, not just $100 basis.
 - **Goal: one trade.** Find THE single best expression. Not a portfolio. Show 1-2 alternatives with genuinely different risk profiles, but lead with THE trade and commit to it.
 - **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in. See Phase 1 Time Horizon.
@@ -42,20 +42,6 @@ Before routing, check:
 
 **This is the most important step. The deeper claim AND the thesis shape determine the trade. Get either wrong and everything downstream is wrong.**
 
-### Classify Thesis Shape
-
-Before anything else, classify the thesis. Shape determines which instruments are natural candidates and which evaluation mode to use.
-
-| Shape | Signal | Natural home | Evaluation mode |
-|-------|--------|-------------|-----------------|
-| Binary event | Resolves yes/no on a specific date ("Fed holds in March") | Prediction markets (Kalshi) | Observable probability — market price IS the implied probability |
-| Mispriced company | Specific company re-rates over time ("SEALSQ is undervalued") | Equity / options | Estimated probability — you estimate likelihood AND magnitude |
-| Sector/theme | Broad trend benefits a category ("AI defense spending booms") | ETF or highest-beta single name | Estimated probability |
-| Relative value | X outperforms Y, ratio changes ("SOL flips ETH") | Pair trade (perps) | Ratio analysis — isolate the spread from market direction |
-| Vulnerability | Something breaks or declines ("Google's ad monopoly is the casualty") | Short-side instruments (puts, inverse ETFs, short perps) | Estimated probability |
-
-The "natural home" is the starting point, not the answer. Phase 3's cross-check tests whether another instrument class beats it on the metric.
-
 ### Extract the Deeper Claim
 
 Every thesis has two layers:
@@ -63,6 +49,42 @@ Every thesis has two layers:
 - **Deeper claim:** What the thesis is REALLY about. The underlying force or mechanism. This is what you actually trade.
 
 The deeper claim often points to a **completely different instrument** than the surface claim.
+
+**Do this BEFORE classifying shape.** The shape of the surface claim is often wrong — the deeper claim reveals the real shape.
+
+### Decompose Compound Theses
+
+Before classifying shape, check: does this thesis contain multiple distinct claims?
+
+"Warsh runs hot AND American AI thrives" is TWO theses:
+- Leg 1: "runs hot" → Warsh is more dovish than expected → binary/probability (prediction markets, rates)
+- Leg 2: "AI thrives" → sector benefits from policy tailwind → sector/theme (ETFs, single names)
+
+Rules:
+1. Decompose into separate legs, each with its own direction
+2. Classify shape for EACH leg independently (below)
+3. Route the STRONGEST leg — highest conviction, clearest asymmetry, most contrarian
+4. Mention the other legs as alternatives
+5. The strongest leg is usually the most contrarian one — where the market disagrees with you
+6. Check `references/portfolio-construction.md` for multi-leg guidance if the user explicitly wants a portfolio
+
+If the thesis is a single claim, skip this step.
+
+### Classify Thesis Shape
+
+Classify the thesis — or each leg of a compound thesis — AFTER extracting the deeper claim. Shape determines which instruments are natural candidates and which evaluation mode to use.
+
+| Shape | Signal | Natural home | Evaluation mode |
+|-------|--------|-------------|-----------------|
+| Binary event | Resolves yes/no on a specific date ("Fed holds in March") | Prediction markets (Polymarket, Kalshi) | Observable probability — market price IS the implied probability |
+| Mispriced company | Specific company re-rates over time ("SEALSQ is undervalued") | Equity / options | Estimated probability — you estimate likelihood AND magnitude |
+| Sector/theme | Broad trend benefits a category ("AI defense spending booms") | ETF or highest-beta single name | Estimated probability |
+| Relative value | X outperforms Y, ratio changes ("SOL flips ETH") | Pair trade (perps) | Ratio analysis — isolate the spread from market direction |
+| Vulnerability | Something breaks or declines ("Google's ad monopoly is the casualty") | Short-side instruments (puts, inverse ETFs, short perps) | Estimated probability |
+
+The "natural home" is the starting point, not the answer. Phase 3's cross-check tests whether another instrument class beats it on the metric.
+
+**Re-classify check:** If the deeper claim points to a different shape than the surface claim, use the deeper claim's shape. "Everyone's on Ozempic" sounds like sector/theme (pharma) but the deeper claim is vulnerability (short food). Use vulnerability. "Warsh runs hot" sounds like sector/theme (long AI) but the deeper claim is probability (more rate cuts than expected). Use binary.
 
 ### Worked Examples
 
@@ -109,7 +131,7 @@ Example — "tech is overvalued because of money printing" → clear. Don't ask.
 
 ### Gate
 
-**You MUST state (a) the thesis shape, (b) the deeper claim in 1-2 sentences, and (c) the time horizon before proceeding to Phase 2.** Write them out explicitly. If you can't find a deeper claim, the surface claim IS the deeper claim — state that.
+**You MUST state (a) the deeper claim in 1-2 sentences, (b) whether it's compound (and if so, which leg you're routing), (c) the thesis shape of the routed leg, and (d) the time horizon before proceeding to Phase 2.** Write them out explicitly. If you can't find a deeper claim, the surface claim IS the deeper claim — state that.
 
 ### Time Horizon
 
@@ -160,7 +182,7 @@ Use web search (parallel searches for speed) to find:
 2. **What has already moved.** YTD performance, 52-week ranges for likely instruments. If the move is underway, state it — it changes entry risk.
 3. **What consensus thinks.** If everyone agrees, there's no edge. If contrarian, that's where asymmetry lives.
 4. **Specific numbers for scoring.** Every fact here becomes ammunition for Phase 3. "CAPE at 39.8 — second highest ever" not "valuations seem high."
-5. **Prediction market check.** For any thesis with a date or binary resolution, search Kalshi (and Polymarket if relevant) for a direct contract. Note the current price/implied probability.
+5. **Prediction market check (always).** Search Polymarket and Kalshi for contracts related to the thesis — regardless of thesis shape. Even sector/theme theses often have binary proxies (e.g., "AI thrives" → rate cut contracts, policy contracts). Note current prices/implied probabilities. This data feeds Step 0 in Phase 3.
 
 ### Gate
 
@@ -170,21 +192,21 @@ Use web search (parallel searches for speed) to find:
 
 ## Phase 3: Find THE Trade
 
-**Goal:** Arrive at the single highest-scoring expression using the metric: `thesis beta × convexity / time cost`.
+**Goal:** Arrive at the single highest-scoring expression using the metric: `thesis beta × convexity / (1 + time cost)`.
 
 The architecture: classify shape (Phase 1) → find best-in-class for that shape → cross-check against other classes → stress-test the winner.
 
 ### Step 0: Binary Check
 
-**Before anything else:** does a prediction market contract exist that literally resolves on this thesis?
+**Before anything else:** does a prediction market contract exist that closely captures this thesis?
 
-Search Kalshi (and Polymarket if relevant) for the exact event. If a contract exists:
+Search Polymarket and Kalshi for a contract on the thesis or a high-thesis-beta proxy. A contract doesn't need to literally resolve on your exact claim — "4+ rate cuts in 2026" closely captures "Warsh runs hot" even though it's not the same words. If a contract exists with >60% thesis beta:
 - It becomes a candidate that MUST be explicitly beaten by something else
 - Evaluate in observable-probability mode: market price = implied probability, your estimate = your edge, EV = `(your probability × payout) − cost`
 - It sets the thesis-beta ceiling: the contract IS the event (~100% thesis beta, zero carry)
 - Other instruments must justify why they beat 100% thesis beta with zero time cost
 
-If no direct contract exists, proceed to Step 1.
+If no contract exists with >60% thesis beta, proceed to Step 1.
 
 ### Step 1: Best-in-Class Within Shape
 
@@ -192,7 +214,7 @@ Using the thesis shape from Phase 1, find the best instrument WITHIN the natural
 
 | Shape | Where to look | What to optimize |
 |-------|--------------|-----------------|
-| Binary event | Kalshi, Polymarket — exact contract | Best price relative to your probability estimate |
+| Binary event | Polymarket, Kalshi — best contract by thesis beta | Best price relative to your probability estimate |
 | Mispriced company | Robinhood (shares, options, LEAPS) | Highest convexity that matches trade horizon |
 | Sector/theme | Robinhood (ETFs, highest-beta single name) | Highest thesis beta within the sector |
 | Relative value | Hyperliquid (long/short perp pair) | Cleanest spread isolation, net funding cost |
@@ -201,7 +223,7 @@ Using the thesis shape from Phase 1, find the best instrument WITHIN the natural
 Also consider cross-platform: commodities like gold can be expressed as GLD (Robinhood, zero carry) OR GOLD-PERP (Hyperliquid, leverage + low carry). Crypto directional can be spot, perps, or Kalshi price-range contracts.
 
 For each surviving candidate within the class, compute the three metric components:
-- **Thesis beta:** What % of this instrument's price movement is driven by THIS thesis? Kalshi binary on the exact event ≈ 100%. Sector ETF ≈ 30-60%. Single name ≈ 60-90%. Pair trade on the exact ratio ≈ 90-100%.
+- **Thesis beta:** What % of this instrument's price movement is driven by THIS thesis? Test: "If my thesis is right but everything else stays the same, how much does this instrument move?" Prediction market on the exact event ≈ 90-100%. Single name in the thesis sector ≈ 60-90%. Sector ETF ≈ 30-60%. Broad index ≈ 10-30%. Pair trade on the exact ratio ≈ 90-100%. If you can't justify >40%, look for a different instrument.
 - **Convexity:** Raw upside multiple at $100K if thesis plays out. Shares 0.2-2x. Options 3-10x. Kalshi binaries 2-12x. Perps at leverage 2-20x.
 - **Time cost:** Annualized carry over the trade horizon. Options: theta (estimate ~30-60% of premium over 6 months). Perps: funding rate × horizon. Kalshi: zero. Shares: zero. Leveraged ETFs: decay drag (quantify over horizon).
 
@@ -241,6 +263,7 @@ These override the metric — an instrument fails on any of these regardless of 
 - **Liquidity.** Can't fill $100K without >2% slippage. Niche Kalshi markets may cap at ~$500/order. Small-cap perps on HL with 3-5x leverage caps signal thin books.
 - **Already priced in.** Instrument has already moved significantly on this thesis AND consensus agrees. Cite the specific data: "XLE is already +19% YTD."
 - **Time mismatch.** Options expire before catalyst. Kalshi contract resolves before the event. Instrument mechanically can't capture the thesis.
+- **Thesis beta too low.** Instrument has <20% thesis beta — it mostly moves on unrelated factors. A "correct thesis, wrong instrument" trade is still a losing trade. Exception: if it's the ONLY available expression (see "When No Traditional Instrument Exists").
 
 ### Step 3: Stress-Test the Winner
 
@@ -251,14 +274,6 @@ Before committing, construct the strongest case AGAINST the winning trade. Ask:
 - **If you can't rebut it, don't hide it.** Flag it as a known risk in the "What kills it" section of the output. If the counterargument is devastating (e.g., the entire upside requires an assumption you can't support), reconsider the runner-up.
 
 This step catches trades where you've convinced yourself of something by accumulating only supporting evidence. The counterexample forces you to look for disconfirming data.
-
-### Compound Theses
-
-When a thesis contains multiple distinct claims:
-1. Decompose into separate legs, each with its own direction
-2. Route the STRONGEST leg (highest conviction, clearest asymmetry) as the primary trade
-3. Mention the other legs as alternatives
-4. Check `references/portfolio-construction.md` for multi-leg guidance if the user explicitly wants a portfolio
 
 ### Step 2.5: Private Market Scan
 
@@ -272,7 +287,7 @@ bun run scripts/adapters/angel/instruments.ts "thesis keywords"
 
 The script searches Republic, Wefunder, and Crunchbase for active raises matching the thesis. Evaluate private instruments on the same metric with an illiquidity penalty:
 
-`thesis beta × convexity / (time cost + illiquidity cost)`
+`thesis beta × convexity / (1 + time cost + illiquidity cost)`
 
 Illiquidity cost: assume 5-7 year lockup for seed/A, 2-4 years for late-stage/pre-IPO. Annualize as opportunity cost (~10%/yr).
 
@@ -299,7 +314,7 @@ When the thesis doesn't map to any instrument on the five platforms (Robinhood, 
 
 **Level 1: High-beta proxy.** Parent company stock, sector ETF. State thesis beta honestly: "WMG captures ~2% of the Osamason thesis."
 
-**Level 2: Adjacent market.** Royalty platforms (Royal.io, SongVest, Sonomo), prediction markets (Polymarket), pre-IPO/secondaries (`references/secondaries.json`), crowdfunding (Republic, Wefunder). Search for the specific asset.
+**Level 2: Adjacent market.** Royalty platforms (Royal.io, SongVest, Sonomo), pre-IPO/secondaries (`references/secondaries.json`), crowdfunding (Republic, Wefunder). Search for the specific asset. (Note: prediction markets are first-class instruments checked in Step 0, not fallbacks.)
 
 **Level 3: Infrastructure play.** Who benefits if the thesis is right? "Nettspend blows up → Spotify benefits" → SPOT. More indirect, but often more tradeable.
 
@@ -328,6 +343,11 @@ bun run scripts/adapters/hyperliquid/instruments.ts "TICKER1,TICKER2"
 
 # Kalshi: keyword-based (series tickers are structured)
 bun run scripts/adapters/kalshi/instruments.ts "keyword phrase"
+
+# Polymarket: keyword search or direct slug
+bun run scripts/adapters/polymarket/instruments.ts "keyword phrase"
+bun run scripts/adapters/polymarket/instruments.ts --slug event-slug-here
+bun run scripts/adapters/polymarket/instruments.ts --game nba LAL LAC 2026-02-20
 
 # Bankr: thesis-based (sends to Bankr AI agent)
 bun run scripts/adapters/bankr/instruments.ts "thesis text"
@@ -453,6 +473,7 @@ Deep link formats:
 - **Robinhood:** `https://robinhood.com/stocks/[TICKER]` (stocks) or search for options
 - **Kalshi:** `https://kalshi.com/markets/[SERIES]`
 - **Hyperliquid:** `https://app.hyperliquid.xyz/trade/[TICKER]`
+- **Polymarket:** `https://polymarket.com/event/[SLUG]`
 - **Republic:** Direct URL from adapter results
 - **Wefunder:** Direct URL from adapter results
 
