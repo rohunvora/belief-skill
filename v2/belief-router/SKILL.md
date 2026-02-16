@@ -237,6 +237,37 @@ Rule: if a candidate scores >5x higher on the metric than the home pick, it wins
 
 When the home pick has thesis beta <50%, **always** cross-check the vulnerability class (puts on the loser) and binary class (prediction markets) before committing. The beneficiary trade is often the boring one; the victim trade is where the convexity lives.
 
+### Step 1.5: Structure the Position
+
+You've found the right underlying (Step 0/1). Now ask: **what's the best way to construct the position?**
+
+The same underlying can be expressed through structurally different products. The structure determines whether you actually make money when the thesis is right.
+
+**Core principle: all-or-nothing payoff is a hidden cost.** The metric sees convexity (max payout) but not how often you collect it. A 5.3x all-or-nothing bet that requires you to be exactly right is often worse than a 3.3x position that pays when you're roughly right. When the thesis is about direction, decomposing into independently-resolving pieces at comparable cost always dominates.
+
+**Two questions:**
+
+**1. Is the thesis about direction or magnitude?**
+- **Direction** ("more X than expected," "price goes up") → decompose into independently-resolving bets. Each occurrence pays separately, partial wins possible. You don't need to nail the exact number.
+- **Magnitude** ("exactly X," "hits $Y by date Z") → single-outcome bet is fine. You have a specific target.
+
+Direction theses are more common. The default error: routing a direction thesis into a magnitude instrument.
+
+This applies across instrument classes:
+- Prediction markets: per-event contracts > annual count buckets
+- Options: positions across multiple strikes/expiries > one OTM YOLO
+- Entries: scaled entries at multiple prices > one all-in order
+
+**2. Can the position be scoped tighter to the thesis?**
+If the thesis names a specific actor, catalyst, or period, look for instruments scoped to that window. Per-catalyst contracts have higher thesis beta than broad contracts that blend your thesis period with unrelated periods. Prefer the narrower scope.
+
+This applies across instrument classes:
+- Prediction markets: per-meeting contracts > annual contracts (when thesis is about a specific actor/period)
+- Options: expiry right after catalyst > far-dated expiry that blends multiple catalysts
+- Equities: pure-play single name > sector ETF that dilutes with unrelated companies
+
+**After structuring:** check multiple platforms — different platforms often carve the same event into structurally different products. Evaluate the structured position (the full composed trade), not individual contracts.
+
 ### Step 2: Cross-Check Across Classes
 
 Is the home pick actually the best? Compare it against the best instrument from at least one OTHER class on the same metric.
@@ -524,3 +555,4 @@ The 2-3 sentence intro adapts by type. The scenario table format stays the same 
 7. **Catalyst-dated theses.** Warn about IV crush on options. Select expiry AFTER the catalyst date.
 8. **End every response** with the disclaimer line.
 9. **Evidence over logic.** Every claim about an instrument must be backed by data from Phase 2 research. No "this seems expensive" — only "this trades at 37.65x P/E vs a 20-year average of 19.08."
+10. **Direction theses → decompose.** If the thesis is about direction ("more of X"), prefer independently-resolving bets over single all-or-nothing bets at comparable cost. Max convexity drops but expected value across realistic outcomes goes up.
