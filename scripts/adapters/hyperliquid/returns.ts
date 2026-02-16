@@ -277,6 +277,10 @@ async function main() {
       PEPE: "kPEPE",
       SHIB: "kSHIB",
       BONK: "kBONK",
+      FLOKI: "kFLOKI",
+      DOGS: "kDOGS",
+      LUNC: "kLUNC",
+      NEIRO: "kNEIRO",
     };
     const alias = aliases[coin];
     if (alias) {
