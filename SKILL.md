@@ -64,16 +64,7 @@ Every thesis has two layers:
 
 The deeper claim often points to a **completely different instrument** than the surface claim.
 
-### Cultural Decoding
-
-When the subject is a **person, brand, creator, or community** — ask: what cultural movement or trend does this represent? The thesis is usually about the wave, not the surfer. Find the wave, then find the trade that captures the wave.
-
-- "How do I long Clavicular?" → Not about the creator. Clavicular represents the **looksmaxxing / blackpill / male self-improvement wave**. → **Long HIMS** (men's finasteride, skincare, the literal looksmaxxing pharmacy).
-- "Long MrBeast" → Not about one YouTuber. Represents the **attention economy scaling past TV**. → **Long META or programmatic ad infra**.
-- "Long Joe Rogan" → Represents **male wellness + alternative health going mainstream**. → **Long HIMS, peptide/longevity companies**.
-- "Long Barstool" → Represents **sports betting normalization among young males**. → **Long DKNG or FLUT**.
-
-The pattern: uninvestable subject → decode the cultural signal → find the publicly-traded company that IS the infrastructure for that movement.
+**If the subject is a person, brand, or community that isn't directly investable:** decode the cultural movement it represents. Trade the wave, not the surfer. ("Long Clavicular" → looksmaxxing wave → HIMS. "Long Barstool" → sports betting normalization → DKNG.)
 
 ### Worked Examples
 
