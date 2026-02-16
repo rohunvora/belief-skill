@@ -426,30 +426,78 @@ Then attach inline buttons (see below). That's ≤16 lines of text + button row.
 
 ### Action Buttons
 
-Every trade card includes inline buttons. The execute button includes the **quantity** — this proves construction and makes the screenshot.
+**Send the trade card via the `message` tool with inline buttons.** Do NOT output the card as a plain text reply — use the message tool so buttons render. Then respond with `NO_REPLY` to avoid a duplicate message.
 
-**Button templates by instrument type:**
+After Phases 1-4 are complete and you have the trade card text + routing facts, send it like this:
 
-| Type | Execute button | Track button |
-|------|---------------|-------------|
-| Stock | `Buy [QTY] [TICKER] → Robinhood` | `📝 Track` |
-| Put/Call | `Buy [QTY] [TICKER] [STRIKE][P/C] [EXP] → Robinhood` | `📝 Track` |
-| Kalshi | `Buy [QTY] [CONTRACT] → Kalshi` | `📝 Track` |
-| Perp | `[Long/Short] [TICKER] [LEV]x → Hyperliquid` | `📝 Track` |
-| Polymarket | `Buy [QTY] [YES/NO] → Polymarket` | `📝 Track` |
+```json
+{
+  "action": "send",
+  "channel": "telegram",
+  "message": "<the trade card text from the output template above>",
+  "buttons": [
+    [
+      {"text": "Buy [QTY] [TICKER] → [Platform]", "url": "[DEEP_LINK]", "style": "success"},
+      {"text": "📝 Track", "callback_data": "blr:track:[ROUTING_ID]", "style": "primary"}
+    ]
+  ]
+}
+```
 
-**What happens on tap:**
-- **Execute button:** Opens confirmation flow → "Confirm: [qty] [instrument] @ $[price] (~$[total])?" with `[✅ Confirm]` `[❌ Cancel]`. On confirm: places order (Kalshi/Polymarket/HL) or opens deep link (Robinhood) + auto-records trade.
-- **📝 Track button:** Records paper trade at current price → trade appears in portfolio.
+**The execute button is a `url` button** — it opens the platform page directly. No callback, no confirmation step. The user taps → platform opens → they execute manually.
 
-**Deep link formats (for platforms without execution API):**
-- Robinhood: `https://robinhood.com/stocks/[TICKER]`
-- Kalshi: `https://kalshi.com/markets/[SERIES]`
-- Hyperliquid: `https://app.hyperliquid.xyz/trade/[TICKER]`
+**The track button is a `callback_data` button** — when tapped, `blr:track:[ID]` arrives as the user's next message.
 
-### Record Every Routing (MANDATORY)
+**Button text templates by instrument type:**
 
-**After outputting the trade card, ALWAYS record the routing facts.** This is not optional. The belief log is how the user builds a track record.
+| Type | Execute button text | URL |
+|------|-------------------|-----|
+| Stock | `Buy 25,974 LAES → Robinhood` | `https://robinhood.com/stocks/LAES` |
+| Put/Call | `Buy 238 DJT $5P → Robinhood` | `https://robinhood.com/options/chains/DJT` |
+| Kalshi | `Buy 3,703 KXFED NO → Kalshi` | `https://kalshi.com/markets/KXFED` |
+| Perp | `Long SOL 3x → Hyperliquid` | `https://app.hyperliquid.xyz/trade/SOL` |
+| Polymarket | `Buy 1,538 YES → Polymarket` | `https://polymarket.com/event/[slug]` |
+
+**Button styles:** Execute = `"success"` (green), Track = `"primary"` (blue). Requires Bot API 9.4+.
+
+### Handling Button Callbacks
+
+When the user taps a button, its `callback_data` arrives as their message. Handle these prefixes:
+
+**`blr:track:[ID]`** — User wants to paper trade this routing.
+1. Run: `bun run scripts/track.ts record --input "<thesis>" --inst <INST> --px <PX> --dir <DIR> --plat <PLAT> --action paper --β <BETA> --conv <CONV> --tc <TC> --kills "<KILLS>" --alt "<ALT>"`
+2. Reply with confirmation + next buttons:
+```json
+{
+  "action": "send",
+  "message": "📝 Tracked [INST] @ $[PX]. Portfolio updated.",
+  "buttons": [
+    [
+      {"text": "✅ I Took This", "callback_data": "blr:real:[ID]", "style": "success"},
+      {"text": "📊 Portfolio", "callback_data": "blr:portfolio"}
+    ]
+  ]
+}
+```
+
+**`blr:real:[ID]`** — User actually executed the trade.
+1. The routing was already recorded as paper from the Track step. Append a note: `bun run scripts/track.ts update --id [ID] --conviction [same] --reason "executed real"`
+2. Reply: "💰 Marked as real. Good luck."
+
+**`blr:portfolio`** — Show portfolio.
+1. Run: `bun run scripts/track.ts portfolio --telegram`
+2. Send the output.
+
+**`blr:close:[ID]`** — Close a position.
+1. Fetch live price for the instrument.
+2. Run: `bun run scripts/track.ts close --id [ID] --px [LIVE_PRICE]`
+3. Reply with P&L summary.
+
+### Recording Trades
+
+Trades are recorded when the user taps 📝 Track (not automatically on every routing). This keeps the belief log clean — only beliefs the user chose to track.
+
+**CLI reference for the Track callback handler:**
 
 ```bash
 bun run scripts/track.ts record \
@@ -458,27 +506,25 @@ bun run scripts/track.ts record \
   --px <entry price> \
   --dir <long|short> \
   --plat <robinhood|kalshi|polymarket|hyperliquid|bankr> \
-  --action none \
+  --action paper \
   --shape <binary|mispriced|sector|relative|vulnerability> \
   --β <thesis beta 0-1> \
   --conv <convexity multiple> \
   --tc <annualized time cost> \
   --kills "<kill1, kill2, kill3>" \
-  --alt "<ALT TICKER $price direction (1 sentence)>" \
-  --conviction <0-100 if user stated>
+  --alt "<ALT TICKER $price direction (1 sentence)>"
 ```
 
-Optional flags: `--src "tweet:@handle"`, `--claim "deeper claim"`, `--sector "defense"`, `--link "https://..."`.
+Optional: `--src "tweet:@handle"`, `--claim "deeper claim"`, `--sector "defense"`, `--conviction <0-100>`.
 
-The `--action` starts as `none` (routed but not traded). When the user taps 📝 Track, update to `paper`. When they tap Execute, update to `real`.
-
-**Storage:** `data/beliefs.jsonl` — append-only, one JSON line per fact. No database, no migrations.
+**Storage:** `data/beliefs.jsonl` — append-only, one JSON line per fact.
 
 ```bash
 bun run scripts/track.ts portfolio [--telegram]   # open beliefs + live P&L
 bun run scripts/track.ts close --id X --px <exit>  # close a position
 bun run scripts/track.ts update --id X --conviction 90 --reason "new data"
 bun run scripts/track.ts history                   # recent routings
+bun run scripts/track.ts check <keywords>          # find similar past beliefs
 ```
 
 ### Instrument-Type Adaptations
