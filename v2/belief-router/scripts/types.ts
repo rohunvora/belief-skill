@@ -72,6 +72,9 @@ export interface ReturnProfile {
   risk_note: string;              // "Leveraged position — liquidation at $X"
 }
 
+export type InstrumentType = "stock" | "option" | "perp" | "binary";
+export type OptionType = "call" | "put";
+
 /** PnL tracking — the "I Called It" card (thesis leads, not the number) */
 export interface TrackedTrade {
   id: string;
@@ -87,6 +90,13 @@ export interface TrackedTrade {
   mode: "paper" | "real";          // Paper trade or actually executed
   kill_conditions?: string[];      // From the trade card — monitor these
   targets?: TradeTarget[];         // Price levels to alert on
+
+  // Options / instrument type fields
+  instrument_type?: InstrumentType;
+  option_type?: OptionType;        // call or put (options only)
+  strike?: number;                 // Strike price (options only)
+  expiry?: string;                 // ISO date (options only)
+  premium?: number;                // Premium paid (options only, same as entry_price)
 }
 
 export interface TradeTarget {
