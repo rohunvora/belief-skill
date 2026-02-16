@@ -332,6 +332,37 @@ async function runThesisTest(thesis: { id: string; input: string; shape: string;
           const dir = thesis.input.toLowerCase().match(/crash|decline|replace|crush|vulnerability|short|bear/) ? "short" : "long";
           const type = ticker.length <= 5 ? "stock" : "etf";
           returnsResult = runAdapter("robinhood", "returns", [ticker, dir, type]);
+
+          // For vulnerability and mispriced theses, ALSO price options (much higher convexity)
+          if (["vulnerability", "mispriced_company", "compound"].includes(thesis.shape) && type === "stock") {
+            const optResult = runAdapter("robinhood", "returns", [ticker, dir, "option"]);
+            if (optResult && !optResult.__error && optResult.expression) {
+              returnsCalculated++;
+              const oExpr = optResult.expression;
+              const oBeta = estimateThesisBeta(thesis.shape, inst.relevance || "proxy", "robinhood");
+              const oConv = oExpr.return_if_right_pct ? Math.max(oExpr.return_if_right_pct / 100, 0.1) : 1;
+              const oTC = estimateTimeCost("robinhood", "option");
+              const oScore = (oBeta * oConv) / (1 + oTC);
+
+              candidates.push({
+                platform: "robinhood",
+                instrument: `${ticker} ${dir === "short" ? "PUT" : "CALL"}`,
+                instrument_name: oExpr.instrument_name,
+                direction: oExpr.direction,
+                return_if_right_pct: oExpr.return_if_right_pct,
+                return_if_wrong_pct: oExpr.return_if_wrong_pct,
+                market_implied_prob: oExpr.market_implied_prob,
+                liquidity: oExpr.liquidity,
+                time_horizon: oExpr.time_horizon,
+                thesis_beta_est: oBeta,
+                convexity_est: Math.round(oConv * 100) / 100,
+                time_cost_est: oTC,
+                score: Math.round(oScore * 100) / 100,
+              });
+
+              console.error(`     💰 ${ticker} ${dir === "short" ? "PUT" : "CALL"}: ${oExpr.direction} → ${oExpr.return_if_right_pct}% if right, score=${Math.round(oScore * 100) / 100}`);
+            }
+          }
         } else if (call.adapter === "hyperliquid") {
           // Hyperliquid returns: coin + direction + leverage
           const dir = thesis.input.toLowerCase().match(/crash|decline|short|bear/) ? "short" : "long";
