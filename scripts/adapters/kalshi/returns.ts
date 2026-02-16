@@ -158,13 +158,15 @@ function calculateReturns(
 
   if (direction === "yes") {
     // Best ask from orderbook (lowest price someone is selling YES at)
-    bestAsk = orderbook.yes.length > 0
-      ? Math.min(...orderbook.yes.map(l => l.price))
+    const yesBook = orderbook?.yes ?? [];
+    bestAsk = yesBook.length > 0
+      ? Math.min(...yesBook.map(l => l.price))
       : undefined;
     buyPriceCents = market.yes_ask || bestAsk || market.last_price || 50;
   } else {
-    bestAsk = orderbook.no.length > 0
-      ? Math.min(...orderbook.no.map(l => l.price))
+    const noBook = orderbook?.no ?? [];
+    bestAsk = noBook.length > 0
+      ? Math.min(...noBook.map(l => l.price))
       : undefined;
     buyPriceCents = market.no_ask || bestAsk || (100 - market.last_price) || 50;
   }
