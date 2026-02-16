@@ -93,6 +93,56 @@ const tests: TestCase[] = [
     },
   },
 
+  // === KALSHI expanded series ===
+  {
+    name: "Kalshi instruments: gold (no BTC/ETH noise)",
+    command: `${SCRIPTS}/kalshi/instruments.ts "gold price"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      const tickers = (o.instruments || []).map((i: any) => i.ticker);
+      const hasGold = tickers.some((t: string) => t.includes("KXGOLD"));
+      if (!hasGold) return "Missing gold series";
+      const hasBtc = tickers.some((t: string) => t.includes("KXBTC") || t.includes("BTC"));
+      if (hasBtc) return `Noise: BTC series appeared in gold query: ${tickers.join(", ")}`;
+      return null;
+    },
+  },
+  {
+    name: "Kalshi instruments: oil crude",
+    command: `${SCRIPTS}/kalshi/instruments.ts "oil crude"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      const tickers = (o.instruments || []).map((i: any) => i.ticker);
+      const hasOil = tickers.some((t: string) => t.includes("OIL") || t.includes("WTI"));
+      if (!hasOil) return `Missing oil series. Got: ${tickers.join(", ")}`;
+      return null;
+    },
+  },
+  {
+    name: "Kalshi instruments: unemployment jobs",
+    command: `${SCRIPTS}/kalshi/instruments.ts "unemployment jobs"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      const tickers = (o.instruments || []).map((i: any) => i.ticker);
+      const hasU3 = tickers.some((t: string) => t.includes("KXU3"));
+      if (!hasU3) return `Missing unemployment series. Got: ${tickers.join(", ")}`;
+      return null;
+    },
+  },
+  {
+    name: "Kalshi instruments: euro (no fed rate noise)",
+    command: `${SCRIPTS}/kalshi/instruments.ts "euro dollar"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      const tickers = (o.instruments || []).map((i: any) => i.ticker);
+      const hasEuro = tickers.some((t: string) => t.includes("KXEURO"));
+      if (!hasEuro) return `Missing euro series. Got: ${tickers.join(", ")}`;
+      const hasFed = tickers.some((t: string) => t.includes("KXFED"));
+      if (hasFed) return `Noise: Fed series appeared in euro query: ${tickers.join(", ")}`;
+      return null;
+    },
+  },
+
   // === ROBINHOOD ===
   {
     name: "Robinhood instruments: NVDA AAPL",

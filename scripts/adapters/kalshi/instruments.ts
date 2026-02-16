@@ -105,6 +105,10 @@ const SERIES_MAP: [string[], string, string][] = [
 const cache = new Map<string, { data: KalshiEvent[]; fetchedAt: number }>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
+// Rate limiting: max concurrent series to fetch (avoids Kalshi 429s)
+const MAX_SERIES_FETCH = 6;
+const FETCH_DELAY_MS = 150; // delay between sequential fetches
+
 interface KalshiEvent {
   event_ticker: string;
   title: string;
@@ -148,14 +152,34 @@ function matchSeries(keywords: string[]): { ticker: string; desc: string; releva
         bestScore = Math.max(bestScore, 3);
         continue;
       }
-      // Any individual keyword matches a trigger word
+
       const triggerWords = trigger.split(" ");
-      for (const kw of input) {
-        if (triggerWords.includes(kw)) {
+      const matchingWords = input.filter(kw => triggerWords.includes(kw));
+
+      if (triggerWords.length === 1) {
+        // Single-word trigger: any keyword match = direct hit
+        if (matchingWords.length > 0) {
           bestScore = Math.max(bestScore, 2);
         }
-        // Partial match (keyword is substring of trigger or vice versa, min 3 chars)
-        if (kw.length >= 3 && (trigger.includes(kw) || kw.includes(trigger))) {
+      } else {
+        // Multi-word trigger (e.g., "bitcoin price today"):
+        // Require ≥50% of trigger words to match to avoid "price" alone
+        // matching "bitcoin price today"
+        const matchRatio = matchingWords.length / triggerWords.length;
+        if (matchRatio >= 0.5) {
+          bestScore = Math.max(bestScore, 2);
+        } else if (matchingWords.length >= 1) {
+          // Single word match in multi-word trigger = weak lateral signal
+          bestScore = Math.max(bestScore, 1);
+        }
+      }
+
+      // Partial match: keyword is substring of trigger or vice versa.
+      // Require min 4 chars AND keyword must be >40% of trigger length.
+      for (const kw of input) {
+        if (kw.length >= 4 && !triggerWords.includes(kw) &&
+            (trigger.includes(kw) || kw.includes(trigger)) &&
+            kw.length / trigger.length > 0.4) {
           bestScore = Math.max(bestScore, 1);
         }
       }
@@ -168,9 +192,14 @@ function matchSeries(keywords: string[]): { ticker: string; desc: string; releva
     }
   }
 
-  // Sort by score descending
+  // Sort by score descending, then filter out lateral matches when we have direct/proxy hits
   matched.sort((a, b) => b.score - a.score);
-  return matched;
+
+  // If we have direct or proxy hits, drop lateral matches to reduce noise
+  const hasStrongHits = matched.some(m => m.score >= 2);
+  const filtered = hasStrongHits ? matched.filter(m => m.score >= 2) : matched;
+
+  return filtered;
 }
 
 /**
@@ -211,13 +240,24 @@ async function findInstruments(keywords: string[]): Promise<AdapterInstrumentRes
 
   const instruments: InstrumentMatch[] = [];
 
-  // Fetch all matched series in parallel
-  const fetchResults = await Promise.all(
-    seriesMatches.map(async (s) => {
-      const events = await fetchEvents(s.ticker);
-      return { ...s, events };
-    })
-  );
+  // Fetch top series sequentially with delay to avoid Kalshi 429s
+  const topMatches = seriesMatches.slice(0, MAX_SERIES_FETCH);
+  const fetchResults: { ticker: string; desc: string; relevance: "direct" | "proxy" | "lateral"; events: KalshiEvent[] }[] = [];
+
+  for (const s of topMatches) {
+    // Check cache first (no delay needed for cached results)
+    const cached = cache.get(s.ticker);
+    if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
+      fetchResults.push({ ...s, events: cached.data });
+      continue;
+    }
+    // Add delay between uncached API calls
+    if (fetchResults.length > 0) {
+      await new Promise(r => setTimeout(r, FETCH_DELAY_MS));
+    }
+    const events = await fetchEvents(s.ticker);
+    fetchResults.push({ ...s, events });
+  }
 
   for (const { ticker: seriesTicker, desc, relevance, events } of fetchResults) {
     if (events.length === 0) {
