@@ -10,7 +10,7 @@
  *  - Edge cases (k-prefix coins, leveraged ETFs, empty orderbooks) handled
  */
 
-const { execSync } = require("child_process");
+import { execSync } from "child_process";
 
 interface TestCase {
   name: string;

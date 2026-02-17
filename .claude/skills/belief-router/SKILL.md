@@ -1,0 +1,1 @@
+/Users/satoshi/dev/belief-skill/SKILL.md

@@ -232,6 +232,15 @@ For bearish theses on Robinhood: propose inverse ETFs directly (SQQQ, SRS, TBT, 
 
 ---
 
+## Mode Gates
+
+| Gate | Rule |
+|------|------|
+| Research → Recommend | Every number in the card must trace to a data source. No source → write "not yet sourced", offer to fetch. Never estimate. |
+| Recommend → Execute | State what you'll do, wait for explicit yes. "Make this easy" ≠ permission to act. |
+
+---
+
 ## Output
 
 Output has two parts: **The Take** (streamed as your reply) and **The Card** (sent via message tool with buttons).

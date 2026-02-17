@@ -26,14 +26,38 @@ async function fetchPrice(plat: string, inst: string): Promise<number | null> {
         return q?.postMarketPrice ?? q?.preMarketPrice ?? q?.regularMarketPrice ?? null;
       }
       case "hyperliquid": {
+        // Detect xyz dex tickers (e.g. "xyz:PLTR")
+        const hasPrefix = ticker.includes(":");
+        const dexName = hasPrefix ? ticker.split(":")[0] : undefined;
+
+        const hlBody: Record<string, string> = { type: "allMids" };
+        if (dexName) hlBody.dex = dexName;
+
         const res = await fetch("https://api.hyperliquid.xyz/info", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ type: "allMids" }),
+          body: JSON.stringify(hlBody),
         });
         if (!res.ok) return null;
         const mids = (await res.json()) as Record<string, string>;
-        return mids[ticker] ? parseFloat(mids[ticker]) : null;
+
+        if (mids[ticker]) return parseFloat(mids[ticker]);
+
+        // If no prefix and not found on default dex, try xyz dex
+        if (!hasPrefix) {
+          const xyzRes = await fetch("https://api.hyperliquid.xyz/info", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "allMids", dex: "xyz" }),
+          });
+          if (xyzRes.ok) {
+            const xyzMids = (await xyzRes.json()) as Record<string, string>;
+            const xyzKey = `xyz:${ticker}`;
+            if (xyzMids[xyzKey]) return parseFloat(xyzMids[xyzKey]);
+          }
+        }
+
+        return null;
       }
       case "kalshi": {
         const res = await fetch(`https://api.elections.kalshi.com/trade-api/v2/markets/${ticker}`);
@@ -68,7 +92,7 @@ function record(f: Record<string, string>) {
     id,
     t: now(),
     input,
-    inst: inst.toUpperCase(),
+    inst: inst.startsWith("k") ? inst : inst.toUpperCase(),
     px,
     dir,
     plat,
@@ -90,7 +114,8 @@ function record(f: Record<string, string>) {
 
   append(fact);
   const mode = fact.action === "real" ? "💰" : fact.action === "paper" ? "📝" : "👁";
-  console.log(`\n${mode} ${id} | ${inst.toUpperCase()} $${px} ${dir} | ${plat} | "${input.slice(0, 50)}"`);
+  const instDisplay = inst.startsWith("k") ? inst : inst.toUpperCase();
+  console.log(`\n${mode} ${id} | ${instDisplay} $${px} ${dir} | ${plat} | "${input.slice(0, 50)}"`);
 }
 
 /**
@@ -167,10 +192,11 @@ function computePnl(r: RoutingFact, livePrice: number): number {
       return ((intrinsic - r.px) / r.px) * 100;
     }
     case "kalshi": {
-      // Kalshi prices are in cents (0-100). Entry and live are both cents.
-      // For YES: profit if price goes up. For NO: profit if price goes down.
-      const sideMul = parsed.side === "NO" ? -1 : 1;
-      return sideMul * ((livePrice - r.px) / r.px) * 100;
+      // Kalshi: livePrice is always YES cents (0-100) from the API.
+      // Entry r.px is stored in the side's own domain (YES cents or NO cents).
+      // For NO positions, convert livePrice to NO domain first: 100 - livePrice.
+      const effectivePrice = parsed.side === "NO" ? 100 - livePrice : livePrice;
+      return ((effectivePrice - r.px) / r.px) * 100;
     }
     case "perp": {
       // Apply leverage from stored fact, default 1x if not recorded.

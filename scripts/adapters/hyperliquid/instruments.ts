@@ -56,11 +56,13 @@ const ALIASES: Record<string, string> = {
 // API helpers
 // ---------------------------------------------------------------------------
 
-async function fetchMetaAndCtxs(): Promise<{ meta: HLMeta; ctxs: HLAssetCtx[] }> {
+async function fetchMetaAndCtxs(dex?: string): Promise<{ meta: HLMeta; ctxs: HLAssetCtx[] }> {
+  const body: Record<string, string> = { type: "metaAndAssetCtxs" };
+  if (dex) body.dex = dex;
   const res = await fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "metaAndAssetCtxs" }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`Hyperliquid API error: ${res.status} ${res.statusText}`);
   const [meta, ctxs] = (await res.json()) as [HLMeta, HLAssetCtx[]];
@@ -98,6 +100,7 @@ async function main() {
     console.error("Examples:");
     console.error("  bun run scripts/adapters/hyperliquid/instruments.ts \"SOL,BTC,ETH\"");
     console.error("  bun run scripts/adapters/hyperliquid/instruments.ts \"FARTCOIN,TRUMP,HYPE\"");
+    console.error("  bun run scripts/adapters/hyperliquid/instruments.ts \"PLTR,SOL,BTC,GOLD\"");
     process.exit(1);
   }
 
@@ -109,47 +112,80 @@ async function main() {
 
   console.error(`\nValidating ${tickers.length} tickers against Hyperliquid perp list...\n`);
 
-  const { meta, ctxs } = await fetchMetaAndCtxs();
+  // Fetch BOTH default crypto dex and xyz HIP-3 dex in parallel
+  const [defaultData, xyzData] = await Promise.all([
+    fetchMetaAndCtxs(),
+    fetchMetaAndCtxs("xyz"),
+  ]);
 
-  // Build lookup: ticker → index
-  const tickerIndex = new Map<string, number>();
-  for (let i = 0; i < meta.universe.length; i++) {
-    tickerIndex.set(meta.universe[i].name, i);
+  // Build lookup: ticker → { index, dex } for both dexes
+  // Default dex entries are stored by raw name (e.g. "SOL")
+  // xyz dex entries are stored by both "xyz:PLTR" and "PLTR" (for fallback matching)
+  const tickerIndex = new Map<string, { idx: number; dex: "default" | "xyz"; apiName: string }>();
+
+  for (let i = 0; i < defaultData.meta.universe.length; i++) {
+    const name = defaultData.meta.universe[i]!.name;
+    tickerIndex.set(name, { idx: i, dex: "default", apiName: name });
   }
 
-  console.error(`Live perps: ${meta.universe.length} assets\n`);
+  for (let i = 0; i < xyzData.meta.universe.length; i++) {
+    const name = xyzData.meta.universe[i]!.name; // e.g. "xyz:PLTR"
+    tickerIndex.set(name, { idx: i, dex: "xyz", apiName: name });
+    // Also allow matching without prefix (e.g. "PLTR" → xyz:PLTR) if not already on default dex
+    const stripped = name.startsWith("xyz:") ? name.slice(4) : name;
+    if (!tickerIndex.has(stripped)) {
+      tickerIndex.set(stripped, { idx: i, dex: "xyz", apiName: name });
+    }
+  }
+
+  console.error(`Live perps: ${defaultData.meta.universe.length} default + ${xyzData.meta.universe.length} xyz (HIP-3)\n`);
 
   const validated: ValidatedPerp[] = [];
   let skipped = 0;
 
   for (const rawTicker of tickers) {
-    // Try exact match, then alias, then strip -PERP suffix
+    // Try exact match, then alias, then strip -PERP suffix, then xyz: prefix
     let ticker = rawTicker;
-    let idx = tickerIndex.get(ticker);
+    let match = tickerIndex.get(ticker);
 
-    if (idx === undefined && ALIASES[ticker]) {
-      const alias = ALIASES[ticker];
-      idx = tickerIndex.get(alias);
-      if (idx !== undefined) {
-        console.error(`  ${ticker} → ${alias} (alias)`);
+    // Try alias (only applies to default dex crypto tickers)
+    if (!match && ALIASES[ticker]) {
+      const alias = ALIASES[ticker]!;
+      match = tickerIndex.get(alias);
+      if (match) {
+        console.error(`  ${ticker} -> ${alias} (alias)`);
         ticker = alias;
       }
     }
 
-    if (idx === undefined && ticker.endsWith("-PERP")) {
+    // Try stripping -PERP suffix
+    if (!match && ticker.endsWith("-PERP")) {
       const base = ticker.replace("-PERP", "");
-      idx = tickerIndex.get(base);
-      if (idx !== undefined) ticker = base;
+      match = tickerIndex.get(base);
+      if (match) ticker = base;
     }
 
-    if (idx === undefined) {
-      console.error(`  SKIP: ${rawTicker} — not listed on Hyperliquid`);
+    // Try xyz: prefix explicitly
+    if (!match) {
+      match = tickerIndex.get(`xyz:${ticker}`);
+      if (match) {
+        console.error(`  ${ticker} -> ${match.apiName} (xyz HIP-3 dex)`);
+        ticker = match.apiName;
+      }
+    }
+
+    if (!match) {
+      console.error(`  SKIP: ${rawTicker} -- not listed on Hyperliquid (default or xyz dex)`);
       skipped++;
       continue;
     }
 
-    const info = meta.universe[idx];
-    const ctx = ctxs[idx];
+    // Select the right data source based on which dex matched
+    const data = match.dex === "xyz" ? xyzData : defaultData;
+    const info = data.meta.universe[match.idx]!;
+    const ctx = data.ctxs[match.idx]!;
+    const displayTicker = match.apiName; // preserves xyz: prefix if from xyz dex
+
     const markPrice = parseFloat(ctx.markPx) || parseFloat(ctx.oraclePx) || 0;
     const funding = parseFloat(ctx.funding) || 0;
     const volume = parseFloat(ctx.dayNtlVlm) || 0;
@@ -159,12 +195,13 @@ async function main() {
     const fundingAnn = Math.round(funding * 24 * 365 * 100 * 100) / 100;
 
     const priceStr = markPrice >= 1 ? markPrice.toFixed(2) : markPrice.toFixed(6);
+    const dexLabel = match.dex === "xyz" ? " [HIP-3]" : "";
 
     validated.push({
-      ticker: `${ticker}-PERP`,
-      name: `${ticker} Perpetual (${info.maxLeverage}x max, ${liquidity} liq)`,
+      ticker: `${displayTicker}-PERP`,
+      name: `${displayTicker} Perpetual (${info.maxLeverage}x max, ${liquidity} liq)${dexLabel}`,
       relevance: "direct",
-      why: `$${priceStr}, ${liquidity} liquidity, up to ${info.maxLeverage}x leverage`,
+      why: `$${priceStr}, ${liquidity} liquidity, up to ${info.maxLeverage}x leverage${dexLabel}`,
       mark_price: markPrice,
       funding_rate_hourly: funding,
       funding_rate_annualized_pct: fundingAnn,

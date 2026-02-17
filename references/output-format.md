@@ -69,3 +69,9 @@ bun run scripts/track.ts record \
   --β <thesis beta 0-1> --conv <convexity multiple> --tc <annualized time cost> \
   --kills "<kill1, kill2, kill3>" --alt "<ALT TICKER $price direction>"
 ```
+
+## Disclaimer
+
+End every routing response with this line:
+
+`Expressions, not advice. Do your own research.`

@@ -117,7 +117,7 @@ USER INPUT
 │  ✗ Liquidity < $100K without 2%     │
 │  ✗ Already priced in (cite data)    │
 │  ✗ Time mismatch (expires early)    │
-│  ✗ Thesis beta < 20%               │
+│  ✗ Thesis beta < 60% (connection floor)               │
 │                                     │
 │  If nothing works → descend ladder: │
 │  L1 high-beta proxy                 │
@@ -219,6 +219,10 @@ score = thesis beta × convexity / (1 + time cost)
 thesis beta   = % of instrument's move driven by THIS thesis (0-1)
 convexity     = upside multiple at bet size if thesis correct
 time cost     = annualized carry (theta, funding, decay)
+
+Note: This formula is used for automated pipeline testing (e2e-routing.ts).
+SKILL.md v3 uses a 4-dimension categorical rubric for Claude's interactive
+judgment. Both coexist.
 ```
 
 ## Platforms
@@ -235,7 +239,7 @@ time cost     = annualized carry (theta, funding, decay)
 │            │ (events, Fed,    │ instruments.ts     │
 │            │ politics)        │ returns.ts         │
 ├────────────┼──────────────────┼───────────────────┤
-│ Polymarket │ Binary + sports  │ polymarket/        │
+│ Polymarket │ Binary + sports  │ via bankr/         │
 │            │ (slug-based)     │ instruments.ts     │
 ├────────────┼──────────────────┼───────────────────┤
 │ Hyperliquid│ Perps (crypto +  │ hyperliquid/       │

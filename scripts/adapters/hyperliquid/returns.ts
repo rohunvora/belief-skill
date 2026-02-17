@@ -41,11 +41,13 @@ interface HLAssetCtx {
 
 // ── API helpers ─────────────────────────────────────────────────────
 
-async function fetchMetaAndCtxs(): Promise<{ meta: HLMeta; ctxs: HLAssetCtx[] }> {
+async function fetchMetaAndCtxs(dex?: string): Promise<{ meta: HLMeta; ctxs: HLAssetCtx[] }> {
+  const body: Record<string, string> = { type: "metaAndAssetCtxs" };
+  if (dex) body.dex = dex;
   const res = await fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "metaAndAssetCtxs" }),
+    body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`Hyperliquid API error: ${res.status} ${res.statusText}`);
   const [meta, ctxs] = (await res.json()) as [HLMeta, HLAssetCtx[]];
@@ -260,53 +262,113 @@ async function main() {
 
   if (!coin || !direction || !["long", "short"].includes(direction) || isNaN(leverage) || leverage < 1) {
     console.error('Usage: bun run scripts/adapters/hyperliquid/returns.ts "SOL" "long" "5"');
-    console.error("  coin:      Ticker (SOL, BTC, ETH, etc.)");
+    console.error('       bun run scripts/adapters/hyperliquid/returns.ts "xyz:PLTR" "long" "3"');
+    console.error("  coin:      Ticker (SOL, BTC, xyz:PLTR, xyz:GOLD, etc.)");
     console.error("  direction: long | short");
     console.error("  leverage:  Multiplier (1-40 depending on asset)");
     process.exit(1);
   }
 
-  // Fetch all perps data
-  const { meta, ctxs } = await fetchMetaAndCtxs();
+  // Detect if coin is explicitly from xyz dex (e.g. "xyz:PLTR")
+  const isExplicitXyz = coin.startsWith("XYZ:") || coin.startsWith("xyz:");
+  const baseCoin = isExplicitXyz ? coin.slice(4) : coin;
 
-  // Find the coin index
-  const idx = meta.universe.findIndex((u) => u.name === coin);
-  if (idx === -1) {
-    // Try common aliases
-    const aliases: Record<string, string> = {
-      PEPE: "kPEPE",
-      SHIB: "kSHIB",
-      BONK: "kBONK",
-      FLOKI: "kFLOKI",
-      DOGS: "kDOGS",
-      LUNC: "kLUNC",
-      NEIRO: "kNEIRO",
-    };
-    const alias = aliases[coin];
-    if (alias) {
-      const aliasIdx = meta.universe.findIndex((u) => u.name === alias);
-      if (aliasIdx !== -1) {
-        console.error(`Note: "${coin}" is listed as "${alias}" on Hyperliquid. Using ${alias}.`);
-        // Re-run with alias
-        process.argv[2] = alias;
-        return main();
+  // Fetch both dexes in parallel — always query both
+  const [defaultData, xyzData] = await Promise.all([
+    fetchMetaAndCtxs(),
+    fetchMetaAndCtxs("xyz"),
+  ]);
+
+  // Try to find the coin: default dex first, then xyz dex
+  let idx = -1;
+  let activeMeta: HLMeta = defaultData.meta;
+  let activeCtxs: HLAssetCtx[] = defaultData.ctxs;
+  let apiCoinName: string = coin; // name as it appears in the API (e.g. "xyz:PLTR" for xyz dex)
+  let displayCoin: string = coin; // name for output (preserves xyz: prefix)
+
+  if (isExplicitXyz) {
+    // User explicitly requested xyz dex — look there directly
+    const xyzName = `xyz:${baseCoin}`;
+    idx = xyzData.meta.universe.findIndex((u) => u.name === xyzName);
+    if (idx === -1) {
+      // Also try without prefix in case API uses raw name
+      idx = xyzData.meta.universe.findIndex((u) => u.name === baseCoin);
+    }
+    if (idx !== -1) {
+      activeMeta = xyzData.meta;
+      activeCtxs = xyzData.ctxs;
+      apiCoinName = xyzData.meta.universe[idx]!.name;
+      displayCoin = apiCoinName.startsWith("xyz:") ? apiCoinName : `xyz:${apiCoinName}`;
+      console.error(`Found ${displayCoin} on xyz HIP-3 dex`);
+    } else {
+      console.error(`ERROR: "${coin}" not found on xyz HIP-3 dex. Available xyz assets: ${xyzData.meta.universe.length}`);
+      process.exit(1);
+    }
+  } else {
+    // Try default dex first
+    idx = defaultData.meta.universe.findIndex((u) => u.name === coin);
+
+    if (idx !== -1) {
+      activeMeta = defaultData.meta;
+      activeCtxs = defaultData.ctxs;
+      apiCoinName = coin;
+      displayCoin = coin;
+    } else {
+      // Try common aliases (only applies to default dex)
+      const aliases: Record<string, string> = {
+        PEPE: "kPEPE",
+        SHIB: "kSHIB",
+        BONK: "kBONK",
+        FLOKI: "kFLOKI",
+        DOGS: "kDOGS",
+        LUNC: "kLUNC",
+        NEIRO: "kNEIRO",
+      };
+      const alias = aliases[coin];
+      if (alias) {
+        idx = defaultData.meta.universe.findIndex((u) => u.name === alias);
+        if (idx !== -1) {
+          console.error(`Note: "${coin}" is listed as "${alias}" on Hyperliquid. Using ${alias}.`);
+          activeMeta = defaultData.meta;
+          activeCtxs = defaultData.ctxs;
+          apiCoinName = alias;
+          displayCoin = alias;
+        }
+      }
+
+      // If still not found, try xyz dex
+      if (idx === -1) {
+        const xyzName = `xyz:${coin}`;
+        idx = xyzData.meta.universe.findIndex((u) => u.name === xyzName);
+        if (idx === -1) {
+          idx = xyzData.meta.universe.findIndex((u) => u.name === coin);
+        }
+        if (idx !== -1) {
+          activeMeta = xyzData.meta;
+          activeCtxs = xyzData.ctxs;
+          apiCoinName = xyzData.meta.universe[idx]!.name;
+          displayCoin = apiCoinName.startsWith("xyz:") ? apiCoinName : `xyz:${apiCoinName}`;
+          console.error(`"${coin}" found on xyz HIP-3 dex as ${displayCoin}`);
+        } else {
+          console.error(`ERROR: "${coin}" not found on Hyperliquid (default: ${defaultData.meta.universe.length} assets, xyz: ${xyzData.meta.universe.length} assets)`);
+          process.exit(1);
+        }
       }
     }
-    console.error(`ERROR: "${coin}" not found on Hyperliquid. Available perps: ${meta.universe.length}`);
-    process.exit(1);
   }
 
-  const info = meta.universe[idx];
-  const ctx = ctxs[idx];
+  const info = activeMeta!.universe[idx]!;
+  const ctx = activeCtxs![idx]!;
 
   const entryPrice = parseFloat(ctx.midPx) || parseFloat(ctx.oraclePx);
   if (!entryPrice || entryPrice <= 0) {
-    throw new Error(`Invalid price for ${coin}: midPx=${ctx.midPx}, oraclePx=${ctx.oraclePx}`);
+    throw new Error(`Invalid price for ${displayCoin}: midPx=${ctx.midPx}, oraclePx=${ctx.oraclePx}`);
   }
 
   // Fetch 30-day realized volatility from candle data
-  console.error(`Fetching 30d candles for ${coin}...`);
-  const volData = await fetchRealizedVol(coin);
+  // candleSnapshot API needs the full coin name including prefix (e.g. "xyz:PLTR")
+  console.error(`Fetching 30d candles for ${apiCoinName}...`);
+  const volData = await fetchRealizedVol(apiCoinName);
 
   let moveIfRightPct: number;
   let moveIfWrongPct: number;
@@ -319,17 +381,17 @@ async function main() {
     volSource = "realized";
     annualizedVol = volData.annualizedVol;
     console.error(`  30d realized vol: ${(annualizedVol * 100).toFixed(1)}% annualized`);
-    console.error(`  Expected move (30d): ±${(volData.moveRight * 100).toFixed(1)}% right, ${(volData.moveWrong * 100).toFixed(1)}% wrong`);
+    console.error(`  Expected move (30d): +/-${(volData.moveRight * 100).toFixed(1)}% right, ${(volData.moveWrong * 100).toFixed(1)}% wrong`);
   } else {
     moveIfRightPct = FALLBACK_MOVE_RIGHT_PCT;
     moveIfWrongPct = FALLBACK_MOVE_WRONG_PCT;
     volSource = "fallback";
     annualizedVol = null;
-    console.error("  Candle data unavailable — using default move assumptions (20%/15%)");
+    console.error("  Candle data unavailable -- using default move assumptions (20%/15%)");
   }
 
   const result = computeReturnProfile({
-    coin,
+    coin: displayCoin,
     direction,
     leverage,
     entryPrice,
