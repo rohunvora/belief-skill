@@ -74,6 +74,22 @@ If the subject is a person, brand, or community that isn't directly investable: 
 
 ---
 
+## Derivation Chain
+
+**When input is sourced:** BEFORE searching, log: source quote → mechanism → what you're searching for. AFTER finding the ticker, append why it matches. This is the reasoning trail, not a post-hoc summary. Without it, sources get credited for trades they never made.
+
+**Attribution tier** — mechanically determined by the "Source said:" step of the chain:
+
+| "Source said:" contains | Tier | Card shows |
+|------------------------|------|------------|
+| A ticker symbol (e.g. "buy LAES", "short GOOG") | `direct` | "@source's call" |
+| A market-specific causal claim, no ticker (e.g. "quantum selloff was mechanical", "GLP-1 distribution is the bottleneck") | `derived` | "@source's thesis · routed by" |
+| A framework or observation only, no market claim (e.g. "AI commoditizes interface layers", "everyone's on Ozempic") | `inspired` | "inspired by @source · routed by" |
+
+For format, examples, and classification rules: load `references/derivation-chain.md`.
+
+---
+
 ## Research
 
 Research the thesis autonomously. You decide what to search and how deeply to go.

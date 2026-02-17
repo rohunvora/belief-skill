@@ -1,6 +1,16 @@
 # Changelog
 
-## v3.1 — Current
+## v3.2 — Current
+
+### 2026-02-17 (v3.2)
+
+🔧 **Attribution is a lookup, not a judgment** — tier (direct/derived/inspired) is now mechanically determined by scanning the source quote: ticker present → direct, market claim → derived, framework → inspired. First match wins.
+
+🔧 **Derivation chain runs before research** — the reasoning trail ("source said X → implies Y → searching for Z") is now a mandatory step before searching, not a post-hoc summary. Prevents misattribution by locking the causal chain before instruments are found.
+
+---
+
+## v3.1
 
 ### 2026-02-17 (v3.1)
 
