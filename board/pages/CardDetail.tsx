@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import type { Call, Comment, PriceLadderStep } from "../types";
 import { getCallById, getCommentsForCall, getUserById } from "../mock-data";
 import { Avatar, formatPrice } from "../components/CallCard";
@@ -130,6 +130,44 @@ function CommentItem({ comment }: { comment: Comment }) {
   );
 }
 
+function DerivationChain({ derivation, callType }: {
+  derivation: NonNullable<Call["derivation"]>;
+  callType: Call["call_type"];
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mb-3">
+      <button
+        onClick={() => setOpen(!open)}
+        className="text-xs text-gray-500 hover:text-gray-700 flex items-center gap-1"
+      >
+        <span>{open ? "\u25BC" : "\u25B6"}</span>
+        <span>How was this {callType === "inspired" ? "derived from framework" : "routed"}?</span>
+      </button>
+      {open && (
+        <div className="mt-2 pl-3 border-l-2 border-gray-200 space-y-2 text-xs text-gray-600">
+          <div>
+            <span className="font-medium text-gray-700">Source said:</span>{" "}
+            <span className="italic">&ldquo;{derivation.source_said}&rdquo;</span>
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">This implies:</span>{" "}
+            {derivation.this_implies}
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Searched for:</span>{" "}
+            {derivation.searched_for}
+          </div>
+          <div>
+            <span className="font-medium text-gray-700">Found ticker because:</span>{" "}
+            {derivation.found_because}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function CardDetail({ id }: { id: string }) {
   const call = getCallById(id);
 
@@ -183,7 +221,8 @@ export function CardDetail({ id }: { id: string }) {
                 <a href={`#/u/${call.source_handle}`} className="text-gray-800 font-medium hover:underline">
                   @{call.source_handle}
                 </a>
-                {"'s take"}
+                {call.call_type === "direct" ? "'s call" :
+                 call.call_type === "inspired" ? "'s framework" : "'s thesis"}
                 {" \u00b7 routed by "}
                 <a href={`#/u/${callerHandle}`} className="text-gray-600 hover:underline">
                   @{callerHandle}
@@ -196,9 +235,13 @@ export function CardDetail({ id }: { id: string }) {
             )}
             <div className="text-xs text-gray-400 mt-0.5">
               {formatDate(call.created_at)}
-              {call.call_type === "curated" && (
-                <span className="ml-1.5 px-1.5 py-0.5 text-[10px] bg-blue-50 text-blue-600 rounded">
-                  curated
+              {call.call_type !== "original" && (
+                <span className={`ml-1.5 px-1.5 py-0.5 text-[10px] rounded ${
+                  call.call_type === "direct" ? "bg-green-50 text-green-600" :
+                  call.call_type === "derived" ? "bg-blue-50 text-blue-600" :
+                  "bg-purple-50 text-purple-600"
+                }`}>
+                  {call.call_type}
                 </span>
               )}
             </div>
@@ -209,6 +252,11 @@ export function CardDetail({ id }: { id: string }) {
         <h1 className="text-xl font-bold text-gray-900 mb-1 leading-snug">
           {call.thesis}
         </h1>
+
+        {/* Derivation chain (derived/inspired only) */}
+        {call.derivation && call.call_type !== "direct" && (
+          <DerivationChain derivation={call.derivation} callType={call.call_type} />
+        )}
 
         {/* Ticker + direction pills */}
         <div className="flex items-center gap-2 mb-4">

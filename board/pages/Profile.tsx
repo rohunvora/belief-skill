@@ -28,7 +28,7 @@ function computeStats(userCalls: Call[]) {
     return (c.resolve_pnl ?? 0) > (best.resolve_pnl ?? 0) ? c : best;
   }, null);
   const originalCalls = userCalls.filter((c) => c.call_type === "original").length;
-  const curatedCalls = userCalls.filter((c) => c.call_type === "curated").length;
+  const curatedCalls = userCalls.filter((c) => c.call_type !== "original").length;
 
   return { winRate, avgReturn, bestCall, originalCalls, curatedCalls };
 }

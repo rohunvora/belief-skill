@@ -11,7 +11,7 @@ export interface Call {
   caller_id: string;
   source_handle: string | null;
   source_url: string | null;
-  call_type: "original" | "curated";
+  call_type: "original" | "direct" | "derived" | "inspired";
 
   // resolution
   status: "active" | "resolved" | "closed" | "expired";
@@ -38,6 +38,12 @@ export interface Call {
   price_ladder?: PriceLadderStep[];
   alternative?: string;
   scan_source?: string; // e.g. "All-In Podcast (Feb 2026)"
+  derivation?: {
+    source_said: string;      // exact quote from source
+    this_implies: string;     // mechanism extracted
+    searched_for: string;     // what the router looked for
+    found_because: string;    // why this ticker matches
+  };
 }
 
 export interface PriceLadderStep {

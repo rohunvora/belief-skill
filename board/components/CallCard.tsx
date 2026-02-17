@@ -138,7 +138,8 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
               >
                 @{call.source_handle}
               </a>
-              {"'s take"}
+              {call.call_type === "direct" ? "'s call" :
+               call.call_type === "inspired" ? "'s framework" : "'s thesis"}
               {" \u00b7 routed by "}
               <a
                 href={`#/u/${callerHandle}`}
@@ -212,9 +213,13 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
         >
           {call.direction === "long" ? "Long" : "Short"}
         </span>
-        {call.call_type === "curated" && (
-          <span className="px-1.5 py-0.5 text-[10px] bg-blue-50 text-blue-600 rounded">
-            curated
+        {call.call_type !== "original" && (
+          <span className={`px-1.5 py-0.5 text-[10px] rounded ${
+            call.call_type === "direct" ? "bg-green-50 text-green-600" :
+            call.call_type === "derived" ? "bg-blue-50 text-blue-600" :
+            "bg-purple-50 text-purple-600"
+          }`}>
+            {call.call_type}
           </span>
         )}
         {call.instrument && (
