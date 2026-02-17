@@ -38,6 +38,7 @@ Before routing, check:
    - **No directional claim at all** ("What's a good investment?", "tell me about stocks") → redirect: "I route specific beliefs into trade expressions. What do you think is going to happen?"
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
 3. **Is it an action request?** ("I want to buy ONDO") — treat the implied direction as the thesis and proceed.
+4. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
 
 ---
 
@@ -375,11 +376,11 @@ End every routing with 2-3 suggested follow-ups. Each should address the most li
 
 ## Bulk Mode
 
-When input contains multiple embedded theses (transcript, article, tweet thread, earnings call, or any content where the user says "scan this" or "what's tradeable here"), switch to bulk mode. Run a three-phase pipeline instead of the full router N times.
+When Input Validation step 4 triggers (multiple theses, user wants all routed), run this pipeline instead of the full router N times.
 
 ### Phase 1: Extract & Cluster
 
-Pure reasoning. No tool calls. Extract every directional claim using the same criteria as Input Validation, applied to each claim found in the source.
+Pure reasoning. No tool calls. Extract every directional claim using the same criteria as Input Validation.
 
 **For each claim, capture:**
 - `attribution` — who made this claim (speaker, author, analyst, CEO, etc.)
