@@ -1,6 +1,22 @@
 # Changelog
 
-## v3.0 — Current
+## v3.1 — Current
+
+### 2026-02-17 (v3.1)
+
+🆕 **Hyperliquid stocks & commodities** — PLTR, GOLD, and 100+ non-crypto perps now route automatically via xyz dex
+
+🔧 **Stricter routing** — thesis connection floor raised to 60% (fewer garbage proxy trades)
+
+🔧 **Kalshi PnL fixed** — NO positions were showing inverted returns
+
+🛡️ **Mode gates** — numbers must trace to a data source, no more hallucinated stats
+
+📋 **Golden tests** — PLTR military-AI thesis + Nettspend cultural momentum sessions saved as regression tests
+
+---
+
+## v3.0
 
 ### 2026-02-16 (v3.0)
 - **Rubric replaces formula.** Replaced `thesis_beta × convexity / (1 + time_cost)` with a 4-dimension categorical rubric: thesis alignment, payoff shape, edge, timing forgiveness. Each dimension uses anchored levels (e.g., Direct → Pure-play → Exposed → Partial → Tangential). Head-to-head comparison instead of numerical scoring. Based on LLM-as-Judge research (MT-Bench, Prometheus 2) showing categorical labels are more reliable than calibrated numbers.
@@ -57,3 +73,26 @@ See [docs/roadmap.md](docs/roadmap.md) for the full build plan. Key next items:
 - **Calibration engine** — edge profile from resolved beliefs (what thesis shapes are you good at?)
 - **Trade cards** — shareable "I Called It" cards with thesis + P&L for viral distribution
 - **Visual frontend** — localhost dashboard for portfolio + thesis history
+
+---
+
+## Changelog Format Guide
+
+When writing changelog entries for new versions, use this format:
+
+```
+## vX.Y
+
+### YYYY-MM-DD (vX.Y)
+
+🆕 **Feature name** — one sentence, what it does and why you care
+🔧 **Fix name** — what was broken, now it works
+🛡️ **Safety/quality** — guardrails, tests, reliability
+📋 **Housekeeping** — docs, tests, cleanup (only if interesting)
+```
+
+Rules:
+- **4 lines max** per release (combine small fixes)
+- **No file paths, no commit hashes, no "synced from upstream"**
+- **Lead with the user impact**, not the implementation
+- Each line: emoji + bold name + em dash + one sentence
