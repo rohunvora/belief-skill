@@ -6,7 +6,8 @@ description: >
   that belief — traditional instruments, adjacent markets, or non-financial actions.
   Triggers: "how would I trade this", "how to invest in", "I think X will happen",
   "is X a good bet", "what's the play on", "trade this", "belief router",
-  "express this view", any pasted tweet/article with a directional claim,
+  "express this view", "scan this", "what's tradeable here",
+  any pasted content with directional claims (transcripts, articles, tweets, earnings calls),
   cultural observations ("everyone's on Ozempic", "my rent just spiked"),
   or questions about investing in specific people/trends/movements.
   NOT for: executing trades, managing funds, portfolio rebalancing,
@@ -369,6 +370,73 @@ After the card, add 2-3 plain language lines:
 End every routing with 2-3 suggested follow-ups. Each should address the most likely reason THIS specific user wouldn't execute THIS specific trade right now — unfamiliar platform, position too large, timing unclear, or thesis not fully believed yet. Make them short enough to tap.
 
 **Disclaimer:** End every routing response with: `Expressions, not advice. Do your own research.`
+
+---
+
+## Bulk Mode
+
+When input contains multiple embedded theses (transcript, article, tweet thread, earnings call, or any content where the user says "scan this" or "what's tradeable here"), switch to bulk mode. Run a three-phase pipeline instead of the full router N times.
+
+### Phase 1: Extract & Cluster
+
+Pure reasoning. No tool calls. Extract every directional claim using the same criteria as Input Validation, applied to each claim found in the source.
+
+**For each claim, capture:**
+- `attribution` — who made this claim (speaker, author, analyst, CEO, etc.)
+- `quote` — verbatim, 1-2 strongest sentences. Timestamps if available.
+- `thesis` — reframed as a directional claim
+- `conviction` — ●○○○ to ●●●● from language intensity
+
+**Cluster:** Same thesis expressed differently = 1 entry. Keep the strongest quote per attribution.
+
+**Tier into three levels:**
+- **Tier 1 (Route):** Specific + high conviction. Gets Phase 2 + Phase 3.
+- **Tier 2 (Sweep only):** Tradeable but needs sharpening. Phase 2 only — show candidates.
+- **Tier 3 (Skip):** Too vague to trade. List for completeness, no instrument search.
+
+### Phase 2: Instrument Sweep
+
+Batched tool calls. No web research. **Batch by platform, not by thesis.**
+
+```bash
+# One call per platform covers all theses
+bun run scripts/adapters/robinhood/instruments.ts "TICK1,TICK2,TICK3,TICK4"
+bun run scripts/adapters/kalshi/instruments.ts "theme keywords"
+bun run scripts/adapters/hyperliquid/instruments.ts "COIN1,COIN2"
+```
+
+Run all platform calls in parallel. Map validated instruments back to theses as candidate lists.
+
+### Phase 3: Deep Route
+
+Full belief-router on Tier 1 theses only (top 3-5). Each deep route is independent — run in parallel. Each gets one thesis + the full routing flow (Research → Scoring → Trade Selection → Output).
+
+### Scan Output
+
+One artifact per source. Two tiers that look deliberately different — the user can tell at a glance what's been analyzed vs what's just a candidate list.
+
+**Quick Hit** (Tier 2 and Tier 1 pre-route): Shows thesis + quote + candidate tickers. Does NOT pick a specific instrument — the logic stops at "these would benefit."
+
+```
+★ [THESIS TITLE] · [attribution] [conviction dots]
+  "[quote]"
+  CANDIDATES: [TICK1], [TICK2], [TICK3]
+  → Deep Route this
+```
+
+**Deep Route Result** (Tier 1 post-route): Shows a specific pick with full reasoning chain — thesis → sector → specific name → why not the alternatives. Includes the standard trade card from the Output section.
+
+**Tier 3**: One line per skipped thesis with reason.
+
+**Footer**: Count of theses extracted/routed/skipped + source link + disclaimer.
+
+### Scan Rules
+
+1. **Never pick a ticker in a quick hit.** Candidates only. The scan never pretends to have done work it hasn't.
+2. **Inference chain required on deep routes.** Must show: thesis → sector → specific name → why not alternatives.
+3. **Counter-arguments.** If the source contains opposing views on a thesis, note them.
+4. **Mixed signals.** If a thesis has both bullish and bearish elements, capture both and let routing resolve direction.
+5. **One scan per source.** The scan is the atomic unit.
 
 ---
 
