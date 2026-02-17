@@ -1,6 +1,7 @@
 import React from "react";
 import type { Call } from "../types";
-import { getUserById } from "../mock-data";
+import type { LivePriceData } from "../hooks/useLivePrices";
+import { getUserById, getUserByHandle } from "../mock-data";
 
 function timeAgo(dateStr: string): string {
   const seconds = Math.floor(
@@ -23,7 +24,7 @@ export function formatPrice(price: number): string {
   return `${(price * 100).toFixed(0)}c`;
 }
 
-/** Avatar circle with first letter of handle */
+/** Avatar circle — uses twitter pfp if available, falls back to letter */
 export function Avatar({
   handle,
   size = "sm",
@@ -31,8 +32,27 @@ export function Avatar({
   handle: string;
   size?: "sm" | "md" | "lg";
 }) {
+  const user = getUserByHandle(handle);
+  const avatarUrl = user?.avatar_url;
+
+  const sizeClass =
+    size === "lg"
+      ? "w-10 h-10 text-base"
+      : size === "md"
+        ? "w-7 h-7 text-xs"
+        : "w-5 h-5 text-[10px]";
+
+  if (avatarUrl) {
+    return (
+      <img
+        src={avatarUrl}
+        alt={handle}
+        className={`${sizeClass} rounded-full object-cover shrink-0`}
+      />
+    );
+  }
+
   const letter = (handle[0] ?? "?").toUpperCase();
-  // Deterministic color from handle
   const colors = [
     "bg-blue-500",
     "bg-green-500",
@@ -47,13 +67,6 @@ export function Avatar({
   for (const c of handle) hash = (hash * 31 + c.charCodeAt(0)) | 0;
   const color = colors[Math.abs(hash) % colors.length];
 
-  const sizeClass =
-    size === "lg"
-      ? "w-10 h-10 text-base"
-      : size === "md"
-        ? "w-7 h-7 text-xs"
-        : "w-5 h-5 text-[10px]";
-
   return (
     <span
       className={`${sizeClass} ${color} rounded-full inline-flex items-center justify-center text-white font-semibold shrink-0`}
@@ -63,12 +76,40 @@ export function Avatar({
   );
 }
 
+/** Compact live price line for feed cards */
+function LivePriceLine({
+  livePrice,
+  direction,
+}: {
+  livePrice: LivePriceData;
+  direction: "long" | "short";
+}) {
+  // Position is winning if long+up or short+down
+  const isWinning =
+    (direction === "long" && livePrice.changePercent >= 0) ||
+    (direction === "short" && livePrice.changePercent <= 0);
+  const colorClass = isWinning ? "text-green-600" : "text-red-500";
+  const arrow = livePrice.changePercent >= 0 ? "\u2191" : "\u2193";
+  const sign = livePrice.changePercent >= 0 ? "+" : "";
+
+  return (
+    <div className={`text-xs font-medium mb-2 ${colorClass}`}>
+      {formatPrice(livePrice.currentPrice)}{" "}
+      <span className="opacity-80">
+        {arrow} {sign}
+        {livePrice.changePercent.toFixed(1)}%
+      </span>
+    </div>
+  );
+}
+
 interface CallCardProps {
   call: Call;
   onClick?: () => void;
+  livePrice?: LivePriceData;
 }
 
-export function CallCard({ call, onClick }: CallCardProps) {
+export function CallCard({ call, onClick, livePrice }: CallCardProps) {
   const caller = getUserById(call.caller_id);
   const callerHandle = caller?.handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
@@ -182,6 +223,14 @@ export function CallCard({ call, onClick }: CallCardProps) {
           </span>
         )}
       </div>
+
+      {/* Live price */}
+      {livePrice && (
+        <LivePriceLine
+          livePrice={livePrice}
+          direction={call.direction}
+        />
+      )}
 
       {/* Engagement */}
       <div className="flex items-center gap-3 text-xs text-gray-400">

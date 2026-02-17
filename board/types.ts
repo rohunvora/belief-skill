@@ -55,6 +55,8 @@ export interface User {
   verified: boolean;
   created_at: string;
 
+  avatar_url?: string; // twitter pfp or other image URL
+
   total_calls: number;
   accuracy: number | null;
   total_pnl: number | null;

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import type { Call, Comment, PriceLadderStep } from "../types";
 import { getCallById, getCommentsForCall, getUserById } from "../mock-data";
 import { Avatar, formatPrice } from "../components/CallCard";
+import { useLivePrices } from "../hooks/useLivePrices";
 
 function timeAgo(dateStr: string): string {
   const seconds = Math.floor(
@@ -26,21 +27,47 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function PriceLadder({ steps, entry }: { steps: PriceLadderStep[]; entry: number }) {
+function PriceLadder({
+  steps,
+  entry,
+  currentPrice,
+}: {
+  steps: PriceLadderStep[];
+  entry: number;
+  currentPrice?: number;
+}) {
   const sorted = [...steps].sort((a, b) => a.price - b.price);
   const maxAbs = Math.max(...sorted.map((s) => Math.abs(s.pnl_pct)));
+
+  // Find the step closest to the current live price
+  let closestIdx = -1;
+  if (currentPrice != null) {
+    let minDist = Infinity;
+    sorted.forEach((step, i) => {
+      const dist = Math.abs(step.price - currentPrice);
+      if (dist < minDist) {
+        minDist = dist;
+        closestIdx = i;
+      }
+    });
+  }
 
   return (
     <div className="space-y-1.5">
       {sorted.map((step, i) => {
         const isEntry = step.pnl_pct === 0;
         const isPositive = step.pnl_pct > 0;
-        const isNegative = step.pnl_pct < 0;
+        const isClosest = i === closestIdx;
         const barWidth = maxAbs > 0 ? Math.abs(step.pnl_pct) / maxAbs * 100 : 0;
 
         return (
-          <div key={i} className="grid grid-cols-[80px_60px_1fr] gap-2 items-center text-sm">
-            <span className="font-mono text-gray-700 text-right">
+          <div
+            key={i}
+            className={`grid grid-cols-[80px_60px_1fr] gap-2 items-center text-sm rounded px-1 -mx-1 ${
+              isClosest ? "bg-blue-50 ring-1 ring-blue-300" : ""
+            }`}
+          >
+            <span className={`font-mono text-right ${isClosest ? "text-blue-700 font-semibold" : "text-gray-700"}`}>
               {formatPrice(step.price)}
             </span>
             <span
@@ -53,7 +80,7 @@ function PriceLadder({ steps, entry }: { steps: PriceLadderStep[]; entry: number
               }`}
             >
               {isEntry
-                ? "—"
+                ? "\u2014"
                 : `${isPositive ? "+" : ""}${step.pnl_pct}%`}
             </span>
             <div className="flex items-center gap-2">
@@ -68,6 +95,9 @@ function PriceLadder({ steps, entry }: { steps: PriceLadderStep[]; entry: number
               )}
               <span className={`text-xs ${isEntry ? "text-gray-600 font-medium" : "text-gray-500"}`}>
                 {step.label}
+                {isClosest && (
+                  <span className="ml-1.5 text-blue-600 font-medium">&larr; current</span>
+                )}
               </span>
             </div>
           </div>
@@ -122,7 +152,13 @@ export function CardDetail({ id }: { id: string }) {
   const isResolved = call.status === "resolved";
   const isExpired = call.status === "expired";
   const isClosed = call.status === "closed";
+  const isActive = call.status === "active";
   const hasRichDetail = !!(call.source_quote || call.reasoning || call.price_ladder);
+
+  // Live price for this single call
+  const singleCallArray = useMemo(() => [call], [call.id]);
+  const livePrices = useLivePrices(singleCallArray);
+  const livePrice = livePrices.get(call.id);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -198,6 +234,40 @@ export function CardDetail({ id }: { id: string }) {
           )}
         </div>
 
+        {/* Live price banner (active calls only) */}
+        {isActive && livePrice && (
+          <div className={`rounded-md p-3 mb-4 border ${
+            (call.direction === "long" && livePrice.changePercent >= 0) ||
+            (call.direction === "short" && livePrice.changePercent <= 0)
+              ? "bg-green-50 border-green-200"
+              : "bg-red-50 border-red-200"
+          }`}>
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">
+              Current Price
+            </div>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className={`text-xl font-bold ${
+                (call.direction === "long" && livePrice.changePercent >= 0) ||
+                (call.direction === "short" && livePrice.changePercent <= 0)
+                  ? "text-green-700"
+                  : "text-red-700"
+              }`}>
+                {formatPrice(livePrice.currentPrice)}
+              </span>
+              <span className={`text-sm font-medium ${
+                (call.direction === "long" && livePrice.changePercent >= 0) ||
+                (call.direction === "short" && livePrice.changePercent <= 0)
+                  ? "text-green-600"
+                  : "text-red-600"
+              }`}>
+                ({livePrice.changeDollars >= 0 ? "+" : "-"}{formatPrice(Math.abs(livePrice.changeDollars))}
+                {" / "}
+                {livePrice.changePercent >= 0 ? "+" : ""}{livePrice.changePercent.toFixed(1)}% from entry)
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* Resolution badge */}
         {isResolved && call.resolve_pnl != null && (
           <div className="mb-4">
@@ -266,7 +336,7 @@ export function CardDetail({ id }: { id: string }) {
             <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">
               Price Ladder · {formatPrice(call.entry_price)} entry
             </div>
-            <PriceLadder steps={call.price_ladder} entry={call.entry_price} />
+            <PriceLadder steps={call.price_ladder} entry={call.entry_price} currentPrice={livePrice?.currentPrice} />
           </div>
         )}
 

@@ -2,11 +2,13 @@ import React, { useState, useMemo } from "react";
 import type { Call } from "../types";
 import { calls } from "../mock-data";
 import { CallCard } from "../components/CallCard";
+import { useLivePrices } from "../hooks/useLivePrices";
 
 type Tab = "hot" | "new" | "resolved";
 
 export function Feed() {
   const [activeTab, setActiveTab] = useState<Tab>("hot");
+  const livePrices = useLivePrices(calls);
 
   const filteredCalls = useMemo(() => {
     let result: Call[];
@@ -65,6 +67,7 @@ export function Feed() {
           <CallCard
             key={call.id}
             call={call}
+            livePrice={livePrices.get(call.id)}
             onClick={() => {
               window.location.hash = `/call/${call.id}`;
             }}
