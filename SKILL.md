@@ -38,9 +38,7 @@ Before routing, check:
    - **No directional claim at all** ("What's a good investment?", "tell me about stocks") → redirect: "I route specific beliefs into trade expressions. What do you think is going to happen?"
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
 3. **Is it an action request?** ("I want to buy ONDO") — treat the implied direction as the thesis and proceed.
-4. **Is it a URL?** Extract content first, then continue validation from step 1.
-   - **YouTube / video URLs** (youtube.com, youtu.be): **DO NOT use WebFetch** — it will fail. Run `bun run scripts/adapters/transcript/extract.ts "URL"` via Bash to get the transcript. For transcripts >3K words, use a sub-agent for Phase 1 (Extract & Cluster) to keep main context clean.
-   - **All other URLs** (tweets, articles, Substack, blogs): use WebFetch. If it fails (auth wall), ask user to paste the text.
+4. **Is it a URL?** Extract content first using the transcript tool (see Tools section), then continue from step 1.
 5. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
 
 ---
@@ -245,6 +243,14 @@ Never dead-end. Descend the expression fidelity ladder:
 Live market API scripts. Call during research, scoring, or to validate a final pick.
 
 **Speed: run discovery calls in parallel.** Robinhood + Kalshi + Hyperliquid instrument discovery can run simultaneously — don't wait for one before starting the next. Batch return calculations for the top 2-3 candidates.
+
+### Content Extraction
+
+```bash
+# URL → text. YouTube uses yt-dlp (never WebFetch — it fails). All other URLs use WebFetch.
+bun run scripts/adapters/transcript/extract.ts "URL"
+# Returns: { source, word_count, transcript|text }. For >3K words, use sub-agent for Phase 1.
+```
 
 ### Instrument Discovery
 
