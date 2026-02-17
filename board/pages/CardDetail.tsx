@@ -187,7 +187,7 @@ export function CardDetail({ id }: { id: string }) {
   const isExpired = call.status === "expired";
   const isClosed = call.status === "closed";
   const isActive = call.status === "active";
-  const hasRichDetail = !!(call.source_quote || call.reasoning || call.price_ladder);
+  const hasRichDetail = !!(call.source_quote || call.derivation || call.reasoning || call.price_ladder);
 
   // Live price for this single call
   const singleCallArray = useMemo(() => [call], [call.id]);
@@ -342,11 +342,11 @@ export function CardDetail({ id }: { id: string }) {
           </div>
         )}
 
-        {/* Source quote */}
-        {call.source_quote && (
+        {/* Source quote — from source_quote field, or extracted from derivation step 1 */}
+        {(call.source_quote || call.derivation) && (
           <div className="border-l-2 border-gray-300 pl-3 mb-4">
             <p className="text-sm text-gray-600 italic leading-relaxed">
-              "{call.source_quote}"
+              "{call.source_quote || call.derivation?.match(/"([^"]+)"/)?.[1] || ""}"
             </p>
             {call.source_handle && (
               <p className="text-xs text-gray-400 mt-1">— @{call.source_handle}</p>

@@ -249,7 +249,6 @@ export const calls: Call[] = [
     votes: 8,
     watchers: 620,
     comments: 4,
-    source_quote: "When the interface layer gets commoditized, the scarce inputs get MORE valuable. Credit ratings, benchmark indices, and commodity pricing are the scarcest inputs in financial infrastructure.",
     reasoning: "The market dropped SPGI 29% alongside FactSet's 57% decline, painting every financial data company with the same 'AI disrupts terminals' brush. But SPGI passes all three survival tests: proprietary data (credit ratings), regulatory lock-in (NRSRO designation), and transaction embedding (S&P indices power $7T+ in passive investing). A $0.35 EPS miss triggered a 25% selloff on a company guiding 6-8% organic revenue growth. Forward P/E compressed from ~30x to ~21x — a level SPGI hasn't traded at since the 2020 panic.",
     edge: "Insiders buying the dip. Wall Street consensus remains 'Strong Buy' with $528 average target. The selloff was driven by a small EPS miss, not structural failure. An LLM can't issue an NRSRO-certified rating any more than it can perform surgery.",
     counter: "FactSet short is the obvious play (already down 57%, 13x P/E — multiple already compressed from 40x). MCO has purer ratings exposure but trades at 33x with binary earnings risk. SPGI's Market Intelligence segment (~45% of revenue) IS exposed to AI search disruption, but multi-year contracts provide 12-24 months of floor.",
