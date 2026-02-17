@@ -131,10 +131,11 @@ function CommentItem({ comment }: { comment: Comment }) {
 }
 
 function DerivationChain({ derivation, callType }: {
-  derivation: NonNullable<Call["derivation"]>;
+  derivation: string;
   callType: Call["call_type"];
 }) {
   const [open, setOpen] = useState(false);
+  const lines = derivation.split("\n").filter(Boolean);
   return (
     <div className="mb-3">
       <button
@@ -145,23 +146,18 @@ function DerivationChain({ derivation, callType }: {
         <span>How was this {callType === "inspired" ? "derived from framework" : "routed"}?</span>
       </button>
       {open && (
-        <div className="mt-2 pl-3 border-l-2 border-gray-200 space-y-2 text-xs text-gray-600">
-          <div>
-            <span className="font-medium text-gray-700">Source said:</span>{" "}
-            <span className="italic">&ldquo;{derivation.source_said}&rdquo;</span>
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">This implies:</span>{" "}
-            {derivation.this_implies}
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Searched for:</span>{" "}
-            {derivation.searched_for}
-          </div>
-          <div>
-            <span className="font-medium text-gray-700">Found ticker because:</span>{" "}
-            {derivation.found_because}
-          </div>
+        <div className="mt-2 pl-3 border-l-2 border-gray-200 space-y-1.5 text-xs text-gray-600">
+          {lines.map((line, i) => {
+            const colonIdx = line.indexOf(": ");
+            if (colonIdx === -1) return <div key={i}>{line}</div>;
+            const label = line.slice(0, colonIdx);
+            const value = line.slice(colonIdx + 2);
+            return (
+              <div key={i}>
+                <span className="font-medium text-gray-700">{label}:</span> {value}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

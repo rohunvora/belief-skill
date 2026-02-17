@@ -262,12 +262,7 @@ export const calls: Call[] = [
     ],
     alternative: "MCO $426 long (purer ratings, but 33x P/E + earnings tomorrow)",
     scan_source: "nicbstme AI vs Financial Data (Feb 2026)",
-    derivation: {
-      source_said: "When the interface layer gets commoditized, the scarce inputs get more valuable",
-      this_implies: "Companies whose moat is proprietary data creation (not data access) benefit from AI disruption of terminals",
-      searched_for: "Financial data companies with regulatory lock-in or benchmark ownership, recently sold off alongside terminal companies",
-      found_because: "SPGI has NRSRO-certified credit ratings + $7T indexed to S&P indices — scarce inputs AI can't replicate — but sold off 29% alongside FactSet",
-    },
+    derivation: 'Source said: "When the interface layer gets commoditized, the scarce inputs get more valuable"\nImplies: Companies whose moat is proprietary data creation benefit from AI disruption of terminals\nSearched: Financial data companies with regulatory lock-in or benchmark ownership, recently sold off\nFound SPGI because: NRSRO-certified credit ratings + $7T indexed to S&P indices — scarce inputs AI can\'t replicate — but sold off 29% alongside FactSet',
   },
   {
     id: "c_laes_long",

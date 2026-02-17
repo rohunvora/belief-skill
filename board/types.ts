@@ -38,12 +38,7 @@ export interface Call {
   price_ladder?: PriceLadderStep[];
   alternative?: string;
   scan_source?: string; // e.g. "All-In Podcast (Feb 2026)"
-  derivation?: {
-    source_said: string;      // exact quote from source
-    this_implies: string;     // mechanism extracted
-    searched_for: string;     // what the router looked for
-    found_because: string;    // why this ticker matches
-  };
+  derivation?: string; // "Source said: ... → Implies: ... → Searched: ... → Found because: ..."
 }
 
 export interface PriceLadderStep {

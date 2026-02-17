@@ -89,40 +89,19 @@ If similar past beliefs exist, surface overlap to the user. If none found, skip 
 
 Before calling any tools, determine: (a) thesis shape, (b) deeper claim.
 
-### Derivation Chain
+### Derivation Chain + Attribution
 
-When the input is sourced from someone else (tweet, article, podcast, stream), you MUST output a derivation chain showing how you got from their words to a specific ticker. This is not optional — without it, the source gets credited for a trade they never made.
+**When input is sourced:** BEFORE searching, log: source quote → mechanism → what you're searching for. AFTER finding the ticker, append why it matches. This is the reasoning trail, not a post-hoc summary. Without it, sources get credited for trades they never made.
 
-**Required steps:**
+**Attribution tier** — determined by what the source quote contains, not model judgment:
 
-1. **Source said:** Quote the specific sentence(s) from the source that contain the tradeable claim. Not a summary — the actual words.
-2. **This implies:** State the mechanism you extracted. What causal relationship did you identify?
-3. **I searched for:** What did you look for? "Companies with X exposure" or "instruments that resolve on Y."
-4. **I found [TICKER] because:** Why this specific instrument matches the mechanism — not the surface topic, the mechanism.
+| Source quote contains | Tier | Card shows |
+|----------------------|------|------------|
+| Ticker + direction ("buy LAES") | `direct` | "@source's call" |
+| Market thesis, no ticker ("quantum selloff was mechanical") | `derived` | "@source's thesis · routed by" |
+| Framework/observation, no market claim ("AI commoditizes interfaces") | `inspired` | "inspired by @source · routed by" |
 
-**Example:**
-```
-Source said: "When the interface layer gets commoditized, the scarce inputs get more valuable"
-This implies: Companies whose moat is proprietary data creation (not data access) benefit from AI disruption
-I searched for: Financial data companies with regulatory lock-in or benchmark ownership
-I found SPGI because: NRSRO-certified credit ratings + $7T indexed to S&P indices = scarce inputs AI can't replicate
-```
-
-If you cannot fill in step 1 with a direct quote that clearly points to the mechanism in step 2, the attribution tier is `inspired` (framework only) — not `derived` (thesis-driven). See Attribution Tiers below.
-
-### Attribution Tiers
-
-When the input comes from a source (not the user's own thesis), classify the attribution:
-
-| Tier | Definition | Source said | Router did | Card shows |
-|------|-----------|-------------|------------|------------|
-| `direct` | Source named the ticker and direction | "Buy LAES" | Validated, structured, priced | "@marginsmall's call" |
-| `derived` | Source described a thesis, router found the instrument | "Quantum selloff was mechanical" | Found IONQ as best expression | "@shkreli's thesis · routed by @satoshi" |
-| `inspired` | Source provided a framework, router built the thesis AND found the instrument | "AI commoditizes interface layers" | Extracted mechanism, searched, found SPGI | "inspired by @nicbstme · routed by @satoshi" |
-
-**Classification test:** Can you quote the source saying something that, on its own, would lead a human reader to the same ticker? If yes → `direct` or `derived`. If no → `inspired`.
-
-The tier goes in the output card metadata. It determines how the source is credited on the board and whether the source can "claim" the call as theirs.
+For format, examples, and classification rules: load `references/derivation-chain.md`.
 
 ### Research Budget
 
