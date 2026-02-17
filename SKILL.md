@@ -39,9 +39,8 @@ Before routing, check:
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
 3. **Is it an action request?** ("I want to buy ONDO") — treat the implied direction as the thesis and proceed.
 4. **Is it a URL?** Extract content first, then continue validation from step 1.
-   - **Text content** (tweets, articles, Substack, blog posts): use WebFetch inline. If WebFetch fails (auth wall), ask user to paste the text.
-   - **Media content** (YouTube, podcast, stream VOD): run `bun run scripts/adapters/transcript/extract.ts "URL"` to get the transcript. For long transcripts (>3K words), use a sub-agent for Phase 1 (Extract & Cluster) to keep main context clean — the sub-agent returns only the extracted theses.
-   - User may also paste text alongside a URL ("scan this: [url]", "find trades in [url]") — extract first, then proceed.
+   - **YouTube / video URLs** (youtube.com, youtu.be): **DO NOT use WebFetch** — it will fail. Run `bun run scripts/adapters/transcript/extract.ts "URL"` via Bash to get the transcript. For transcripts >3K words, use a sub-agent for Phase 1 (Extract & Cluster) to keep main context clean.
+   - **All other URLs** (tweets, articles, Substack, blogs): use WebFetch. If it fails (auth wall), ask user to paste the text.
 5. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
 
 ---
