@@ -36,6 +36,12 @@ Tracking the jaggedness of takes integrated into the board prototype. Each entry
 - **Edge cases:** Thesis explicitly rejects two other tickers (MS, GS) before arriving at EVR. This is a *non-obvious play* shape — the scan says "the problem with the obvious play" then redirects. The reasoning section is partially about *why NOT* MS/GS, not just *why* EVR. Also: smaller dollar amounts on the ladder ($89-$201 range vs $1000+ on IONQ/DELL) — position sizing affects how dramatic the ladder bars look.
 - **Visual note:** Two takes from one source, same scan batch. Both have `scan_source: "Martin Shkreli (Feb 2026)"` — first time we have 2 cards from the same scan. Feed should NOT group them, but the detail page `scan_source` badge now has meaning as a batch identifier. Small P&L dollar amounts make the ladder bars less visually dramatic — may need to normalize bar widths by % not $.
 
+### 5. nicbstme — SPGI (Regulatory Fortress vs AI Disruption)
+- **Shape:** Rich — source quote, reasoning, edge, counter, 5-step price ladder (includes breakeven row), alternative (MCO)
+- **Tickers:** SPGI primary, MCO alt. Also references FDS (FactSet) as the "obvious short" that's already played out, plus mentions Platts/S&P 500 index as embedded moats.
+- **Edge cases:** This is a *bifurcation thesis* — the scan's core insight is that the market is failing to distinguish between two categories of financial data company (search layer vs regulatory infrastructure). The rubric comparison evaluates 3 candidates head-to-head (SPGI long, FDS short, MCO long) before picking SPGI. The FDS short is explicitly rejected as "dead money" (already down 57%, only 5% left to the floor). MCO rejected on binary earnings risk. First take where the "obvious play" is a *short* that gets rejected in favor of the long side of the bifurcation.
+- **Visual note:** 5-step ladder with small dollar amounts ($55-$297 on 2 shares / $1K risk). Same normalization issue as EVR — need % bars not $ bars. The "breakeven — dead money" label is the first ladder step with editorial commentary baked in. The thesis is long and structural — the card preview needs to capture "regulatory fortress" not just "long SPGI." First take sourced from an X post with a direct URL — the `source_url` field is populated with a real tweet link.
+
 ---
 
 *Next takes go below. We're looking for: single-ticker vs multi-ticker, rich vs slim, prediction markets vs equities, short thesis vs long thesis, anything that breaks the card layout.*

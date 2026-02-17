@@ -8,7 +8,7 @@ export const users: User[] = [
     twitter: "satoshi",
     verified: true,
     created_at: "2025-11-01T00:00:00Z",
-    total_calls: 4,
+    total_calls: 5,
     accuracy: null,
     total_pnl: null,
     watchers: 1840,
@@ -64,6 +64,18 @@ export const users: User[] = [
     accuracy: null,
     total_pnl: null,
     watchers: 3200,
+  },
+  {
+    id: "u_nicbstme",
+    handle: "nicbstme",
+    bio: "Financial data infrastructure, moat analysis.",
+    twitter: "nicbstme",
+    verified: false,
+    created_at: "2026-02-17T00:00:00Z",
+    total_calls: 1,
+    accuracy: null,
+    total_pnl: null,
+    watchers: 420,
   },
 ];
 
@@ -215,6 +227,43 @@ export const calls: Call[] = [
     scan_source: "Martin Shkreli (Feb 2026)",
   },
   {
+    id: "c_spgi_long",
+    thesis: "S&P Global is a regulatory fortress disguised as a financial data terminal — the market is selling it like it's another search layer over public data",
+    ticker: "SPGI",
+    direction: "long",
+    entry_price: 409.54,
+    breakeven: "35% to be +EV",
+    kills: "Credit issuance collapses; NRSRO deregulated; AI displaces ratings oligopoly",
+    caller_id: "u_satoshi",
+    source_handle: "nicbstme",
+    source_url: "https://x.com/nicbstme/status/2023501562480644501",
+    call_type: "curated",
+    status: "active",
+    resolve_price: null,
+    resolve_date: null,
+    resolve_pnl: null,
+    resolve_note: null,
+    created_at: "2026-02-17T16:00:00Z",
+    instrument: "stock",
+    platform: "robinhood",
+    votes: 8,
+    watchers: 620,
+    comments: 4,
+    source_quote: "When the interface layer gets commoditized, the scarce inputs get MORE valuable. Credit ratings, benchmark indices, and commodity pricing are the scarcest inputs in financial infrastructure.",
+    reasoning: "The market dropped SPGI 29% alongside FactSet's 57% decline, painting every financial data company with the same 'AI disrupts terminals' brush. But SPGI passes all three survival tests: proprietary data (credit ratings), regulatory lock-in (NRSRO designation), and transaction embedding (S&P indices power $7T+ in passive investing). A $0.35 EPS miss triggered a 25% selloff on a company guiding 6-8% organic revenue growth. Forward P/E compressed from ~30x to ~21x — a level SPGI hasn't traded at since the 2020 panic.",
+    edge: "Insiders buying the dip. Wall Street consensus remains 'Strong Buy' with $528 average target. The selloff was driven by a small EPS miss, not structural failure. An LLM can't issue an NRSRO-certified rating any more than it can perform surgery.",
+    counter: "FactSet short is the obvious play (already down 57%, 13x P/E — multiple already compressed from 40x). MCO has purer ratings exposure but trades at 33x with binary earnings risk. SPGI's Market Intelligence segment (~45% of revenue) IS exposed to AI search disruption, but multi-year contracts provide 12-24 months of floor.",
+    price_ladder: [
+      { price: 382, pnl_pct: -7, pnl_dollars: -55, label: "52W low / recession" },
+      { price: 410, pnl_pct: 0, pnl_dollars: 0, label: "breakeven — dead money" },
+      { price: 493, pnl_pct: 20, pnl_dollars: 167, label: "50-day MA reversion" },
+      { price: 528, pnl_pct: 29, pnl_dollars: 237, label: "analyst consensus" },
+      { price: 558, pnl_pct: 36, pnl_dollars: 297, label: "pre-selloff levels" },
+    ],
+    alternative: "MCO $426 long (purer ratings, but 33x P/E + earnings tomorrow)",
+    scan_source: "nicbstme AI vs Financial Data (Feb 2026)",
+  },
+  {
     id: "c_laes_long",
     thesis: "PQC mandate will create a new semiconductor category",
     ticker: "LAES",
@@ -244,10 +293,11 @@ export const calls: Call[] = [
 export const comments: Comment[] = [];
 
 export const leaderboard: LeaderboardEntry[] = [
-  { rank: 1, user: users[0]!, original_calls: 0, curated_calls: 4 },  // satoshi
+  { rank: 1, user: users[0]!, original_calls: 0, curated_calls: 5 },  // satoshi
   { rank: 2, user: users[3]!, original_calls: 0, curated_calls: 2 },  // martinshkreli (source)
   { rank: 3, user: users[1]!, original_calls: 0, curated_calls: 1 },  // chamath (source)
   { rank: 4, user: users[2]!, original_calls: 0, curated_calls: 1 },  // threadguy (source)
+  { rank: 5, user: users[5]!, original_calls: 0, curated_calls: 1 },  // nicbstme (source)
 ];
 
 // Helper to look up user by id
