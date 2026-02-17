@@ -129,9 +129,9 @@ For each surviving instrument, assess four dimensions using the anchored levels 
 | Level | Meaning | Example |
 |-------|---------|---------|
 | Max asymmetry | Risk $1 to make $10+, defined max loss | OTM options, Kalshi contracts <$0.15 |
-| High asymmetry | Risk $1 to make $3-8, defined or manageable loss | ATM options, moderate Kalshi contracts |
-| Moderate | Risk $1 to make $1.5-3 | ITM options, leveraged ETFs |
-| Linear | Up and down roughly equal | Shares, spot crypto |
+| High asymmetry | Risk $1 to make $3-8, defined or manageable loss | ATM options, moderate Kalshi contracts, 3-5x perps |
+| Moderate | Risk $1 to make $1.5-3 | ITM options, leveraged ETFs, 2-3x perps |
+| Linear | Up and down roughly equal | Shares, spot crypto, 1x perps |
 | Capped/adverse | Upside limited or shape works against you | Selling premium, inverse ETFs with decay |
 
 **3. Edge** — *Has the market priced this thesis into THIS specific instrument?*
@@ -149,10 +149,38 @@ Assess per instrument, not per thesis. The same thesis can be consensus for one 
 
 | Level | Meaning | Example |
 |-------|---------|---------|
-| Very forgiving | No expiry, no decay, hold indefinitely | Shares, spot crypto, Kalshi (no expiry risk) |
-| Forgiving | Minor drag, 12+ months of runway | Long-dated LEAPS, low-funding perps |
-| Punishing | Meaningful drag, must be roughly right on timing | Medium-dated options (3-6mo), moderate funding perps |
+| Very forgiving | No expiry, no decay, hold indefinitely | Shares, spot crypto, Kalshi (no expiry risk), 1x perps with <5% ann funding |
+| Forgiving | Minor drag, 12+ months of runway | Long-dated LEAPS, low-funding perps (<10% ann) |
+| Punishing | Meaningful drag, must be roughly right on timing | Medium-dated options (3-6mo), perps with 10-25% ann funding |
 | Very punishing | Rapid decay, must be right quickly | Weekly options, high funding, leveraged ETFs |
+
+### Underlying vs Wrapper
+
+The four dimensions split into two groups:
+
+- **Thesis-dependent** (Alignment + Edge): properties of the *underlying* — same regardless of how you trade it. MSFT has the same alignment and edge whether you buy shares, calls, or a perp.
+- **Instrument-dependent** (Payoff Shape + Timing Forgiveness): properties of the *wrapper* — changes with leverage, expiry, and funding costs.
+
+**Step 1: Pick the underlying.** Score all candidate underlyings on Alignment + Edge. Prune to the top 1-2.
+
+**Step 2: Pick the wrapper.** For each winning underlying, evaluate all available wrappers on Payoff Shape + Timing Forgiveness:
+
+- Stock (Robinhood) — Linear, Very forgiving
+- Options (Robinhood) — High/Max asymmetry, Punishing/Very punishing
+- Perp at recommended leverage (Hyperliquid) — varies by leverage and funding rate
+
+Always check Hyperliquid for equity tickers — many stocks trade as perps (HIP-3). A leveraged perp on the right underlying often beats stock on payoff shape while maintaining acceptable timing forgiveness.
+
+**Perp leverage selection:** Funding should never eat more than half the expected edge over the hold period.
+
+| Thesis horizon | Funding <10% ann | 10-25% ann | >25% ann |
+|---|---|---|---|
+| <30 days | 5x | 3x | 2x |
+| 1-3 months | 3x | 2x | 1x |
+| 3-6 months | 2x | 1x | 1x |
+| 6+ months | 1x | 1x | Stock preferred |
+
+Always state: leverage used, liquidation price, monthly funding drag in dollars.
 
 ### Comparing Candidates
 
