@@ -89,6 +89,12 @@ If similar past beliefs exist, surface overlap to the user. If none found, skip 
 
 Before calling any tools, determine: (a) thesis shape, (b) deeper claim.
 
+### Research Budget
+
+- **Fast path (3-5 searches):** Thesis shape is clear + known instrument class exists (e.g., "PLTR is undervalued" → stock/options, check Kalshi, done). Most routings should hit this path.
+- **Deep path (6-10 searches max):** Cultural decoding needed ("invest in Nettspend"), uninvestable subject requires proxy search, or sector theme needs pure-play discovery.
+- **Hard cap: 10 web searches.** If you can't ground the thesis by search 10, the thesis is too vague — ask the user to sharpen it rather than searching more.
+
 ---
 
 ## Scoring + Trade Selection
@@ -99,7 +105,12 @@ Before calling any tools, determine: (a) thesis shape, (b) deeper claim.
 
 These disqualify an instrument before evaluation — no exceptions:
 
-- **Thesis contradiction.** Instrument bets against the deeper claim. Load `references/instrument-reasoning.md` for detailed patterns.
+- **Thesis contradiction.** Instrument bets against the deeper claim. Patterns:
+  - *Surface vs. deeper claim mismatch:* Surface claim points one direction, deeper claim points another. Always trade the deeper claim — it has better asymmetry because fewer people see it. Example: "AI blamed for tech layoffs but real cause is money printing" → short tech is surface, long gold is deeper.
+  - *Shorting the scapegoat's victims:* If the thesis says X is a scapegoat, the victims are unfairly punished and should recover. Don't short them. Example: "AI is a scapegoat" → don't short software (IGV), it should recover.
+  - *Multi-step causal chain:* Prefer the instrument requiring the fewest assumptions beyond the thesis. Example: "Money printing → inflation" → gold is 1 assumption (direct). Tech short requires 3 assumptions (inflation → Fed raises → tech sells).
+  - *Sector vs. broad index dilution:* Shorting a broad index (QQQ) dilutes your thesis with unrelated exposure. Short specific names or sector ETFs with higher thesis beta.
+  For close alternatives between instrument types, load `references/instrument-reasoning.md`.
 - **Liquidity.** Can't fill $100K without >2% slippage.
 - **Time mismatch.** Instrument expires or resolves before the catalyst date.
 
@@ -171,6 +182,10 @@ Example — "SEALSQ undervalued because of PQC mandate":
 
 If a prediction market contract exists that literally resolves on this thesis, it must be explicitly beaten. It starts at Direct alignment with Very forgiving timing. Other instruments must justify why they beat that on payoff shape or edge.
 
+### Early Stop
+
+If you find an instrument with Direct alignment + Undiscovered/Emerging edge + High/Max asymmetry, skip exhaustive search of remaining platforms. Still cross-check ONE other instrument class (the cross-check rule stands), but don't keep hunting for marginal improvements.
+
 ### Cross-Check
 
 Always compare your best candidate against the best from at least one OTHER instrument class. This forces a head-to-head comparison and prevents defaulting to whatever class the shape points to.
@@ -222,11 +237,72 @@ Never dead-end. Descend the expression fidelity ladder:
 
 ## Tools
 
-Live market API scripts. Call during research, scoring, or to validate a final pick. Load `references/tools.md` for full CLI syntax.
+Live market API scripts. Call during research, scoring, or to validate a final pick.
 
-- **Instrument discovery:** Robinhood (Yahoo Finance), Hyperliquid (perp list), Kalshi (keyword search), Bankr (AI agent, 15-125s), Angel (Republic/Wefunder/Crunchbase)
-- **Return calculations:** Per-platform scripts for entry, target, stop, P&L, options chain
-- **Tracking:** `bun run scripts/track.ts` — record, check, portfolio, close, update, history. Storage: `data/beliefs.jsonl`
+**Speed: run discovery calls in parallel.** Robinhood + Kalshi + Hyperliquid instrument discovery can run simultaneously — don't wait for one before starting the next. Batch return calculations for the top 2-3 candidates.
+
+### Instrument Discovery
+
+```bash
+# Robinhood: validate tickers via Yahoo Finance
+bun run scripts/adapters/robinhood/instruments.ts "TICKER1,TICKER2"
+# Returns: price, market cap, 52-week range, day change
+
+# Hyperliquid: validate against live perp list
+bun run scripts/adapters/hyperliquid/instruments.ts "TICKER1,TICKER2"
+# Returns: mark price, funding rate, OI, volume, max leverage
+
+# Kalshi: keyword-based discovery (series tickers)
+bun run scripts/adapters/kalshi/instruments.ts "keyword phrase"
+# Returns: open events sorted by date relevance
+
+# Bankr: thesis-based (sends to Bankr AI agent, 15-125s)
+bun run scripts/adapters/bankr/instruments.ts "thesis text"
+# Returns: tokens, Polymarket markets, onchain instruments
+
+# Angel: keyword search across Republic, Wefunder, Crunchbase
+bun run scripts/adapters/angel/instruments.ts "thesis keywords"
+# Returns: active raises matching the thesis
+```
+
+### Return Calculations
+
+```bash
+# Robinhood: ticker + direction + type
+bun run scripts/adapters/robinhood/returns.ts "TICKER" "long|short" "stock|etf|option"
+# Returns: entry price, IV-derived target/stop, return %, options chain
+
+# Hyperliquid: asset + direction + leverage
+bun run scripts/adapters/hyperliquid/returns.ts "TICKER" "long|short" "5"
+# Returns: entry, liquidation price, 30d expected move, funding cost
+
+# Kalshi: event ticker + optional strike + direction
+bun run scripts/adapters/kalshi/returns.ts "EVENT-TICKER" "" "yes|no"
+# Returns: buy price, implied probability, return if right, contracts per $100
+
+# Bankr: ticker + direction + type (15-125s)
+bun run scripts/adapters/bankr/returns.ts "TICKER" "long" "token|polymarket|treasury"
+# Returns: price, return profile
+
+# Angel: stage + sector (no live pricing)
+bun run scripts/adapters/angel/returns.ts "stage" "sector"
+# Returns: stage-based venture return distribution
+```
+
+### Tracking
+
+```bash
+bun run scripts/track.ts record --input "<thesis>" --inst TICKER --px PRICE --dir long --plat robinhood [flags]
+bun run scripts/track.ts check <keywords>
+bun run scripts/track.ts portfolio [--telegram]
+bun run scripts/track.ts close --id X --px PRICE
+bun run scripts/track.ts update --id X --conviction N --reason "..."
+bun run scripts/track.ts history
+```
+
+Optional flags: `--action paper`, `--shape binary`, `--β 0.8`, `--conv 5`, `--tc 0.3`, `--kills "kill1, kill2"`, `--alt "ALT"`, `--src "tweet:@handle"`, `--claim "deeper claim"`, `--sector "defense"`, `--conviction 80`.
+
+Storage: `data/beliefs.jsonl` — append-only JSONL.
 
 For bearish theses on Robinhood: propose inverse ETFs directly (SQQQ, SRS, TBT, etc.).
 
@@ -249,13 +325,25 @@ Output has two parts: **The Take** (streamed as your reply) and **The Card** (se
 
 No preamble — start with the insight immediately.
 
-**Style: bold claims, not prose.** Each paragraph is one logical step: a bold claim + 1-2 sentences of evidence. The user can scan the bolds and trace the full reasoning in 5 seconds.
+**Tone matching:** Detect input sophistication before writing.
+- **Expert** (input contains trading terms like "IV", "funding rate", "theta", strike prices, ticker symbols with specific price targets): full technical vocabulary, bold-claim style.
+- **Casual** (cultural observation, question, vibe — "everyone's on Ozempic", "how to invest in Nettspend?"): plain language with jargon translations inline.
+  - "IV crush" → "option loses value after the event regardless of direction"
+  - "funding rate" → "daily fee for holding this position"
+  - "convexity" → "how much you can make vs how much you can lose"
+  - "implied probability" → "market thinks there's a X% chance"
+  - "theta decay" → "your option loses value every day you hold it"
+  - "OTM" → "out of the money — the stock needs to move significantly to profit"
 
-**Required elements:**
-- The non-obvious insight (what the market is missing)
-- Why the obvious play is wrong or already priced in
-- The probability gap: what the market prices vs what breakeven requires
-- "You need to believe X" — frame the user as the decision-maker
+**Style register:**
+- Expert → bold claims, scannable in 5 seconds. Each paragraph: bold claim + 1-2 sentences of evidence.
+- Casual → conversational, direct, "you" language. Same rigor but friendlier. No assumed knowledge.
+
+**Required elements (answer-first order):**
+1. **The answer** — one sentence: what to buy, where, and why it beats the obvious play
+2. The non-obvious insight (what the market is missing)
+3. The probability gap: what the market prices vs what breakeven requires
+4. "You need to believe X" — frame the user as the decision-maker
 
 **Constraints:**
 - 4-6 paragraphs max. Tight, not rambling.
@@ -284,6 +372,12 @@ Alt: [TICKER] $[price] [dir] ([1 sentence])
 
 **≤10 lines.** The card is a spec sheet, not a story.
 
+**"What This Means" block (casual inputs only):**
+After the card, add 2-3 plain language lines:
+- "You're betting $X that [thing happens] by [date]. Right → $Y. Wrong → lose $Z."
+- Translate any jargon in the card (e.g., "3x perp" → "3x leveraged futures position — you get liquidated if it drops 33%").
+- Skip this block for expert inputs.
+
 **Card precision rules:**
 - **Equity:** target price = target MC ÷ shares outstanding. Multiple = target ÷ entry.
 - **Options:** state strike, expiry, premium. P&L = contracts × (intrinsic − premium) × 100. State breakeven price.
@@ -293,7 +387,54 @@ Alt: [TICKER] $[price] [dir] ([1 sentence])
 
 ### Sending the Card + Button Callbacks
 
-Load `references/output-format.md` for card JSON, button text by instrument type, callback handlers (`blr:track`, `blr:real`, `blr:portfolio`, `blr:close`), and recording CLI syntax. After sending the card, respond with `NO_REPLY` to avoid a duplicate message.
+Send the card via the `message` tool:
+
+```json
+{
+  "action": "send",
+  "channel": "telegram",
+  "message": "<card text>",
+  "buttons": [
+    [
+      {"text": "[Verb] [QTY] [INST] → [Platform]", "callback_data": "blr:exec:[ID]"},
+      {"text": "📝 Track", "callback_data": "blr:track:[ID]"}
+    ]
+  ]
+}
+```
+
+**Button text by instrument type:**
+
+| Type | Button text |
+|------|------------|
+| Stock | `Buy 1,923 BKNG → Robinhood` |
+| Put/Call | `Buy 800 MTCH $25P → Robinhood` |
+| Kalshi | `Buy 3,225 FED-CUTS YES → Kalshi` |
+| Perp | `Long SOL 3x → Hyperliquid` |
+| Polymarket | `Buy 4,545 YES → Polymarket` |
+
+After sending the card, respond with `NO_REPLY` to avoid a duplicate message.
+
+**Callback handlers:**
+
+- **`blr:track:[ID]`** — Paper trade. Run: `bun run scripts/track.ts record --input "<thesis>" --inst <INST> --px <PX> --dir <DIR> --plat <PLAT> --action paper --shape <SHAPE> --β <BETA> --conv <CONV> --tc <TC> --kills "<KILLS>" --alt "<ALT>"`. Reply with confirmation + `✅ I Took This` (`blr:real:[ID]`) and `📊 Portfolio` (`blr:portfolio`) buttons.
+- **`blr:real:[ID]`** — Mark as real trade. Run: `bun run scripts/track.ts update --id [ID] --conviction [same] --reason "executed real"`. Reply: "Marked as real. Good luck."
+- **`blr:portfolio`** — Show portfolio. Run: `bun run scripts/track.ts portfolio --telegram`.
+- **`blr:close:[ID]`** — Close position. Fetch live price, run: `bun run scripts/track.ts close --id [ID] --px [LIVE_PRICE]`. Reply with P&L summary.
+
+**Recording CLI:**
+```bash
+bun run scripts/track.ts record \
+  --input "<user's exact words>" \
+  --inst "<TICKER or CONTRACT>" \
+  --px <entry price> --dir <long|short> \
+  --plat <robinhood|kalshi|polymarket|hyperliquid|bankr> \
+  --action paper --shape <binary|mispriced|sector|relative|vulnerability> \
+  --β <thesis beta 0-1> --conv <convexity multiple> --tc <annualized time cost> \
+  --kills "<kill1, kill2, kill3>" --alt "<ALT TICKER $price direction>"
+```
+
+**Disclaimer:** End every routing response with: `Expressions, not advice. Do your own research.`
 
 ---
 
