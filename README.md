@@ -1,95 +1,78 @@
 # Belief Router
 
-You already have beliefs about the world. You just don't realize they're trades.
+You have opinions about the world. This turns them into trades.
 
-## Example
+## What You Can Say
 
-Someone posts this on X:
+Just talk. The skill figures out what's tradeable.
 
-![tweet about AI overbuild and PQC](examples/pqc-tweet.jpg)
+| You say | What you get back |
+|---------|-------------------|
+| "Everyone's on Ozempic" | A specific stock to buy, how much it could make, what could go wrong |
+| "AI is going to kill Google" | A bet against Google with exact prices and scenarios |
+| "Fed won't cut rates in March" | A prediction market contract where $80 pays $1,000 if you're right |
+| "SOL is going to flip ETH" | A paired trade that profits on the gap, not the market |
+| *paste a YouTube link* | Pulls out every tradeable claim, asks which ones to route |
+| *forward a tweet* | Same thing. Screenshot, article, podcast link, all work |
 
-You forward it to your agent. The skill returns:
+You don't need to know tickers, strike prices, or what a "put" is. You bring the opinion. The skill does the rest.
+
+## What You Get Back
+
+A short explanation of why this is the best way to bet on your idea, then a trade card:
 
 ```
-🎯 PQC MANDATE
+IONQ · STOCK · LONG
+29 shares @ $34.11 · risk $100
 
-LAES $3.85 · long
+$30.70   [-$100]       thesis wrong, you lose $100
+$45.97   [+$344]       starts recovering
+$69.48   [+$1,026]     halfway back to highs
+$84.64   [+$1,466]     full recovery
 
-Only public PQC chip maker. NIST 2030 = gov
-has to buy. Down 56%. The obvious play (IONQ)
-is quantum hardware — this is quantum security.
-
-$100K → 25,974 shares
-
-$2     -$48K   mandate delays
-$5.80   1.5x   52w high
-$8.70   2.3x   ATH
-$15     3.9x   gov contracts land
-
-40% to be +EV · dies if: NIST delays, cash burn
-Alt: ARQQ $17 (quantum encryption)
-
-[Buy 25,974 LAES → Robinhood]  [📝 Track]
++EV above 40% · dies if DARPA rejects, rates stay high
+Alt: RGTI $16.09 long (riskier but cheaper)
 ```
 
-The tweet said "AI overbuild → quantum plugs into subsidized infra for NIST deadline." The skill traced that to the deeper claim: the NIST post-quantum cryptography mandate creates a government-backed buyer for quantum-safe chips regardless of what happens to SaaS. It found LAES — the only public company making PQC semiconductors — down 56% from highs at $689M market cap. The obvious play (IONQ, quantum hardware) has 40% thesis beta. LAES has 85%.
-
-Tap the green button → Robinhood opens. Tap Track → it's in your portfolio with live P&L.
-
----
-
-## More Examples
-
-| You say | Skill finds | Why not the obvious play |
-|---------|------------|------------------------|
-| *"Everyone's on Ozempic"* | HIMS LEAPS, 5x | Pharma (NVO/LLY) is consensus. The distribution bottleneck (telehealth DTC) is underpriced — HIMS is a GLP-1 distributor the market still sees as a hair loss company. |
-| *"Meme politics are dead"* | DJT $5 puts, 11x | No pure "short political entertainment" ETF exists. DJT is a sentiment stock with $1M/quarter revenue at $2.3B mcap. |
-| *"Warsh will run the economy hot"* | Kalshi rate cut contracts, 3.3x | Semis ETF (SOXL) has 25% thesis beta. Kalshi per-meeting contracts have 90% — and you can win partially. |
-| *"SOL flips ETH"* | Long SOL / short ETH perps on Hyperliquid | Buying SOL spot exposes you to market-wide crashes. The ratio trade isolates the thesis. |
-| *"AI replaces search"* | GOOG $150 puts, 7.1x | Buying AI companies is consensus and unclear. Shorting the victim (57% of Google's revenue = search ads) has more convexity. |
-| *"China AI = defense boom"* | PLTR long + Anduril secondary | Defense ETF has 30% thesis beta. PLTR (55% gov revenue, 40% YoY growth) has 80%. |
-
-Every example follows the same pattern: find the deeper claim → check prediction markets first → evaluate on a 4-dimension rubric (alignment, payoff shape, edge, timing) → output one trade with scenario table and buttons.
-
----
+Every card shows: what you buy, how much you risk, what happens if you're right, what happens if you're wrong, and what would kill the trade.
 
 ## How It Works
 
-1. **Finds the deeper claim** — your surface observation traces to a specific mechanism. That mechanism points to the real trade.
-2. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that directly resolves on your thesis, everything else has to beat 100% thesis beta with zero carry.
-3. **Evaluates on a structured rubric** — thesis alignment, payoff shape, edge, timing forgiveness. Head-to-head comparison, not a formula.
-4. **Structures the position** — direction theses decompose into independent bets (partial wins > all-or-nothing).
-5. **One trade, one screen** — ≤18 lines on Telegram. Scenario table, kill conditions, conviction breakeven, and buttons to execute or track.
+1. **Finds the real trade.** Your surface observation ("everyone's on Ozempic") maps to a deeper claim (GLP-1 distribution is the bottleneck). The deeper claim often points to a different, better trade than the obvious one.
+2. **Searches live markets.** Checks stocks, options, prediction markets (Kalshi, Polymarket), crypto perpetuals (Hyperliquid), and private markets automatically. You don't pick the instrument class. It finds the best one.
+3. **Picks one winner.** Evaluates every candidate on four dimensions: how directly it matches your thesis, how much you can make vs lose, whether the market has already priced it in, and how forgiving it is if your timing is off. Compares head-to-head. Returns the single best expression.
+4. **Shows the downside.** Every card includes a "thesis wrong" row with your dollar loss. No trade without a scenario table.
 
-Searches Kalshi, Polymarket, Robinhood, Hyperliquid, Bankr, and private markets automatically.
+## What Counts as an Opinion
 
-## Track Your Beliefs
+Anything with a direction. Explicit or implied.
 
-Every trade card has a 📝 Track button. Tap it → belief goes into your portfolio with live P&L from 24/7 sources (crypto perps, prediction markets, after-hours stocks).
+- "I think PLTR is undervalued" (obvious direction)
+- "My landlord raised rent 40%" (implies housing inflation accelerating)
+- "Nobody I know uses X/Twitter anymore" (implies usage declining)
+- A podcast where someone says AI spending will double (paste the link)
+- An earnings call transcript (paste it, the skill extracts every claim)
 
-```bash
-bun run scripts/track.ts portfolio --telegram   # open beliefs + live P&L
-bun run scripts/track.ts history                 # past routings
-bun run scripts/track.ts close --id X --px Y     # close + realize P&L
-```
+If your input has multiple claims, the skill asks which ones to route. Or you say "scan this" and it routes them all.
 
-Storage is a single append-only file: `data/beliefs.jsonl`. One line per fact.
+## What It Won't Do
 
-## Repo Structure
+- Execute trades for you. It shows you what to buy and where. You press the button.
+- Manage your portfolio. It tracks beliefs if you want, but it's not a portfolio manager.
+- Give financial advice. Everything is framed as "expressions, not advice."
 
-```
-SKILL.md              ← the skill (start here)
-scripts/adapters/     ← live market API connectors
-scripts/track.ts      ← belief tracking + portfolio
-references/           ← context loaded by SKILL.md when needed
-tests/                ← scoring, smoke, e2e, golden tests
-```
+## Examples
 
-Everything else (`docs/`, `thoughts/`, `.cursor/`) is development infrastructure — you can ignore it.
+| You say | Skill finds | The insight |
+|---------|------------|-------------|
+| "Everyone's on Ozempic" | HIMS stock, long | The drug makers (Novo, Lilly) are the obvious play and already priced in. The bottleneck is distribution. HIMS is a telehealth company selling GLP-1s that the market still thinks is a hair loss company. |
+| "AI replaces search" | GOOG puts (bet against Google) | Buying AI companies is what everyone is doing. The less crowded trade is betting against the victim. 57% of Google's revenue is search ads. |
+| "Fed won't cut in March" | Kalshi NO contract at $0.08 | Pays $1 if you're right. That's 12x your money with a defined max loss. No stock or ETF gives you that kind of payoff on a rate decision. |
+| *paste a podcast URL* | Extracts 5-7 claims, routes the best ones | Finds every directional statement, ranks them by how tradeable they are, and deep-routes the top picks. |
 
 ## Install
 
-Requires [Bun](https://bun.sh) and [OpenClaw](https://github.com/openclaw/openclaw).
+Requires [Bun](https://bun.sh) and [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
 ```bash
 git clone https://github.com/rohunvora/belief-skill.git
@@ -97,11 +80,21 @@ cd belief-skill
 bun install
 ```
 
-Point your OpenClaw skill path to the repo root. Activates automatically when you express a belief — no commands, just talk. Or forward a tweet. Or send a voice note.
+Add the skill to Claude Code and start talking. No special commands. Just say what you think is going to happen.
 
-No API keys required. Uses public APIs (Yahoo Finance, Polymarket, Kalshi, DexScreener, Hyperliquid).
+No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexScreener, Hyperliquid).
 
-See [CHANGELOG.md](CHANGELOG.md) for version history and [docs/roadmap.md](docs/roadmap.md) for what's next.
+## Repo Structure
+
+```
+SKILL.md              the skill prompt (start here)
+scripts/adapters/     live market API connectors
+scripts/track.ts      belief tracking and portfolio
+references/           context loaded by SKILL.md when needed
+tests/                scoring, smoke, e2e, golden tests
+```
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## License
 
