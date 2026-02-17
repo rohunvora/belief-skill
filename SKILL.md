@@ -81,12 +81,6 @@ Research the thesis autonomously. You decide what to search and how deeply to go
 - If a prediction market contract exists on the exact event (check Kalshi)
 - **Time horizon:** catalyst date, price-in window (known catalysts 6-18mo early, surprises 0-3mo), and trade horizon (catalyst minus price-in window)
 
-**Check past beliefs first:**
-```bash
-bun run scripts/track.ts check <keywords from thesis>
-```
-If similar past beliefs exist, surface overlap to the user. If none found, skip silently.
-
 Before calling any tools, determine: (a) thesis shape, (b) deeper claim.
 
 ### Research Budget
@@ -289,21 +283,6 @@ bun run scripts/adapters/angel/returns.ts "stage" "sector"
 # Returns: stage-based venture return distribution
 ```
 
-### Tracking
-
-```bash
-bun run scripts/track.ts record --input "<thesis>" --inst TICKER --px PRICE --dir long --plat robinhood [flags]
-bun run scripts/track.ts check <keywords>
-bun run scripts/track.ts portfolio [--telegram]
-bun run scripts/track.ts close --id X --px PRICE
-bun run scripts/track.ts update --id X --conviction N --reason "..."
-bun run scripts/track.ts history
-```
-
-Optional flags: `--action paper`, `--shape binary`, `--β 0.8`, `--conv 5`, `--tc 0.3`, `--kills "kill1, kill2"`, `--alt "ALT"`, `--src "tweet:@handle"`, `--claim "deeper claim"`, `--sector "defense"`, `--conviction 80`.
-
-Storage: `data/beliefs.jsonl` — append-only JSONL.
-
 For bearish theses on Robinhood: propose inverse ETFs directly (SQQQ, SRS, TBT, etc.).
 
 ---
@@ -351,9 +330,9 @@ No preamble — start with the insight immediately.
 - Every claim backed by data from research
 - End with a clear statement of the edge
 
-### Part 2: The Card (message tool)
+### Part 2: The Card
 
-After the take, send the trade card via the `message` tool with inline buttons. Fixed format every time.
+After the take, include the trade card. Fixed format every time.
 
 **Card template:**
 
@@ -385,54 +364,9 @@ After the card, add 2-3 plain language lines:
 - **Perps:** P&L = size × leverage × move %. State liquidation price in worst row.
 - **Kill conditions:** specific + observable. "NIST delays mandate" not "thesis is wrong."
 
-### Sending the Card + Button Callbacks
+### Part 3: Follow-Up Suggestions
 
-Send the card via the `message` tool:
-
-```json
-{
-  "action": "send",
-  "channel": "telegram",
-  "message": "<card text>",
-  "buttons": [
-    [
-      {"text": "[Verb] [QTY] [INST] → [Platform]", "callback_data": "blr:exec:[ID]"},
-      {"text": "📝 Track", "callback_data": "blr:track:[ID]"}
-    ]
-  ]
-}
-```
-
-**Button text by instrument type:**
-
-| Type | Button text |
-|------|------------|
-| Stock | `Buy 1,923 BKNG → Robinhood` |
-| Put/Call | `Buy 800 MTCH $25P → Robinhood` |
-| Kalshi | `Buy 3,225 FED-CUTS YES → Kalshi` |
-| Perp | `Long SOL 3x → Hyperliquid` |
-| Polymarket | `Buy 4,545 YES → Polymarket` |
-
-After sending the card, respond with `NO_REPLY` to avoid a duplicate message.
-
-**Callback handlers:**
-
-- **`blr:track:[ID]`** — Paper trade. Run: `bun run scripts/track.ts record --input "<thesis>" --inst <INST> --px <PX> --dir <DIR> --plat <PLAT> --action paper --shape <SHAPE> --β <BETA> --conv <CONV> --tc <TC> --kills "<KILLS>" --alt "<ALT>"`. Reply with confirmation + `✅ I Took This` (`blr:real:[ID]`) and `📊 Portfolio` (`blr:portfolio`) buttons.
-- **`blr:real:[ID]`** — Mark as real trade. Run: `bun run scripts/track.ts update --id [ID] --conviction [same] --reason "executed real"`. Reply: "Marked as real. Good luck."
-- **`blr:portfolio`** — Show portfolio. Run: `bun run scripts/track.ts portfolio --telegram`.
-- **`blr:close:[ID]`** — Close position. Fetch live price, run: `bun run scripts/track.ts close --id [ID] --px [LIVE_PRICE]`. Reply with P&L summary.
-
-**Recording CLI:**
-```bash
-bun run scripts/track.ts record \
-  --input "<user's exact words>" \
-  --inst "<TICKER or CONTRACT>" \
-  --px <entry price> --dir <long|short> \
-  --plat <robinhood|kalshi|polymarket|hyperliquid|bankr> \
-  --action paper --shape <binary|mispriced|sector|relative|vulnerability> \
-  --β <thesis beta 0-1> --conv <convexity multiple> --tc <annualized time cost> \
-  --kills "<kill1, kill2, kill3>" --alt "<ALT TICKER $price direction>"
-```
+End every routing with 2-3 suggested follow-ups. Each should address the most likely reason THIS specific user wouldn't execute THIS specific trade right now — unfamiliar platform, position too large, timing unclear, or thesis not fully believed yet. Make them short enough to tap.
 
 **Disclaimer:** End every routing response with: `Expressions, not advice. Do your own research.`
 

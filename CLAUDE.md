@@ -17,7 +17,7 @@ The skill is `SKILL.md` + `scripts/` + `references/`. Everything else is develop
 **Core files:**
 - `SKILL.md` — the entire skill prompt
 - `scripts/adapters/` — live market API adapters (Robinhood, Kalshi, Hyperliquid, Bankr, Angel)
-- `scripts/track.ts` — belief tracking and portfolio
+- `scripts/track.ts` — belief tracking (currently disabled in skill, kept for future use)
 - `references/` — conditional reference content loaded by SKILL.md when needed
 - `tests/` — scoring tests, smoke tests, e2e routing, golden test summaries
 

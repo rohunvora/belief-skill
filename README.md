@@ -29,12 +29,12 @@ $15     3.9x   gov contracts land
 40% to be +EV · dies if: NIST delays, cash burn
 Alt: ARQQ $17 (quantum encryption)
 
-[Buy 25,974 LAES → Robinhood]  [📝 Track]
+You could ask: "I trade with $10K not $100K" · "How do I buy LAES on Robinhood?" · "What if NIST delays to 2032?"
 ```
 
 The tweet said "AI overbuild → quantum plugs into subsidized infra for NIST deadline." The skill traced that to the deeper claim: the NIST post-quantum cryptography mandate creates a government-backed buyer for quantum-safe chips regardless of what happens to SaaS. It found LAES — the only public company making PQC semiconductors — down 56% from highs at $689M market cap. The obvious play (IONQ, quantum hardware) has 40% thesis beta. LAES has 85%.
 
-Tap the green button → Robinhood opens. Tap Track → it's in your portfolio with live P&L.
+The follow-ups help you dig deeper — size the trade for your actual account, explore options for more leverage, or stress-test the thesis before committing.
 
 ---
 
@@ -49,7 +49,7 @@ Tap the green button → Robinhood opens. Tap Track → it's in your portfolio w
 | *"AI replaces search"* | GOOG $150 puts, 7.1x | Buying AI companies is consensus and unclear. Shorting the victim (57% of Google's revenue = search ads) has more convexity. |
 | *"China AI = defense boom"* | PLTR long + Anduril secondary | Defense ETF has 30% thesis beta. PLTR (55% gov revenue, 40% YoY growth) has 80%. |
 
-Every example follows the same pattern: find the deeper claim → check prediction markets first → evaluate on a 4-dimension rubric (alignment, payoff shape, edge, timing) → output one trade with scenario table and buttons.
+Every example follows the same pattern: find the deeper claim → check prediction markets first → evaluate on a 4-dimension rubric (alignment, payoff shape, edge, timing) → output one trade with scenario table and follow-ups.
 
 ---
 
@@ -59,28 +59,15 @@ Every example follows the same pattern: find the deeper claim → check predicti
 2. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that directly resolves on your thesis, everything else has to beat 100% thesis beta with zero carry.
 3. **Evaluates on a structured rubric** — thesis alignment, payoff shape, edge, timing forgiveness. Head-to-head comparison, not a formula.
 4. **Structures the position** — direction theses decompose into independent bets (partial wins > all-or-nothing).
-5. **One trade, one screen** — ≤18 lines on Telegram. Scenario table, kill conditions, conviction breakeven, and buttons to execute or track.
+5. **One trade, one screen** — scenario table, kill conditions, conviction breakeven, and follow-up suggestions to refine before executing.
 
 Searches Kalshi, Polymarket, Robinhood, Hyperliquid, Bankr, and private markets automatically.
-
-## Track Your Beliefs
-
-Every trade card has a 📝 Track button. Tap it → belief goes into your portfolio with live P&L from 24/7 sources (crypto perps, prediction markets, after-hours stocks).
-
-```bash
-bun run scripts/track.ts portfolio --telegram   # open beliefs + live P&L
-bun run scripts/track.ts history                 # past routings
-bun run scripts/track.ts close --id X --px Y     # close + realize P&L
-```
-
-Storage is a single append-only file: `data/beliefs.jsonl`. One line per fact.
 
 ## Repo Structure
 
 ```
 SKILL.md              ← the skill (start here)
 scripts/adapters/     ← live market API connectors
-scripts/track.ts      ← belief tracking + portfolio
 references/           ← context loaded by SKILL.md when needed
 tests/                ← scoring, smoke, e2e, golden tests
 ```
