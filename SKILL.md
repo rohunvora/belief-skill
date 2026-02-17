@@ -247,9 +247,9 @@ Live market API scripts. Call during research, scoring, or to validate a final p
 ### Content Extraction
 
 ```bash
-# URL → text. YouTube uses yt-dlp (never WebFetch — it fails). All other URLs use WebFetch.
+# URL → text. Handles all URLs. YouTube uses yt-dlp internally; other URLs use fetch + HTML strip.
 bun run scripts/adapters/transcript/extract.ts "URL"
-# Returns: { source, word_count, transcript|text }. For >3K words, use sub-agent for Phase 1.
+# Returns: { source, word_count, transcript|text }. On error, falls back with message. >3K words → sub-agent for Phase 1.
 ```
 
 ### Instrument Discovery
