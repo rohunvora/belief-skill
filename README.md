@@ -75,6 +75,18 @@ bun run scripts/track.ts close --id X --px Y     # close + realize P&L
 
 Storage is a single append-only file: `data/beliefs.jsonl`. One line per fact.
 
+## Repo Structure
+
+```
+SKILL.md              ← the skill (start here)
+scripts/adapters/     ← live market API connectors
+scripts/track.ts      ← belief tracking + portfolio
+references/           ← context loaded by SKILL.md when needed
+tests/                ← scoring, smoke, e2e, golden tests
+```
+
+Everything else (`docs/`, `thoughts/`, `.cursor/`) is development infrastructure — you can ignore it.
+
 ## Install
 
 Requires [Bun](https://bun.sh) and [OpenClaw](https://github.com/openclaw/openclaw).

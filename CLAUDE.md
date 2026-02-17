@@ -4,6 +4,23 @@ globs: "*.ts, *.tsx, *.html, *.css, *.js, *.jsx, package.json"
 alwaysApply: false
 ---
 
+## Repo Scope
+
+The skill is `SKILL.md` + `scripts/` + `references/`. Everything else is development infrastructure.
+
+**Don't read or modify:**
+- `docs/` — internal design diagrams (excalidraw), not relevant to the skill
+- `thoughts/` — cross-machine session state, not part of the skill
+- `tests/golden/*.jsonl` — raw session traces, only the `.md` summaries matter
+- `.cursor/` — IDE config
+
+**Core files:**
+- `SKILL.md` — the entire skill prompt
+- `scripts/adapters/` — live market API adapters (Robinhood, Kalshi, Hyperliquid, Bankr, Angel)
+- `scripts/track.ts` — belief tracking and portfolio
+- `references/` — conditional reference content loaded by SKILL.md when needed
+- `tests/` — scoring tests, smoke tests, e2e routing, golden test summaries
+
 Default to using Bun instead of Node.js.
 
 - Use `bun <file>` instead of `node <file>` or `ts-node <file>`
