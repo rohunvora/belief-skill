@@ -156,31 +156,9 @@ Assess per instrument, not per thesis. The same thesis can be consensus for one 
 
 ### Underlying vs Wrapper
 
-The four dimensions split into two groups:
+Alignment + Edge are properties of the *underlying* — same for shares, options, or perps. Payoff Shape + Timing Forgiveness are properties of the *wrapper*. Pick the underlying first (Alignment + Edge), then evaluate wrappers (Payoff Shape + Timing). Always check Hyperliquid for equity tickers — many stocks trade as HIP-3 perps.
 
-- **Thesis-dependent** (Alignment + Edge): properties of the *underlying* — same regardless of how you trade it. MSFT has the same alignment and edge whether you buy shares, calls, or a perp.
-- **Instrument-dependent** (Payoff Shape + Timing Forgiveness): properties of the *wrapper* — changes with leverage, expiry, and funding costs.
-
-**Step 1: Pick the underlying.** Score all candidate underlyings on Alignment + Edge. Prune to the top 1-2.
-
-**Step 2: Pick the wrapper.** For each winning underlying, evaluate all available wrappers on Payoff Shape + Timing Forgiveness:
-
-- Stock (Robinhood) — Linear, Very forgiving
-- Options (Robinhood) — High/Max asymmetry, Punishing/Very punishing
-- Perp at recommended leverage (Hyperliquid) — varies by leverage and funding rate
-
-Always check Hyperliquid for equity tickers — many stocks trade as perps (HIP-3). A leveraged perp on the right underlying often beats stock on payoff shape while maintaining acceptable timing forgiveness.
-
-**Perp leverage selection:** Funding should never eat more than half the expected edge over the hold period.
-
-| Thesis horizon | Funding <10% ann | 10-25% ann | >25% ann |
-|---|---|---|---|
-| <30 days | 5x | 3x | 2x |
-| 1-3 months | 3x | 2x | 1x |
-| 3-6 months | 2x | 1x | 1x |
-| 6+ months | 1x | 1x | Stock preferred |
-
-Always state: leverage used, liquidation price, monthly funding drag in dollars.
+**Perp leverage:** funding should never eat >50% of expected edge. Guideline: 5x/3x/2x (<30d), 3x/2x/1x (1-3mo), 2x/1x/1x (3-6mo), 1x/1x/stock (6mo+) across <10%/10-25%/>25% annual funding columns. Always state leverage, liquidation price, monthly funding drag.
 
 ### Comparing Candidates
 
