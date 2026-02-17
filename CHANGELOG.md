@@ -1,6 +1,14 @@
 # Changelog
 
-## v2.1 — Current
+## v3.0 — Current
+
+### 2026-02-16 (v3.0)
+- **Rubric replaces formula.** Replaced `thesis_beta × convexity / (1 + time_cost)` with a 4-dimension categorical rubric: thesis alignment, payoff shape, edge, timing forgiveness. Each dimension uses anchored levels (e.g., Direct → Pure-play → Exposed → Partial → Tangential). Head-to-head comparison instead of numerical scoring. Based on LLM-as-Judge research (MT-Bench, Prometheus 2) showing categorical labels are more reliable than calibrated numbers.
+- **Edge dimension (new).** "Has the market priced this thesis into THIS specific instrument?" — assessed per-instrument, not per-thesis. 4 levels: Undiscovered → Emerging → Consensus → Crowded. Replaces binary "priced in" flag.
+- **Research agent model.** Replaced rigid 6-phase pipeline with autonomous research agent. Claude decides what to search, how deep to go, when to call tools. Only rigid requirements: rubric, hard gates, output format.
+- **SKILL.md compressed 442 → 301 lines.** Output boilerplate moved to `references/output-format.md`, tools CLI moved to `references/tools.md`, Time Horizon merged into Research, Clarity Gate merged into Input Validation.
+- **Ozempic→DASH example purged.** Replaced with Ozempic→HIMS (GLP-1 distribution bottleneck) across SKILL.md, tests, README, and fixtures. Fixed "contrarian = smart" bias in deeper claim table.
+- **Dev docs moved to `docs/`.** Architecture, roadmap, output drafts, excalidraw diagrams. Root cleaned to 17 items.
 
 ### 2026-02-16 (v2.1)
 - **Two-part output: The Take + The Card.** Take streams as reply (conviction, reasoning, probability gap). Card sent via message tool with buttons (spec sheet, fixed format). Take = experience. Card = artifact.
@@ -43,7 +51,7 @@
 
 ## Roadmap
 
-See [V2-ROADMAP.md](V2-ROADMAP.md) for the full build plan. Key next items:
+See [docs/roadmap.md](docs/roadmap.md) for the full build plan. Key next items:
 
 - **Execution layer** — Kalshi/Polymarket/Hyperliquid API integration for one-tap trades
 - **Calibration engine** — edge profile from resolved beliefs (what thesis shapes are you good at?)

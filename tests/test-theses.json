@@ -32,12 +32,12 @@
     "shape": "sector_theme",
     "input": "Everyone's on Ozempic — the weight loss drug wave is unstoppable",
     "expected": {
-      "deeper_claim": "GLP-1 adoption shrinks food consumption at scale — second-order losers are mispriced",
+      "deeper_claim": "GLP-1 distribution is the bottleneck — telehealth DTC access is underpriced",
       "primary_platform": "robinhood",
-      "direction": "short",
-      "should_find": ["DASH", "MDLZ", "PEP", "CAKE"],
-      "should_not_find_as_primary": ["NVO", "LLY"],
-      "notes": "Surface claim is long pharma. Deeper claim is short food/delivery — the second-order losers. Tests deeper claim extraction."
+      "direction": "long",
+      "should_find": ["HIMS", "NVO", "LLY"],
+      "should_not_find_as_primary": [],
+      "notes": "Surface claim is long pharma (NVO/LLY). Deeper claim is long GLP-1 distributors (HIMS) where market still sees a hair loss company. Tests deeper claim extraction without contrarian-for-the-sake-of-it bias."
     }
   },
   {

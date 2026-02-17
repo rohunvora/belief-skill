@@ -1,0 +1,576 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "belief-skill",
+  "elements": [
+    {
+      "id": "title",
+      "type": "text",
+      "x": 20,
+      "y": 15,
+      "width": 500,
+      "height": 35,
+      "text": "SKILL.md Audit Map (442 lines)",
+      "fontSize": 24,
+      "fontFamily": 1,
+      "textAlign": "left",
+      "baseline": 28,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "x": 20,
+      "y": 52,
+      "width": 500,
+      "height": 18,
+      "text": "Each block = one section. Size ≈ lines. Color = action needed.",
+      "fontSize": 14,
+      "fontFamily": 1,
+      "textAlign": "left",
+      "baseline": 14,
+      "strokeColor": "#868e96"
+    },
+
+    {
+      "id": "legend-green",
+      "type": "rectangle",
+      "x": 620,
+      "y": 15,
+      "width": 16,
+      "height": 16,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "#d8f5a2",
+      "fillStyle": "solid"
+    },
+    {
+      "id": "legend-green-text",
+      "type": "text",
+      "x": 642,
+      "y": 15,
+      "width": 100,
+      "height": 16,
+      "text": "Good — keep",
+      "fontSize": 12,
+      "fontFamily": 1,
+      "strokeColor": "#2f9e44"
+    },
+    {
+      "id": "legend-yellow",
+      "type": "rectangle",
+      "x": 620,
+      "y": 37,
+      "width": 16,
+      "height": 16,
+      "strokeColor": "#e8590c",
+      "backgroundColor": "#fff3bf",
+      "fillStyle": "solid"
+    },
+    {
+      "id": "legend-yellow-text",
+      "type": "text",
+      "x": 642,
+      "y": 37,
+      "width": 150,
+      "height": 16,
+      "text": "Could compress",
+      "fontSize": 12,
+      "fontFamily": 1,
+      "strokeColor": "#e8590c"
+    },
+    {
+      "id": "legend-red",
+      "type": "rectangle",
+      "x": 620,
+      "y": 59,
+      "width": 16,
+      "height": 16,
+      "strokeColor": "#e03131",
+      "backgroundColor": "#ffe3e3",
+      "fillStyle": "solid"
+    },
+    {
+      "id": "legend-red-text",
+      "type": "text",
+      "x": 642,
+      "y": 59,
+      "width": 200,
+      "height": 16,
+      "text": "Bloated / move to reference file",
+      "fontSize": 12,
+      "fontFamily": 1,
+      "strokeColor": "#e03131"
+    },
+
+
+    {
+      "id": "sec1-box",
+      "type": "rectangle",
+      "x": 20,
+      "y": 95,
+      "width": 240,
+      "height": 55,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "#d8f5a2",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec1-title",
+      "type": "text",
+      "x": 30,
+      "y": 100,
+      "width": 220,
+      "height": 16,
+      "text": "Frontmatter + Defaults",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec1-meta",
+      "type": "text",
+      "x": 30,
+      "y": 118,
+      "width": 220,
+      "height": 28,
+      "text": "Lines 1-28 (28 lines)\nTrigger description, defaults, bet size",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+
+
+    {
+      "id": "sec2-box",
+      "type": "rectangle",
+      "x": 280,
+      "y": 95,
+      "width": 240,
+      "height": 55,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "#d8f5a2",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec2-title",
+      "type": "text",
+      "x": 290,
+      "y": 100,
+      "width": 220,
+      "height": 16,
+      "text": "Input Validation",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec2-meta",
+      "type": "text",
+      "x": 290,
+      "y": 118,
+      "width": 220,
+      "height": 28,
+      "text": "Lines 29-41 (13 lines)\nIs this a thesis? Clear enough?",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+
+
+    {
+      "id": "sec3-box",
+      "type": "rectangle",
+      "x": 540,
+      "y": 95,
+      "width": 240,
+      "height": 55,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "#d8f5a2",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec3-title",
+      "type": "text",
+      "x": 550,
+      "y": 100,
+      "width": 220,
+      "height": 16,
+      "text": "Research",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec3-meta",
+      "type": "text",
+      "x": 550,
+      "y": 118,
+      "width": 220,
+      "height": 28,
+      "text": "Lines 91-108 (18 lines)\nAutonomous research, min 3 data points",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+
+
+    {
+      "id": "sec4-box",
+      "type": "rectangle",
+      "x": 20,
+      "y": 175,
+      "width": 370,
+      "height": 105,
+      "strokeColor": "#e8590c",
+      "backgroundColor": "#fff3bf",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec4-title",
+      "type": "text",
+      "x": 30,
+      "y": 180,
+      "width": 350,
+      "height": 16,
+      "text": "Thesis Analysis",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec4-meta",
+      "type": "text",
+      "x": 30,
+      "y": 198,
+      "width": 350,
+      "height": 75,
+      "text": "Lines 43-89 (47 lines)\n\n  Shapes table (12 lines) — keep, essential\n  Deeper Claim table (14 lines) — keep, high value\n  Time Horizon (9 lines) — could merge into Research\n  Clarity Gate (8 lines) — could merge into Input Validation",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+    {
+      "id": "sec4-note",
+      "type": "text",
+      "x": 30,
+      "y": 263,
+      "width": 350,
+      "height": 14,
+      "text": "💡 Time Horizon + Clarity Gate = 17 lines that belong elsewhere",
+      "fontSize": 11,
+      "fontFamily": 1,
+      "strokeColor": "#e8590c"
+    },
+
+
+    {
+      "id": "sec5-box",
+      "type": "rectangle",
+      "x": 410,
+      "y": 175,
+      "width": 370,
+      "height": 105,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "#d8f5a2",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec5-title",
+      "type": "text",
+      "x": 420,
+      "y": 180,
+      "width": 350,
+      "height": 16,
+      "text": "Scoring + Trade Selection",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec5-meta",
+      "type": "text",
+      "x": 420,
+      "y": 198,
+      "width": 350,
+      "height": 75,
+      "text": "Lines 110-237 (128 lines) — JUST REWRITTEN\n\n  Hard Gates (8 lines) — tight\n  Evaluation Rubric (44 lines) — 4 tables, earned\n  Comparing + checks (76 lines) — many small subsections\n  \n  Already lean from the rubric refactor",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+
+
+    {
+      "id": "sec6-box",
+      "type": "rectangle",
+      "x": 20,
+      "y": 310,
+      "width": 370,
+      "height": 105,
+      "strokeColor": "#e8590c",
+      "backgroundColor": "#fff3bf",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec6-title",
+      "type": "text",
+      "x": 30,
+      "y": 315,
+      "width": 350,
+      "height": 16,
+      "text": "Tools",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec6-meta",
+      "type": "text",
+      "x": 30,
+      "y": 333,
+      "width": 350,
+      "height": 75,
+      "text": "Lines 239-308 (70 lines)\n\n  Instrument Discovery (26 lines) — 5 CLI examples\n  Return Calculations (24 lines) — 5 CLI examples\n  Tracking CLI (17 lines) — CLI reference\n  Every adapter has same pattern: command + comment",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+    {
+      "id": "sec6-note",
+      "type": "text",
+      "x": 30,
+      "y": 398,
+      "width": 350,
+      "height": 14,
+      "text": "💡 Could move to references/tools.md — Claude loads on demand",
+      "fontSize": 11,
+      "fontFamily": 1,
+      "strokeColor": "#e8590c"
+    },
+
+
+    {
+      "id": "sec7-box",
+      "type": "rectangle",
+      "x": 410,
+      "y": 310,
+      "width": 370,
+      "height": 105,
+      "strokeColor": "#e03131",
+      "backgroundColor": "#ffe3e3",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec7-title",
+      "type": "text",
+      "x": 420,
+      "y": 315,
+      "width": 350,
+      "height": 16,
+      "text": "Output (The Take + The Card)",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec7-meta",
+      "type": "text",
+      "x": 420,
+      "y": 333,
+      "width": 350,
+      "height": 75,
+      "text": "Lines 310-429 (120 lines) ← BIGGEST SECTION\n\n  The Take (20 lines) — writing style guide, keep\n  The Card template (27 lines) — keep\n  Sending JSON + button table (27 lines) — boilerplate\n  Button Callbacks (29 lines) — handler recipes\n  Recording CLI Reference (12 lines) — duplicate of Tools",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+    {
+      "id": "sec7-note",
+      "type": "text",
+      "x": 420,
+      "y": 398,
+      "width": 350,
+      "height": 14,
+      "text": "💡 68 lines of JSON/CLI templates → references/output-format.md",
+      "fontSize": 11,
+      "fontFamily": 1,
+      "strokeColor": "#e03131"
+    },
+
+
+    {
+      "id": "sec8-box",
+      "type": "rectangle",
+      "x": 20,
+      "y": 445,
+      "width": 240,
+      "height": 50,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "#d8f5a2",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "sec8-title",
+      "type": "text",
+      "x": 30,
+      "y": 450,
+      "width": 220,
+      "height": 16,
+      "text": "Rules",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "sec8-meta",
+      "type": "text",
+      "x": 30,
+      "y": 468,
+      "width": 220,
+      "height": 22,
+      "text": "Lines 432-442 (11 lines) — tight list",
+      "fontSize": 11,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+
+
+    {
+      "id": "summary-box",
+      "type": "rectangle",
+      "x": 20,
+      "y": 530,
+      "width": 760,
+      "height": 220,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "#f8f9fa",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "summary-title",
+      "type": "text",
+      "x": 35,
+      "y": 540,
+      "width": 300,
+      "height": 22,
+      "text": "Where the lines go",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#1e1e1e"
+    },
+    {
+      "id": "summary-bars",
+      "type": "text",
+      "x": 35,
+      "y": 570,
+      "width": 730,
+      "height": 170,
+      "text": "Output section          ████████████████████████████████████████████  120 lines (27%)\nScoring + Trade Sel.    ██████████████████████████████████████         128 lines (29%) ← just rewritten\nTools                   █████████████████████                           70 lines (16%)\nThesis Analysis         ██████████████                                  47 lines (11%)\nFrontmatter + Defaults  ████████                                        28 lines  (6%)\nResearch                █████                                           18 lines  (4%)\nInput Validation        ████                                            13 lines  (3%)\nRules                   ███                                             11 lines  (2%)\n                        ──────────────────────────────────────────────────────────────\n                                                                       442 lines total",
+      "fontSize": 12,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+
+
+    {
+      "id": "actions-box",
+      "type": "rectangle",
+      "x": 20,
+      "y": 780,
+      "width": 760,
+      "height": 210,
+      "strokeColor": "#1971c2",
+      "backgroundColor": "#e7f5ff",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "actions-title",
+      "type": "text",
+      "x": 35,
+      "y": 790,
+      "width": 400,
+      "height": 22,
+      "text": "3 obvious compression moves",
+      "fontSize": 16,
+      "fontFamily": 1,
+      "strokeColor": "#1971c2"
+    },
+    {
+      "id": "action1",
+      "type": "text",
+      "x": 35,
+      "y": 822,
+      "width": 730,
+      "height": 50,
+      "text": "1. Move Output boilerplate to references/output-format.md          -68 lines\n   Keep: The Take style guide + Card template (52 lines)\n   Move: Sending JSON, button callbacks, recording CLI (68 lines of copy-paste templates)\n   SKILL.md says \"Load references/output-format.md for card JSON and button handlers\"",
+      "fontSize": 12,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+    {
+      "id": "action2",
+      "type": "text",
+      "x": 35,
+      "y": 882,
+      "width": 730,
+      "height": 40,
+      "text": "2. Move Tools CLI reference to references/tools.md                 -60 lines\n   Keep: 10-line summary of what tools exist and when to call them\n   Move: Full CLI syntax with examples (60 lines of bash blocks)",
+      "fontSize": 12,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+    {
+      "id": "action3",
+      "type": "text",
+      "x": 35,
+      "y": 932,
+      "width": 730,
+      "height": 40,
+      "text": "3. Merge Time Horizon into Research, Clarity Gate into Input Val    -10 lines\n   These are small subsections that belong in their parent sections\n   Saves 10 lines of headers + whitespace",
+      "fontSize": 12,
+      "fontFamily": 3,
+      "strokeColor": "#495057"
+    },
+
+    {
+      "id": "result-box",
+      "type": "rectangle",
+      "x": 250,
+      "y": 960,
+      "width": 300,
+      "height": 40,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "#d8f5a2",
+      "fillStyle": "solid",
+      "roundness": {"type": 3}
+    },
+    {
+      "id": "result-text",
+      "type": "text",
+      "x": 265,
+      "y": 966,
+      "width": 270,
+      "height": 28,
+      "text": "442 → ~304 lines (-31%)\nCore logic only. Templates on demand.",
+      "fontSize": 13,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "strokeColor": "#2f9e44"
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

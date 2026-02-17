@@ -9,7 +9,7 @@
  * and enriches with live market data.
  *
  * Usage:
- *   bun run scripts/adapters/robinhood/instruments.ts "PEP,MDLZ,HSY,SQQQ"
+ *   bun run scripts/adapters/robinhood/instruments.ts "HIMS,NVO,LLY,SQQQ"
  *   bun run scripts/adapters/robinhood/instruments.ts "BAH PLTR LMT"
  *   bun run scripts/adapters/robinhood/instruments.ts "NVDA"
  */
@@ -127,7 +127,7 @@ async function main() {
   if (!input) {
     console.error("Usage: bun run scripts/adapters/robinhood/instruments.ts \"TICKER1,TICKER2,...\"");
     console.error("Examples:");
-    console.error("  bun run scripts/adapters/robinhood/instruments.ts \"PEP,MDLZ,HSY,SQQQ\"");
+    console.error("  bun run scripts/adapters/robinhood/instruments.ts \"HIMS,NVO,LLY,SQQQ\"");
     console.error("  bun run scripts/adapters/robinhood/instruments.ts \"BAH PLTR LMT\"");
     console.error("  bun run scripts/adapters/robinhood/instruments.ts \"NVDA\"");
     process.exit(1);

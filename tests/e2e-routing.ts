@@ -2,7 +2,7 @@
 /**
  * End-to-End Routing Test
  *
- * Takes a thesis from v3-test-theses.json (or a custom one), runs it through
+ * Takes a thesis from test-theses.json (or a custom one), runs it through
  * the full adapter pipeline, and produces a routing report with:
  *   - Instrument discovery across all relevant adapters
  *   - Return calculations for top candidates
@@ -32,7 +32,7 @@ const CONCEPT_TICKERS: Record<string, string[]> = {
   "nvidia": ["NVDA"], "google": ["GOOG", "GOOGL"], "apple": ["AAPL"], "amazon": ["AMZN"],
   "microsoft": ["MSFT"], "meta": ["META"], "tesla": ["TSLA"],
   // Sectors/themes
-  "ozempic": ["NVO", "LLY", "DASH", "MDLZ", "PEP", "CAKE", "HIMS"],
+  "ozempic": ["NVO", "LLY", "HIMS"],
   "weight": ["NVO", "LLY", "WW"],
   "defense": ["DFEN", "ITA", "BAH", "PLTR", "LMT", "RTX", "NOC"],  // DFEN first (3x leveraged)
   "oil": ["USO", "XLE", "OXY", "CVX"], "gold": ["GLD", "NEM", "GOLD"],
@@ -471,7 +471,7 @@ async function main() {
   }
 
   // Load test theses
-  const thesesPath = resolve(__dirname, "v3-test-theses.json");
+  const thesesPath = resolve(__dirname, "test-theses.json");
   let theses: any[];
   try {
     theses = JSON.parse(readFileSync(thesesPath, "utf-8"));

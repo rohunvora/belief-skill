@@ -42,14 +42,14 @@ Tap the green button → Robinhood opens. Tap Track → it's in your portfolio w
 
 | You say | Skill finds | Why not the obvious play |
 |---------|------------|------------------------|
-| *"Everyone's on Ozempic"* | DASH puts, 7.5x | Pharma (NVO/LLY) is consensus. The victim (food delivery) is mispriced. |
+| *"Everyone's on Ozempic"* | HIMS LEAPS, 5x | Pharma (NVO/LLY) is consensus. The distribution bottleneck (telehealth DTC) is underpriced — HIMS is a GLP-1 distributor the market still sees as a hair loss company. |
 | *"Meme politics are dead"* | DJT $5 puts, 11x | No pure "short political entertainment" ETF exists. DJT is a sentiment stock with $1M/quarter revenue at $2.3B mcap. |
 | *"Warsh will run the economy hot"* | Kalshi rate cut contracts, 3.3x | Semis ETF (SOXL) has 25% thesis beta. Kalshi per-meeting contracts have 90% — and you can win partially. |
 | *"SOL flips ETH"* | Long SOL / short ETH perps on Hyperliquid | Buying SOL spot exposes you to market-wide crashes. The ratio trade isolates the thesis. |
 | *"AI replaces search"* | GOOG $150 puts, 7.1x | Buying AI companies is consensus and unclear. Shorting the victim (57% of Google's revenue = search ads) has more convexity. |
 | *"China AI = defense boom"* | PLTR long + Anduril secondary | Defense ETF has 30% thesis beta. PLTR (55% gov revenue, 40% YoY growth) has 80%. |
 
-Every example follows the same pattern: find the deeper claim → check prediction markets first → score on `thesis beta × convexity / (1 + time cost)` → output one trade with scenario table and buttons.
+Every example follows the same pattern: find the deeper claim → check prediction markets first → evaluate on a 4-dimension rubric (alignment, payoff shape, edge, timing) → output one trade with scenario table and buttons.
 
 ---
 
@@ -57,7 +57,7 @@ Every example follows the same pattern: find the deeper claim → check predicti
 
 1. **Finds the deeper claim** — your surface observation traces to a specific mechanism. That mechanism points to the real trade.
 2. **Checks prediction markets first** — if Kalshi or Polymarket has a contract that directly resolves on your thesis, everything else has to beat 100% thesis beta with zero carry.
-3. **Scores on one metric** — `thesis beta × convexity / (1 + time cost)`. No gut feel, no defaults.
+3. **Evaluates on a structured rubric** — thesis alignment, payoff shape, edge, timing forgiveness. Head-to-head comparison, not a formula.
 4. **Structures the position** — direction theses decompose into independent bets (partial wins > all-or-nothing).
 5. **One trade, one screen** — ≤18 lines on Telegram. Scenario table, kill conditions, conviction breakeven, and buttons to execute or track.
 
@@ -89,7 +89,7 @@ Point your OpenClaw skill path to the repo root. Activates automatically when yo
 
 No API keys required. Uses public APIs (Yahoo Finance, Polymarket, Kalshi, DexScreener, Hyperliquid).
 
-See [CHANGELOG.md](CHANGELOG.md) for version history and [V2-ROADMAP.md](V2-ROADMAP.md) for what's next.
+See [CHANGELOG.md](CHANGELOG.md) for version history and [docs/roadmap.md](docs/roadmap.md) for what's next.
 
 ## License
 
