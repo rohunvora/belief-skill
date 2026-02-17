@@ -95,46 +95,48 @@ async function extractYoutube(url: string): Promise<string> {
 // ---------------------------------------------------------------------------
 
 async function extractText(url: string): Promise<string> {
+  // Try markdown.new first (clean article extraction, handles JS-rendered pages)
+  try {
+    const mdRes = await fetch(`https://markdown.new/${url}`, {
+      headers: { Accept: "text/markdown" },
+    });
+    if (mdRes.ok) {
+      const md = (await mdRes.text()).trim();
+      if (md.length > 100) {
+        const wordCount = md.split(/\s+/).length;
+        console.error(`  markdown.new: ${wordCount} words extracted`);
+        return JSON.stringify({ source: "markdown.new", url, word_count: wordCount, text: md.slice(0, 50000) });
+      }
+    }
+  } catch {
+    console.error("  markdown.new unavailable, falling back to raw fetch");
+  }
+
+  // Fallback: raw fetch + regex strip
   const res = await fetch(url, {
     headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
       Accept: "text/html,application/xhtml+xml",
     },
     redirect: "follow",
   });
 
   if (!res.ok) {
-    return JSON.stringify({
-      source: "text",
-      url,
-      error: `HTTP ${res.status} — use WebFetch or ask user to paste content`,
-    });
+    return JSON.stringify({ source: "text", url, error: `HTTP ${res.status}` });
   }
 
   const html = await res.text();
-
-  // Strip HTML tags, scripts, styles
   const text = html
     .replace(/<script[\s\S]*?<\/script>/gi, "")
     .replace(/<style[\s\S]*?<\/style>/gi, "")
     .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&#39;/g, "'")
-    .replace(/&quot;/g, '"')
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&").replace(/&#39;/g, "'").replace(/&quot;/g, '"')
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">")
     .replace(/\s+/g, " ")
     .trim();
 
   const wordCount = text.split(/\s+/).length;
-
-  return JSON.stringify({
-    source: "text",
-    url,
-    word_count: wordCount,
-    text: text.slice(0, 50000),
-  });
+  return JSON.stringify({ source: "text", url, word_count: wordCount, text: text.slice(0, 50000) });
 }
 
 // ---------------------------------------------------------------------------

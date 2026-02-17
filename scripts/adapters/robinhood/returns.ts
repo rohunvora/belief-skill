@@ -198,12 +198,17 @@ async function fetchNearestOption(
   let bestPut: OptionData | null = null;
 
   if (chain.calls) {
-    // First OTM call (strike > current price) with decent open interest
-    const otmCalls = chain.calls
-      .filter((c: any) => c.strike > currentPrice && (c.openInterest ?? 0) > 10)
+    // First OTM call (strike > current price), progressively relaxing liquidity filter.
+    // Yahoo Finance returns OI=0 for less liquid names even when options have traded.
+    const allOtmCalls = chain.calls
+      .filter((c: any) => c.strike > currentPrice)
       .sort((a: any, b: any) => a.strike - b.strike);
-    if (otmCalls.length > 0) {
-      const c = otmCalls[0];
+    const picked = allOtmCalls.find((c: any) => (c.openInterest ?? 0) > 10)
+      || allOtmCalls.find((c: any) => (c.openInterest ?? 0) > 0)
+      || allOtmCalls.find((c: any) => (c.lastPrice ?? 0) > 0)
+      || null;
+    if (picked) {
+      const c = picked;
       bestCall = {
         contractSymbol: c.contractSymbol ?? "",
         strike: c.strike,
@@ -219,12 +224,16 @@ async function fetchNearestOption(
   }
 
   if (chain.puts) {
-    // First OTM put (strike < current price) with decent open interest
-    const otmPuts = chain.puts
-      .filter((c: any) => c.strike < currentPrice && (c.openInterest ?? 0) > 10)
+    // First OTM put (strike < current price), progressively relaxing liquidity filter.
+    const allOtmPuts = chain.puts
+      .filter((c: any) => c.strike < currentPrice)
       .sort((a: any, b: any) => b.strike - a.strike);
-    if (otmPuts.length > 0) {
-      const p = otmPuts[0];
+    const picked = allOtmPuts.find((c: any) => (c.openInterest ?? 0) > 10)
+      || allOtmPuts.find((c: any) => (c.openInterest ?? 0) > 0)
+      || allOtmPuts.find((c: any) => (c.lastPrice ?? 0) > 0)
+      || null;
+    if (picked) {
+      const p = picked;
       bestPut = {
         contractSymbol: p.contractSymbol ?? "",
         strike: p.strike,
