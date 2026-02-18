@@ -155,9 +155,12 @@ Bun.serve({
           const call = insertCall({
             ...body,
             id: body.id || "",
-            direction: body.direction ?? "long",
+            direction: body.routed_direction ?? body.direction ?? "long",
+            ticker: body.routed_ticker ?? body.ticker,
             entry_price: body.entry_price ?? body.price_at_call ?? 0,
             call_type: body.call_type ?? "original",
+            source_date: body.source_date ?? null,
+            conviction: body.conviction ?? null,
             status: "active",
             resolve_price: null,
             resolve_date: null,

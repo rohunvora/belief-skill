@@ -52,16 +52,33 @@ if (dbCalls.length > 0) {
   let chainsMissing = 0;
   for (const c of dbCalls) {
     const d = c.derivation;
-    const isStructured = d && typeof d === "object" && "source_said" in d;
-    const label = isStructured ? "structured" : d ? "legacy string" : "none";
-    console.log(`  ${c.id} (${c.ticker}): ${label}`);
-    if (isStructured) {
+    let label = "none";
+    if (d && typeof d === "object") {
+      if ("segments" in d && "steps" in d) label = "segment-based (v2)";
+      else if ("steps" in d) label = "steps (v1)";
+      else if ("source_said" in d) label = "legacy structured";
+      else label = "object (unknown)";
       chainsOk++;
+    } else if (typeof d === "string") {
+      label = "legacy string";
     } else if (c.source_handle && c.call_type !== "original") {
       chainsMissing++;
     }
+    console.log(`  ${c.id} (${c.ticker}): ${label}`);
   }
   console.log(`  Structured: ${chainsOk}/${dbCalls.length}, Missing on sourced calls: ${chainsMissing}`);
+
+  // Verify two-layer fields roundtrip
+  console.log(`\nTwo-layer model fields:`);
+  for (const c of dbCalls) {
+    const sd = c.source_date ?? "none";
+    const cv = c.conviction ?? "none";
+    const at = c.author_thesis ? c.author_thesis.slice(0, 50) + "..." : "none";
+    const ak = c.author_ticker ?? "null";
+    const seg = c.segments ? `${c.segments.length} segments` : "none";
+    console.log(`  ${c.id}: date=${sd} conv=${cv} author_ticker=${ak} ${seg}`);
+    console.log(`    author_thesis: ${at}`);
+  }
 }
 
 const ok = dbUsers.length === users.length && dbCalls.length === calls.length;

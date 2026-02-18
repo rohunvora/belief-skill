@@ -1,4 +1,4 @@
-import type { Call, User, Comment, LeaderboardEntry, PriceLadderStep, DerivationChain } from "./types";
+import type { Call, User, Comment, LeaderboardEntry, PriceLadderStep, DerivationChain, Segment } from "./types";
 
 export const users: User[] = [
   {
@@ -91,6 +91,8 @@ export const calls: Call[] = [
     caller_id: "u_satoshi",
     source_handle: "chamath",
     source_url: "https://www.youtube.com/watch?v=allin-feb2026",
+    source_date: "2026-02-15",
+    conviction: "high",
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -103,11 +105,47 @@ export const calls: Call[] = [
     votes: 67,
     watchers: 3400,
     comments: 24,
+    // Layer 1: author's signal (preserved faithfully)
+    author_thesis: "Enterprise data sovereignty will push companies back to owned infrastructure",
+    author_ticker: undefined,   // Chamath didn't name a ticker
+    author_direction: undefined,
+    conditions: undefined,
+    segments: [
+      {
+        quote: "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no.",
+        speaker: "chamath",
+        timestamp: "42:15",
+        source_url: "https://www.youtube.com/watch?v=allin-feb2026",
+      },
+      {
+        quote: "Too expensive.",
+        speaker: "friedberg",
+        timestamp: "43:30",
+        source_url: "https://www.youtube.com/watch?v=allin-feb2026",
+      },
+    ],
+    // Layer 2: skill's analysis
     derivation: {
-      source_said: "On-prem is back.",
-      implies: "enterprise data sovereignty fears → on-prem AI infrastructure spend",
-      searching_for: "On-prem AI server companies with accelerating backlog, sold off on margin fears",
-      found_because: "Dell shipped $10B AI servers H1, backlog $18.4B (150% YoY), stock -30% from highs",
+      segments: [
+        {
+          quote: "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no.",
+          speaker: "chamath",
+          timestamp: "42:15",
+          source_url: "https://www.youtube.com/watch?v=allin-feb2026",
+        },
+        {
+          quote: "Too expensive.",
+          speaker: "friedberg",
+          timestamp: "43:30",
+          source_url: "https://www.youtube.com/watch?v=allin-feb2026",
+        },
+      ],
+      steps: [
+        { text: "on-prem is back — enterprises won't put proprietary data in open LLMs", segment: 0 },
+        { text: "cloud private AI is \"too expensive\" — reinforces physical on-prem", segment: 1 },
+        { text: "companies buying their own AI servers instead of cloud" },
+        { text: "DELL has $18.4B AI server backlog growing 150% YoY, stock -30% from highs" },
+      ],
       chose_over: "HPE (lower AI backlog growth), SMCI (accounting risk) — Dell has the enterprise relationship + backlog proof",
     },
     source_quote: "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no. That's obvious.",
@@ -135,6 +173,8 @@ export const calls: Call[] = [
     caller_id: "u_satoshi",
     source_handle: "threadguy",
     source_url: "https://www.youtube.com/watch?v=threadguy-feb16",
+    source_date: "2026-02-16",
+    conviction: "high",
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -154,6 +194,9 @@ export const calls: Call[] = [
       found_because: "MSFT owns VS Code + GitHub + Copilot (42% share) + Azure + OpenAI stake, at 25.2x earnings vs 33.8x 3yr avg",
       chose_over: "GOOG (competing but no IDE lock-in), ADBE (creative not code) — MSFT owns the full stack: IDE + host + model",
     },
+    // Layer 1: author's signal
+    author_thesis: "100% of code is AI-generated — every engineer runs through MSFT's tollbooth",
+    author_ticker: undefined,
     source_quote: "100% of code is AI. Five SWEs independently confirmed they write zero human code post-Feb 5. Every one of those engineers runs their code through MSFT's tollbooth: VS Code, GitHub, Copilot, Azure, OpenAI.",
     reasoning: "GitHub Copilot has 20M+ users, 42% market share, and 90% of the Fortune 100. Copilot alone now generates more revenue than GitHub did when MSFT acquired it for $7.5B. MSFT trades at 25.2x earnings \u2014 20% below its 3-year average of 33.8x. At its historical average P/E, MSFT is a $530 stock \u2014 32% upside before a single dollar of incremental AI revenue.",
     edge: "Market is punishing MSFT for capex spending while ignoring that the AI coding market grew from $4.9B to $7.4B in a single year, projected to hit $30B by 2032. MSFT owns 42% of it.",
@@ -179,6 +222,8 @@ export const calls: Call[] = [
     caller_id: "u_satoshi",
     source_handle: "martinshkreli",
     source_url: null,
+    source_date: "2026-02-17",
+    conviction: "high",
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -198,6 +243,9 @@ export const calls: Call[] = [
       found_because: "IonQ at $12.3B after -60% drawdown, stronger gov contracts than Quantinuum ($10B private) or PsiQuantum ($7B private)",
       chose_over: "RGTI (higher beta but no DARPA Stage B), QBTS (thinner contract book) — IonQ has strongest gov pipeline",
     },
+    // Layer 1: author's signal
+    author_thesis: "Quantum selloff was mechanical (quant unwind), not fundamental deterioration",
+    author_ticker: undefined,
     source_quote: "Bloomberg confirmed quants suffered their worst drawdown since October in the first two weeks of January, down 2.8% per UBS prime book estimates. Goldman prime data showed systematic long-short managers in their worst 10-day stretch simultaneously. This wasn't a story about quantum fundamentals deteriorating — it was forced selling by systematic strategies rotating out of last year's hottest momentum factor.",
     reasoning: "The public-private disconnect is real and measurable. Quantinuum closed at $10B, PsiQuantum raised at $7B from BlackRock and Nvidia's venture arm — both rising. Meanwhile IonQ trades at $12.3B after a 60% drawdown, with a stronger government contract book than either private peer ($100M+ USAF contracts, DARPA QBI Stage B selection). Rigetti at $5.3B is cheaper than PsiQuantum's private round despite having live hardware and revenue.",
     edge: "Catalyst calendar is dense: DARPA Stage C selections in 2026, EU Quantum Grand Challenge funding, Xanadu's $3.1B SPAC closing Q1 2026 repricing every public comp. The US government is discussing taking equity stakes in quantum companies — a structure that puts a floor under valuations.",
@@ -222,6 +270,8 @@ export const calls: Call[] = [
     caller_id: "u_satoshi",
     source_handle: "martinshkreli",
     source_url: null,
+    source_date: "2026-02-17",
+    conviction: "high",
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -241,6 +291,9 @@ export const calls: Call[] = [
       found_because: "EVR: pure advisory, 50%+ margins, -17% from 52W high vs MS/GS already at consensus targets",
       chose_over: "MS (already at consensus target, diversified), GS (same) — EVR is pure advisory, 50%+ margins, better entry",
     },
+    // Layer 1: author's signal
+    author_thesis: "Michael Grimes returning to Morgan Stanley signals the IPO factory restarts",
+    author_ticker: undefined,
     source_quote: "Michael Grimes walking back into Morgan Stanley in February 2026 is the signal the IPO factory restarts at full capacity. Goldman CEO Solomon is calling 2026 a 'record-breaking year for M&A,' SEC Chair Atkins is coordinating what they're both calling the 'Great IPO Wave.' Pipeline is real: SpaceX ($1.5T), Databricks ($134B), Stripe ($120B), potentially OpenAI and Anthropic.",
     reasoning: "MS at $171 and GS at $905 have already priced in a strong 2026. MS consensus target is $180-195 — that's 5-14% upside. IPO underwriting is one revenue stream among many. The non-obvious play is Evercore: pure-play advisory, no trading desk, no consumer banking diluting the story. Fee-based revenue at 50%+ margins. At $322, it's 17% below its 52W high of $389 and below its 50-day MA — a better entry than MS.",
     edge: "When IPO volume surges, boutique advisors get pulled into every deal as co-advisors and fairness opinion providers. EVR has more leverage to the thesis than the diversified banks, with a better technical entry.",
@@ -265,6 +318,8 @@ export const calls: Call[] = [
     caller_id: "u_satoshi",
     source_handle: "nicbstme",
     source_url: "https://x.com/nicbstme/status/2023501562480644501",
+    source_date: "2026-02-17",
+    conviction: "high",
     call_type: "inspired",
     status: "active",
     resolve_price: null,
@@ -277,6 +332,9 @@ export const calls: Call[] = [
     votes: 8,
     watchers: 620,
     comments: 4,
+    // Layer 1: author's signal — observation, not a trade thesis
+    author_thesis: "When the interface layer gets commoditized, the scarce inputs get more valuable",
+    author_ticker: undefined, // nicbstme didn't name a ticker — it was a conceptual observation
     reasoning: "The market dropped SPGI 29% alongside FactSet's 57% decline, painting every financial data company with the same 'AI disrupts terminals' brush. But SPGI passes all three survival tests: proprietary data (credit ratings), regulatory lock-in (NRSRO designation), and transaction embedding (S&P indices power $7T+ in passive investing). A $0.35 EPS miss triggered a 25% selloff on a company guiding 6-8% organic revenue growth. Forward P/E compressed from ~30x to ~21x — a level SPGI hasn't traded at since the 2020 panic.",
     edge: "Insiders buying the dip. Wall Street consensus remains 'Strong Buy' with $528 average target. The selloff was driven by a small EPS miss, not structural failure. An LLM can't issue an NRSRO-certified rating any more than it can perform surgery.",
     counter: "FactSet short is the obvious play (already down 57%, 13x P/E — multiple already compressed from 40x). MCO has purer ratings exposure but trades at 33x with binary earnings risk. SPGI's Market Intelligence segment (~45% of revenue) IS exposed to AI search disruption, but multi-year contracts provide 12-24 months of floor.",
@@ -308,6 +366,8 @@ export const calls: Call[] = [
     caller_id: "u_satoshi",
     source_handle: "marginsmall",
     source_url: null,
+    source_date: "2026-02-15",
+    conviction: "high",
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -320,6 +380,16 @@ export const calls: Call[] = [
     votes: 5,
     watchers: 1200,
     comments: 8,
+    // Layer 1: author's signal
+    author_thesis: "PQC software still has NIST tailwinds via US gov, even through AI/SaaS washout",
+    author_ticker: undefined,
+    conditions: "assumes 2027 compute glut leads to 2028/2030 washout; quantum plugs into AI subsidized infra",
+    segments: [
+      {
+        quote: "ai overbuild, 2027 compute glut, 2028/2030 washout, quantum plugs into ai subsidised infra to meet 2030/2035 nist deadline. saas meltdown but pqc software still has nist tailwinds via us gov",
+        speaker: "marginsmall",
+      },
+    ],
     source_quote: "ai overbuild, 2027 compute glut, 2028/2030 washout, quantum plugs into ai subsidised infra to meet 2030/2035 nist deadline. saas meltdown but pqc software still has nist tailwinds via us gov",
     reasoning: "SEALSQ makes the QS7001, the first hardware-embedded post-quantum chip. Revenue hit $18M for FY 2025, up 66% YoY, with Q4 alone doing $8M. Pipeline is $200M through 2028, with $60M+ tied to PQC-specific products. Federal systems must start transitioning to CNSA 2.0 by January 2027. RSA and ECDSA get deprecated by 2030, fully disallowed by 2035. This isn't optional — it's a compliance mandate that creates a new hardware upgrade cycle.",
     edge: "LSCC launched CNSA 2.0-compliant FPGAs and trades at $97.50 with a $13.3B market cap, but PQC is a feature for Lattice, not the business. The stock already ran from $35 to $98. LAES at $694M market cap with PQC as 100% of the story has more thesis beta. If the PQC mandate drives the spending, LAES moves multiples, not percentages.",

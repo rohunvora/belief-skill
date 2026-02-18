@@ -24,6 +24,7 @@ You are a research agent. Investigate the thesis autonomously using web search, 
 - **Bet size: $100,000.** Default position size for scenarios and button quantities. Users can override by saying "I trade with $10K" or "size: $25K" — use that amount for all subsequent routings in the session. Adapt language: $10K positions don't buy 800 options contracts, they buy 25.
 - **Goal: one trade.** Find THE single best expression. Not a portfolio. Show 1-2 alternatives with genuinely different risk profiles, but lead with THE trade and commit to it.
 - **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in.
+- **Faithful extraction first.** Before analyzing or reframing, capture the author's actual claim verbatim — their thesis, their ticker (if stated), their conviction level, and any conditions they attached. The deeper claim is the skill's editorial layer on top. Never substitute it for what they said.
 
 ---
 
@@ -38,7 +39,7 @@ Before routing, check:
    - **No directional claim at all** ("What's a good investment?", "tell me about stocks") → redirect: "I route specific beliefs into trade expressions. What do you think is going to happen?"
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
 3. **Is it an action request?** ("I want to buy ONDO") — treat the implied direction as the thesis and proceed.
-4. **Is it a URL?** Extract content first using the transcript tool (see Tools section), then continue from step 1.
+4. **Is it a URL?** Extract content first using the transcript tool (see Tools section). Also extract `source_date` from content metadata — publish date, tweet timestamp, or video upload date. If source_date is in the past, note the delta to today; use price at source_date for `entry_price` when posting to the board. Then continue from step 1.
 5. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
 
 ---
@@ -59,7 +60,11 @@ The "natural home" is the starting point, not the answer. The scoring cross-chec
 
 ### Deeper Claim
 
+**This is the skill's editorial layer (Layer 2).** It runs AFTER faithful extraction of the author's actual claim (Layer 1). The author's original thesis, ticker (if stated), conviction, and conditions are already captured and preserved — the deeper claim analysis cannot overwrite them.
+
 Every thesis has a surface claim and a deeper claim. The deeper claim sometimes points to a different instrument, sometimes refines the same one. Don't flip for the sake of being contrarian — flip only when the deeper claim has a stronger causal chain.
+
+If the skill routes to a different instrument than the author stated, the attribution tier shifts from `direct` to `derived` and the card must show both: what the author said AND what the skill found.
 
 If the subject is a person, brand, or community that isn't directly investable: decode the cultural movement it represents. Trade the wave, not the surfer.
 
@@ -76,56 +81,102 @@ If the subject is a person, brand, or community that isn't directly investable: 
 
 ## Derivation Chain
 
-**Mandatory for all sourced calls.** Show your work. Each line is one step from what someone said to what you'd trade. Use as many steps as the logic needs — no more, no fewer. A normie should follow every step without finance jargon.
+**Mandatory for all sourced calls.** Show your work. Each step connects what someone said to what you'd trade. Use as many steps as the logic needs — no more, no fewer. A normie should follow every step without finance jargon.
 
-The ticker appears naturally inline when you reach the trade. No structured fields — just plain sentences a non-finance person could follow.
+The ticker appears naturally inline when you reach the trade. Steps are plain sentences a non-finance person could follow.
 
-**Format:** An array of strings. Each string is one step.
+### Format
+
+The chain has three parts: **segments** (cited source material), **steps** (the reasoning chain), and **chose_over** (alternatives considered).
 
 ```json
 {
+  "segments": [
+    { "quote": "verbatim quote from source", "speaker": "who said it", "timestamp": "14:22" },
+    { "quote": "another quote", "speaker": "same or different speaker", "timestamp": "15:10" }
+  ],
   "steps": [
-    "step 1 — the observation or quote",
-    "step 2 — what that means",
-    "step 3 — who benefits and why (ticker inline)"
+    { "text": "step grounded in segment 0", "segment": 0 },
+    { "text": "step grounded in segment 1", "segment": 1 },
+    { "text": "inference step — skill's reasoning, not from source" },
+    { "text": "conclusion with TICKER inline" }
   ],
   "chose_over": "alternatives considered — detail page only"
 }
 ```
 
+- Steps WITH a `segment` index = **evidence** (cited from source, verifiable)
+- Steps WITHOUT a `segment` index = **inference** (skill's contribution)
+- The boundary between what someone said and what the skill concluded is always visible
+
+**Segments** capture the raw source material: verbatim quotes with speaker attribution and timestamp/paragraph where available. For single-source inputs (a tweet, a one-liner), there may be just one segment. For transcripts, there may be several across different timestamps and speakers.
+
 **Quality floor:** No card without at least 2 steps. The last step must contain the ticker. If you can't connect the quote to the trade in plain language, the call is not ready.
 
-**Examples at different lengths:**
+### Examples
 
-2 steps:
+2 steps (direct call — all evidence, no inference):
 ```json
-{"steps": ["all code is AI now", "MSFT owns GitHub, Copilot, VS Code — the tollbooth"]}
+{
+  "segments": [{ "quote": "all code is AI now — MSFT owns the whole stack", "speaker": "source" }],
+  "steps": [
+    { "text": "all code is AI now", "segment": 0 },
+    { "text": "MSFT owns GitHub, Copilot, VS Code — the tollbooth", "segment": 0 }
+  ]
+}
 ```
 
-3 steps:
+3 steps (derived — evidence + inference):
 ```json
-{"steps": ["on-prem is back", "companies buying their own AI servers instead of cloud", "DELL has $18B in orders to build them"]}
+{
+  "segments": [{ "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "marginsmall" }],
+  "steps": [
+    { "text": "on-prem is back", "segment": 0 },
+    { "text": "companies buying their own AI servers instead of cloud" },
+    { "text": "DELL has $18B in orders to build them" }
+  ]
+}
 ```
 
-4 steps:
+4 steps from multi-segment transcript (inspired — mostly inference):
 ```json
-{"steps": ["trade wars make scarce resources strategic", "uranium is the hardest to replace — 10 year mine lead time", "AI datacenters need nuclear power, new demand on top", "CCJ is the biggest producer, down 16%"]}
+{
+  "segments": [
+    { "quote": "trade wars make everything geopolitical", "speaker": "chamath", "timestamp": "12:30" },
+    { "quote": "the AI power problem is real, every datacenter is maxed", "speaker": "friedberg", "timestamp": "34:15" }
+  ],
+  "steps": [
+    { "text": "trade wars make scarce resources strategic", "segment": 0 },
+    { "text": "uranium is the hardest to replace — 10 year mine lead time" },
+    { "text": "AI datacenters need nuclear power, new demand on top", "segment": 1 },
+    { "text": "CCJ is the biggest producer, down 16%" }
+  ]
+}
 ```
 
-**Rules:**
+### Rules
+
 - Each line earns the next — no logical leaps
 - No finance jargon (no "reversion trade", "permanent AUM", "fee compression")
 - Ticker appears naturally, not forced
 - Lowercase unless starting a proper noun or ticker
 - No arrows (→) — use natural language connectors
 
-**Attribution tier** — mechanically determined by the first step of the chain:
+### Attribution Tier
 
-| First step contains | Tier | Card shows |
-|------------------------|------|------------|
-| A ticker symbol (e.g. "buy LAES", "short GOOG") | `direct` | "@source's call" |
-| A market-specific causal claim, no ticker (e.g. "quantum selloff was mechanical", "GLP-1 distribution is the bottleneck") | `derived` | "@source's thesis · routed by" |
-| A framework or observation only, no market claim (e.g. "AI commoditizes interface layers", "everyone's on Ozempic") | `inspired` | "inspired by @source · routed by" |
+Mechanically determined by two factors: (1) what the first step contains, and (2) whether the routed ticker matches the author's stated ticker.
+
+| Condition | Tier | Card shows |
+|-----------|------|------------|
+| Author named a ticker AND skill routes to the same ticker | `direct` | "@source's call" |
+| Author named a ticker BUT skill routes elsewhere | `derived` | "@source's thesis · routed by" |
+| Author had a market-specific claim, no ticker (e.g. "GLP-1 distribution is the bottleneck") | `derived` | "@source's thesis · routed by" |
+| Author made a cultural observation only (e.g. "everyone's on Ozempic") | `inspired` | "inspired by @source · routed by" |
+
+**Track record scoring by tier:**
+- `direct` — score the author on instrument performance. Their pick, their record.
+- `derived` — score the author on thesis direction (did the sector/theme move right?). Score the skill separately on instrument selection.
+- `inspired` — too many inference steps to score the author on instrument performance. Note as context, not as a call.
 
 For examples and classification rules: load `references/derivation-chain.md`.
 
@@ -140,8 +191,9 @@ Research the thesis autonomously. You decide what to search and how deeply to go
 - Whether the thesis is already priced in (what's moved, what consensus thinks)
 - If a prediction market contract exists on the exact event (check Kalshi)
 - **Time horizon:** catalyst date, price-in window (known catalysts 6-18mo early, surprises 0-3mo), and trade horizon (catalyst minus price-in window)
+- **Source date:** if extracted from content, note the delta to today. When delta > 0, entry_price should reflect the price at source_date, not today's price.
 
-Before calling any tools, determine: (a) thesis shape, (b) deeper claim.
+Before calling any tools, determine: (a) faithful extraction of the author's claim (Layer 1), (b) thesis shape, (c) deeper claim (Layer 2).
 
 ### Research Budget
 
@@ -397,6 +449,7 @@ No preamble — start with the insight immediately.
 2. The non-obvious insight (what the market is missing)
 3. The probability gap: what the market prices vs what breakeven requires
 4. "You need to believe X" — frame the user as the decision-maker
+5. **If the routing diverges from the author's stated instrument** (derived/inspired), acknowledge it explicitly: "Marginsmall is talking about data sovereignty — the purest expression is DELL, not the cloud providers."
 
 **Constraints:**
 - 4-6 paragraphs max. Tight, not rambling.
@@ -426,15 +479,7 @@ Alt: [TICKER] $[price] [dir] ([1 sentence])
 **≤10 lines.** The card is a spec sheet, not a story.
 
 **Derivation chain (sourced calls only):**
-After the card, include the structured chain as JSON:
-```json
-{
-  "source_said": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM? The answer is no.",
-  "implies": "Enterprise data sovereignty fears → shift from cloud to on-prem AI infrastructure",
-  "searching_for": "On-prem AI server companies with accelerating backlog, sold off on margin fears",
-  "found_because": "Dell shipped $10B AI servers H1, backlog $18.4B (150% YoY), stock -30% from highs"
-}
-```
+After the card, include the structured chain using the segment-based format defined in the Derivation Chain section. Evidence steps link to source segments; inference steps stand alone. This is both displayed to the user and included in the board POST.
 
 **"What This Means" block (casual inputs only):**
 After the card, add 2-3 plain language lines:
@@ -459,47 +504,78 @@ End every routing with 2-3 suggested follow-ups. Each should address the most li
 
 Optional. After displaying the card and follow-ups, POST the take to the belief board. If the board is unreachable, note it briefly and move on — the terminal output is the primary deliverable.
 
-**Step 1: Construct the JSON payload** from routing output:
+**Step 1: Construct the JSON payload** from routing output.
 
-| Skill output | API field | Notes |
-|---|---|---|
-| Thesis text | `thesis` | required |
-| Winning ticker | `ticker` | required |
-| long/short | `direction` | "long" or "short" |
-| Card price | `entry_price` | number |
-| "+EV above X%" | `breakeven` | string |
-| "dies if k1, k2" | `kills` | string |
-| Source @handle | `source_handle` | string |
-| Source URL | `source_url` | string |
-| Attribution tier | `call_type` | "original", "direct", "derived", or "inspired" |
-| Instrument type | `instrument` | "stock", "options", "kalshi", or "perps" |
-| Platform | `platform` | "robinhood", "kalshi", or "hyperliquid" |
-| Verbatim quote | `source_quote` | goes in `trade_data` blob |
-| Take reasoning | `reasoning` | goes in `trade_data` blob |
-| Edge statement | `edge` | goes in `trade_data` blob |
-| Counter-argument | `counter` | goes in `trade_data` blob |
-| Payoff table | `price_ladder` | goes in `trade_data` blob |
-| Alt line | `alternative` | goes in `trade_data` blob |
-| "Source (Date)" | `scan_source` | goes in `trade_data` blob |
-| Derivation chain | `derivation` | goes in `trade_data` blob, `{"steps": [...], "chose_over": "..."}` |
+The payload contains both layers: the **Call** (author's signal, faithfully preserved) and the **Routing** (skill's analysis).
 
-**Example payload:**
+| Layer | Skill output | API field | Notes |
+|---|---|---|---|
+| Call | Source @handle | `source_handle` | string |
+| Call | Source URL | `source_url` | string |
+| Call | Source date | `source_date` | ISO date string, when they said it |
+| Call | Author's actual thesis | `author_thesis` | their claim in their words, not reframed |
+| Call | Author's ticker (if stated) | `author_ticker` | string or null |
+| Call | Author's direction (if stated) | `author_direction` | "long", "short", or null |
+| Call | Conviction level | `conviction` | "high", "medium", "low", or "speculative" |
+| Call | Conditions stated | `conditions` | string or null — qualifications they attached |
+| Routing | Skill's thesis (reframed) | `thesis` | required |
+| Routing | Routed ticker | `ticker` | required |
+| Routing | long/short | `direction` | "long" or "short" |
+| Routing | Price at source_date | `entry_price` | number |
+| Routing | Attribution tier | `call_type` | "direct", "derived", or "inspired" |
+| Routing | "+EV above X%" | `breakeven` | string |
+| Routing | "dies if k1, k2" | `kills` | string |
+| Routing | Instrument type | `instrument` | "stock", "options", "kalshi", or "perps" |
+| Routing | Platform | `platform` | "robinhood", "kalshi", or "hyperliquid" |
+| Detail | Verbatim quote | `source_quote` | goes in `trade_data` blob |
+| Detail | Source segments | `segments` | goes in `trade_data` blob, `[{quote, speaker, timestamp?}]` |
+| Detail | Derivation chain | `derivation` | goes in `trade_data` blob, `{segments, steps, chose_over}` |
+| Detail | Take reasoning | `reasoning` | goes in `trade_data` blob |
+| Detail | Edge statement | `edge` | goes in `trade_data` blob |
+| Detail | Counter-argument | `counter` | goes in `trade_data` blob |
+| Detail | Payoff table | `price_ladder` | goes in `trade_data` blob |
+| Detail | Alt line | `alternative` | goes in `trade_data` blob |
+| Detail | "Source (Date)" | `scan_source` | goes in `trade_data` blob |
+
+**Example payload (derived call):**
 
 ```json
 {
+  "source_handle": "marginsmall",
+  "source_url": "https://x.com/marginsmall/status/123456",
+  "source_date": "2026-02-15",
+  "author_thesis": "Enterprise data sovereignty will push companies back to owned infrastructure",
+  "author_ticker": null,
+  "author_direction": null,
+  "conviction": "high",
+  "conditions": null,
+
   "thesis": "Enterprise data security fears push companies back to owned hardware",
   "ticker": "DELL",
   "caller_id": "anon",
   "direction": "long",
   "entry_price": 117.49,
+  "call_type": "derived",
   "breakeven": "+EV above 8%",
   "kills": "cloud pricing drops, enterprise capex freeze",
-  "source_handle": "marginsmall",
-  "source_url": "https://x.com/marginsmall/status/123456",
-  "call_type": "derived",
   "instrument": "stock",
   "platform": "robinhood",
-  "source_quote": "On-prem is back.",
+
+  "source_quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM? The answer is no.",
+  "segments": [
+    { "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "marginsmall" }
+  ],
+  "derivation": {
+    "segments": [
+      { "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "marginsmall" }
+    ],
+    "steps": [
+      { "text": "on-prem is back", "segment": 0 },
+      { "text": "companies buying their own AI servers instead of cloud" },
+      { "text": "DELL has $18B in orders to build them" }
+    ],
+    "chose_over": "HPE (lower margin), SMCI (supply chain concerns)"
+  },
   "reasoning": "Enterprise spending shifting from cloud back to owned infrastructure due to data sovereignty concerns",
   "edge": "Market pricing DELL as commodity PC maker, missing enterprise infrastructure pivot",
   "counter": "Cloud providers could drop prices aggressively to retain enterprise customers",
@@ -510,15 +586,7 @@ Optional. After displaying the card and follow-ups, POST the take to the belief 
     { "price": 200.00, "pnl_pct": 70, "pnl_dollars": 7000, "label": "retest 52W high" }
   ],
   "alternative": "HPE $18 long (lower margin but similar thesis, cheaper entry)",
-  "scan_source": "@marginsmall tweet (Feb 2026)",
-  "derivation": {
-    "steps": [
-      "on-prem is back",
-      "companies buying their own AI servers instead of cloud",
-      "DELL has $18B in orders to build them"
-    ],
-    "chose_over": "HPE (lower margin), SMCI (supply chain concerns)"
-  }
+  "scan_source": "@marginsmall tweet (Feb 2026)"
 }
 ```
 
@@ -559,13 +627,20 @@ When Input Validation step 4 triggers (multiple theses, user wants all routed), 
 
 Pure reasoning. No tool calls. Extract every directional claim using the same criteria as Input Validation.
 
-**For each claim, capture:**
-- `attribution` — who made this claim (speaker, author, analyst, CEO, etc.)
-- `quote` — verbatim, 1-2 strongest sentences. Timestamps if available.
-- `thesis` — reframed as a directional claim
-- `conviction` — ●○○○ to ●●●● from language intensity
+**For each claim, capture the Call layer first (faithful extraction):**
+- `source_quote` — verbatim, 1-2 strongest sentences
+- `speaker` — who made this claim (name, handle, role)
+- `timestamp` — where in the source (MM:SS for video/audio, paragraph for text)
+- `author_thesis` — what they actually claimed, in their words (not reframed)
+- `author_ticker` — did they name a specific instrument? (null if not)
+- `conviction` — high / medium / low / speculative, from language intensity
+- `conditions` — any qualifications they attached (null if none)
 
-**Cluster:** Same thesis expressed differently = 1 entry. Keep the strongest quote per attribution.
+**Then add the Routing layer:**
+- `thesis` — reframed as a directional claim (may differ from author_thesis)
+- `call_type` — direct / derived / inspired based on divergence
+
+**Cluster:** Same thesis expressed differently = 1 entry. Keep the strongest quote per attribution. When multiple speakers support the same thesis, capture each as a separate segment with speaker + timestamp.
 
 **Tier into three levels:**
 - **Tier 1 (Route):** Specific + high conviction. Gets Phase 2 + Phase 3.
@@ -593,11 +668,11 @@ Full belief-router on Tier 1 theses only (top 3-5). Each deep route is independe
 
 One artifact per source. Two tiers that look deliberately different — the user can tell at a glance what's been analyzed vs what's just a candidate list.
 
-**Quick Hit** (Tier 2 and Tier 1 pre-route): Shows thesis + quote + candidate tickers. Does NOT pick a specific instrument — the logic stops at "these would benefit."
+**Quick Hit** (Tier 2 and Tier 1 pre-route): Leads with the author's actual quote and attribution. Shows candidates but does NOT pick a specific instrument — the logic stops at "these would benefit."
 
 ```
-★ [THESIS TITLE] · [attribution] [conviction dots]
-  "[quote]"
+★ "[source_quote]" · [speaker] [timestamp] [conviction]
+  thesis: [author_thesis or reframed thesis]
   CANDIDATES: [TICK1], [TICK2], [TICK3]
   → Deep Route this
 ```

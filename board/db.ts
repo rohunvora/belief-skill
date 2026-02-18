@@ -2,7 +2,7 @@
 
 import { Database } from "bun:sqlite";
 import { join } from "path";
-import type { Call, User, DerivationChain, PriceLadderStep } from "./types";
+import type { Call, User, DerivationChain, PriceLadderStep, Segment } from "./types";
 
 const DB_PATH = join(import.meta.dir, "board.db");
 const db = new Database(DB_PATH);
@@ -61,9 +61,24 @@ db.run(`
   )
 `);
 
+// ── Migrations (safe to re-run — uses IF NOT EXISTS pattern) ─────────
+// Two-layer model: add source_date and conviction as queryable columns.
+// Everything else (author_thesis, author_ticker, etc.) lives in the trade_data blob.
+const existingCols = new Set(
+  (db.prepare("PRAGMA table_info(calls)").all() as { name: string }[]).map(c => c.name)
+);
+if (!existingCols.has("source_date")) {
+  db.run("ALTER TABLE calls ADD COLUMN source_date TEXT");
+}
+if (!existingCols.has("conviction")) {
+  db.run("ALTER TABLE calls ADD COLUMN conviction TEXT");
+}
+
 db.run(`CREATE INDEX IF NOT EXISTS idx_calls_created ON calls(created_at DESC)`);
 db.run(`CREATE INDEX IF NOT EXISTS idx_calls_status ON calls(status)`);
 db.run(`CREATE INDEX IF NOT EXISTS idx_calls_caller ON calls(caller_id)`);
+db.run(`CREATE INDEX IF NOT EXISTS idx_calls_source_date ON calls(source_date)`);
+db.run(`CREATE INDEX IF NOT EXISTS idx_calls_conviction ON calls(conviction)`);
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
@@ -74,7 +89,14 @@ function genId(): string {
 /** Pack detail fields into trade_data JSON blob. */
 function packTradeData(call: Partial<Call>): string | null {
   const data: Record<string, any> = {};
+  // Layer 1: author's signal (blob detail)
   if (call.source_quote) data.source_quote = call.source_quote;
+  if (call.author_thesis) data.author_thesis = call.author_thesis;
+  if (call.author_ticker) data.author_ticker = call.author_ticker;
+  if (call.author_direction) data.author_direction = call.author_direction;
+  if (call.conditions) data.conditions = call.conditions;
+  if (call.segments) data.segments = call.segments;
+  // Layer 2: skill's analysis (blob detail)
   if (call.reasoning) data.reasoning = call.reasoning;
   if (call.edge) data.edge = call.edge;
   if (call.counter) data.counter = call.counter;
@@ -90,29 +112,42 @@ function unpackRow(row: any): Call {
   const tradeData = row.trade_data ? JSON.parse(row.trade_data) : {};
   return {
     id: row.id,
+    // Layer 2: routing (queryable)
     thesis: row.thesis,
     ticker: row.ticker,
     direction: row.direction,
     entry_price: row.entry_price,
     breakeven: row.breakeven ?? "",
     kills: row.kills ?? "",
-    caller_id: row.caller_id,
+    // Layer 1: call (queryable)
     source_handle: row.source_handle,
     source_url: row.source_url,
+    source_date: row.source_date ?? null,
+    conviction: row.conviction ?? null,
     call_type: row.call_type,
+    caller_id: row.caller_id,
+    // Resolution
     status: row.status,
     resolve_price: row.resolve_price,
     resolve_date: row.resolve_date,
     resolve_pnl: row.resolve_pnl,
     resolve_note: row.resolve_note,
+    // Metadata
     created_at: row.created_at,
     instrument: row.instrument,
     platform: row.platform,
+    // Engagement
     votes: row.votes,
     watchers: row.watchers,
     comments: row.comments,
-    // Unpacked from blob
+    // Layer 1: call (blob detail)
     source_quote: tradeData.source_quote,
+    author_thesis: tradeData.author_thesis,
+    author_ticker: tradeData.author_ticker,
+    author_direction: tradeData.author_direction,
+    conditions: tradeData.conditions,
+    segments: tradeData.segments,
+    // Layer 2: routing (blob detail)
     reasoning: tradeData.reasoning,
     edge: tradeData.edge,
     counter: tradeData.counter,
@@ -192,11 +227,11 @@ export function listUsers(): User[] {
 
 const insertCallStmt = db.prepare(`
   INSERT INTO calls (id, thesis, ticker, direction, entry_price, breakeven, kills,
-    caller_id, source_handle, source_url, call_type,
+    caller_id, source_handle, source_url, source_date, conviction, call_type,
     status, resolve_price, resolve_date, resolve_pnl, resolve_note,
     created_at, instrument, platform,
     votes, watchers, comments, trade_data)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `);
 
 export function insertCall(call: Call): Call {
@@ -222,6 +257,8 @@ export function insertCall(call: Call): Call {
     call.caller_id,
     call.source_handle ?? null,
     call.source_url ?? null,
+    call.source_date ?? null,
+    call.conviction ?? null,
     call.call_type,
     call.status,
     call.resolve_price ?? null,
