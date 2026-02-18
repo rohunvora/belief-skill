@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import type { Call, Comment, PriceLadderStep } from "../types";
-import { extractChainDisplay } from "../types";
+import { extractChainDisplay, extractDerivationDetail } from "../types";
 import { Avatar } from "../components/CallCard";
 import { useLivePrices } from "../hooks/useLivePrices";
 import { useBoardData } from "../hooks/useData";
@@ -261,10 +261,22 @@ export function CardDetail({ id }: { id: string }) {
                     </span>
                   )}
               </div>
-              <div className="text-xs text-gray-500 mt-0.5">
-                {formatDate(call.created_at)}
+              <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                {call.conviction && (
+                  <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                    call.conviction === "high" ? "bg-green-50 text-green-700" :
+                    call.conviction === "medium" ? "bg-yellow-50 text-yellow-700" :
+                    call.conviction === "low" ? "bg-red-50 text-red-700" :
+                    "bg-purple-50 text-purple-700"
+                  }`}>{call.conviction}</span>
+                )}
+                <span className="text-xs text-gray-500">
+                  {call.source_date && call.source_date !== call.created_at.slice(0, 10)
+                    ? `Said ${formatDate(call.source_date)} · Routed ${formatDate(call.created_at)}`
+                    : formatDate(call.source_date ?? call.created_at)}
+                </span>
                 {call.scan_source && (
-                  <span className="ml-1.5">
+                  <span className="text-xs text-gray-500">
                     &middot;{" "}
                     {call.source_url ? (
                       <a
@@ -281,15 +293,23 @@ export function CardDetail({ id }: { id: string }) {
                   </span>
                 )}
                 {call.call_type !== "original" && (
-                  <span className="ml-1.5 px-1.5 py-0.5 text-[10px] rounded bg-gray-100 text-gray-600">
-                    {call.call_type}
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${
+                    call.call_type === "direct" ? "bg-blue-50 text-blue-600" :
+                    call.call_type === "derived" ? "bg-amber-50 text-amber-600" :
+                    call.call_type === "inspired" ? "bg-purple-50 text-purple-600" :
+                    "bg-gray-100 text-gray-600"
+                  }`}>
+                    {call.call_type === "direct" ? "direct call" :
+                     call.call_type === "derived" ? "routed from thesis" :
+                     call.call_type === "inspired" ? "inspired" :
+                     call.call_type}
                   </span>
                 )}
               </div>
             </div>
           </div>
-          <span className="text-xs text-gray-500" title={call.created_at}>
-            {timeAgo(call.created_at)}
+          <span className="text-xs text-gray-500" title={call.source_date ?? call.created_at}>
+            {timeAgo(call.source_date ?? call.created_at)}
           </span>
         </div>
 
@@ -298,46 +318,66 @@ export function CardDetail({ id }: { id: string }) {
           {call.thesis}
         </h1>
 
-        {/* Source quote — the voice behind the claim, first step of chain */}
-        {(() => {
-          const chain = extractChainDisplay(call);
-          const firstStep = chain.steps[0];
-          if (!firstStep || !call.source_handle) return null;
-          return (
-            <div className="border-l-2 border-gray-300 pl-3 mb-3">
-              <p className="text-sm text-gray-600 italic leading-relaxed">
-                &ldquo;{firstStep}&rdquo;
-              </p>
-              {call.source_handle && (
-                <p className="text-xs text-gray-500 mt-1">
-                  —{" "}
-                  {displayUser?.twitter ? (
-                    <a
-                      href={`https://x.com/${displayUser.twitter}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      @{call.source_handle}
-                    </a>
-                  ) : (
-                    `@${call.source_handle}`
-                  )}
-                  {call.source_url && (
-                    <a
-                      href={call.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ml-1.5 text-gray-400 hover:text-gray-600 hover:underline"
-                    >
-                      View source &rarr;
-                    </a>
-                  )}
-                </p>
-              )}
+        {/* The Call — author's preserved signal (Layer 1) */}
+        {(call.source_quote || call.author_thesis || call.conditions) && (
+          <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3">
+            <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-2">
+              The Call
             </div>
-          );
-        })()}
+            {call.source_quote && (
+              <div className="border-l-2 border-gray-300 pl-3 mb-2">
+                <p className="text-sm text-gray-600 italic leading-relaxed">
+                  &ldquo;{call.source_quote}&rdquo;
+                </p>
+                {call.source_handle && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    —{" "}
+                    {displayUser?.twitter ? (
+                      <a
+                        href={`https://x.com/${displayUser.twitter}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
+                        @{call.source_handle}
+                      </a>
+                    ) : (
+                      `@${call.source_handle}`
+                    )}
+                    {call.source_url && (
+                      <a
+                        href={call.source_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-1.5 text-gray-400 hover:text-gray-600 hover:underline"
+                      >
+                        View source &rarr;
+                      </a>
+                    )}
+                  </p>
+                )}
+              </div>
+            )}
+            {call.author_thesis && call.author_thesis !== call.source_quote && (
+              <p className="text-sm text-gray-700 mb-1">
+                <span className="text-xs font-medium text-gray-500">Their thesis:</span>{" "}
+                {call.author_thesis}
+              </p>
+            )}
+            {call.author_ticker && (
+              <p className="text-xs text-gray-500 mb-1">
+                <span className="font-medium text-gray-500">Their pick:</span>{" "}
+                {call.author_ticker}{call.author_direction ? ` ${call.author_direction}` : ""}
+              </p>
+            )}
+            {call.conditions && (
+              <p className="text-xs text-gray-500 italic">
+                <span className="font-medium not-italic text-gray-500">Conditions:</span>{" "}
+                {call.conditions}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* HOW TO PROFIT — trade data with P&L as punchline */}
         <div className="flex items-baseline justify-between mb-3">
@@ -477,8 +517,48 @@ export function CardDetail({ id }: { id: string }) {
           </p>
         )}
 
-        {/* Derivation chain — greentext steps */}
+        {/* Derivation chain — evidence/inference markers or greentext fallback */}
         {(() => {
+          // Try structured derivation with segment links first
+          const detail = extractDerivationDetail(call);
+          if (detail && detail.steps.length > 0) {
+            return (
+              <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3 space-y-1.5">
+                <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
+                  Derivation Chain
+                </div>
+                {detail.steps.map((step, i) => {
+                  const hasEvidence = step.segment !== undefined && detail.segments[step.segment];
+                  const seg = hasEvidence ? detail.segments[step.segment!] : null;
+                  return (
+                    <div key={i} className="flex items-baseline gap-2 text-xs leading-relaxed">
+                      <span className={`shrink-0 text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                        hasEvidence
+                          ? "bg-blue-50 text-blue-700"
+                          : "bg-purple-50 text-purple-700"
+                      }`}>
+                        {hasEvidence ? "evidence" : "inference"}
+                      </span>
+                      <span className="text-gray-700 flex-1">{step.text}</span>
+                      {seg && (
+                        <span className="shrink-0 text-[10px] text-gray-400">
+                          {seg.speaker}{seg.timestamp ? ` @ ${seg.timestamp}` : ""}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+                {detail.chose_over && (
+                  <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
+                    <span className="font-medium text-gray-600">Chose over:</span>{" "}
+                    {detail.chose_over}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // Fall back to flat greentext display for legacy data
           const chain = extractChainDisplay(call);
           if (!chain.hasChain || chain.steps.length === 0) return null;
           return (

@@ -84,6 +84,14 @@ Add the skill to Claude Code and start talking. No special commands. Just say wh
 
 No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexScreener, Hyperliquid).
 
+## Current Stage (v4.0)
+
+Two-layer data model implemented end-to-end. Every belief entry preserves the author's original signal (what they said, their conviction, their conditions) separately from the skill's routing (which instrument, why, derivation chain). Feed, detail view, shareable cards, and permalinks all display both layers with attribution tiers (direct/derived/inspired).
+
+**What's next:** Deploy board publicly. Curator submission flow. Skill → board API integration.
+
+**What's blocked:** Nothing.
+
 ## Repo Structure
 
 ```
@@ -94,8 +102,12 @@ tests/                scoring, smoke, e2e, golden tests
 board/                belief.board web app
   server.ts           Bun.serve() — API + server-rendered cards/permalinks
   db.ts               SQLite store (single source of truth)
+  types.ts            Call, User types + derivation chain helpers
   seed.ts             sample data for development
-  templates/          server-rendered HTML for OG previews
+  templates/          server-rendered HTML (card, permalink) for OG previews
+  components/         React components (CallCard, Avatar)
+  pages/              React pages (Feed, CardDetail, Profile, Leaderboard)
+  hooks/              React hooks (useData, useLivePrices)
 ```
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.

@@ -1,6 +1,20 @@
 # Changelog
 
-## v3.2 — Current
+## v4.0 — Current
+
+### 2026-02-18 (v4.0)
+
+🆕 **Two-layer data model** — every entry preserves the author's signal (source_quote, author_thesis, conviction, conditions) separately from the skill's routing (ticker, derivation, reasoning). Never conflated.
+
+🆕 **Evidence/inference markers** — derivation chain steps linked to source segments (speaker + timestamp) show as "evidence"; skill's own conclusions show as "inference". The boundary between what someone said and what the skill concluded is always visible.
+
+🔧 **Attribution tiers are structural** — direct/derived/inspired now determines scoring, card design, and permalink layout. Not just a label.
+
+🔧 **source_date pricing** — entry_price uses the date the belief was expressed, not when it was processed. Historical price adapters provide this.
+
+---
+
+## v3.2
 
 ### 2026-02-17 (v3.2)
 

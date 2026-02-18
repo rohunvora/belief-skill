@@ -296,3 +296,139 @@ Merged `belief-board-v4` branch (full React app with 7 screens, live prices, Tai
 - Card design needs CT research to make screenshot-worthy
 - No curator submission flow yet
 - No skill → board API integration yet (skill doesn't auto-POST to board)
+
+## 2026-02-18: Session 7 — North Star, Data Model Redesign, Strategic Vision
+
+### Context
+Resumed from time-aware routing / historical adapters session. Stepped back from tactical SKILL.md edits to define the project's north star and long-term vision. Identified fundamental design tensions that required resolving before further implementation.
+
+### North Star
+**"Every belief gets a receipt."** The database of structured, attributed belief-to-instrument translations is the asset. The skill is the capture mechanism. The board is the display layer. The database is what compounds.
+
+### Strategic Vision
+Beliefs precede capital flows. The database captures what people believe is about to happen, translated into specific instruments with reasoning — not just "bullish/bearish" sentiment. This is a categorically different data product from existing social sentiment providers (Stocktwits, LunarCrush, Social Market Analytics) because each entry is instrument-specific, attributed, reasoned, and timestamped.
+
+**Growth loop:** Card sharing → installs → routings → database grows → track records emerge → status game → more routings. The card is the viral unit.
+
+**Gate milestones:** (1) Capture critical mass (10K routings, 100+ callers) → (2) Outcome depth (6+ months history) → (3) Real-time signal value (emerging consensus visible) → (4) Data moat (replication takes years).
+
+**Data buyers:** Crypto funds (first, fastest), quant alt-data teams (bigger checks), prediction market platforms (partnerships), broker-dealers (largest, longest).
+
+### The Two-Layer Data Model
+
+Root problem identified: the skill was designed as a ROUTING tool (transform input to find best trade) but is being repurposed as a DATA COLLECTION tool (preserve input faithfully). These have opposite requirements. The deeper claim feature actively corrupts the data it's supposed to collect — it puts words in people's mouths.
+
+**Resolution: every entry has two layers, never conflated.**
+
+- **The Call** — author's actual signal, preserved faithfully: source_quote, author_thesis, author_ticker (nullable), conviction, conditions, source_date.
+- **The Routing** — skill's analysis on top: routed_ticker, derivation chain, reasoning, edge, counter, etc.
+
+The attribution tier (direct/derived/inspired) becomes structural, not decorative. It determines what gets scored in track records:
+- Direct (author named ticker) → score author on instrument performance
+- Derived (author had thesis, skill found instrument) → score author on thesis direction, score skill on instrument selection
+- Inspired (observation only) → too many steps to score reliably
+
+### Cited Evidence Model
+
+For bulk scans (podcasts, articles), each card must trace to SPECIFIC source segments with timestamps/paragraph refs — not "from the All-In podcast" but "minute 12 + minute 45 + minute 67."
+
+Derivation chain format evolves: each step optionally links to a source segment. Steps with segments = evidence (cited). Steps without = inference (skill's contribution). The boundary between "what someone said" and "what the skill concluded" is always visible in the data.
+
+### Blindspots Identified
+
+Six structural blindspots found — all stemming from the routing-vs-collection tension:
+
+1. **Deeper claim vs accurate extraction** — skill reframes the author's claim. Resolved: two layers.
+2. **Narrative compression** — qualifications stripped ("IF FSD works AND..."). Resolved: `conditions` field.
+3. **Conviction flattening** — "maybe 20%" scored same as "I am CERTAIN." Resolved: explicit conviction field.
+4. **Forced singularity** — smart people hedge, skill picks one side. Resolved: `author_ticker` preserved even if skill routes elsewhere.
+5. **Routing error vs thesis error** — bad outcome, whose fault? Resolved: attribution tier separates scoring.
+6. **Processing time vs belief time** — entry price uses wrong date. Resolved: `source_date` extracted, `entry_price` = price at source_date.
+
+### Key design decisions (additions)
+
+26. **"Every belief gets a receipt" as north star.** The database is the asset. The skill and board are infrastructure for filling and displaying it. All feature decisions evaluated against: does this put more receipts in the database (P0), increase capture velocity (P1), make the database appreciate (P2), or make data sellable (P3)?
+
+27. **Two-layer data model (Call vs Routing).** Never conflate the author's signal with the skill's analysis. The Call layer is preserved faithfully. The Routing layer is the skill's editorial contribution. Both stored, clearly labeled, separately scorable. This resolves all six identified blindspots.
+
+28. **Attribution tier as structural concept.** Direct/derived/inspired determines what gets scored in track records, not just how the card looks. Direct calls score the author. Derived calls score both (author on direction, skill on instrument). Inspired calls are too many steps removed for reliable scoring.
+
+29. **Cited evidence with segment references.** Derivation chain steps link to specific source segments (timestamps, paragraphs). Evidence steps are cited. Inference steps are unlabeled. The database is auditable — anyone can verify the extraction by clicking through to the source moment.
+
+30. **Conviction and conditions as first-class fields.** Conviction (high/medium/low/speculative) from language intensity. Conditions (nullable) preserve qualifications. These prevent flattening hedged or low-conviction takes into binary calls, which would produce unfair track records at scale.
+
+31. **entry_price = price at source_date, not processing date.** Outcomes must be measured from when the belief was expressed, not when the skill processed it. Historical price adapters (already built) provide this.
+
+32. **Card leads with author's voice.** The source quote is the headline, not the ticker. Three visual variants by attribution tier. The derivation chain is the interesting part that makes people stop scrolling. The ticker is the payoff, not the lead.
+
+33. **Skill produces two outputs with different purposes.** The Take (streamed reply) is the deep analysis for the user who asked — rubric, cross-check, scenarios, kills. The Card (POST to board) is the lean receipt for the database and sharing — both layers, essential fields only. These serve different audiences and should be optimized independently.
+
+### Schema changes planned
+- Queryable columns: source_handle, source_date, call_type, routed_ticker, routed_direction, entry_price, conviction, status, caller_id
+- Trade data blob: source_quote, source_url, author_thesis, author_ticker, author_direction, conditions, segments (with timestamps), derivation (with segment refs), reasoning, edge, counter, kills, price_ladder, alternative
+
+### Design spec
+Full spec saved to `thoughts/shared/plans/2026-02-18-belief-board-vision.md`. Covers: north star, decision principles, growth loop, gate milestones, data buyer profiles, two-layer model, cited evidence, schema, card designs (three tiers), skill output contract, blindspot resolutions, and work prioritization.
+
+### What's next
+1. ~~Implement schema redesign in board/db.ts~~ (done, session 8)
+2. ~~Update SKILL.md: faithful extraction step + cited evidence derivation chain~~ (done, session 8)
+3. ~~Redesign card templates for three attribution tiers~~ (done, session 8)
+4. Deploy board publicly
+5. Publish skill to GitHub for distribution
+
+## 2026-02-18: Session 8 — Two-Layer Implementation (SKILL.md + Schema + UI)
+
+### Context
+Executed the full two-layer data model designed in session 7. Three workstreams: SKILL.md prompt changes, database schema + templates, and React SPA updates.
+
+### What we built
+
+**SKILL.md (632 → 706 lines):**
+- Faithful extraction as default first step — extract author's signal before any routing analysis
+- `source_date` extraction in Input Validation (price at belief time, not processing time)
+- Research section reordered: extraction → research → routing
+- Deeper Claim reframed as Layer 2 (skill's editorial contribution, after faithful extraction)
+- Derivation chain rewritten for segment-based format with evidence/inference distinction
+- Output Part 2 updated: derivation chain steps with segment references
+- Output Part 4 (POST payload): all new fields in the board submission contract
+- Bulk Mode Phase 1: faithful extraction + segments for podcast/article scans
+
+**Database schema (board/db.ts, board/types.ts):**
+- New interfaces: `Segment`, `DerivationStep`, updated `DerivationChain`
+- New queryable columns: `source_date`, `conviction` (auto-migrated via ALTER TABLE)
+- New blob fields: `author_thesis`, `author_ticker`, `author_direction`, `conditions`, `segments`
+- `extractDerivationDetail()` — returns raw DerivationStep objects for evidence/inference UI
+- `extractChainDisplay()` updated to handle segment-based v2 format alongside legacy formats
+- POST endpoint accepts `routed_ticker`/`routed_direction` aliases
+- Mock data updated with full two-layer fields on all 6 calls (including segment-based DELL derivation chain with 2 segments + 4 steps)
+
+**Server-rendered templates:**
+- `card.ts` — three-tier shareable card: quote-forward design, conviction badge, attribution footer by tier, derivation chain steps for routed calls
+- `permalink.ts` — full two-layer display: "The Call" section (source_quote, author_thesis, conditions), derivation chain with blue EVIDENCE / purple INFERENCE badges + speaker citations, price ladder, dual dates ("Said X · Routed Y"), tier labels
+
+**React SPA (feed + detail):**
+- Feed card (CallCard.tsx): source_date for timeAgo, conviction badge (colored by level), → arrow on ticker for derived/inspired
+- Detail view (CardDetail.tsx): "The Call" section with author's preserved signal, evidence/inference markers in derivation chain using extractDerivationDetail() with fallback to greentext for legacy data, conviction badge, dual dates, tier labels with color coding
+
+### Key technical decisions
+
+34. **Auto-migration via PRAGMA table_info.** New columns added with ALTER TABLE only if they don't exist. Re-runnable, no migration files needed. Works because SQLite columns are always nullable when added via ALTER.
+
+35. **extractDerivationDetail() separate from extractChainDisplay().** The chain display function returns flat strings (for feed cards and legacy data). The detail function returns typed DerivationStep objects (for detail view evidence/inference markers). Two functions, two audiences, shared data path.
+
+36. **Greentext preserved as fallback.** The `> step` display in feed cards uses extractChainDisplay() which normalizes all formats to string[]. Evidence/inference markers only appear in the detail view where extractDerivationDetail() returns structured data. Legacy data gets greentext everywhere.
+
+37. **routed_ticker/routed_direction as POST aliases.** The SKILL.md POST payload uses `routed_ticker` (semantic), but legacy code uses `ticker`. Server accepts both, preferring the routed_ prefix. No breaking change.
+
+### Known issues
+- Board still localhost:4000 only — not deployed
+- Browser extension disconnected during visual review — changes verified via API + type checking
+- Comments table still empty (hardcoded [])
+- No skill → board API integration yet
+
+### What's next
+1. Deploy board publicly
+2. Publish skill to GitHub for distribution
+3. Visual review of React SPA in browser (feed cards + detail view)
+4. Build curator submission flow (anyone can submit a routing)

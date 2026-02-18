@@ -1,4 +1,4 @@
-/** 1200x675 shareable card — light mode, claim-focused. */
+/** 1200x675 shareable card — three attribution tiers, quote-forward design. */
 
 import type { Call } from "../types";
 import { extractChainDisplay } from "../types";
@@ -24,46 +24,90 @@ function claimFontSize(claim: string): number {
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
     month: "short",
-    day: "numeric",
     year: "numeric",
   });
 }
 
+/**
+ * Get the headline quote for the card. Uses author's voice when available.
+ * Priority: source_quote > author_thesis > first derivation step > thesis
+ */
+function getQuote(call: Call, chain: ReturnType<typeof extractChainDisplay>): string {
+  if (call.source_quote) return call.source_quote;
+  if (call.author_thesis) return call.author_thesis;
+  if (chain.steps[0] && call.source_handle) return chain.steps[0];
+  return call.thesis;
+}
+
+/**
+ * Get the attribution line at bottom of card.
+ * direct: "direct call · belief.board"
+ * derived: "@author's thesis · routed by belief.board"
+ * inspired: "inspired by @author · routed by belief.board"
+ * original: "belief.board"
+ */
+function getAttribution(call: Call): string {
+  const handle = call.source_handle ? `@${call.source_handle}` : "";
+  switch (call.call_type) {
+    case "direct":
+      return "direct call \u00b7 belief.board";
+    case "derived":
+      return handle ? `${handle}\u2019s thesis \u00b7 routed by belief.board` : "routed by belief.board";
+    case "inspired":
+      return handle ? `inspired by ${handle} \u00b7 routed by belief.board` : "routed by belief.board";
+    default:
+      return "belief.board";
+  }
+}
+
 export function renderCard(call: Call): string {
   const chain = extractChainDisplay(call);
-  // Sourced calls: show the human's words (first step). Originals: show thesis.
-  const firstStep = chain.steps[0];
-  const claimText = (firstStep && call.source_handle)
-    ? firstStep
-    : call.thesis;
-  const fontSize = claimFontSize(claimText);
-  const date = formatDate(call.created_at);
+  const quoteText = getQuote(call, chain);
+  const fontSize = claimFontSize(quoteText);
+  const sourceDate = call.source_date ?? call.created_at;
+  const date = formatDate(sourceDate);
   const caller = escapeHtml(call.source_handle ?? call.caller_id);
-  const claim = escapeHtml(claimText);
+  const quote = escapeHtml(quoteText);
 
-  // Instrument + price line
-  let detailParts: string[] = [];
-  detailParts.push(escapeHtml(call.ticker));
-  detailParts.push(`$${call.entry_price.toLocaleString()} at call`);
+  // Routing line: for derived/inspired, show arrow prefix
+  const isRouted = call.call_type === "derived" || call.call_type === "inspired";
+  const routePrefix = isRouted ? "\u2192 " : ""; // → symbol
+  const routeLine = `${routePrefix}${call.ticker} ${call.direction} \u00b7 $${call.entry_price.toLocaleString()}`;
 
-  // Show PnL if we have a current price (injected at render time, not on Call type)
+  // Derivation chain — show 2-3 steps max for card
+  let chainHtml = "";
+  if (isRouted && chain.hasChain && chain.steps.length > 0) {
+    // Skip the first step if it's the source_quote (already shown as headline)
+    const displaySteps = chain.steps.slice(0, 4);
+    const stepItems = displaySteps
+      .map((s) => `<div class="chain-step">${escapeHtml(s)}</div>`)
+      .join("\n");
+    chainHtml = `<div class="chain">${stepItems}</div>`;
+  }
+
+  // PnL if available
   let pnlHtml = "";
   const currentPrice = (call as Call & { current_price?: number }).current_price;
   if (currentPrice != null) {
     const pnl = ((currentPrice - call.entry_price) / call.entry_price) * 100;
     const sign = pnl >= 0 ? "+" : "";
     const color = pnl >= 0 ? "#16a34a" : "#dc2626";
-    detailParts.push(`<span style="color:${color};font-weight:700">${sign}${pnl.toFixed(1)}%</span>`);
+    pnlHtml = `<span style="color:${color};font-weight:700;margin-left:12px">${sign}${pnl.toFixed(1)}%</span>`;
   }
 
-  const detailLine = detailParts.join(" \u00b7 ");
+  // Conviction badge
+  const convictionHtml = call.conviction
+    ? `<span class="conviction conviction-${call.conviction}">${call.conviction}</span>`
+    : "";
+
+  const attribution = escapeHtml(getAttribution(call));
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=1200">
-<title>${caller}: ${claim}</title>
+<title>${caller}: ${quote}</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body {
@@ -79,59 +123,82 @@ export function renderCard(call: Call): string {
     height: 675px;
     display: flex;
     flex-direction: column;
-    padding: 64px 80px;
+    padding: 56px 72px;
     position: relative;
   }
   .header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 40px;
+    align-items: center;
+    margin-bottom: 32px;
   }
   .caller {
     font-size: 20px;
     font-weight: 600;
     color: #111;
   }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
   .date {
     font-size: 18px;
     color: #6b7280;
   }
-  .claim {
+  .conviction {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+  .conviction-high { background: #dcfce7; color: #166534; }
+  .conviction-medium { background: #fef9c3; color: #854d0e; }
+  .conviction-low { background: #fee2e2; color: #991b1b; }
+  .conviction-speculative { background: #f3e8ff; color: #6b21a8; }
+  .quote {
     font-size: ${fontSize}px;
     font-weight: 700;
     line-height: 1.3;
     color: #111;
     flex: 1;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-  .claim::before { content: "\\201C"; color: #6b7280; }
-  .claim::after { content: "\\201D"; color: #6b7280; }
-  .divider {
-    width: 200px;
-    height: 1px;
-    background: #d1d5db;
-    margin: 32px 0 24px;
-  }
-  .details {
-    font-size: 18px;
-    color: #6b7280;
-    letter-spacing: 0.01em;
-  }
-  .details .instrument {
+  .quote::before { content: "\\201C"; color: #9ca3af; }
+  .quote::after { content: "\\201D"; color: #9ca3af; }
+  .route-line {
+    font-size: 22px;
+    font-weight: 700;
     color: #111;
-    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 12px;
   }
-  .brand {
+  .chain {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  .chain-step {
+    font-size: 14px;
+    color: #6b7280;
+    padding-left: 16px;
+    margin-bottom: 2px;
+  }
+  .chain-step::before { content: "> "; color: #d1d5db; }
+  .attribution {
     position: absolute;
     bottom: 28px;
-    right: 40px;
+    left: 72px;
+    right: 72px;
+    display: flex;
+    justify-content: space-between;
     font-size: 14px;
-    color: #d1d5db;
-    letter-spacing: 0.05em;
+    color: #9ca3af;
+    letter-spacing: 0.02em;
   }
 </style>
 </head>
@@ -139,12 +206,17 @@ export function renderCard(call: Call): string {
 <div class="card">
   <div class="header">
     <span class="caller">${caller}</span>
-    <span class="date">${date}</span>
+    <div class="header-right">
+      ${convictionHtml}
+      <span class="date">${date}</span>
+    </div>
   </div>
-  <div class="claim">${claim}</div>
-  <div class="divider"></div>
-  <div class="details">${detailLine}</div>
-  <div class="brand">belief.board</div>
+  <div class="quote">${quote}</div>
+  <div class="route-line">${escapeHtml(routeLine)}${pnlHtml}</div>
+  ${chainHtml}
+  <div class="attribution">
+    <span>${attribution}</span>
+  </div>
 </div>
 </body>
 </html>`;

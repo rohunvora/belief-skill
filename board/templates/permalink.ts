@@ -1,7 +1,7 @@
-/** Server-rendered permalink page with OG meta tags for link previews. */
+/** Server-rendered permalink page — two-layer display with attribution tiers. */
 
-import type { Call } from "../types";
-import { extractChainDisplay } from "../types";
+import type { Call, Segment } from "../types";
+import { extractChainDisplay, extractDerivationDetail } from "../types";
 
 function escapeHtml(s: string): string {
   return s
@@ -24,75 +24,204 @@ function truncate(s: string, max: number): string {
   return s.length > max ? s.slice(0, max - 1) + "\u2026" : s;
 }
 
-export function renderPermalink(call: Call): string {
-  const date = formatDate(call.created_at);
-  const caller = call.source_handle ?? call.caller_id;
+/**
+ * Get the attribution label for the tier badge.
+ */
+function tierLabel(call: Call): string {
+  const handle = call.source_handle ? `@${call.source_handle}` : "unknown";
+  switch (call.call_type) {
+    case "direct": return `direct call by ${handle}`;
+    case "derived": return `${handle}\u2019s thesis \u00b7 routed by belief.board`;
+    case "inspired": return `inspired by ${handle} \u00b7 routed by belief.board`;
+    default: return "belief.board";
+  }
+}
+
+/**
+ * Build the author's signal section (Layer 1).
+ * Shows the faithful extraction: their quote, thesis, ticker, conviction, conditions.
+ */
+function buildAuthorSection(call: Call): string {
+  const parts: string[] = [];
+
+  // Source quote — verbatim
+  if (call.source_quote) {
+    parts.push(`<blockquote class="source-quote">${escapeHtml(truncate(call.source_quote, 400))}</blockquote>`);
+  }
+
+  // Author's thesis (if different from source_quote)
+  if (call.author_thesis && call.author_thesis !== call.source_quote) {
+    parts.push(`<div class="author-thesis"><span class="field-label">Their thesis:</span> ${escapeHtml(call.author_thesis)}</div>`);
+  }
+
+  // Author's ticker (if they named one)
+  if (call.author_ticker) {
+    const dir = call.author_direction ? ` ${call.author_direction}` : "";
+    parts.push(`<div class="author-detail"><span class="field-label">Their pick:</span> ${escapeHtml(call.author_ticker)}${dir}</div>`);
+  }
+
+  // Conditions
+  if (call.conditions) {
+    parts.push(`<div class="author-detail conditions"><span class="field-label">Conditions:</span> ${escapeHtml(call.conditions)}</div>`);
+  }
+
+  if (parts.length === 0) return "";
+  return `<div class="section author-section">
+    <div class="section-header">The Call</div>
+    ${parts.join("\n")}
+  </div>`;
+}
+
+/**
+ * Build the derivation chain section with evidence/inference markers.
+ * Steps with segment links show a citation marker; steps without are marked as inference.
+ */
+function buildChainSection(call: Call): string {
+  // Try structured derivation first (segment-linked steps)
+  const detail = extractDerivationDetail(call);
+  if (detail && detail.steps.length > 0) {
+    const stepItems = detail.steps.map((step) => {
+      const hasEvidence = step.segment !== undefined && detail.segments[step.segment];
+      const seg = hasEvidence ? detail.segments[step.segment!] : null;
+      const marker = hasEvidence ? "evidence" : "inference";
+      const markerClass = hasEvidence ? "step-evidence" : "step-inference";
+
+      let citationHtml = "";
+      if (seg) {
+        const speaker = seg.speaker ? `${seg.speaker}` : "";
+        const ts = seg.timestamp ? ` @ ${seg.timestamp}` : "";
+        citationHtml = `<span class="step-citation">${escapeHtml(speaker)}${escapeHtml(ts)}</span>`;
+      }
+
+      return `<div class="chain-step ${markerClass}">
+        <span class="step-marker">${marker}</span>
+        <span class="step-text">${escapeHtml(step.text)}</span>
+        ${citationHtml}
+      </div>`;
+    }).join("\n");
+
+    const choseOverHtml = detail.chose_over
+      ? `<div class="chain-chose-over"><span class="field-label">Chose over:</span> ${escapeHtml(detail.chose_over)}</div>`
+      : "";
+
+    return `<div class="section chain-section">
+      <div class="section-header">Derivation Chain</div>
+      ${stepItems}
+      ${choseOverHtml}
+    </div>`;
+  }
+
+  // Fall back to flat chain display (legacy data)
   const chain = extractChainDisplay(call);
+  if (!chain.hasChain || chain.steps.length === 0) return "";
+
+  const stepItems = chain.steps
+    .map((s) => `<div class="chain-step step-flat">&gt; ${escapeHtml(s)}</div>`)
+    .join("\n");
+  const choseOverHtml = chain.chose_over
+    ? `<div class="chain-chose-over"><span class="field-label">Chose over:</span> ${escapeHtml(chain.chose_over)}</div>`
+    : "";
+
+  return `<div class="section chain-section">
+    <div class="section-header">Derivation Chain</div>
+    ${stepItems}
+    ${choseOverHtml}
+  </div>`;
+}
+
+/**
+ * Build the price ladder section.
+ */
+function buildLadderSection(call: Call): string {
+  if (!call.price_ladder || call.price_ladder.length === 0) return "";
+
+  const sorted = [...call.price_ladder].sort((a, b) => a.price - b.price);
+  const maxAbs = Math.max(...sorted.map((s) => Math.abs(s.pnl_pct)), 1);
+  const rows = sorted
+    .map((step) => {
+      const isNeg = step.pnl_pct < 0;
+      const color = isNeg ? "#dc2626" : "#16a34a";
+      const sign = isNeg ? "" : "+";
+      const barWidth = Math.round((Math.abs(step.pnl_pct) / maxAbs) * 100);
+      return `<div class="ladder-row">
+        <span class="ladder-price">$${step.price.toLocaleString()}</span>
+        <span class="ladder-bar-wrap"><span class="ladder-bar" style="width:${barWidth}%;background:${color}"></span></span>
+        <span class="ladder-pnl" style="color:${color}">${sign}${step.pnl_pct}%</span>
+      </div>
+      <div class="ladder-label-row">${escapeHtml(step.label)}</div>`;
+    })
+    .join("\n");
+
+  return `<div class="section ladder-section">
+    <div class="section-header">Price Ladder</div>
+    ${rows}
+  </div>`;
+}
+
+export function renderPermalink(call: Call): string {
+  const sourceDate = call.source_date ?? call.created_at;
+  const date = formatDate(sourceDate);
+  const caller = call.source_handle ?? call.caller_id;
   const thesis = escapeHtml(call.thesis);
 
-  // OG meta — sourced calls use first step as quote, originals use thesis
-  const firstStep = chain.steps[0];
-  const ogTitleText = (firstStep && call.source_handle)
-    ? `${caller}: "${truncate(firstStep, 70)}"`
-    : `${caller}: ${truncate(call.thesis, 80)}`;
+  // OG meta — use author's voice for social previews
+  const ogQuote = call.source_quote ?? call.author_thesis ?? call.thesis;
+  const ogTitleText = call.source_handle
+    ? `${caller}: "${truncate(ogQuote, 70)}"`
+    : truncate(call.thesis, 80);
   const ogTitle = escapeHtml(ogTitleText);
   const ogParts: string[] = [call.ticker, `$${call.entry_price}`, date];
   const ogDescription = escapeHtml(ogParts.join(" \u2014 "));
 
-  // Detail section
-  let details = `<p class="details"><strong>${escapeHtml(call.ticker)}</strong> &middot; $${call.entry_price.toLocaleString()} at call &middot; ${call.direction}</p>`;
+  // Conviction badge
+  const convictionHtml = call.conviction
+    ? `<span class="conviction conviction-${call.conviction}">${call.conviction}</span>`
+    : "";
 
-  // Source quote — first step from chain
-  let quoteHtml = "";
-  if (firstStep && call.source_handle) {
-    quoteHtml = `<blockquote class="source-quote">${escapeHtml(truncate(firstStep, 300))}</blockquote>`;
-  }
+  // Tier label
+  const tier = escapeHtml(tierLabel(call));
+
+  // Routing line with direction
+  const isRouted = call.call_type === "derived" || call.call_type === "inspired";
+  const routePrefix = isRouted ? "\u2192 " : "";
+  const routeHtml = `<div class="route-line">${routePrefix}<strong>${escapeHtml(call.ticker)}</strong> ${call.direction} \u00b7 $${call.entry_price.toLocaleString()} at call</div>`;
+
+  // Author section
+  const authorHtml = buildAuthorSection(call);
+
+  // Derivation chain
+  const chainHtml = buildChainSection(call);
+
+  // Price ladder
+  const ladderHtml = buildLadderSection(call);
 
   // Reasoning
   let reasoningHtml = "";
   if (call.reasoning) {
-    reasoningHtml = `<div class="reasoning"><h3>Reasoning</h3><p>${escapeHtml(truncate(call.reasoning, 500))}</p></div>`;
+    reasoningHtml = `<div class="section reasoning"><div class="section-header">Reasoning</div><p>${escapeHtml(truncate(call.reasoning, 600))}</p></div>`;
   }
 
-  // Derivation chain section — greentext steps
-  let chainHtml = "";
-  if (chain.hasChain && chain.steps.length > 0) {
-    const stepItems = chain.steps
-      .map((s) => `<div class="chain-step">&gt; ${escapeHtml(s)}</div>`)
-      .join("\n");
-    const choseOverHtml = chain.chose_over
-      ? `<div class="chain-step chain-chose-over"><span class="chain-label">Chose over:</span> ${escapeHtml(chain.chose_over)}</div>`
-      : "";
-    chainHtml = `<div class="chain-section"><div class="chain-header">Derivation Chain</div>${stepItems}${choseOverHtml}</div>`;
+  // Edge + Counter
+  let edgeHtml = "";
+  if (call.edge) {
+    edgeHtml = `<div class="section"><div class="section-header">Edge</div><p>${escapeHtml(truncate(call.edge, 400))}</p></div>`;
   }
-
-  // Price ladder
-  let ladderHtml = "";
-  if (call.price_ladder && call.price_ladder.length > 0) {
-    const sorted = [...call.price_ladder].sort((a, b) => a.price - b.price);
-    const maxAbs = Math.max(...sorted.map((s) => Math.abs(s.pnl_pct)), 1);
-    const rows = sorted
-      .map((step) => {
-        const isNeg = step.pnl_pct < 0;
-        const color = isNeg ? "#dc2626" : "#16a34a";
-        const sign = isNeg ? "" : "+";
-        const barWidth = Math.round((Math.abs(step.pnl_pct) / maxAbs) * 100);
-        return `<div class="ladder-row">
-          <span class="ladder-price">$${step.price.toLocaleString()}</span>
-          <span class="ladder-bar-wrap"><span class="ladder-bar" style="width:${barWidth}%;background:${color}"></span></span>
-          <span class="ladder-pnl" style="color:${color}">${sign}${step.pnl_pct}%</span>
-        </div>
-        <div class="ladder-label-row">${escapeHtml(step.label)}</div>`;
-      })
-      .join("\n");
-    ladderHtml = `<div class="ladder-section"><div class="ladder-header">Price Ladder</div>${rows}</div>`;
+  let counterHtml = "";
+  if (call.counter) {
+    counterHtml = `<div class="section"><div class="section-header">Counter</div><p>${escapeHtml(truncate(call.counter, 400))}</p></div>`;
   }
 
   // Source link
   let sourceLink = "";
   if (call.source_url) {
-    sourceLink = `<a href="${escapeHtml(call.source_url)}" target="_blank" rel="noopener">Source</a> &middot; `;
+    sourceLink = `<a href="${escapeHtml(call.source_url)}" target="_blank" rel="noopener">Source</a> \u00b7 `;
   }
+
+  // Created vs source date note
+  const processedDate = formatDate(call.created_at);
+  const dateNote = call.source_date && call.source_date !== call.created_at.slice(0, 10)
+    ? `<span class="date-note">Said ${date} \u00b7 Routed ${processedDate}</span>`
+    : `<span class="date-note">${date}</span>`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -125,64 +254,66 @@ export function renderPermalink(call: Call): string {
     border-bottom: 1px solid #e5e7eb;
   }
   .nav a { font-weight: 600; text-decoration: none; font-size: 15px; letter-spacing: 0.03em; }
+
+  /* Header */
   .take-header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: 16px;
+    align-items: center;
+    margin-bottom: 8px;
   }
   .caller { font-weight: 600; font-size: 17px; }
-  .date { color: #6b7280; font-size: 14px; }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .conviction {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 3px;
+  }
+  .conviction-high { background: #dcfce7; color: #166534; }
+  .conviction-medium { background: #fef9c3; color: #854d0e; }
+  .conviction-low { background: #fee2e2; color: #991b1b; }
+  .conviction-speculative { background: #f3e8ff; color: #6b21a8; }
+  .date-note { color: #9ca3af; font-size: 13px; }
+
+  /* Tier badge */
+  .tier {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 16px;
+  }
+
+  /* Thesis */
   .thesis {
     font-size: 22px;
     font-weight: 600;
     line-height: 1.4;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
   }
-  .details {
-    color: #6b7280;
-    font-size: 15px;
-    margin-bottom: 20px;
-  }
-  .details strong { color: #111; }
-  .source-quote {
-    font-size: 14px;
-    color: #6b7280;
-    border-left: 3px solid #e5e7eb;
-    padding: 8px 16px;
-    margin-bottom: 20px;
-    font-style: italic;
-  }
-  .reasoning {
-    margin-bottom: 20px;
-  }
-  .reasoning h3 {
-    font-size: 14px;
-    color: #9ca3af;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-  }
-  .reasoning p {
-    font-size: 15px;
+
+  /* Route line */
+  .route-line {
+    font-size: 16px;
     color: #374151;
+    margin-bottom: 20px;
   }
-  .meta {
-    font-size: 14px;
-    color: #6b7280;
-    padding-top: 16px;
-    border-top: 1px solid #e5e7eb;
-  }
-  .meta a { color: #6b7280; }
-  .meta a:hover { color: #111; }
-  .chain-section {
+  .route-line strong { color: #111; }
+
+  /* Shared section style */
+  .section {
     background: #f9fafb;
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     padding: 12px 16px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
-  .chain-header {
+  .section-header {
     font-size: 10px;
     font-weight: 600;
     color: #9ca3af;
@@ -190,30 +321,86 @@ export function renderPermalink(call: Call): string {
     letter-spacing: 0.05em;
     margin-bottom: 8px;
   }
-  .chain-step {
+  .section p {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.6;
+  }
+
+  /* Author section (Layer 1) */
+  .source-quote {
+    font-size: 14px;
+    color: #6b7280;
+    border-left: 3px solid #d1d5db;
+    padding: 8px 16px;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .author-thesis {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+  .author-detail {
     font-size: 13px;
     color: #6b7280;
     margin-bottom: 4px;
   }
-  .chain-label {
+  .conditions {
+    font-style: italic;
+  }
+  .field-label {
     font-weight: 600;
+    color: #6b7280;
+  }
+
+  /* Chain section */
+  .chain-step {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13px;
     color: #374151;
+    margin-bottom: 6px;
+    padding: 4px 0;
   }
-  .ladder-section {
-    background: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    padding: 12px 16px;
-    margin-bottom: 20px;
-  }
-  .ladder-header {
-    font-size: 10px;
+  .step-marker {
+    font-size: 9px;
     font-weight: 600;
-    color: #9ca3af;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
   }
+  .step-evidence .step-marker {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  .step-inference .step-marker {
+    background: #f3e8ff;
+    color: #6b21a8;
+  }
+  .step-text { flex: 1; }
+  .step-citation {
+    font-size: 11px;
+    color: #9ca3af;
+    flex-shrink: 0;
+  }
+  .step-flat {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 4px;
+  }
+  .chain-chose-over {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  /* Ladder */
   .ladder-row {
     display: grid;
     grid-template-columns: 72px 1fr 48px;
@@ -250,6 +437,16 @@ export function renderPermalink(call: Call): string {
     margin-top: -4px;
     margin-bottom: 4px;
   }
+
+  /* Meta footer */
+  .meta {
+    font-size: 14px;
+    color: #6b7280;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+  }
+  .meta a { color: #6b7280; }
+  .meta a:hover { color: #111; }
 </style>
 </head>
 <body>
@@ -257,14 +454,20 @@ export function renderPermalink(call: Call): string {
 <article>
   <div class="take-header">
     <span class="caller">${escapeHtml(caller)}</span>
-    <span class="date">${date}</span>
+    <div class="header-right">
+      ${convictionHtml}
+      ${dateNote}
+    </div>
   </div>
-  ${quoteHtml}
+  <div class="tier">${tier}</div>
   <div class="thesis">${thesis}</div>
-  ${details}
+  ${routeHtml}
+  ${authorHtml}
   ${chainHtml}
   ${ladderHtml}
   ${reasoningHtml}
+  ${edgeHtml}
+  ${counterHtml}
   <div class="meta">
     ${sourceLink}
     <a href="/t/${call.id}/card">Card view</a>
