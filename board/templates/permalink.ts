@@ -30,9 +30,10 @@ export function renderPermalink(call: Call): string {
   const chain = extractChainDisplay(call);
   const thesis = escapeHtml(call.thesis);
 
-  // OG meta — sourced calls use quote, originals use thesis
-  const ogTitleText = (chain.source_said && call.source_handle)
-    ? `${caller}: "${truncate(chain.source_said, 70)}"`
+  // OG meta — sourced calls use first step as quote, originals use thesis
+  const firstStep = chain.steps[0];
+  const ogTitleText = (firstStep && call.source_handle)
+    ? `${caller}: "${truncate(firstStep, 70)}"`
     : `${caller}: ${truncate(call.thesis, 80)}`;
   const ogTitle = escapeHtml(ogTitleText);
   const ogParts: string[] = [call.ticker, `$${call.entry_price}`, date];
@@ -41,10 +42,10 @@ export function renderPermalink(call: Call): string {
   // Detail section
   let details = `<p class="details"><strong>${escapeHtml(call.ticker)}</strong> &middot; $${call.entry_price.toLocaleString()} at call &middot; ${call.direction}</p>`;
 
-  // Source quote — from chain
+  // Source quote — first step from chain
   let quoteHtml = "";
-  if (chain.source_said) {
-    quoteHtml = `<blockquote class="source-quote">${escapeHtml(truncate(chain.source_said, 300))}</blockquote>`;
+  if (firstStep && call.source_handle) {
+    quoteHtml = `<blockquote class="source-quote">${escapeHtml(truncate(firstStep, 300))}</blockquote>`;
   }
 
   // Reasoning
@@ -53,22 +54,16 @@ export function renderPermalink(call: Call): string {
     reasoningHtml = `<div class="reasoning"><h3>Reasoning</h3><p>${escapeHtml(truncate(call.reasoning, 500))}</p></div>`;
   }
 
-  // Derivation chain section
+  // Derivation chain section — greentext steps
   let chainHtml = "";
-  if (chain.hasChain) {
-    const steps = [
-      { label: "Source said", value: chain.source_said },
-      { label: "Implies", value: chain.implies },
-      { label: "Searching for", value: chain.searching_for },
-      { label: "Found because", value: chain.found_because },
-      { label: "Chose over", value: chain.chose_over },
-    ].filter((s) => s.value);
-    if (steps.length > 0) {
-      const stepsHtml = steps
-        .map((s) => `<div class="chain-step"><span class="chain-label">${s.label}:</span> ${escapeHtml(s.value!)}</div>`)
-        .join("\n");
-      chainHtml = `<div class="chain-section"><div class="chain-header">Derivation Chain</div>${stepsHtml}</div>`;
-    }
+  if (chain.hasChain && chain.steps.length > 0) {
+    const stepItems = chain.steps
+      .map((s) => `<div class="chain-step">&gt; ${escapeHtml(s)}</div>`)
+      .join("\n");
+    const choseOverHtml = chain.chose_over
+      ? `<div class="chain-step chain-chose-over"><span class="chain-label">Chose over:</span> ${escapeHtml(chain.chose_over)}</div>`
+      : "";
+    chainHtml = `<div class="chain-section"><div class="chain-header">Derivation Chain</div>${stepItems}${choseOverHtml}</div>`;
   }
 
   // Source link

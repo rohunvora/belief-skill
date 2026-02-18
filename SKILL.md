@@ -76,25 +76,52 @@ If the subject is a person, brand, or community that isn't directly investable: 
 
 ## Derivation Chain
 
-**Mandatory for all sourced calls.** BEFORE searching, log the chain as a structured object. AFTER finding the ticker, append why it matches. This is the reasoning trail, not a post-hoc summary. Without it, sources get credited for trades they never made.
+**Mandatory for all sourced calls.** Show your work. Each line is one step from what someone said to what you'd trade. Use as many steps as the logic needs — no more, no fewer. A normie should follow every step without finance jargon.
 
-**Quality floor:** No card without `source_said` + `found_because`. If you can't fill both, the call is not ready.
+The ticker appears naturally inline when you reach the trade. No structured fields — just plain sentences a non-finance person could follow.
 
-**Structured format** (output as JSON after the card template):
+**Format:** An array of strings. Each string is one step.
 
 ```json
 {
-  "source_said": "[hook — the fragment a listener would remember and repeat. ≤80 chars, verbatim from source's words]",
-  "implies": "[causal mechanism, lowercase, use → for causation]",
-  "searching_for": "[what you're about to look for]",
-  "found_because": "[why this ticker matches the mechanism]",
-  "chose_over": "[why this ticker over the alternatives — name runners-up and why they lost]"
+  "steps": [
+    "step 1 — the observation or quote",
+    "step 2 — what that means",
+    "step 3 — who benefits and why (ticker inline)"
+  ],
+  "chose_over": "alternatives considered — detail page only"
 }
 ```
 
-**Attribution tier** — mechanically determined by the `source_said` field:
+**Quality floor:** No card without at least 2 steps. The last step must contain the ticker. If you can't connect the quote to the trade in plain language, the call is not ready.
 
-| `source_said` contains | Tier | Card shows |
+**Examples at different lengths:**
+
+2 steps:
+```json
+{"steps": ["all code is AI now", "MSFT owns GitHub, Copilot, VS Code — the tollbooth"]}
+```
+
+3 steps:
+```json
+{"steps": ["on-prem is back", "companies buying their own AI servers instead of cloud", "DELL has $18B in orders to build them"]}
+```
+
+4 steps:
+```json
+{"steps": ["trade wars make scarce resources strategic", "uranium is the hardest to replace — 10 year mine lead time", "AI datacenters need nuclear power, new demand on top", "CCJ is the biggest producer, down 16%"]}
+```
+
+**Rules:**
+- Each line earns the next — no logical leaps
+- No finance jargon (no "reversion trade", "permanent AUM", "fee compression")
+- Ticker appears naturally, not forced
+- Lowercase unless starting a proper noun or ticker
+- No arrows (→) — use natural language connectors
+
+**Attribution tier** — mechanically determined by the first step of the chain:
+
+| First step contains | Tier | Card shows |
 |------------------------|------|------------|
 | A ticker symbol (e.g. "buy LAES", "short GOOG") | `direct` | "@source's call" |
 | A market-specific causal claim, no ticker (e.g. "quantum selloff was mechanical", "GLP-1 distribution is the bottleneck") | `derived` | "@source's thesis · routed by" |
@@ -454,7 +481,7 @@ Optional. After displaying the card and follow-ups, POST the take to the belief 
 | Payoff table | `price_ladder` | goes in `trade_data` blob |
 | Alt line | `alternative` | goes in `trade_data` blob |
 | "Source (Date)" | `scan_source` | goes in `trade_data` blob |
-| Derivation chain | `derivation` | goes in `trade_data` blob, structured object with `source_said`/`implies`/`searching_for`/`found_because`/`chose_over` |
+| Derivation chain | `derivation` | goes in `trade_data` blob, `{"steps": [...], "chose_over": "..."}` |
 
 **Example payload:**
 
@@ -477,10 +504,11 @@ Optional. After displaying the card and follow-ups, POST the take to the belief 
   "counter": "Cloud providers could drop prices aggressively to retain enterprise customers",
   "scan_source": "@marginsmall tweet (Feb 2026)",
   "derivation": {
-    "source_said": "On-prem is back.",
-    "implies": "enterprise infrastructure spending shifts from cloud to owned hardware",
-    "searching_for": "hardware manufacturers with enterprise server/storage exposure",
-    "found_because": "DELL has highest enterprise infrastructure revenue share outside pure-play server cos",
+    "steps": [
+      "on-prem is back",
+      "companies buying their own AI servers instead of cloud",
+      "DELL has $18B in orders to build them"
+    ],
     "chose_over": "HPE (lower margin), SMCI (supply chain concerns)"
   }
 }

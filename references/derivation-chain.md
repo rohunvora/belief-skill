@@ -2,99 +2,110 @@
 
 When routing sourced input, log the chain BEFORE searching — not after.
 
-## Format (Structured JSON)
+## Format (Greentext Steps)
 
-Output as a JSON object with 5 fields:
+Output as a JSON object with 2 fields:
 
 ```json
 {
-  "source_said": "[hook — the fragment a listener would remember and repeat]",
-  "implies": "[causal mechanism, lowercase, use → for causation]",
-  "searching_for": "[what you're about to look for]",
-  "found_because": "[why this ticker matches the mechanism]",
-  "chose_over": "[why this ticker over the alternatives you considered — name the runners-up and why they lost]"
+  "steps": ["step 1", "step 2", "step 3"],
+  "chose_over": "alternatives"
 }
 ```
 
-All 5 fields are mandatory for sourced calls. `source_said` and `found_because` are the quality floor — no card ships without both.
+Each line earns the next — no logical leaps. Variable length (2-5 steps) based on how many logical steps the connection requires. Ticker appears naturally inline in the last step.
 
-## `source_said` — Hook Extraction
+## Writing Rules
 
-Not the full transcript. The fragment a listener would remember and repeat. ≤80 chars, verbatim from source's words.
+- each line earns the next — no logical leaps
+- no finance jargon — write for normies
+- ticker appears naturally inline in the last step
+- variable length (2-5 steps) based on how many logical steps the connection requires
+- lowercase unless proper noun or ticker
 
-Decision tree:
+## Examples — 2 Steps
 
-1. Does the quote contain a phrase that works as a standalone headline? → Use it verbatim. ("On-prem is back.", "100% of code is AI.")
-2. Does it contain a sharp clause? → Extract the clause. ("Quantum selloff was mechanical, not fundamental.")
-3. Neither? → Use the source's core claim in ≤80 chars, their words not yours.
+@threadguy on MSFT:
 
-The full quote lives in `source_quote`. The hook is `source_said`.
+```json
+{"steps": ["all code is AI now", "MSFT owns GitHub, Copilot, VS Code — the tollbooth"], "chose_over": "GOOG (competing but no IDE lock-in), ADBE (creative not code)"}
+```
 
-| Source type | Hook (`source_said`) |
-|---|---|
-| Podcast sound bite | `On-prem is back.` |
-| CT analysis thread | `100% of code is AI.` |
-| Analyst framework (already sharp) | `When the interface layer gets commoditized, the scarce inputs get more valuable` |
-| Analytical paragraph | `Quantum selloff was mechanical, not fundamental.` |
-| Direct ticker call | `LAES. PQC mandate, new semiconductor category.` |
-| Narrative observation | `Michael Grimes is back at Morgan Stanley. The IPO factory restarts.` |
+@martinshkreli on IONQ:
 
-## `implies` — Causal Mechanism
+```json
+{"steps": ["quantum stocks crashed 60%", "funds forced to sell, not a tech failure", "IONQ now cheaper than private peers with bigger gov contracts"], "chose_over": "RGTI (no DARPA Stage B), QBTS (thinner contract book)"}
+```
 
-Write lowercase. Use → for causation, not em-dashes. This is the AI's bridge, not the source's words — keep it casual, not systemic.
+## Examples — 3 Steps
+
+@chamath on DELL:
+
+```json
+{"steps": ["on-prem is back", "companies buying their own AI servers instead of cloud", "DELL has $18B in orders to build them"], "chose_over": "HPE (lower AI backlog growth), SMCI (accounting risk)"}
+```
+
+@marginsmall on LAES:
+
+```json
+{"steps": ["government mandating quantum-proof chips", "someone has to make them", "LAES is the only public company that does"], "chose_over": "LSCC (PQC <10% of revenue), MCHP (even more diluted)"}
+```
+
+@nicbstme on SPGI:
+
+```json
+{"steps": ["AI makes dashboards commodity", "raw data underneath gets more valuable", "SPGI owns the ratings and indices $7T tracks"], "chose_over": "MCO (33x P/E), FactSet short (already -57%)"}
+```
+
+@BigA on GLD:
+
+```json
+{"steps": ["governments heading toward freezing assets", "gold is the one thing they can't", "GLD is 14% off its high"], "chose_over": "GDX (miners re-rated), BTC (exposed not direct)"}
+```
+
+## Examples — 4 Steps
+
+@WillManidis on APO:
+
+```json
+{"steps": ["VC model is broken, companies can't exit", "the winners are patient permanent capital pools", "APO has the highest permanent ratio at 60%", "expanding to retail through Athene — 401k is next"], "chose_over": "BX (40% permanent vs 60%), KKR (less permanent focus)"}
+```
+
+@BigA on CCJ:
+
+```json
+{"steps": ["trade wars make scarce resources strategic", "uranium is the hardest to replace — 10 year mine lead time", "AI datacenters need nuclear power, new demand on top", "CCJ is the biggest producer, down 16%"], "chose_over": "LMT/RTX/NOC (all near ATH), ITA ETF (broad dilution)"}
+```
 
 ## `chose_over` — Why This Ticker
 
 Why this ticker over the alternatives you considered. Name the runners-up and why they lost. For direct calls (source named the ticker), use: "direct call — source named the ticker explicitly."
 
-## Example
-
-```json
-{
-  "source_said": "When the interface layer gets commoditized, the scarce inputs get more valuable",
-  "implies": "proprietary data creators benefit from ai disrupting terminals",
-  "searching_for": "Financial data companies with regulatory lock-in or benchmark ownership, recently sold off",
-  "found_because": "NRSRO-certified credit ratings + $7T indexed to S&P indices — scarce inputs AI can't replicate — but sold off 29% alongside FactSet",
-  "chose_over": "MCO (purer ratings but 33x P/E + earnings risk), FactSet short (already -57%, obvious) — SPGI has ratings + indices, dual moat"
-}
-```
-
 ## How the Board Uses It
 
-- **Feed card headline**: `source_said` in quotes — the hook, not the full transcript
-- **Feed card subheader**: `implies` in lowercase (the bridge from quote to trade)
-- **Detail page**: Full 5-step chain rendered as auditable trail
-- **OG card / link preview**: `source_said` in quotes
-- **Hover tooltip**: full `source_quote` appears on hover (desktop)
+- **Feed card**: steps rendered as the derivation trail
+- **Detail page**: full steps chain rendered as auditable trail
+- **OG card / link preview**: first step as the hook
 - Original calls (no source) keep thesis as headline
 
 ## Attribution Tier Classification
 
-The tier is a mechanical consequence of the `source_said` field — not a separate judgment. After writing the chain, scan the quote and apply the first matching rule:
+The tier is a mechanical consequence of the first step — not a separate judgment. After writing the chain, scan the first step and apply the first matching rule:
 
-1. **`direct`** — The quote contains a ticker symbol (e.g. LAES, GOOG, SOL) or a named, tradable contract. The source told you what to trade.
-2. **`derived`** — The quote contains a causal claim about a specific market, sector, or asset class (e.g. "quantum selloff was mechanical", "GLP-1 distribution is the bottleneck") but no ticker symbol. The source pointed at a market; you found the instrument.
-3. **`inspired`** — The quote contains only a framework, observation, or cultural signal with no market-specific claim (e.g. "AI commoditizes interface layers", "everyone's on Ozempic"). You connected it to a market.
+1. **`direct`** — The first step contains a ticker symbol (e.g. LAES, GOOG, SOL) or a named, tradable contract. The source told you what to trade.
+2. **`derived`** — The first step contains a market-specific causal claim (e.g. "quantum stocks crashed 60%", "government mandating quantum-proof chips") but no ticker symbol. The source pointed at a market; you found the instrument.
+3. **`inspired`** — The first step is a framework or observation only with no market-specific claim (e.g. "AI makes dashboards commodity", "governments heading toward freezing assets"). You connected it to a market.
 
-**Rules are applied top-down: first match wins.** If the quote has a ticker, it is `direct` regardless of whether it also contains a framework. If no ticker but a market-specific causal claim, it is `derived`. Everything else is `inspired`.
+**Rules are applied top-down: first match wins.** If the first step has a ticker, it is `direct` regardless of whether it also contains a framework. If no ticker but a market-specific causal claim, it is `derived`. Everything else is `inspired`.
 
-| `source_said` contains | Tier | Example |
+| First step contains | Tier | Example |
 |------------------------|------|---------|
-| Ticker symbol present | `direct` | "Buy LAES" → direct |
-| Market-specific causal claim, no ticker | `derived` | "Quantum selloff was mechanical" → derived |
-| Framework/observation only | `inspired` | "AI commoditizes interface layers" → inspired |
+| Ticker symbol present | `direct` | "buy LAES before the mandate" -> direct |
+| Market-specific causal claim, no ticker | `derived` | "quantum stocks crashed 60%" -> derived |
+| Framework/observation only | `inspired` | "AI makes dashboards commodity" -> inspired |
 
-If you cannot quote the source saying something that would point a human reader to the same ticker, the tier is `inspired`.
+If you cannot point to something in the first step that would lead a human reader to the same market, the tier is `inspired`.
 
 ## Legacy Format (deprecated)
 
-The old newline-delimited format is still parsed for backward compatibility:
-
-```
-Source said: "[exact quote]"
-This implies: [mechanism]
-Searching for: [what you're looking for]
-Found [TICKER] because: [why it matches]
-```
-
-New calls should always use the structured JSON format.
+The old structured format (`source_said`/`implies`/`searching_for`/`found_because`/`chose_over`) is still parsed for backward compatibility. New calls should always use the greentext steps format.

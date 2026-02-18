@@ -1,10 +1,16 @@
-/** Structured derivation chain — the reasoning trail from source quote to trade. */
+/** Greentext derivation — variable-length reasoning trail from source quote to trade. */
 export interface DerivationChain {
-  source_said: string;     // hook — the fragment a listener would remember. ≤80 chars, verbatim from source's words
-  implies: string;          // causal mechanism — card subheader, lowercase
-  searching_for: string;    // what the AI looked for — detail page
-  found_because: string;    // why this ticker — detail page
-  chose_over: string;       // why this ticker over the alternatives considered
+  steps: string[];           // each step earns the next — normie-readable, ticker inline
+  chose_over?: string;       // alternatives considered — detail page only
+}
+
+/** Legacy structured chain — old format, converted to steps at read time. */
+export interface LegacyDerivationChain {
+  source_said: string;
+  implies: string;
+  searching_for: string;
+  found_because: string;
+  chose_over?: string;
 }
 
 export interface Call {
@@ -47,33 +53,56 @@ export interface Call {
   price_ladder?: PriceLadderStep[];
   alternative?: string;
   scan_source?: string; // e.g. "All-In Podcast (Feb 2026)"
-  derivation?: string | DerivationChain; // structured chain or legacy string
+  derivation?: string | DerivationChain | LegacyDerivationChain; // steps, legacy structured, or legacy string
+}
+
+/** Helper to detect legacy structured chain format */
+function isLegacyChain(d: unknown): d is LegacyDerivationChain {
+  return typeof d === "object" && d !== null && "source_said" in d && !("steps" in d);
+}
+
+/** Helper to detect new steps format */
+function isStepsChain(d: unknown): d is DerivationChain {
+  return typeof d === "object" && d !== null && "steps" in d && Array.isArray((d as DerivationChain).steps);
+}
+
+/** Convert legacy structured chain to steps (best effort) */
+function legacyToSteps(d: LegacyDerivationChain): string[] {
+  const steps: string[] = [];
+  if (d.source_said) steps.push(d.source_said.toLowerCase());
+  if (d.implies) steps.push(d.implies.replace(/\s*→\s*/g, ", "));
+  if (d.found_because) steps.push(d.found_because);
+  return steps;
 }
 
 /**
  * Single interface between data and UI for derivation chain display.
- * Handles structured chain, legacy string chain, and fallback to source_quote/reasoning.
+ * Handles steps chain, legacy structured chain, legacy string chain, and fallback.
  */
 export function extractChainDisplay(call: Call): {
-  source_said: string | null;
-  implies: string | null;
-  searching_for: string | null;
-  found_because: string | null;
+  steps: string[];
   chose_over: string | null;
   hasChain: boolean;
 } {
-  const empty = { source_said: null, implies: null, searching_for: null, found_because: null, chose_over: null, hasChain: false };
+  const empty = { steps: [], chose_over: null, hasChain: false };
 
-  // Structured chain — preferred
   if (call.derivation && typeof call.derivation === "object") {
-    return {
-      source_said: call.derivation.source_said,
-      implies: call.derivation.implies,
-      searching_for: call.derivation.searching_for,
-      found_because: call.derivation.found_because,
-      chose_over: call.derivation.chose_over ?? null,
-      hasChain: true,
-    };
+    // New steps format
+    if (isStepsChain(call.derivation)) {
+      return {
+        steps: call.derivation.steps,
+        chose_over: call.derivation.chose_over ?? null,
+        hasChain: true,
+      };
+    }
+    // Legacy structured format — convert to steps
+    if (isLegacyChain(call.derivation)) {
+      return {
+        steps: legacyToSteps(call.derivation),
+        chose_over: call.derivation.chose_over ?? null,
+        hasChain: true,
+      };
+    }
   }
 
   // Legacy string chain — parse "Source said: ...\nImplies: ...\n..."
@@ -87,33 +116,22 @@ export function extractChainDisplay(call: Call): {
         const value = line.slice(colonIdx + 2).trim();
         if (key.includes("source")) parsed.source_said = value.replace(/^"|"$/g, "");
         else if (key.includes("impl")) parsed.implies = value;
-        else if (key.includes("search")) parsed.searching_for = value;
         else if (key.includes("found")) parsed.found_because = value;
         else if (key.includes("chose")) parsed.chose_over = value;
       }
     }
     if (parsed.source_said) {
-      return {
-        source_said: parsed.source_said ?? null,
-        implies: parsed.implies ?? null,
-        searching_for: parsed.searching_for ?? null,
-        found_because: parsed.found_because ?? null,
-        chose_over: parsed.chose_over ?? null,
-        hasChain: true,
-      };
+      const steps: string[] = [];
+      steps.push(parsed.source_said.toLowerCase());
+      if (parsed.implies) steps.push(parsed.implies.replace(/\s*→\s*/g, ", "));
+      if (parsed.found_because) steps.push(parsed.found_because);
+      return { steps, chose_over: parsed.chose_over ?? null, hasChain: true };
     }
   }
 
-  // Fallback: use source_quote if available (no full chain, but we have the quote)
+  // Fallback: source_quote as single step
   if (call.source_quote) {
-    return {
-      source_said: call.source_quote,
-      implies: null,
-      searching_for: null,
-      found_because: null,
-      chose_over: null,
-      hasChain: false,
-    };
+    return { steps: [call.source_quote], chose_over: null, hasChain: false };
   }
 
   return empty;

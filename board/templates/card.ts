@@ -31,9 +31,10 @@ function formatDate(iso: string): string {
 
 export function renderCard(call: Call): string {
   const chain = extractChainDisplay(call);
-  // Sourced calls: show the human's words. Originals: show thesis.
-  const claimText = (chain.source_said && call.source_handle)
-    ? chain.source_said
+  // Sourced calls: show the human's words (first step). Originals: show thesis.
+  const firstStep = chain.steps[0];
+  const claimText = (firstStep && call.source_handle)
+    ? firstStep
     : call.thesis;
   const fontSize = claimFontSize(claimText);
   const date = formatDate(call.created_at);
@@ -45,10 +46,11 @@ export function renderCard(call: Call): string {
   detailParts.push(escapeHtml(call.ticker));
   detailParts.push(`$${call.entry_price.toLocaleString()} at call`);
 
-  // Show PnL if we have a current price
+  // Show PnL if we have a current price (injected at render time, not on Call type)
   let pnlHtml = "";
-  if (call.current_price != null) {
-    const pnl = ((call.current_price - call.entry_price) / call.entry_price) * 100;
+  const currentPrice = (call as Call & { current_price?: number }).current_price;
+  if (currentPrice != null) {
+    const pnl = ((currentPrice - call.entry_price) / call.entry_price) * 100;
     const sign = pnl >= 0 ? "+" : "";
     const color = pnl >= 0 ? "#16a34a" : "#dc2626";
     detailParts.push(`<span style="color:${color};font-weight:700">${sign}${pnl.toFixed(1)}%</span>`);

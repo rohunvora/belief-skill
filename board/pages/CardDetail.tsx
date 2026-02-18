@@ -298,14 +298,15 @@ export function CardDetail({ id }: { id: string }) {
           {call.thesis}
         </h1>
 
-        {/* Source quote — the voice behind the claim, from chain */}
+        {/* Source quote — the voice behind the claim, first step of chain */}
         {(() => {
           const chain = extractChainDisplay(call);
-          if (!chain.source_said) return null;
+          const firstStep = chain.steps[0];
+          if (!firstStep || !call.source_handle) return null;
           return (
             <div className="border-l-2 border-gray-300 pl-3 mb-3">
               <p className="text-sm text-gray-600 italic leading-relaxed">
-                &ldquo;{chain.source_said}&rdquo;
+                &ldquo;{firstStep}&rdquo;
               </p>
               {call.source_handle && (
                 <p className="text-xs text-gray-500 mt-1">
@@ -476,31 +477,27 @@ export function CardDetail({ id }: { id: string }) {
           </p>
         )}
 
-        {/* Derivation chain — auditable 5-step trail */}
+        {/* Derivation chain — greentext steps */}
         {(() => {
           const chain = extractChainDisplay(call);
-          if (!chain.hasChain) return null;
-          const steps = [
-            { label: "Source said", value: chain.source_said },
-            { label: "Implies", value: chain.implies },
-            { label: "Searching for", value: chain.searching_for },
-            { label: "Found because", value: chain.found_because },
-            { label: "Chose over", value: chain.chose_over },
-          ].filter((s) => s.value);
-          if (steps.length === 0) return null;
+          if (!chain.hasChain || chain.steps.length === 0) return null;
           return (
-            <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3 space-y-1.5">
+            <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3 space-y-1">
               <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
                 Derivation Chain
               </div>
-              {steps.map((step, i) => (
-                <div key={i} className="text-xs text-gray-600">
-                  <span className="font-medium text-gray-700">
-                    {step.label}:
-                  </span>{" "}
-                  {step.value}
+              {chain.steps.map((step, i) => (
+                <div key={i} className="text-xs text-gray-500 font-mono leading-relaxed">
+                  <span className="text-gray-400 select-none">&gt; </span>
+                  {step}
                 </div>
               ))}
+              {chain.chose_over && (
+                <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
+                  <span className="font-medium text-gray-600">Considered alternatives:</span>{" "}
+                  {chain.chose_over}
+                </div>
+              )}
             </div>
           );
         })()}

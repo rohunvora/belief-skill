@@ -120,11 +120,8 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
   const dirArrow = isLong ? "▲" : "▼";
   const dirBadgeBg = isLong ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700";
 
-  // Thesis text: for sourced calls use source_said, for originals use thesis
+  // Derivation: greentext steps or fallback to thesis
   const chain = extractChainDisplay(call);
-  const thesisText = (chain.source_said && call.source_handle)
-    ? chain.source_said
-    : call.thesis;
 
   return (
     <article
@@ -150,10 +147,20 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
         <span className="text-[11px] text-gray-400">· {timeAgo(call.created_at)}</span>
       </div>
 
-      {/* Row 2: Thesis — the main content */}
-      <p className="text-[15px] text-gray-900 leading-snug line-clamp-2 mb-2">
-        {thesisText}
-      </p>
+      {/* Row 2: Greentext derivation steps or thesis fallback */}
+      {chain.hasChain && chain.steps.length > 0 ? (
+        <div className="mb-2 space-y-0.5">
+          {chain.steps.map((step, i) => (
+            <p key={i} className="text-[14px] text-gray-800 leading-snug">
+              <span className="text-gray-400 mr-1">&gt;</span>{step}
+            </p>
+          ))}
+        </div>
+      ) : (
+        <p className="text-[15px] text-gray-900 leading-snug line-clamp-2 mb-2">
+          {call.thesis}
+        </p>
+      )}
 
       {/* Row 3: Ticker badge + price + P&L / status */}
       <div className="flex items-center justify-between">
