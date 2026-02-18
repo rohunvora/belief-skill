@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { calls as allCalls } from "../mock-data";
 import { CallCard } from "../components/CallCard";
+import { useBoardData } from "../hooks/useData";
 
 function generateVerificationCode(): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -14,9 +14,12 @@ function generateVerificationCode(): string {
 export function Claim({ handle }: { handle: string }) {
   const [copied, setCopied] = useState(false);
   const [verificationCode] = useState(() => generateVerificationCode());
+  const { getCallsBySourceHandle, loading } = useBoardData();
+
+  if (loading) return <div className="text-center text-gray-500 py-8">Loading...</div>;
 
   // Find calls that attribute this handle as a source
-  const attributedCalls = allCalls.filter((c) => c.source_handle === handle);
+  const attributedCalls = getCallsBySourceHandle(handle);
 
   if (attributedCalls.length === 0) {
     return (
@@ -27,7 +30,7 @@ export function Claim({ handle }: { handle: string }) {
         </p>
         <a
           href="#/"
-          className="text-green-600 hover:text-green-700 text-sm font-medium"
+          className="text-gray-600 hover:text-gray-900 text-sm font-medium"
         >
           Back to feed
         </a>
@@ -102,13 +105,13 @@ export function Claim({ handle }: { handle: string }) {
       </div>
 
       {/* CTA section */}
-      <div className="border border-green-200 bg-green-50 rounded-lg p-6 mb-6">
+      <div className="border border-gray-200 bg-gray-50 rounded-lg p-6 mb-6">
         <h2 className="text-lg font-bold text-gray-900 mb-2">Claim These Calls</h2>
         <p className="text-sm text-gray-600 mb-4">
           Verify your identity via Twitter to claim your track record. Once verified,
           all calls citing @{handle} will be linked to your profile.
         </p>
-        <button className="w-full py-2.5 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors mb-4">
+        <button className="w-full py-2.5 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition-colors mb-4">
           Claim These Calls
         </button>
 
@@ -128,7 +131,7 @@ export function Claim({ handle }: { handle: string }) {
               {copied ? "Copied" : "Copy"}
             </button>
           </div>
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-gray-500 mt-2">
             Post this code in a tweet from @{handle} so we can verify ownership.
           </p>
         </div>
@@ -143,7 +146,7 @@ export function Claim({ handle }: { handle: string }) {
           <div className="flex items-center gap-2 mb-1">
             <span className="text-lg font-bold text-gray-900">@{handle}</span>
             <svg
-              className="w-4 h-4 text-blue-500"
+              className="w-4 h-4 text-gray-500"
               viewBox="0 0 20 20"
               fill="currentColor"
             >

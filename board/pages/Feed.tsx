@@ -1,49 +1,63 @@
 import React, { useState, useMemo } from "react";
 import type { Call } from "../types";
-import { calls } from "../mock-data";
 import { CallCard } from "../components/CallCard";
 import { useLivePrices } from "../hooks/useLivePrices";
+import { useBoardData } from "../hooks/useData";
+import { formatWatchers } from "../utils";
 
 type Tab = "hot" | "new" | "resolved";
 
 export function Feed() {
   const [activeTab, setActiveTab] = useState<Tab>("hot");
+  const { calls, loading } = useBoardData();
   const livePrices = useLivePrices(calls);
 
-  const filteredCalls = useMemo(() => {
-    let result: Call[];
+  const activeCalls = useMemo(
+    () => calls.filter((c) => c.status === "active"),
+    [calls]
+  );
+  const resolvedCalls = useMemo(
+    () => calls.filter((c) => c.status !== "active"),
+    [calls]
+  );
+  const totalWatchers = useMemo(
+    () => calls.reduce((s, c) => s + c.watchers, 0),
+    [calls]
+  );
 
+  const filteredCalls = useMemo(() => {
     switch (activeTab) {
       case "hot":
-        result = calls
-          .filter((c) => c.status === "active")
-          .sort((a, b) => b.watchers - a.watchers);
-        break;
+        return [...activeCalls].sort((a, b) => b.watchers - a.watchers);
       case "new":
-        result = calls
-          .filter((c) => c.status === "active")
-          .sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime()
-          );
-        break;
+        return [...activeCalls].sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() -
+            new Date(a.created_at).getTime()
+        );
       case "resolved":
-        result = calls.filter((c) => c.status !== "active");
-        break;
+        return resolvedCalls;
     }
+  }, [activeTab, activeCalls, resolvedCalls]);
 
-    return result;
-  }, [activeTab]);
+  if (loading)
+    return (
+      <div className="text-center text-gray-400 py-8">Loading...</div>
+    );
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "hot", label: "Hot" },
+    { key: "hot", label: `Hot (${activeCalls.length})` },
     { key: "new", label: "New" },
-    { key: "resolved", label: "Resolved" },
+    { key: "resolved", label: `Resolved (${resolvedCalls.length})` },
   ];
 
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Summary line — context for any screenshot */}
+      <div className="text-xs text-gray-500 mb-3">
+        {calls.length} calls · {formatWatchers(totalWatchers)} watching
+      </div>
+
       {/* Tabs */}
       <div className="flex gap-1 mb-5 border-b border-gray-200">
         {tabs.map((tab) => (
@@ -74,7 +88,7 @@ export function Feed() {
           />
         ))}
         {filteredCalls.length === 0 && (
-          <p className="text-gray-400 text-sm text-center py-8">
+          <p className="text-gray-500 text-sm text-center py-8">
             No calls to show.
           </p>
         )}

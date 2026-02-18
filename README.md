@@ -89,9 +89,13 @@ No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexSc
 ```
 SKILL.md              the skill prompt (start here)
 scripts/adapters/     live market API connectors
-scripts/track.ts      belief tracking and portfolio
 references/           context loaded by SKILL.md when needed
 tests/                scoring, smoke, e2e, golden tests
+board/                belief.board web app
+  server.ts           Bun.serve() — API + server-rendered cards/permalinks
+  db.ts               SQLite store (single source of truth)
+  seed.ts             sample data for development
+  templates/          server-rendered HTML for OG previews
 ```
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.

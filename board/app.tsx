@@ -7,6 +7,8 @@ import { NewCall } from "./pages/NewCall";
 import { Leaderboard } from "./pages/Leaderboard";
 import { Profile } from "./pages/Profile";
 import { Claim } from "./pages/Claim";
+import { HowItWorks } from "./pages/HowItWorks";
+import { BoardDataProvider } from "./hooks/useData";
 
 function parseHash(): { path: string; params: Record<string, string> } {
   const hash = window.location.hash.slice(1) || "/";
@@ -26,6 +28,10 @@ function matchRoute(path: string): React.ReactNode {
 
   if (path === "/leaderboard") {
     return <Leaderboard />;
+  }
+
+  if (path === "/how-it-works") {
+    return <HowItWorks />;
   }
 
   const profileMatch = path.match(/^\/u\/(.+)$/);
@@ -54,10 +60,12 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-      <Header />
-      <main className="px-4 py-6">{matchRoute(path)}</main>
-    </div>
+    <BoardDataProvider>
+      <div className="min-h-screen bg-gray-50" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+        <Header />
+        <main className="px-4 py-6">{matchRoute(path)}</main>
+      </div>
+    </BoardDataProvider>
   );
 }
 

@@ -259,3 +259,40 @@ Three abstractions identified:
 24. **Cross-check as the de-biasing mechanism.** Without cross-check, shape classification would just route to the natural home and stop. The cross-check forces an explicit comparison between the home pick and the best from another class, on the same metric. This is where the skill catches cases where a non-obvious instrument class actually wins (e.g., perps beating shares for a gold thesis because of leverage at low funding cost).
 
 25. **Disqualifiers separate from the metric.** Thesis contradiction, liquidity failure, already-priced-in, and time mismatch are binary gates, not gradients. An illiquid instrument with a perfect metric score is still untradeable. Keeping these as hard disqualifiers prevents the metric from accidentally surfacing instruments that can't be executed.
+
+## 2026-02-17: Session 6 — Board Frontend + Architecture Consolidation
+
+### Context
+Merged `belief-board-v4` branch (full React app with 7 screens, live prices, Tailwind, HMR) from another machine. Collapsed 3 overlapping systems (JSONL store, dark card generator, paper tracker) into SQLite-backed board as single source of truth.
+
+### What we built
+- **board/db.ts** — SQLite store with `trade_data TEXT` blob pattern. Queryable columns for feed/filtering (thesis, ticker, direction, entry_price, status, caller_id), JSON blob for detail-only fields (reasoning, edge, price_ladder, derivation, source_quote, alternative, counter, scan_source). `packTradeData()` / `unpackRow()` for roundtripping.
+- **board/server.ts** — Rewired to SQLite. API routes in `routes` object (GET/POST /api/takes, GET /api/users, GET /api/prices), SPA catch-all via HTML import (`"/*": index`), server-rendered routes in `fetch` handler (/t/:id → permalink, /t/:id/card → shareable card). Live price fetching from Yahoo Finance + Hyperliquid with 30s cache.
+- **board/seed.ts** — Migrates mock-data.ts into SQLite with full validation (count, date range, sample records, blob roundtrip).
+- **board/hooks/useData.ts** — BoardDataProvider React context replacing all mock-data imports. Fetches /api/takes + /api/users once, provides getCallById, getUserById, getUserByHandle, getCallsByUser, getCallsBySourceHandle, refetch.
+- **board/templates/card.ts** — 1200x675 light-mode shareable card. Auto-sized font (28-44px by claim length). Shows PnL if current_price exists. Brand: "belief.board".
+- **board/templates/permalink.ts** — Server-rendered HTML with OG meta tags (og:title, og:description, twitter:card). Mobile-first (max-width: 640px). Shows source quote + reasoning if available.
+- Updated all 6 React pages to use BoardDataProvider instead of mock-data imports.
+- Deleted `scripts/db.ts`, `scripts/card.ts`, `scripts/track.ts`, `data/beliefs.jsonl`.
+
+### Key architecture decision
+**trade_data blob pattern.** Detail fields (reasoning, edge, price_ladder, derivation, source_quote, alternative, counter, scan_source) are serialized into a single JSON TEXT column. The feed only needs thesis, ticker, direction, entry_price, status — those stay as queryable columns. Detail fields are only needed on the permalink/detail page. This keeps the schema lean and avoids 8+ nullable columns that would mostly be NULL.
+
+### Bug fixed
+**White screen after React refactor.** The SPA catch-all in the `fetch` handler was intercepting Bun's JS/CSS bundle requests, returning index.html for asset URLs. Fix: moved `"/*": index` back into `routes` object (Bun handles bundling for routes, not fetch), kept `fetch` handler only for /t/:id server-rendered routes.
+
+### Strategic context gathered
+- Researched moltbook.com's agent onboarding pattern (skill.md as distribution channel)
+- Discussed self-sustaining flywheel design with Frank
+- Identified 7 blindspots (outcome tracking, CT sharing patterns, cold start, legal, competitive, revenue economics, card design)
+- Defined 3 roles: Caller, Curator, Verifier
+- Defined graph model: links between takes (inspired by, agrees with, contradicts)
+- Updated HANDOFF.md with full technical + strategic picture
+
+### Known issues
+- Board runs on localhost:4000 only — not deployed yet
+- Comments table not in SQLite yet (hardcoded to empty array)
+- mock-data.ts still exists but nothing imports it (only used by seed.ts for migration)
+- Card design needs CT research to make screenshot-worthy
+- No curator submission flow yet
+- No skill → board API integration yet (skill doesn't auto-POST to board)

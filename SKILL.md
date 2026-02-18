@@ -76,17 +76,31 @@ If the subject is a person, brand, or community that isn't directly investable: 
 
 ## Derivation Chain
 
-**When input is sourced:** BEFORE searching, log: source quote → mechanism → what you're searching for. AFTER finding the ticker, append why it matches. This is the reasoning trail, not a post-hoc summary. Without it, sources get credited for trades they never made.
+**Mandatory for all sourced calls.** BEFORE searching, log the chain as a structured object. AFTER finding the ticker, append why it matches. This is the reasoning trail, not a post-hoc summary. Without it, sources get credited for trades they never made.
 
-**Attribution tier** — mechanically determined by the "Source said:" step of the chain:
+**Quality floor:** No card without `source_said` + `found_because`. If you can't fill both, the call is not ready.
 
-| "Source said:" contains | Tier | Card shows |
+**Structured format** (output as JSON after the card template):
+
+```json
+{
+  "source_said": "[hook — the fragment a listener would remember and repeat. ≤80 chars, verbatim from source's words]",
+  "implies": "[causal mechanism, lowercase, use → for causation]",
+  "searching_for": "[what you're about to look for]",
+  "found_because": "[why this ticker matches the mechanism]",
+  "chose_over": "[why this ticker over the alternatives — name runners-up and why they lost]"
+}
+```
+
+**Attribution tier** — mechanically determined by the `source_said` field:
+
+| `source_said` contains | Tier | Card shows |
 |------------------------|------|------------|
 | A ticker symbol (e.g. "buy LAES", "short GOOG") | `direct` | "@source's call" |
 | A market-specific causal claim, no ticker (e.g. "quantum selloff was mechanical", "GLP-1 distribution is the bottleneck") | `derived` | "@source's thesis · routed by" |
 | A framework or observation only, no market claim (e.g. "AI commoditizes interface layers", "everyone's on Ozempic") | `inspired` | "inspired by @source · routed by" |
 
-For format, examples, and classification rules: load `references/derivation-chain.md`.
+For examples and classification rules: load `references/derivation-chain.md`.
 
 ---
 
@@ -383,6 +397,17 @@ Alt: [TICKER] $[price] [dir] ([1 sentence])
 ```
 
 **≤10 lines.** The card is a spec sheet, not a story.
+
+**Derivation chain (sourced calls only):**
+After the card, include the structured chain as JSON:
+```json
+{
+  "source_said": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM? The answer is no.",
+  "implies": "Enterprise data sovereignty fears → shift from cloud to on-prem AI infrastructure",
+  "searching_for": "On-prem AI server companies with accelerating backlog, sold off on margin fears",
+  "found_because": "Dell shipped $10B AI servers H1, backlog $18.4B (150% YoY), stock -30% from highs"
+}
+```
 
 **"What This Means" block (casual inputs only):**
 After the card, add 2-3 plain language lines:

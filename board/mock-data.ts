@@ -1,4 +1,4 @@
-import type { Call, User, Comment, LeaderboardEntry, PriceLadderStep } from "./types";
+import type { Call, User, Comment, LeaderboardEntry, PriceLadderStep, DerivationChain } from "./types";
 
 export const users: User[] = [
   {
@@ -103,6 +103,13 @@ export const calls: Call[] = [
     votes: 67,
     watchers: 3400,
     comments: 24,
+    derivation: {
+      source_said: "On-prem is back.",
+      implies: "enterprise data sovereignty fears → on-prem AI infrastructure spend",
+      searching_for: "On-prem AI server companies with accelerating backlog, sold off on margin fears",
+      found_because: "Dell shipped $10B AI servers H1, backlog $18.4B (150% YoY), stock -30% from highs",
+      chose_over: "HPE (lower AI backlog growth), SMCI (accounting risk) — Dell has the enterprise relationship + backlog proof",
+    },
     source_quote: "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no. That's obvious.",
     reasoning: "Dell shipped $10B in AI servers in H1 FY2026 alone. Revenue guidance raised to $111.7B (+17% YoY). The stock is at $117 \u2014 30% below its 52-week high of $168 \u2014 while its AI backlog ($18.4B) is at all-time records growing 150% YoY. The market is punishing DELL on margin compression fears while ignoring that the on-prem enterprise shift is just beginning.",
     edge: "Stock sold off 30% while fundamentals accelerated. Market is pricing margin pressure from commodity servers, not the enterprise on-prem security premium \u2014 where enterprises will pay more to keep data in-house.",
@@ -140,6 +147,13 @@ export const calls: Call[] = [
     votes: 31,
     watchers: 890,
     comments: 9,
+    derivation: {
+      source_said: "100% of code is AI.",
+      implies: "ai coding is universal dependency → tollbooth owner collects rent",
+      searching_for: "Companies owning the AI coding tollbooth (IDE, hosting, model API), trading below historical multiples",
+      found_because: "MSFT owns VS Code + GitHub + Copilot (42% share) + Azure + OpenAI stake, at 25.2x earnings vs 33.8x 3yr avg",
+      chose_over: "GOOG (competing but no IDE lock-in), ADBE (creative not code) — MSFT owns the full stack: IDE + host + model",
+    },
     source_quote: "100% of code is AI. Five SWEs independently confirmed they write zero human code post-Feb 5. Every one of those engineers runs their code through MSFT's tollbooth: VS Code, GitHub, Copilot, Azure, OpenAI.",
     reasoning: "GitHub Copilot has 20M+ users, 42% market share, and 90% of the Fortune 100. Copilot alone now generates more revenue than GitHub did when MSFT acquired it for $7.5B. MSFT trades at 25.2x earnings \u2014 20% below its 3-year average of 33.8x. At its historical average P/E, MSFT is a $530 stock \u2014 32% upside before a single dollar of incremental AI revenue.",
     edge: "Market is punishing MSFT for capex spending while ignoring that the AI coding market grew from $4.9B to $7.4B in a single year, projected to hit $30B by 2032. MSFT owns 42% of it.",
@@ -177,6 +191,13 @@ export const calls: Call[] = [
     votes: 18,
     watchers: 1400,
     comments: 7,
+    derivation: {
+      source_said: "Quantum selloff was mechanical, not fundamental.",
+      implies: "quant unwind sold public quantum below private valuations → reversion trade",
+      searching_for: "Public quantum companies trading below comparable private round valuations, with upcoming catalysts",
+      found_because: "IonQ at $12.3B after -60% drawdown, stronger gov contracts than Quantinuum ($10B private) or PsiQuantum ($7B private)",
+      chose_over: "RGTI (higher beta but no DARPA Stage B), QBTS (thinner contract book) — IonQ has strongest gov pipeline",
+    },
     source_quote: "Bloomberg confirmed quants suffered their worst drawdown since October in the first two weeks of January, down 2.8% per UBS prime book estimates. Goldman prime data showed systematic long-short managers in their worst 10-day stretch simultaneously. This wasn't a story about quantum fundamentals deteriorating — it was forced selling by systematic strategies rotating out of last year's hottest momentum factor.",
     reasoning: "The public-private disconnect is real and measurable. Quantinuum closed at $10B, PsiQuantum raised at $7B from BlackRock and Nvidia's venture arm — both rising. Meanwhile IonQ trades at $12.3B after a 60% drawdown, with a stronger government contract book than either private peer ($100M+ USAF contracts, DARPA QBI Stage B selection). Rigetti at $5.3B is cheaper than PsiQuantum's private round despite having live hardware and revenue.",
     edge: "Catalyst calendar is dense: DARPA Stage C selections in 2026, EU Quantum Grand Challenge funding, Xanadu's $3.1B SPAC closing Q1 2026 repricing every public comp. The US government is discussing taking equity stakes in quantum companies — a structure that puts a floor under valuations.",
@@ -213,6 +234,13 @@ export const calls: Call[] = [
     votes: 12,
     watchers: 780,
     comments: 3,
+    derivation: {
+      source_said: "Michael Grimes is back at Morgan Stanley. The IPO factory restarts.",
+      implies: "ipo wave is consensus for MS/GS → non-obvious play is pure-play advisory",
+      searching_for: "Boutique advisory firms with pure fee exposure to IPO/M&A volume, better entry than diversified banks",
+      found_because: "EVR: pure advisory, 50%+ margins, -17% from 52W high vs MS/GS already at consensus targets",
+      chose_over: "MS (already at consensus target, diversified), GS (same) — EVR is pure advisory, 50%+ margins, better entry",
+    },
     source_quote: "Michael Grimes walking back into Morgan Stanley in February 2026 is the signal the IPO factory restarts at full capacity. Goldman CEO Solomon is calling 2026 a 'record-breaking year for M&A,' SEC Chair Atkins is coordinating what they're both calling the 'Great IPO Wave.' Pipeline is real: SpaceX ($1.5T), Databricks ($134B), Stripe ($120B), potentially OpenAI and Anthropic.",
     reasoning: "MS at $171 and GS at $905 have already priced in a strong 2026. MS consensus target is $180-195 — that's 5-14% upside. IPO underwriting is one revenue stream among many. The non-obvious play is Evercore: pure-play advisory, no trading desk, no consumer banking diluting the story. Fee-based revenue at 50%+ margins. At $322, it's 17% below its 52W high of $389 and below its 50-day MA — a better entry than MS.",
     edge: "When IPO volume surges, boutique advisors get pulled into every deal as co-advisors and fairness opinion providers. EVR has more leverage to the thesis than the diversified banks, with a better technical entry.",
@@ -261,7 +289,13 @@ export const calls: Call[] = [
     ],
     alternative: "MCO $426 long (purer ratings, but 33x P/E + earnings tomorrow)",
     scan_source: "nicbstme AI vs Financial Data (Feb 2026)",
-    derivation: 'Source said: "When the interface layer gets commoditized, the scarce inputs get more valuable"\nImplies: Companies whose moat is proprietary data creation benefit from AI disruption of terminals\nSearched: Financial data companies with regulatory lock-in or benchmark ownership, recently sold off\nFound SPGI because: NRSRO-certified credit ratings + $7T indexed to S&P indices — scarce inputs AI can\'t replicate — but sold off 29% alongside FactSet',
+    derivation: {
+      source_said: "When the interface layer gets commoditized, the scarce inputs get more valuable",
+      implies: "proprietary data creators benefit from ai disrupting terminals",
+      searching_for: "Financial data companies with regulatory lock-in or benchmark ownership, recently sold off",
+      found_because: "NRSRO-certified credit ratings + $7T indexed to S&P indices — scarce inputs AI can't replicate — but sold off 29% alongside FactSet",
+      chose_over: "MCO (purer ratings but 33x P/E + earnings risk), FactSet short (already -57%, obvious) — SPGI has ratings + indices, dual moat",
+    },
   },
   {
     id: "c_laes_long",
@@ -286,6 +320,13 @@ export const calls: Call[] = [
     votes: 5,
     watchers: 1200,
     comments: 8,
+    derivation: {
+      source_said: "LAES. PQC mandate, new semiconductor category.",
+      implies: "government pqc mandate → new chip demand category",
+      searching_for: "Pure-play PQC semiconductor companies with government contract pipeline",
+      found_because: "LAES is the direct ticker call — source named it explicitly as the PQC mandate beneficiary",
+      chose_over: "direct call — source named the ticker explicitly",
+    },
     scan_source: "marginsmall (Feb 2026)",
   },
 ];

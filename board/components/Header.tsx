@@ -20,20 +20,31 @@ export function Header() {
           belief.board
         </a>
 
-        {/* Search */}
-        <div className="flex-1 max-w-md">
-          <input
-            type="text"
-            placeholder="Search calls, tickers, people..."
-            className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-          />
-        </div>
-
         {/* Right section */}
         <div className="flex items-center gap-3 shrink-0">
+          <a
+            href="#/leaderboard"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/leaderboard");
+            }}
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors hidden sm:inline"
+          >
+            Leaderboard
+          </a>
+          <a
+            href="#/how-it-works"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/how-it-works");
+            }}
+            className="text-sm text-gray-500 hover:text-gray-700 transition-colors hidden sm:inline"
+          >
+            How it works
+          </a>
           <button
             onClick={() => navigate("/call/new")}
-            className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+            className="px-3 py-1.5 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition-colors"
           >
             Make Your Call
           </button>

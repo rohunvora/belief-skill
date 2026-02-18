@@ -17,9 +17,15 @@ The skill is `SKILL.md` + `scripts/` + `references/`. Everything else is develop
 **Core files:**
 - `SKILL.md` — the entire skill prompt
 - `scripts/adapters/` — live market API adapters (Robinhood, Kalshi, Hyperliquid, Bankr, Angel)
-- `scripts/track.ts` — belief tracking (currently disabled in skill, kept for future use)
 - `references/` — conditional reference content loaded by SKILL.md when needed
 - `tests/` — scoring tests, smoke tests, e2e routing, golden test summaries
+- `board/` — belief.board web app (React + Bun.serve + SQLite)
+  - `board/server.ts` — Bun.serve() entry, API routes, server-rendered cards/permalinks
+  - `board/db.ts` — bun:sqlite schema + queries (the single source of truth for stored calls)
+  - `board/types.ts` — Call, User types
+  - `board/templates/` — server-rendered HTML (card.ts, permalink.ts) for OG previews
+  - `board/seed.ts` — insert sample data: `bun run board/seed.ts`
+  - Start with: `bun run board/server.ts` (port 4000)
 
 Default to using Bun instead of Node.js.
 
