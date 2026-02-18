@@ -76,7 +76,7 @@ export function Feed() {
       </div>
 
       {/* Card list */}
-      <div className="flex flex-col gap-3">
+      <div className="divide-y divide-gray-100">
         {filteredCalls.map((call) => (
           <CallCard
             key={call.id}

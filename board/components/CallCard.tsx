@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import type { Call } from "../types";
 import { extractChainDisplay } from "../types";
 import type { LivePriceData } from "../hooks/useLivePrices";
 import { useBoardData } from "../hooks/useData";
-import { timeAgo, formatPrice, formatWatchers, computePnl } from "../utils";
+import { timeAgo, formatPrice, computePnl } from "../utils";
 
 /** Avatar circle — uses twitter pfp if available, falls back to letter */
 export function Avatar({
@@ -58,6 +58,37 @@ export function Avatar({
   );
 }
 
+/** Inline source-site icon — SVG for known domains, favicon fallback */
+function SourceIcon({ url }: { url: string }) {
+  const size = "w-3.5 h-3.5 shrink-0";
+  let hostname: string;
+  try { hostname = new URL(url).hostname.replace("www.", ""); } catch { return null; }
+
+  if (hostname.includes("youtube.com") || hostname.includes("youtu.be")) {
+    return (
+      <svg className={size} viewBox="0 0 24 24" fill="#FF0000">
+        <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+      </svg>
+    );
+  }
+  if (hostname.includes("x.com") || hostname.includes("twitter.com")) {
+    return (
+      <svg className={size} viewBox="0 0 24 24" fill="#000000">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+    );
+  }
+  if (hostname.includes("substack.com")) {
+    return (
+      <svg className={size} viewBox="0 0 24 24" fill="#FF6719">
+        <path d="M22.54 6.42H1.46V4.2h21.08zM1.46 10.18v2.22h21.08v-2.22zM1.46 16.12v5.66l10.54-5.66 10.54 5.66v-5.66z"/>
+      </svg>
+    );
+  }
+  // Fallback: Google favicon service
+  return <img src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`} className={`${size} rounded-sm`} alt={hostname} />;
+}
+
 /** Re-export formatPrice for consumers that import from CallCard */
 export { formatPrice } from "../utils";
 
@@ -68,16 +99,14 @@ interface CallCardProps {
 }
 
 export function CallCard({ call, onClick, livePrice }: CallCardProps) {
-  const { getUserById, getUserByHandle } = useBoardData();
-  const [linkCopied, setLinkCopied] = useState(false);
+  const { getUserById } = useBoardData();
   const caller = getUserById(call.caller_id);
   const callerHandle = caller?.handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
-  const displayUser = getUserByHandle(displayHandle);
 
   const isResolved = call.status === "resolved";
-  const isExpired = call.status === "expired";
   const isClosed = call.status === "closed";
+  const isExpired = call.status === "expired";
 
   // P&L: resolved uses resolve_pnl, active uses live price
   const pnl = isResolved
@@ -86,226 +115,82 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
       ? computePnl(call.entry_price, livePrice.currentPrice, call.direction)
       : null;
 
-  const isWinning = pnl != null && pnl >= 0;
-  const isLosing = pnl != null && pnl < 0;
+  // Direction styling
+  const isLong = call.direction === "long";
+  const dirArrow = isLong ? "▲" : "▼";
+  const dirBadgeBg = isLong ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700";
 
-  // Left border color based on status + performance
-  const borderAccent = isResolved
-    ? isWinning
-      ? "border-l-green-500"
-      : "border-l-red-500"
-    : isExpired
-      ? "border-l-gray-300"
-      : isClosed
-        ? "border-l-gray-400"
-        : isWinning
-          ? "border-l-green-400"
-          : isLosing
-            ? "border-l-red-400"
-            : "border-l-gray-200";
-
-  const copyLink = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const url = `${window.location.origin}${window.location.pathname}#/call/${call.id}`;
-    navigator.clipboard.writeText(url).then(() => {
-      setLinkCopied(true);
-      setTimeout(() => setLinkCopied(false), 1500);
-    });
-  };
+  // Thesis text: for sourced calls use source_said, for originals use thesis
+  const chain = extractChainDisplay(call);
+  const thesisText = (chain.source_said && call.source_handle)
+    ? chain.source_said
+    : call.thesis;
 
   return (
     <article
-      className={`border border-gray-200 border-l-[3px] ${borderAccent} rounded-lg p-4 bg-white hover:border-gray-300 transition-colors cursor-pointer ${isExpired ? "opacity-60" : ""}`}
+      className={`py-3 cursor-pointer ${isExpired ? "opacity-60" : ""}`}
       onClick={onClick}
     >
-      {/* Row 1: WHO — identity first */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-2">
-          <Avatar handle={displayHandle} size="md" />
-          <div>
-            <div className="flex items-center gap-1.5">
-              <a
-                href={`#/u/${displayHandle}`}
-                className="text-sm font-semibold text-gray-900 hover:underline"
-                onClick={(e) => e.stopPropagation()}
-              >
-                @{displayHandle}
-              </a>
-              {/* Twitter/X external link */}
-              {displayUser?.twitter && (
-                <a
-                  href={`https://x.com/${displayUser.twitter}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-gray-600"
-                  onClick={(e) => e.stopPropagation()}
-                  title={`@${displayUser.twitter} on X`}
-                >
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                  </svg>
-                </a>
-              )}
-              {call.source_handle && call.source_handle !== callerHandle && (
-                <span className="text-xs text-gray-500">
-                  via{" "}
-                  <a
-                    href={`#/u/${callerHandle}`}
-                    className="hover:underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    @{callerHandle}
-                  </a>
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-        <span className="text-xs text-gray-500" title={call.created_at}>
-          {timeAgo(call.created_at)}
-        </span>
-      </div>
-
-      {/* Row 2: WHAT — human voice for sourced calls, thesis for originals */}
-      {(() => {
-        const chain = extractChainDisplay(call);
-        if (chain.source_said && call.source_handle) {
-          return (
-            <>
-              <p
-                className="text-base font-semibold text-gray-900 leading-snug mb-1 line-clamp-2"
-                title={call.source_quote || chain.source_said}
-              >
-                &ldquo;{chain.source_said}&rdquo;
-              </p>
-              {/* Row 3: bridge — the reasoning trail from mechanism → evidence → ticker */}
-              {chain.implies && (
-                <p className="text-xs text-gray-500 leading-snug mb-2 line-clamp-2 lowercase">
-                  {chain.implies} → <span className="font-semibold text-gray-700 normal-case">{call.ticker}</span>
-                  {chain.found_because && (
-                    <span className="text-gray-400"> — {chain.found_because}</span>
-                  )}
-                </p>
-              )}
-            </>
-          );
-        }
-        // Original calls: thesis as headline (current behavior)
-        return (
-          <p className="text-base font-semibold text-gray-900 leading-snug mb-2 line-clamp-2">
-            {call.thesis}
-          </p>
-        );
-      })()}
-
-      {/* Row 4: HOW TO PROFIT — trade data with P&L as punchline */}
-      <div className="flex items-baseline justify-between mb-2">
-        <div className="flex items-baseline gap-2">
+      {/* Row 1: Avatar + @handle + source icon + time */}
+      <div className="flex items-center gap-2 mb-1">
+        <Avatar handle={displayHandle} size="md" />
+        <span className="text-[15px] font-semibold text-gray-900">@{displayHandle}</span>
+        {call.source_url && (
           <a
-            href={`#/?ticker=${call.ticker}`}
-            className="text-sm font-bold text-gray-700 hover:underline"
+            href={call.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
+            className="opacity-60 hover:opacity-100 transition-opacity"
+            title={call.source_url}
           >
-            {call.ticker}
+            <SourceIcon url={call.source_url} />
           </a>
-          <span
-            className={`text-xs font-semibold ${
-              call.direction === "long" ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {call.direction === "long" ? "Long" : "Short"}
-          </span>
-          <span className="text-xs text-gray-500">
-            {formatPrice(call.entry_price)}
-          </span>
-          {call.instrument && (
-            <span className="text-xs text-gray-500">{call.instrument}</span>
-          )}
-        </div>
-
-        {/* P&L — the punchline, not the headline */}
-        {pnl != null && (
-          <span
-            className={`text-xl font-extrabold tabular-nums tracking-tight ${
-              pnl >= 0 ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {pnl >= 0 ? "+" : ""}
-            {pnl.toFixed(1)}%
-          </span>
         )}
-
-        {isExpired && pnl == null && (
-          <span className="text-xs font-bold text-gray-500">EXPIRED</span>
-        )}
-        {isClosed && pnl == null && (
-          <span className="text-xs font-bold text-gray-500">CLOSED</span>
-        )}
+        <span className="text-[11px] text-gray-400">· {timeAgo(call.created_at)}</span>
       </div>
 
-      {/* Row 4: HOW TO LEARN — reasoning breadcrumb with source link */}
-      {call.scan_source && (
-        <p className="text-xs text-gray-500 mb-2 truncate">
-          {call.source_url ? (
-            <a
-              href={call.source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:underline"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {call.scan_source}
-            </a>
-          ) : (
-            call.scan_source
-          )}
-          {call.reasoning && (
-            <span className="text-gray-400"> → </span>
-          )}
-          {call.reasoning && (
-            <span>{call.reasoning.length > 80 ? call.reasoning.slice(0, 80) + "..." : call.reasoning}</span>
-          )}
-        </p>
-      )}
-      {!call.scan_source && call.reasoning && (
-        <p className="text-xs text-gray-500 mb-2 truncate">
-          {call.reasoning.length > 100 ? call.reasoning.slice(0, 100) + "..." : call.reasoning}
-        </p>
-      )}
+      {/* Row 2: Thesis — the main content */}
+      <p className="text-[15px] text-gray-900 leading-snug line-clamp-2 mb-2">
+        {thesisText}
+      </p>
 
-      {/* Social proof footer + copy link */}
-      <div className="flex items-center justify-between text-xs text-gray-500">
+      {/* Row 3: Ticker badge + price + P&L / status */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {call.watchers > 0 && (
-            <span className="font-medium">
-              {formatWatchers(call.watchers)} watching
+          <span className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-1.5 py-0.5`}>
+            {dirArrow} {call.ticker}
+          </span>
+          <span className="text-xs text-gray-400">{formatPrice(call.entry_price)}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {pnl != null && (
+            <span
+              className={`text-sm font-bold tabular-nums ${
+                pnl >= 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%
             </span>
           )}
           {isResolved && call.resolve_pnl != null && (
             <span
-              className={`font-bold px-1.5 py-0.5 rounded text-[11px] ${
+              className={`text-[10px] font-bold px-1 py-0.5 rounded ${
                 call.resolve_pnl >= 0
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-700"
               }`}
             >
-              {call.resolve_pnl >= 0 ? "CALLED IT" : "MISSED"}
+              {call.resolve_pnl >= 0 ? "HIT" : "MISS"}
             </span>
           )}
-        </div>
-        <button
-          onClick={copyLink}
-          className="text-gray-400 hover:text-gray-600 transition-colors"
-          title="Copy link"
-        >
-          {linkCopied ? (
-            <span className="text-[11px]">Copied</span>
-          ) : (
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
+          {isExpired && pnl == null && (
+            <span className="text-[10px] font-bold text-gray-400">EXPIRED</span>
           )}
-        </button>
+          {isClosed && pnl == null && (
+            <span className="text-[10px] font-bold text-gray-400">CLOSED</span>
+          )}
+        </div>
       </div>
     </article>
   );
