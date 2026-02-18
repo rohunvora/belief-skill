@@ -66,6 +66,28 @@ export function renderPermalink(call: Call): string {
     chainHtml = `<div class="chain-section"><div class="chain-header">Derivation Chain</div>${stepItems}${choseOverHtml}</div>`;
   }
 
+  // Price ladder
+  let ladderHtml = "";
+  if (call.price_ladder && call.price_ladder.length > 0) {
+    const sorted = [...call.price_ladder].sort((a, b) => a.price - b.price);
+    const maxAbs = Math.max(...sorted.map((s) => Math.abs(s.pnl_pct)), 1);
+    const rows = sorted
+      .map((step) => {
+        const isNeg = step.pnl_pct < 0;
+        const color = isNeg ? "#dc2626" : "#16a34a";
+        const sign = isNeg ? "" : "+";
+        const barWidth = Math.round((Math.abs(step.pnl_pct) / maxAbs) * 100);
+        return `<div class="ladder-row">
+          <span class="ladder-price">$${step.price.toLocaleString()}</span>
+          <span class="ladder-bar-wrap"><span class="ladder-bar" style="width:${barWidth}%;background:${color}"></span></span>
+          <span class="ladder-pnl" style="color:${color}">${sign}${step.pnl_pct}%</span>
+        </div>
+        <div class="ladder-label-row">${escapeHtml(step.label)}</div>`;
+      })
+      .join("\n");
+    ladderHtml = `<div class="ladder-section"><div class="ladder-header">Price Ladder</div>${rows}</div>`;
+  }
+
   // Source link
   let sourceLink = "";
   if (call.source_url) {
@@ -177,6 +199,57 @@ export function renderPermalink(call: Call): string {
     font-weight: 600;
     color: #374151;
   }
+  .ladder-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+  .ladder-header {
+    font-size: 10px;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .ladder-row {
+    display: grid;
+    grid-template-columns: 72px 1fr 48px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .ladder-price {
+    font-weight: 600;
+    font-size: 13px;
+    color: #374151;
+    text-align: right;
+  }
+  .ladder-bar-wrap {
+    height: 6px;
+    background: #f3f4f6;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .ladder-bar {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .ladder-pnl {
+    font-weight: 600;
+    font-size: 12px;
+    text-align: right;
+  }
+  .ladder-label-row {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    color: #9ca3af;
+    padding-left: 80px;
+    margin-top: -4px;
+    margin-bottom: 4px;
+  }
 </style>
 </head>
 <body>
@@ -190,6 +263,7 @@ export function renderPermalink(call: Call): string {
   <div class="thesis">${thesis}</div>
   ${details}
   ${chainHtml}
+  ${ladderHtml}
   ${reasoningHtml}
   <div class="meta">
     ${sourceLink}

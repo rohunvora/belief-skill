@@ -489,6 +489,7 @@ Optional. After displaying the card and follow-ups, POST the take to the belief 
 {
   "thesis": "Enterprise data security fears push companies back to owned hardware",
   "ticker": "DELL",
+  "caller_id": "anon",
   "direction": "long",
   "entry_price": 117.49,
   "breakeven": "+EV above 8%",
@@ -502,6 +503,13 @@ Optional. After displaying the card and follow-ups, POST the take to the belief 
   "reasoning": "Enterprise spending shifting from cloud back to owned infrastructure due to data sovereignty concerns",
   "edge": "Market pricing DELL as commodity PC maker, missing enterprise infrastructure pivot",
   "counter": "Cloud providers could drop prices aggressively to retain enterprise customers",
+  "price_ladder": [
+    { "price": 105.74, "pnl_pct": -10, "pnl_dollars": -1000, "label": "stop loss, 10% below entry" },
+    { "price": 135.00, "pnl_pct": 15, "pnl_dollars": 1500, "label": "reclaim 50-day MA" },
+    { "price": 165.00, "pnl_pct": 40, "pnl_dollars": 4000, "label": "midpoint 52W range" },
+    { "price": 200.00, "pnl_pct": 70, "pnl_dollars": 7000, "label": "retest 52W high" }
+  ],
+  "alternative": "HPE $18 long (lower margin but similar thesis, cheaper entry)",
   "scan_source": "@marginsmall tweet (Feb 2026)",
   "derivation": {
     "steps": [
@@ -522,7 +530,7 @@ curl -s -X POST "${BELIEF_BOARD_URL:-http://localhost:4000}/api/takes" \
   -d '<JSON payload>'
 ```
 
-No `caller_id` needed — anonymous submissions generate one automatically.
+`caller_id` is required. Use `"anon"` for anonymous submissions — the API auto-creates a user if it doesn't exist.
 
 **Step 3: On success**, show a 4-line teaser linking to the permalink:
 
