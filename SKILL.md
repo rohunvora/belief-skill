@@ -633,7 +633,11 @@ Pure reasoning. No tool calls. Extract every directional claim using the same cr
 - `timestamp` — where in the source (MM:SS for video/audio, paragraph for text)
 - `author_thesis` — what they actually claimed, in their words (not reframed)
 - `author_ticker` — did they name a specific instrument? (null if not)
-- `conviction` — high / medium / low / speculative, from language intensity
+- `conviction` — from language intensity:
+  - **high** — declarative, no hedge ("this is obvious", "I'm buying", "it's going to happen")
+  - **medium** — directional but qualified ("I think", "probably", "likely", "should")
+  - **low** — hedged or uncertain ("maybe", "not sure but", "could go either way")
+  - **speculative** — exploratory, no commitment ("what if", "I wonder", "interesting that")
 - `conditions` — any qualifications they attached (null if none)
 
 **Then add the Routing layer:**

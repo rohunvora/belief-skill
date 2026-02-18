@@ -174,7 +174,7 @@ export const calls: Call[] = [
     source_handle: "threadguy",
     source_url: "https://www.youtube.com/watch?v=threadguy-feb16",
     source_date: "2026-02-16",
-    conviction: "high",
+    conviction: "high",  // "100% of code is AI" — declarative, no hedge
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -223,7 +223,7 @@ export const calls: Call[] = [
     source_handle: "martinshkreli",
     source_url: null,
     source_date: "2026-02-17",
-    conviction: "high",
+    conviction: "medium",  // analytical mechanism thesis — "Bloomberg confirmed... forced selling"
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -271,7 +271,7 @@ export const calls: Call[] = [
     source_handle: "martinshkreli",
     source_url: null,
     source_date: "2026-02-17",
-    conviction: "high",
+    conviction: "medium",  // "the signal the IPO factory restarts" — reading a signal, not declaring certainty
     call_type: "derived",
     status: "active",
     resolve_price: null,
@@ -319,7 +319,7 @@ export const calls: Call[] = [
     source_handle: "nicbstme",
     source_url: "https://x.com/nicbstme/status/2023501562480644501",
     source_date: "2026-02-17",
-    conviction: "high",
+    conviction: "speculative",  // "the scarce inputs get more valuable" — framework observation, no trade commitment
     call_type: "inspired",
     status: "active",
     resolve_price: null,
@@ -367,7 +367,7 @@ export const calls: Call[] = [
     source_handle: "marginsmall",
     source_url: null,
     source_date: "2026-02-15",
-    conviction: "high",
+    conviction: "medium",  // "pqc software still has nist tailwinds" — hedged with "still" amid washout framing
     call_type: "derived",
     status: "active",
     resolve_price: null,
