@@ -428,6 +428,91 @@ End every routing with 2-3 suggested follow-ups. Each should address the most li
 
 **Disclaimer:** End every routing response with: `Expressions, not advice. Do your own research.`
 
+### Part 4: Post to Board
+
+Optional. After displaying the card and follow-ups, POST the take to the belief board. If the board is unreachable, note it briefly and move on — the terminal output is the primary deliverable.
+
+**Step 1: Construct the JSON payload** from routing output:
+
+| Skill output | API field | Notes |
+|---|---|---|
+| Thesis text | `thesis` | required |
+| Winning ticker | `ticker` | required |
+| long/short | `direction` | "long" or "short" |
+| Card price | `entry_price` | number |
+| "+EV above X%" | `breakeven` | string |
+| "dies if k1, k2" | `kills` | string |
+| Source @handle | `source_handle` | string |
+| Source URL | `source_url` | string |
+| Attribution tier | `call_type` | "original", "direct", "derived", or "inspired" |
+| Instrument type | `instrument` | "stock", "options", "kalshi", or "perps" |
+| Platform | `platform` | "robinhood", "kalshi", or "hyperliquid" |
+| Verbatim quote | `source_quote` | goes in `trade_data` blob |
+| Take reasoning | `reasoning` | goes in `trade_data` blob |
+| Edge statement | `edge` | goes in `trade_data` blob |
+| Counter-argument | `counter` | goes in `trade_data` blob |
+| Payoff table | `price_ladder` | goes in `trade_data` blob |
+| Alt line | `alternative` | goes in `trade_data` blob |
+| "Source (Date)" | `scan_source` | goes in `trade_data` blob |
+| Derivation chain | `derivation` | goes in `trade_data` blob, structured object with `source_said`/`implies`/`searching_for`/`found_because`/`chose_over` |
+
+**Example payload:**
+
+```json
+{
+  "thesis": "Enterprise data security fears push companies back to owned hardware",
+  "ticker": "DELL",
+  "direction": "long",
+  "entry_price": 117.49,
+  "breakeven": "+EV above 8%",
+  "kills": "cloud pricing drops, enterprise capex freeze",
+  "source_handle": "marginsmall",
+  "source_url": "https://x.com/marginsmall/status/123456",
+  "call_type": "derived",
+  "instrument": "stock",
+  "platform": "robinhood",
+  "source_quote": "On-prem is back.",
+  "reasoning": "Enterprise spending shifting from cloud back to owned infrastructure due to data sovereignty concerns",
+  "edge": "Market pricing DELL as commodity PC maker, missing enterprise infrastructure pivot",
+  "counter": "Cloud providers could drop prices aggressively to retain enterprise customers",
+  "scan_source": "@marginsmall tweet (Feb 2026)",
+  "derivation": {
+    "source_said": "On-prem is back.",
+    "implies": "enterprise infrastructure spending shifts from cloud to owned hardware",
+    "searching_for": "hardware manufacturers with enterprise server/storage exposure",
+    "found_because": "DELL has highest enterprise infrastructure revenue share outside pure-play server cos",
+    "chose_over": "HPE (lower margin), SMCI (supply chain concerns)"
+  }
+}
+```
+
+**Step 2: POST to the board:**
+
+```bash
+curl -s -X POST "${BELIEF_BOARD_URL:-http://localhost:4000}/api/takes" \
+  -H "Content-Type: application/json" \
+  -d '<JSON payload>'
+```
+
+No `caller_id` needed — anonymous submissions generate one automatically.
+
+**Step 3: On success**, show a 4-line teaser linking to the permalink:
+
+```
+---
+"On-prem is back." — @marginsmall
+DELL long · $117.49 · derived
+Enterprise data security fears push companies back to owned hardware
+→ http://localhost:4000/t/abc123
+---
+```
+
+Format: `source_quote` (or thesis if no quote) + `source_handle`, then `ticker direction · $entry_price · call_type`, then thesis as subtitle, then permalink URL from the API response.
+
+**Step 4: On failure** (board unreachable, non-2xx response), print one line: `Board unavailable — skipping post.` and continue normally.
+
+**Bulk mode:** POST each deep-routed take individually, immediately after its card is displayed.
+
 ---
 
 ## Bulk Mode
