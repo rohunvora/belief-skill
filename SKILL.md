@@ -651,7 +651,7 @@ When Input Validation step 5 triggers (input is an X handle, `x.com` URL, or "sc
 
 **0. Check for X_BEARER_TOKEN**
 
-If `X_BEARER_TOKEN` is not set, show this and stop:
+If `X_BEARER_TOKEN` is not set, offer two fallbacks and stop:
 ```
 X API not configured — X_BEARER_TOKEN is not set.
 
@@ -662,8 +662,18 @@ To enable handle scanning:
 
 Cost: ~$0.26 to scan 50 original posts from any handle.
 
-In the meantime, paste any tweet directly and I'll route it.
+In the meantime, two options:
+
+Option A — Screenshot: Take a screenshot of the tweet (or paste the text).
+I'll extract the author handle, text, and date from it and route it directly.
+
+Option B — Browser: I can open x.com/{handle} in Chrome and read the posts
+directly (no API cost). Say "open their profile in Chrome" to proceed.
 ```
+
+If the user chooses Option A: route the screenshot/text as normal. Extract `source_handle` from the author shown in the screenshot. Set `source_url` if visible.
+
+If the user chooses Option B: use the claude-in-chrome MCP tools to navigate to `https://x.com/{handle}`, read the visible posts from the page, filter for directional takes, and proceed from step 4 (Surface to user). This costs nothing but is limited to what's visible on the page.
 
 **1. Cost gate (mandatory — never skip)**
 
