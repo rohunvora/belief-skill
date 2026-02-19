@@ -89,6 +89,79 @@ function SourceIcon({ url }: { url: string }) {
   return <img src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`} className={`${size} rounded-sm`} alt={hostname} />;
 }
 
+/** Common abbreviations that aren't stock tickers in financial text */
+const NON_TICKERS = new Set([
+  // 2-letter words commonly used as abbreviations, not tickers
+  "AI", "AM", "AN", "AS", "AT", "BE", "BY", "DO", "GO", "IF",
+  "IN", "IS", "IT", "MA", "NO", "OF", "OK", "ON", "OR", "PM",
+  "SO", "TO", "UP", "US", "UK", "VS",
+  // 3+ letter abbreviations common in financial/market text
+  "CEO", "CFO", "CTO", "COO", "DOD", "ETF", "EU", "FBI", "FDA",
+  "FY", "GDP", "CIA", "HQ", "HR", "IPO", "MT", "NATO", "NYSE",
+  "OCF", "PR", "QE", "SEC", "USAF", "YOY", "YTD", "DARPA", "API",
+]);
+
+/** Regex: 2-5 uppercase letters at word boundaries */
+const TICKER_RE = /\b([A-Z]{2,5})\b/g;
+
+/** Split step text into plain text and ticker references */
+function parseTickersInText(
+  text: string,
+  cardTicker: string,
+): Array<{ type: "text"; value: string } | { type: "ticker"; value: string }> {
+  const parts: Array<{ type: "text"; value: string } | { type: "ticker"; value: string }> = [];
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(TICKER_RE)) {
+    const word = match[1];
+    const start = match.index!;
+    // Card's own ticker always matches; others must pass the blocklist
+    const isTicker = word === cardTicker || !NON_TICKERS.has(word);
+    if (isTicker) {
+      if (start > lastIndex) {
+        parts.push({ type: "text", value: text.slice(lastIndex, start) });
+      }
+      parts.push({ type: "ticker", value: word });
+      lastIndex = start + word.length;
+    }
+  }
+
+  if (lastIndex < text.length) {
+    parts.push({ type: "text", value: text.slice(lastIndex) });
+  }
+  return parts.length > 0 ? parts : [{ type: "text", value: text }];
+}
+
+/** Render step text with inline ticker badges — clickable to ticker filter */
+function StepWithTickers({ text, cardTicker, isLong }: {
+  text: string;
+  cardTicker: string;
+  isLong: boolean;
+}) {
+  const parts = parseTickersInText(text, cardTicker);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.type === "text") return <span key={i}>{part.value}</span>;
+        const isCard = part.value === cardTicker;
+        const badge = isCard
+          ? (isLong ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700")
+          : "bg-gray-100 text-gray-600";
+        return (
+          <a
+            key={i}
+            href={`#/?ticker=${part.value}`}
+            onClick={(e) => e.stopPropagation()}
+            className={`inline text-[11px] font-bold ${badge} rounded px-1 py-0.5 hover:opacity-80 no-underline`}
+          >
+            {part.value}
+          </a>
+        );
+      })}
+    </>
+  );
+}
+
 /** Re-export formatPrice for consumers that import from CallCard */
 export { formatPrice } from "../utils";
 
@@ -152,7 +225,8 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
         <div className="mb-2 space-y-0.5">
           {chain.steps.map((step, i) => (
             <p key={i} className="text-[14px] text-gray-800 leading-snug">
-              <span className="text-gray-400 mr-1">&gt;</span>{step}
+              <span className="text-gray-400 mr-1">&gt;</span>
+              <StepWithTickers text={step} cardTicker={call.ticker} isLong={isLong} />
             </p>
           ))}
         </div>

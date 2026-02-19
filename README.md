@@ -84,11 +84,11 @@ Add the skill to Claude Code and start talking. No special commands. Just say wh
 
 No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexScreener, Hyperliquid).
 
-## Current Stage (v5.1)
+## Current Stage (v5.2)
 
-Two-layer data model with cleaned-up taxonomy. Attribution tiers simplified to 3 (original/direct/derived — "inspired" merged into "derived"). Conviction badges removed from display (source quote carries the tone). All internal jargon renamed for readers: "Derivation Chain" → "Reasoning", "evidence"/"inference" → "cited"/"inferred", "The Call" → "What They Said". Detail page shows cited vs inferred reasoning steps with speaker citations.
+Reasoning chain anti-templating + inline ticker styling. SKILL.md Derivation Chain section rewritten with 3 distinct chain structures (lead with company, two threads converge, counterfactual) and explicit anti-patterns section. Feed card chain steps now auto-detect ticker symbols and render them as clickable badges — card's ticker in directional color, other tickers in gray, all linking to the ticker filter.
 
-**What's next:** Deploy board publicly. Curator submission flow. Skill → board API integration.
+**What's next:** Shorten Telegram output (link to board instead of full card). Bulk mode speed optimization. Deploy board publicly.
 
 **What's blocked:** Nothing.
 

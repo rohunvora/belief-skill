@@ -472,3 +472,38 @@ Audit identified that every taxonomy in the codebase was designed for Claude's i
 - Legacy chain format (5 of 6 mock calls) shows uniform gray `>` on feed — only segment-based v2 format (DELL) shows color coding. This is correct behavior — legacy data doesn't have segment links.
 - Conviction data still stored in DB, just not displayed. Available for future analysis.
 - `chose_over` field name in DerivationChain interface not renamed (internal data, not user-facing)
+
+## 2026-02-18: Session 10 — Reasoning chain anti-templating + inline tickers
+
+### What we changed
+
+**SKILL.md Derivation Chain rewrite:**
+- Removed "last step must contain the ticker" rule — was forcing every chain into a reveal-at-the-end pattern
+- Rewrote all 3 examples with distinct structures: lead with company, two threads converge, counterfactual
+- Added explicit Anti-patterns section showing the templated skeleton to avoid
+- Updated rules to encourage structural variety
+
+**CallCard.tsx inline ticker styling:**
+- Ticker symbols in chain step text are auto-detected and rendered as clickable badges
+- Card's own ticker gets directional coloring (green for long, red for short)
+- Other tickers get neutral gray styling
+- All clickable to `#/?ticker=TICKER` (existing filter)
+- Blocklist of ~40 common financial abbreviations (CEO, IPO, ETF, AI, etc.) prevents false positives
+
+### Decisions made
+
+**42. Reasoning chains were obviously templated.** User tested via Telegram (YouTube video, 4 theses, rating 2/5). All 4 chains followed identical `[macro] → [sector] → [industry] → [TICKER down X%]` skeleton. Root cause analysis identified 5 structural issues: ticker-last rule, linear format, research-as-reasoning, "down X% from highs" verbal tic, uniform length. Fixed with 3 changes: removed ticker-last rule, added anti-patterns section, updated examples to show 3 distinct structures.
+
+**43. Color-coded chain steps reverted to uniform gray.** User said blue/amber `>` prefixes "don't accomplish much" at feed-scan speed. Kept cited/inferred distinction only on the detail page. Feed cards use uniform gray `>` prefix.
+
+**44. Inline ticker badges in feed card chain steps.** Tickers detected via regex (`\b[A-Z]{2,5}\b`) with blocklist filtering. Card's own ticker = directional color, other tickers = gray. Clickable to existing `#/?ticker=` filter. Future: ticker page showing all takes about that ticker.
+
+### Files changed
+- `SKILL.md` — complete rewrite of Derivation Chain section (examples, anti-patterns, rules)
+- `board/components/CallCard.tsx` — added ticker parsing, StepWithTickers component, inline badge rendering
+- `.gitignore` — added .vercel
+
+### Known issues
+- Ticker detection uses heuristic blocklist — some edge cases (e.g., ticker "MA" = Mastercard blocked because "MA" commonly means "moving average" in financial text)
+- Output length problem from Telegram test (rating 2/5) not yet addressed — user wants shorter output that links to the board site
+- Bulk mode speed (4 sequential deep research phases) not yet optimized

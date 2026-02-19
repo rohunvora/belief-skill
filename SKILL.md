@@ -83,7 +83,7 @@ If the subject is a person, brand, or community that isn't directly investable: 
 
 **Mandatory for all sourced calls.** Show your work. Each step connects what someone said to what you'd trade. Use as many steps as the logic needs — no more, no fewer. A normie should follow every step without finance jargon.
 
-The ticker appears naturally inline when you reach the trade. Steps are plain sentences a non-finance person could follow.
+The ticker appears wherever the reasoning naturally reaches it — could be step 1 or step 5. Steps are plain sentences a non-finance person could follow.
 
 ### Format
 
@@ -98,69 +98,83 @@ The chain has three parts: **segments** (cited source material), **steps** (the 
   "steps": [
     { "text": "step grounded in segment 0", "segment": 0 },
     { "text": "step grounded in segment 1", "segment": 1 },
-    { "text": "inference step — skill's reasoning, not from source" },
-    { "text": "conclusion with TICKER inline" }
+    { "text": "inference step — skill's reasoning, not from source" }
   ],
   "chose_over": "alternatives considered — detail page only"
 }
 ```
 
-- Steps WITH a `segment` index = **evidence** (cited from source, verifiable)
-- Steps WITHOUT a `segment` index = **inference** (skill's contribution)
+- Steps WITH a `segment` index = **cited** (from source, verifiable)
+- Steps WITHOUT a `segment` index = **inferred** (skill's contribution)
 - The boundary between what someone said and what the skill concluded is always visible
 
 **Segments** capture the raw source material: verbatim quotes with speaker attribution and timestamp/paragraph where available. For single-source inputs (a tweet, a one-liner), there may be just one segment. For transcripts, there may be several across different timestamps and speakers.
 
-**Quality floor:** No card without at least 2 steps. The last step must contain the ticker. If you can't connect the quote to the trade in plain language, the call is not ready.
+**Quality floor:** No card without at least 2 steps. If you can't connect the quote to the trade in plain language, the call is not ready.
 
 ### Examples
 
-2 steps (direct call — all evidence, no inference):
+Lead with the company, reason about it:
 ```json
 {
-  "segments": [{ "quote": "all code is AI now — MSFT owns the whole stack", "speaker": "source" }],
+  "segments": [{ "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "chamath" }],
   "steps": [
-    { "text": "all code is AI now", "segment": 0 },
-    { "text": "MSFT owns GitHub, Copilot, VS Code — the tollbooth", "segment": 0 }
+    { "text": "on-prem is back — enterprises won't put proprietary data in open LLMs", "segment": 0 },
+    { "text": "DELL has $18B in AI server orders to build exactly this" },
+    { "text": "the market is punishing them on margin compression while the backlog grows 150% YoY" }
   ]
 }
 ```
 
-3 steps (derived — evidence + inference):
-```json
-{
-  "segments": [{ "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "marginsmall" }],
-  "steps": [
-    { "text": "on-prem is back", "segment": 0 },
-    { "text": "companies buying their own AI servers instead of cloud" },
-    { "text": "DELL has $18B in orders to build them" }
-  ]
-}
-```
-
-4 steps from multi-segment transcript (derived — mostly inference):
+Two threads converge:
 ```json
 {
   "segments": [
-    { "quote": "trade wars make everything geopolitical", "speaker": "chamath", "timestamp": "12:30" },
-    { "quote": "the AI power problem is real, every datacenter is maxed", "speaker": "friedberg", "timestamp": "34:15" }
+    { "quote": "Chinese models are 20x cheaper and open source", "speaker": "frank", "timestamp": "12:30" },
+    { "quote": "the AI power problem is real, every datacenter is maxed", "speaker": "frank", "timestamp": "34:15" }
   ],
   "steps": [
-    { "text": "trade wars make scarce resources strategic", "segment": 0 },
-    { "text": "uranium is the hardest to replace — 10 year mine lead time" },
-    { "text": "AI datacenters need nuclear power, new demand on top", "segment": 1 },
-    { "text": "CCJ is the biggest producer, down 16%" }
+    { "text": "AI models are getting 20x cheaper — when something gets 20x cheaper, usage explodes", "segment": 0 },
+    { "text": "every AI inference needs power — if inference volume 10x, power demand 10x", "segment": 1 },
+    { "text": "those two facts converge on nuclear baseload — CEG restarted Three Mile Island for exactly this" }
   ]
 }
 ```
+
+Counterfactual — start with the trade, question the market:
+```json
+{
+  "segments": [{ "quote": "AI is being treated as national security infrastructure", "speaker": "frank", "timestamp": "8:15" }],
+  "steps": [
+    { "text": "for PLTR at current prices, you'd have to believe government AI spending decelerates", "segment": 0 },
+    { "text": "the opposite is happening — $10B Army contract in August, Maven hit $1B" },
+    { "text": "the market still classifies it as a tech stock, but it's a defense contractor with software margins" }
+  ]
+}
+```
+
+### Anti-patterns
+
+Do NOT write chains that follow this skeleton:
+```
+[broad macro claim] → [sector inference] → [industry connection] → [TICKER is X, down Y% from highs]
+```
+
+This reads as templated after two cards. Specifically avoid:
+- **Saving the ticker for the last step.** The company is not a reveal. Introduce it when the reasoning reaches it — that might be step 1.
+- **"Down X% from highs" as a closer.** Price context belongs in the trade data, not in the reasoning chain. The chain explains WHY, not WHAT THE PRICE IS.
+- **Every chain being the same length.** If the logic needs 2 steps, write 2. If it needs 5, write 5. Do not pad to 4.
+- **Forcing a single linear narrative.** If two threads converge on one trade, say "these converge" explicitly. Don't linearize parallel evidence into a fake sequence.
+- **Research facts pretending to be reasoning.** "DoD became the largest shareholder in July 2025" is a fact you looked up, not something you derived. Keep the chain as connective tissue — the WHY, not the WHAT.
 
 ### Rules
 
 - Each line earns the next — no logical leaps
 - No finance jargon (no "reversion trade", "permanent AUM", "fee compression")
-- Ticker appears naturally, not forced
+- Ticker appears naturally wherever the reasoning reaches it
 - Lowercase unless starting a proper noun or ticker
 - No arrows (→) — use natural language connectors
+- Vary the structure: lead with company, converge two threads, or start with what the market is getting wrong
 
 ### Attribution Tier
 
