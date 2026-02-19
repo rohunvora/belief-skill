@@ -19,7 +19,17 @@
  *   bun run scripts/adapters/x/user-timeline.ts --handle chamath --paginate  (fetch next page)
  */
 
-const BEARER_TOKEN = process.env.X_BEARER_TOKEN;
+// Prefer .env over shell env — Bun's auto-loader won't override stale shell vars
+function loadBearerToken(): string | undefined {
+  try {
+    const envFile = Bun.file(`${import.meta.dir}/../../../.env`);
+    const text = envFile.textSync?.() ?? require("fs").readFileSync(envFile.name!, "utf-8");
+    const match = text.match(/^X_BEARER_TOKEN=(.+)$/m);
+    if (match?.[1]) return match[1].trim();
+  } catch { /* fall through */ }
+  return process.env.X_BEARER_TOKEN;
+}
+const BEARER_TOKEN = loadBearerToken();
 
 const COST_PER_TWEET = 0.005;   // $0.005 per tweet read
 const COST_PER_LOOKUP = 0.010;  // $0.010 per user profile lookup
@@ -57,7 +67,8 @@ export interface TimelineResult {
 
 function loadCache(): Record<string, string> {
   try {
-    return JSON.parse(Bun.file(CACHE_PATH).toString());
+    const text = require("fs").readFileSync(CACHE_PATH, "utf-8");
+    return JSON.parse(text);
   } catch {
     return {};
   }
@@ -125,7 +136,7 @@ export async function fetchTimeline(
     skipConfirm?: boolean;   // Set true in non-interactive contexts
   } = {}
 ): Promise<TimelineResult> {
-  const max = Math.min(options.max ?? DEFAULT_MAX, 100);  // API cap is 100
+  const max = Math.max(5, Math.min(options.max ?? DEFAULT_MAX, 100));  // API range: 5-100
   const costEstimate = COST_PER_LOOKUP + max * COST_PER_TWEET;
 
   // Show cost estimate and confirm before any spend
