@@ -547,3 +547,35 @@ Fix: (a) "Every" → "Most", dropped Surface/Deeper naming, (b) skeleton replace
 ### Files changed
 - `SKILL.md` — self-test subsection, Research "First:" instruction, em dash ban in rules, em dashes cleaned from format template and all chain examples
 - `references/derivation-chain.md` — full sync: self-test section, em dash ban, cleaned examples, updated opening
+
+## 2026-02-18: Session 12 — X API integration (trust-to-trade pipeline)
+
+### What we built
+- `scripts/adapters/x/user-timeline.ts` — fetches original posts from any X handle
+  - Hardcoded `exclude=retweets,replies` — never configurable
+  - Mandatory cost gate before any API spend (shows estimate, asks y/N)
+  - Caches user ID lookups at `~/.cache/belief-router-x-users.json` ($0.01 once, then free)
+  - Graceful degradation when `X_BEARER_TOKEN` is not set (shows setup instructions, exits clean)
+  - CLI: `--handle`, `--max`, `--since-id`, `--paginate` args
+- `~/.claude/skills/x-research/references/x-api.md` — updated with pay-per-use pricing, user lookup, and user timeline endpoints
+- `SKILL.md` — Handle Scan section (full flow: cost gate → fetch → filter → surface → route → post)
+- Input Validation step 5 — detects `@handle`, `x.com/username`, "scan @handle"
+
+### Key product insight
+Primary use case is NOT normie cultural observations — it's **trust-to-trade**: extracting directional takes from smart people you follow on X and routing them. People don't want to trade their own ideas; they want to copy smart people's ideas. Faithful extraction (Call layer) matters MORE than routing (Route layer) in this context.
+
+### Decisions made
+
+**48. X_BEARER_TOKEN gate is soft, not hard.** Missing token shows setup instructions and falls back to manual paste. Never breaks other routing flows. Discoverable feature, not a hard dependency.
+
+**49. Retweets and replies are hardcoded excluded.** The API param `exclude=retweets,replies` is commented "HARDCODED — do not remove." Retweets are someone else's words (attribution breaks). Replies are conversational noise. Both inflate cost with zero routing value.
+
+**50. Cost gate is mandatory, not configurable.** X API spend can escalate fast. Every fetch shows estimate and requires y/N before API call. `skipConfirm` option only for non-interactive contexts (future programmatic use).
+
+**51. Pay-per-use X API (Jan 21, 2026).** X abolished fixed tiers. Now $0.005/tweet read, $0.01/user lookup. Old Basic ($200/mo) is gone. This changes the cost model significantly for bulk scanning.
+
+### Files changed
+- `scripts/adapters/x/user-timeline.ts` — new adapter
+- `~/.claude/skills/x-research/references/x-api.md` — pay-per-use pricing, user lookup + timeline endpoints
+- `SKILL.md` — Input Validation step 5, Handle Scan section
+- `README.md` — bumped to v5.4

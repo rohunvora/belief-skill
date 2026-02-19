@@ -40,7 +40,8 @@ Before routing, check:
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
 3. **Is it an action request?** ("I want to buy ONDO") — treat the implied direction as the thesis and proceed.
 4. **Is it a URL?** Extract content first using the transcript tool (see Tools section). Also extract `source_date` from content metadata — publish date, tweet timestamp, or video upload date. If source_date is in the past, note the delta to today; use price at source_date for `entry_price` when posting to the board. Then continue from step 1.
-5. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
+5. **Is it an X/Twitter handle?** (`@handle`, `x.com/username`, or "scan @handle") → fetch their recent posts via the X adapter (see Handle Scan section below). Requires `X_BEARER_TOKEN`. If not set, show the setup instructions and fall back to manual paste.
+6. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
 
 ---
 
@@ -644,9 +645,78 @@ Format: `source_quote` (or thesis if no quote) + `source_handle`, then `ticker d
 
 ---
 
+## Handle Scan
+
+When Input Validation step 5 triggers (input is an X handle, `x.com` URL, or "scan @handle"):
+
+**0. Check for X_BEARER_TOKEN**
+
+If `X_BEARER_TOKEN` is not set, show this and stop:
+```
+X API not configured — X_BEARER_TOKEN is not set.
+
+To enable handle scanning:
+  1. Go to developer.x.com and create an app (pay-per-use, no monthly fee)
+  2. Copy your Bearer Token
+  3. Add to .env: X_BEARER_TOKEN=your_token
+
+Cost: ~$0.26 to scan 50 original posts from any handle.
+
+In the meantime, paste any tweet directly and I'll route it.
+```
+
+**1. Cost gate (mandatory — never skip)**
+
+Show before any API call:
+```
+Fetching @{handle}'s last 50 original posts
+Estimated cost: $0.26 (50 × $0.005 + $0.01 lookup)
+Proceed? [y/N / or type a number, e.g. "20"]
+```
+If user says a number, use that as `--max`. If user says no or doesn't reply, abort.
+
+**2. Fetch**
+
+```bash
+bun run scripts/adapters/x/user-timeline.ts --handle {handle} --max {N}
+```
+
+Returns JSON with `tweets[]`. Retweets and replies are excluded at the API level — do not re-filter.
+
+**3. Filter for directional takes**
+
+Read each tweet. Keep only those with a directional claim — explicit or implied — about markets, companies, sectors, macro, or specific assets. Discard commentary, jokes, personal updates, and anything with no tradeable direction.
+
+**4. Surface to user**
+
+```
+Found {N} directional takes from @{handle}:
+
+1. [tweet text truncated to ~100 chars] ({date})
+2. ...
+
+Route all, or pick? [all / 1,3,5 / skip]
+```
+
+If user says "all" or said "scan @handle" upfront, route all. If they pick a subset, route only those. If none were found: "No directional takes in the last {N} posts from @{handle}."
+
+**5. Route each take**
+
+Run each selected tweet through the standard belief-router flow. On the Call layer, set:
+- `source_quote` — the tweet text verbatim
+- `source_handle` — @{handle}
+- `source_url` — the tweet URL from the adapter output
+- `source_date` — tweet's `created_at`
+
+**6. Post to board**
+
+POST each routed call as normal. Board posts will show `source_handle` and link back to the original tweet.
+
+---
+
 ## Bulk Mode
 
-When Input Validation step 4 triggers (multiple theses, user wants all routed), run this pipeline instead of the full router N times.
+When Input Validation step 6 triggers (multiple theses, user wants all routed), run this pipeline instead of the full router N times.
 
 ### Phase 1: Extract & Cluster
 

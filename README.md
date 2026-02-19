@@ -84,9 +84,9 @@ Add the skill to Claude Code and start talking. No special commands. Just say wh
 
 No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexScreener, Hyperliquid).
 
-## Current Stage (v5.3)
+## Current Stage (v5.4)
 
-Chain self-test + chain-sketch-before-research flow. Derivation chains are now drafted BEFORE research as a pre-flight check: if the chain can't connect source to trade without looked-up facts, the routing is wrong and research won't fix it. Em dashes banned from chain output. All chain examples cleaned. Inline ticker badges reverted (needs skill-side data, not frontend regex).
+X handle scanning via X API (pay-per-use). Say `scan @chamath` or paste any X handle and the skill fetches their recent original posts, filters for directional takes, and routes each one. Mandatory cost gate before any API spend. Caches user ID lookups locally. Graceful fallback when `X_BEARER_TOKEN` is not set. Also: chain self-test + chain-sketch-before-research flow, em dash ban, inline ticker badges reverted (needs skill-side data, not frontend regex).
 
 **What's next:** Shorten Telegram output (link to board instead of full card). Bulk mode speed optimization. Deploy board publicly.
 
