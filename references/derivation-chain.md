@@ -35,9 +35,9 @@ Output as a JSON object with 3 fields:
 
 ## Self-test
 
-After drafting the chain, remove any step that states a looked-up fact rather than a reasoned conclusion. If the remaining steps still connect quote to trade, the removed steps were padding. Cut them. If the chain breaks, you filled a reasoning gap with research. Fix the routing, not the chain.
+After drafting the chain, test each step: remove it and check if the chain still connects quote to trade. If yes, the step was padding. Cut it. If no, the step is load-bearing. Keep it, even if it contains a researched fact. Fix the routing, not the chain.
 
-## Examples — By Structure
+## Examples by Structure
 
 **Lead with the company:**
 
@@ -134,7 +134,7 @@ Avoid:
 - "Down X% from highs" as a closer. price context belongs in the trade data
 - Every chain being the same length
 - Forcing a single linear narrative when evidence is parallel
-- Research facts pretending to be reasoning. "DoD became largest shareholder in July 2025" is a lookup, not a derivation
+- Decorative facts pretending to be reasoning. "DoD became largest shareholder in July 2025" adds credibility but doesn't advance the logic. Test: remove the step. If the chain still connects, the fact was padding
 
 ## `chose_over`
 
@@ -149,20 +149,18 @@ Why this ticker over the alternatives you considered. Name the runners-up and wh
 
 ## Attribution Tier Classification
 
-The tier is a mechanical consequence of two factors: (1) what the first step contains, and (2) whether the routed ticker matches the author's stated ticker.
+The tier is mechanically determined by two factors: (1) did the author name a specific ticker, and (2) does the skill route to that same ticker.
 
-1. **`direct`** — The first step contains a ticker symbol (e.g. LAES, GOOG, SOL) or a named, tradable contract. The source told you what to trade.
-2. **`derived`** — Everything else. The first step contains a market-specific causal claim but no ticker, OR a framework/observation only. The skill found the instrument.
-
-| First step contains | Tier | Example |
-|------------------------|------|---------|
-| Ticker symbol present | `direct` | "MSFT owns the tollbooth" → direct |
-| Market-specific claim, no ticker | `derived` | "quantum stocks crashed 60%" → derived |
-| Framework/observation only | `derived` | "AI makes dashboards commodity" → derived |
+| Condition | Tier | Card shows |
+|-----------|------|------------|
+| Author named a ticker AND skill routes to the same ticker | `direct` | "@source's call" |
+| Author named a ticker BUT skill routes elsewhere | `derived` | "@source's thesis · via belief.board" |
+| Author had a market-specific claim, no ticker | `derived` | "@source's thesis · via belief.board" |
+| Author made a cultural observation only | `derived` | "@source's thesis · via belief.board" |
 
 **Track record scoring:**
-- `direct` — score the author on instrument performance. Their pick, their record.
-- `derived` — score the author on thesis direction. Score the skill separately on instrument selection.
+- `direct`: score the author on instrument performance. Their pick, their record.
+- `derived`: score the author on thesis direction. Score the skill separately on instrument selection.
 
 ## Legacy Format (deprecated)
 
