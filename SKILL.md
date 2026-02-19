@@ -688,8 +688,9 @@ If user says a number, use that as `--max`. If user says no or doesn't reply, ab
 **2. Fetch**
 
 ```bash
-bun run scripts/adapters/x/user-timeline.ts --handle {handle} --max {N}
+bun run scripts/adapters/x/user-timeline.ts --handle {handle} --max {N} --skip-confirm
 ```
+(`--skip-confirm` bypasses the script's own stdin prompt — you already confirmed in chat.)
 
 Returns JSON with `tweets[]`. Retweets and replies are excluded at the API level — do not re-filter.
 

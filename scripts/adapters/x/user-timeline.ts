@@ -241,15 +241,16 @@ In the meantime, paste any tweet directly and the belief-router will route it.
 
   const handle = getArg("--handle");
   if (!handle) {
-    console.error("Usage: bun run scripts/adapters/x/user-timeline.ts --handle <handle> [--max N] [--since-id ID] [--paginate TOKEN]");
+    console.error("Usage: bun run scripts/adapters/x/user-timeline.ts --handle <handle> [--max N] [--since-id ID] [--paginate TOKEN] [--skip-confirm]");
     process.exit(1);
   }
 
   const max = getArg("--max") ? parseInt(getArg("--max")!, 10) : DEFAULT_MAX;
   const sinceId = getArg("--since-id");
   const paginationToken = getArg("--paginate");
+  const skipConfirm = args.includes("--skip-confirm");  // For non-interactive callers (e.g. clawd)
 
-  const result = await fetchTimeline(handle, { max, sinceId, paginationToken });
+  const result = await fetchTimeline(handle, { max, sinceId, paginationToken, skipConfirm });
 
   // Print tweets as JSON for piping into other tools
   console.log(JSON.stringify(result, null, 2));
