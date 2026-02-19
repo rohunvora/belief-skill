@@ -496,14 +496,20 @@ Audit identified that every taxonomy in the codebase was designed for Claude's i
 
 **43. Color-coded chain steps reverted to uniform gray.** User said blue/amber `>` prefixes "don't accomplish much" at feed-scan speed. Kept cited/inferred distinction only on the detail page. Feed cards use uniform gray `>` prefix.
 
-**44. Inline ticker badges in feed card chain steps.** Tickers detected via regex (`\b[A-Z]{2,5}\b`) with blocklist filtering. Card's own ticker = directional color, other tickers = gray. Clickable to existing `#/?ticker=` filter. Future: ticker page showing all takes about that ticker.
+**44. Inline ticker badges reverted.** Regex heuristic with blocklist was the wrong abstraction — the skill already knows which words are tickers at generation time. Frontend guessing creates false positives (PQC) and misses mixed-case (IonQ). Correct fix: skill declares tickers in step data (like `segment` index), frontend renders them. Parked for now.
+
+**45. Templated output caused by prompt contradictions, not chain section.** Deeper diagnosis found the chain section's anti-patterns were being overridden by three other SKILL.md sections:
+- Line 65 "Every thesis has a surface/deeper claim" forced binary decomposition → became output labels "Surface: / Deeper:"
+- Lines 697+706 prescribed `thesis → sector → specific name → why not alternatives` — the exact skeleton the anti-patterns forbid
+- Lines 460-465 numbered required elements list → became sequential template when compressed for bulk
+Fix: (a) "Every" → "Most", dropped Surface/Deeper naming, (b) skeleton replaced with pointer to Derivation Chain section as single source of truth, (c) numbered list → unordered set with permission to drop elements.
 
 ### Files changed
-- `SKILL.md` — complete rewrite of Derivation Chain section (examples, anti-patterns, rules)
-- `board/components/CallCard.tsx` — added ticker parsing, StepWithTickers component, inline badge rendering
+- `SKILL.md` — three structural fixes: Deeper Claim wording (line 65), Scan Output skeleton removed (lines 697+706), Required Elements un-numbered (lines 460-465); plus earlier Derivation Chain rewrite (examples, anti-patterns, rules)
+- `board/components/CallCard.tsx` — reverted inline ticker badges (was regex blocklist approach)
 - `.gitignore` — added .vercel
 
 ### Known issues
-- Ticker detection uses heuristic blocklist — some edge cases (e.g., ticker "MA" = Mastercard blocked because "MA" commonly means "moving average" in financial text)
 - Output length problem from Telegram test (rating 2/5) not yet addressed — user wants shorter output that links to the board site
 - Bulk mode speed (4 sequential deep research phases) not yet optimized
+- Inline ticker badges parked — needs skill-side `tickers` field in DerivationStep before frontend can render them

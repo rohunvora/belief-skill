@@ -62,7 +62,7 @@ The "natural home" is the starting point, not the answer. The scoring cross-chec
 
 **This is the skill's editorial layer (Layer 2).** It runs AFTER faithful extraction of the author's actual claim (Layer 1). The author's original thesis, ticker (if stated), conviction, and conditions are already captured and preserved — the deeper claim analysis cannot overwrite them.
 
-Every thesis has a surface claim and a deeper claim. The deeper claim sometimes points to a different instrument, sometimes refines the same one. Don't flip for the sake of being contrarian — flip only when the deeper claim has a stronger causal chain.
+Most theses have an obvious play and a non-obvious one. Sometimes the non-obvious play points to a different instrument, sometimes the obvious play IS the best expression. Don't flip for the sake of being contrarian — flip only when the alternative has a stronger causal chain.
 
 If the skill routes to a different instrument than the author stated, the attribution tier shifts from `direct` to `derived` and the card must show both: what the author said AND what the skill found.
 
@@ -457,12 +457,14 @@ No preamble — start with the insight immediately.
 - Expert → bold claims, scannable in 5 seconds. Each paragraph: bold claim + 1-2 sentences of evidence.
 - Casual → conversational, direct, "you" language. Same rigor but friendlier. No assumed knowledge.
 
-**Required elements (answer-first order):**
-1. **The answer** — one sentence: what to buy, where, and why it beats the obvious play
-2. The non-obvious insight (what the market is missing)
-3. The probability gap: what the market prices vs what breakeven requires
-4. "You need to believe X" — frame the user as the decision-maker
-5. **If the routing diverges from the author's stated instrument** (derived), acknowledge it explicitly: "Marginsmall is talking about data sovereignty — the purest expression is DELL, not the cloud providers."
+**The take must cover** (in whatever order fits the thesis):
+- **The answer** — what to buy, where, and why it beats the obvious play. Lead with this.
+- The non-obvious insight (what the market is missing)
+- The probability gap: what the market prices vs what breakeven requires
+- "You need to believe X" — frame the user as the decision-maker
+- **If the routing diverges** (derived), acknowledge it: "Marginsmall is talking about data sovereignty — the purest expression is DELL, not the cloud providers."
+
+Not every element appears in every take. A direct call ("PLTR is undervalued") doesn't need a divergence acknowledgment. A binary event doesn't need a probability gap paragraph. Include what earns its space.
 
 **Constraints:**
 - 4-6 paragraphs max. Tight, not rambling.
@@ -694,7 +696,7 @@ One artifact per source. Two tiers that look deliberately different — the user
   → Deep Route this
 ```
 
-**Deep Route Result** (Tier 1 post-route): Shows a specific pick with full reasoning chain — thesis → sector → specific name → why not the alternatives. Includes the standard trade card from the Output section.
+**Deep Route Result** (Tier 1 post-route): Shows a specific pick with the derivation chain (see Derivation Chain section for format and anti-patterns) and the standard trade card from the Output section.
 
 **Tier 3**: One line per skipped thesis with reason.
 
@@ -703,7 +705,7 @@ One artifact per source. Two tiers that look deliberately different — the user
 ### Scan Rules
 
 1. **Never pick a ticker in a quick hit.** Candidates only. The scan never pretends to have done work it hasn't.
-2. **Inference chain required on deep routes.** Must show: thesis → sector → specific name → why not alternatives.
+2. **Inference chain required on deep routes.** Use the Derivation Chain format — segments, steps, chose_over. The chain section defines structure and anti-patterns.
 3. **Counter-arguments.** If the source contains opposing views on a thesis, note them.
 4. **Mixed signals.** If a thesis has both bullish and bearish elements, capture both and let routing resolve direction.
 5. **One scan per source.** The scan is the atomic unit.
