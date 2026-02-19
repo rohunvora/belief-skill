@@ -513,3 +513,37 @@ Fix: (a) "Every" → "Most", dropped Surface/Deeper naming, (b) skeleton replace
 - Output length problem from Telegram test (rating 2/5) not yet addressed — user wants shorter output that links to the board site
 - Bulk mode speed (4 sequential deep research phases) not yet optimized
 - Inline ticker badges parked — needs skill-side `tickers` field in DerivationStep before frontend can render them
+
+## 2026-02-18: Session 11 — Chain self-test + chain-sketch-before-research
+
+### What we changed
+
+**Self-test paragraph added to SKILL.md Derivation Chain section:**
+- Draft the chain BEFORE research. If you can't connect source quote to trade in 2-5 plain steps without looking anything up, the routing has a problem research won't fix.
+- Test: remove looked-up facts from steps. If chain still holds, they were padding. If chain breaks, a reasoning gap was filled with research — fix routing, not chain.
+- Sketch targets research: steps needing grounding tell you what to search. Steps that hold without data need no searches.
+
+**Research section restructured:**
+- New "First:" instruction at top of Research section pointing to chain sketch as prerequisite.
+- Flow is now: extraction → deeper claim → chain sketch → self-test → research → scoring.
+
+**Em dash ban:**
+- Added "no em dashes" to chain writing rules in both SKILL.md and references/derivation-chain.md.
+- Cleaned all em dashes from chain example step text in both files.
+- Cleaned format template `chose_over` field.
+
+**references/derivation-chain.md synced:**
+- All example step text cleaned of em dashes (periods instead).
+- Self-test section added.
+- Opening line updated to "Draft the chain BEFORE research."
+- Writing rules updated with em dash ban.
+
+### Decisions made
+
+**46. Chain as pre-flight check, not post-hoc documentation.** The chain is the litmus test for routing quality. If it needs research facts to connect source to trade, something upstream is wrong. Drafting it before research is free (no tool calls). Doing it after research is expensive (already spent 3-10 searches). Fail fast principle.
+
+**47. Em dashes banned from chain output.** Every chain step used the same "X — Y" pattern, creating another templating signal. Banned in rules, cleaned from all examples. One clean thought per step instead.
+
+### Files changed
+- `SKILL.md` — self-test subsection, Research "First:" instruction, em dash ban in rules, em dashes cleaned from format template and all chain examples
+- `references/derivation-chain.md` — full sync: self-test section, em dash ban, cleaned examples, updated opening

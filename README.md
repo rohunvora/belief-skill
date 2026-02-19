@@ -84,9 +84,9 @@ Add the skill to Claude Code and start talking. No special commands. Just say wh
 
 No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexScreener, Hyperliquid).
 
-## Current Stage (v5.2)
+## Current Stage (v5.3)
 
-Reasoning chain anti-templating + inline ticker styling. SKILL.md Derivation Chain section rewritten with 3 distinct chain structures (lead with company, two threads converge, counterfactual) and explicit anti-patterns section. Feed card chain steps now auto-detect ticker symbols and render them as clickable badges — card's ticker in directional color, other tickers in gray, all linking to the ticker filter.
+Chain self-test + chain-sketch-before-research flow. Derivation chains are now drafted BEFORE research as a pre-flight check: if the chain can't connect source to trade without looked-up facts, the routing is wrong and research won't fix it. Em dashes banned from chain output. All chain examples cleaned. Inline ticker badges reverted (needs skill-side data, not frontend regex).
 
 **What's next:** Shorten Telegram output (link to board instead of full card). Bulk mode speed optimization. Deploy board publicly.
 
