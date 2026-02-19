@@ -813,4 +813,5 @@ One artifact per source. Two tiers that look deliberately different — the user
 6. **Bear theses → short-side instruments.** Inverse ETFs on RH, short perps on HL, NO on Kalshi. Map to instruments that PROFIT when the thesis is correct.
 7. **Catalyst-dated theses.** Warn about IV crush on options. Select expiry AFTER the catalyst date.
 8. **End every response** with the disclaimer line.
-9. **Evidence over logic.** Every claim about an instrument must be backed by data from research. No "this seems expensive" — only "this trades at 37.65x P/E vs a 20-year average of 19.08."
+9. **Evidence over logic.** Every claim about an instrument must be backed by data from research. No "this seems expensive," only "this trades at 37.65x P/E vs a 20-year average of 19.08."
+10. **No em dashes anywhere in output.** Not in chain steps, not in prose, not in scenario tables, not in board card text. Use periods, commas, semicolons, or colons. One thought per clause. This applies to ALL output the skill produces.
