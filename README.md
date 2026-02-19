@@ -84,9 +84,9 @@ Add the skill to Claude Code and start talking. No special commands. Just say wh
 
 No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexScreener, Hyperliquid).
 
-## Current Stage (v4.0)
+## Current Stage (v5.1)
 
-Two-layer data model implemented end-to-end. Every belief entry preserves the author's original signal (what they said, their conviction, their conditions) separately from the skill's routing (which instrument, why, derivation chain). Feed, detail view, shareable cards, and permalinks all display both layers with attribution tiers (direct/derived/inspired).
+Two-layer data model with cleaned-up taxonomy. Attribution tiers simplified to 3 (original/direct/derived — "inspired" merged into "derived"). Conviction badges removed from display (source quote carries the tone). All internal jargon renamed for readers: "Derivation Chain" → "Reasoning", "evidence"/"inference" → "cited"/"inferred", "The Call" → "What They Said". Detail page shows cited vs inferred reasoning steps with speaker citations.
 
 **What's next:** Deploy board publicly. Curator submission flow. Skill → board API integration.
 

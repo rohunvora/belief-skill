@@ -31,8 +31,7 @@ function tierLabel(call: Call): string {
   const handle = call.source_handle ? `@${call.source_handle}` : "unknown";
   switch (call.call_type) {
     case "direct": return `direct call by ${handle}`;
-    case "derived": return `${handle}\u2019s thesis \u00b7 routed by belief.board`;
-    case "inspired": return `inspired by ${handle} \u00b7 routed by belief.board`;
+    case "derived": return `${handle}\u2019s thesis \u00b7 via belief.board`;
     default: return "belief.board";
   }
 }
@@ -67,7 +66,7 @@ function buildAuthorSection(call: Call): string {
 
   if (parts.length === 0) return "";
   return `<div class="section author-section">
-    <div class="section-header">The Call</div>
+    <div class="section-header">What They Said</div>
     ${parts.join("\n")}
   </div>`;
 }
@@ -83,7 +82,7 @@ function buildChainSection(call: Call): string {
     const stepItems = detail.steps.map((step) => {
       const hasEvidence = step.segment !== undefined && detail.segments[step.segment];
       const seg = hasEvidence ? detail.segments[step.segment!] : null;
-      const marker = hasEvidence ? "evidence" : "inference";
+      const marker = hasEvidence ? "cited" : "inferred";
       const markerClass = hasEvidence ? "step-evidence" : "step-inference";
 
       let citationHtml = "";
@@ -101,11 +100,11 @@ function buildChainSection(call: Call): string {
     }).join("\n");
 
     const choseOverHtml = detail.chose_over
-      ? `<div class="chain-chose-over"><span class="field-label">Chose over:</span> ${escapeHtml(detail.chose_over)}</div>`
+      ? `<div class="chain-chose-over"><span class="field-label">Instead of:</span> ${escapeHtml(detail.chose_over)}</div>`
       : "";
 
     return `<div class="section chain-section">
-      <div class="section-header">Derivation Chain</div>
+      <div class="section-header">Reasoning</div>
       ${stepItems}
       ${choseOverHtml}
     </div>`;
@@ -119,11 +118,11 @@ function buildChainSection(call: Call): string {
     .map((s) => `<div class="chain-step step-flat">&gt; ${escapeHtml(s)}</div>`)
     .join("\n");
   const choseOverHtml = chain.chose_over
-    ? `<div class="chain-chose-over"><span class="field-label">Chose over:</span> ${escapeHtml(chain.chose_over)}</div>`
+    ? `<div class="chain-chose-over"><span class="field-label">Instead of:</span> ${escapeHtml(chain.chose_over)}</div>`
     : "";
 
   return `<div class="section chain-section">
-    <div class="section-header">Derivation Chain</div>
+    <div class="section-header">Reasoning</div>
     ${stepItems}
     ${choseOverHtml}
   </div>`;
@@ -173,16 +172,13 @@ export function renderPermalink(call: Call): string {
   const ogParts: string[] = [call.ticker, `$${call.entry_price}`, date];
   const ogDescription = escapeHtml(ogParts.join(" \u2014 "));
 
-  // Conviction badge
-  const convictionHtml = call.conviction
-    ? `<span class="conviction conviction-${call.conviction}">${call.conviction}</span>`
-    : "";
+  // Conviction badge removed — source quote carries the tone
 
   // Tier label
   const tier = escapeHtml(tierLabel(call));
 
   // Routing line with direction
-  const isRouted = call.call_type === "derived" || call.call_type === "inspired";
+  const isRouted = call.call_type === "derived";
   const routePrefix = isRouted ? "\u2192 " : "";
   const routeHtml = `<div class="route-line">${routePrefix}<strong>${escapeHtml(call.ticker)}</strong> ${call.direction} \u00b7 $${call.entry_price.toLocaleString()} at call</div>`;
 
@@ -220,7 +216,7 @@ export function renderPermalink(call: Call): string {
   // Created vs source date note
   const processedDate = formatDate(call.created_at);
   const dateNote = call.source_date && call.source_date !== call.created_at.slice(0, 10)
-    ? `<span class="date-note">Said ${date} \u00b7 Routed ${processedDate}</span>`
+    ? `<span class="date-note">Said ${date} \u00b7 Added ${processedDate}</span>`
     : `<span class="date-note">${date}</span>`;
 
   return `<!DOCTYPE html>
@@ -268,18 +264,6 @@ export function renderPermalink(call: Call): string {
     align-items: center;
     gap: 8px;
   }
-  .conviction {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 2px 8px;
-    border-radius: 3px;
-  }
-  .conviction-high { background: #dcfce7; color: #166534; }
-  .conviction-medium { background: #fef9c3; color: #854d0e; }
-  .conviction-low { background: #fee2e2; color: #991b1b; }
-  .conviction-speculative { background: #f3e8ff; color: #6b21a8; }
   .date-note { color: #9ca3af; font-size: 13px; }
 
   /* Tier badge */
@@ -455,7 +439,6 @@ export function renderPermalink(call: Call): string {
   <div class="take-header">
     <span class="caller">${escapeHtml(caller)}</span>
     <div class="header-right">
-      ${convictionHtml}
       ${dateNote}
     </div>
   </div>

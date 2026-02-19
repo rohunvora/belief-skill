@@ -262,17 +262,9 @@ export function CardDetail({ id }: { id: string }) {
                   )}
               </div>
               <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
-                {call.conviction && (
-                  <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                    call.conviction === "high" ? "bg-green-50 text-green-700" :
-                    call.conviction === "medium" ? "bg-yellow-50 text-yellow-700" :
-                    call.conviction === "low" ? "bg-red-50 text-red-700" :
-                    "bg-purple-50 text-purple-700"
-                  }`}>{call.conviction}</span>
-                )}
                 <span className="text-xs text-gray-500">
                   {call.source_date && call.source_date !== call.created_at.slice(0, 10)
-                    ? `Said ${formatDate(call.source_date)} · Routed ${formatDate(call.created_at)}`
+                    ? `Said ${formatDate(call.source_date)} · Added ${formatDate(call.created_at)}`
                     : formatDate(call.source_date ?? call.created_at)}
                 </span>
                 {call.scan_source && (
@@ -296,12 +288,10 @@ export function CardDetail({ id }: { id: string }) {
                   <span className={`text-[10px] px-1.5 py-0.5 rounded ${
                     call.call_type === "direct" ? "bg-blue-50 text-blue-600" :
                     call.call_type === "derived" ? "bg-amber-50 text-amber-600" :
-                    call.call_type === "inspired" ? "bg-purple-50 text-purple-600" :
                     "bg-gray-100 text-gray-600"
                   }`}>
                     {call.call_type === "direct" ? "direct call" :
-                     call.call_type === "derived" ? "routed from thesis" :
-                     call.call_type === "inspired" ? "inspired" :
+                     call.call_type === "derived" ? "AI-routed" :
                      call.call_type}
                   </span>
                 )}
@@ -322,7 +312,7 @@ export function CardDetail({ id }: { id: string }) {
         {(call.source_quote || call.author_thesis || call.conditions) && (
           <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3">
             <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-2">
-              The Call
+              What They Said
             </div>
             {call.source_quote && (
               <div className="border-l-2 border-gray-300 pl-3 mb-2">
@@ -517,7 +507,7 @@ export function CardDetail({ id }: { id: string }) {
           </p>
         )}
 
-        {/* Derivation chain — evidence/inference markers or greentext fallback */}
+        {/* Reasoning chain — cited/inferred markers or greentext fallback */}
         {(() => {
           // Try structured derivation with segment links first
           const detail = extractDerivationDetail(call);
@@ -525,7 +515,7 @@ export function CardDetail({ id }: { id: string }) {
             return (
               <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3 space-y-1.5">
                 <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                  Derivation Chain
+                  Reasoning
                 </div>
                 {detail.steps.map((step, i) => {
                   const hasEvidence = step.segment !== undefined && detail.segments[step.segment];
@@ -535,9 +525,9 @@ export function CardDetail({ id }: { id: string }) {
                       <span className={`shrink-0 text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ${
                         hasEvidence
                           ? "bg-blue-50 text-blue-700"
-                          : "bg-purple-50 text-purple-700"
+                          : "bg-amber-50 text-amber-700"
                       }`}>
-                        {hasEvidence ? "evidence" : "inference"}
+                        {hasEvidence ? "cited" : "inferred"}
                       </span>
                       <span className="text-gray-700 flex-1">{step.text}</span>
                       {seg && (
@@ -550,7 +540,7 @@ export function CardDetail({ id }: { id: string }) {
                 })}
                 {detail.chose_over && (
                   <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
-                    <span className="font-medium text-gray-600">Chose over:</span>{" "}
+                    <span className="font-medium text-gray-600">Instead of:</span>{" "}
                     {detail.chose_over}
                   </div>
                 )}
@@ -564,7 +554,7 @@ export function CardDetail({ id }: { id: string }) {
           return (
             <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3 space-y-1">
               <div className="text-[10px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                Derivation Chain
+                Reasoning
               </div>
               {chain.steps.map((step, i) => (
                 <div key={i} className="text-xs text-gray-500 font-mono leading-relaxed">
@@ -574,7 +564,7 @@ export function CardDetail({ id }: { id: string }) {
               ))}
               {chain.chose_over && (
                 <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
-                  <span className="font-medium text-gray-600">Considered alternatives:</span>{" "}
+                  <span className="font-medium text-gray-600">Instead of:</span>{" "}
                   {chain.chose_over}
                 </div>
               )}

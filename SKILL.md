@@ -138,7 +138,7 @@ The chain has three parts: **segments** (cited source material), **steps** (the 
 }
 ```
 
-4 steps from multi-segment transcript (inspired — mostly inference):
+4 steps from multi-segment transcript (derived — mostly inference):
 ```json
 {
   "segments": [
@@ -169,14 +169,13 @@ Mechanically determined by two factors: (1) what the first step contains, and (2
 | Condition | Tier | Card shows |
 |-----------|------|------------|
 | Author named a ticker AND skill routes to the same ticker | `direct` | "@source's call" |
-| Author named a ticker BUT skill routes elsewhere | `derived` | "@source's thesis · routed by" |
-| Author had a market-specific claim, no ticker (e.g. "GLP-1 distribution is the bottleneck") | `derived` | "@source's thesis · routed by" |
-| Author made a cultural observation only (e.g. "everyone's on Ozempic") | `inspired` | "inspired by @source · routed by" |
+| Author named a ticker BUT skill routes elsewhere | `derived` | "@source's thesis · via belief.board" |
+| Author had a market-specific claim, no ticker | `derived` | "@source's thesis · via belief.board" |
+| Author made a cultural observation only | `derived` | "@source's thesis · via belief.board" |
 
 **Track record scoring by tier:**
 - `direct` — score the author on instrument performance. Their pick, their record.
 - `derived` — score the author on thesis direction (did the sector/theme move right?). Score the skill separately on instrument selection.
-- `inspired` — too many inference steps to score the author on instrument performance. Note as context, not as a call.
 
 For examples and classification rules: load `references/derivation-chain.md`.
 
@@ -449,7 +448,7 @@ No preamble — start with the insight immediately.
 2. The non-obvious insight (what the market is missing)
 3. The probability gap: what the market prices vs what breakeven requires
 4. "You need to believe X" — frame the user as the decision-maker
-5. **If the routing diverges from the author's stated instrument** (derived/inspired), acknowledge it explicitly: "Marginsmall is talking about data sovereignty — the purest expression is DELL, not the cloud providers."
+5. **If the routing diverges from the author's stated instrument** (derived), acknowledge it explicitly: "Marginsmall is talking about data sovereignty — the purest expression is DELL, not the cloud providers."
 
 **Constraints:**
 - 4-6 paragraphs max. Tight, not rambling.
@@ -522,7 +521,7 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 | Routing | Routed ticker | `ticker` | required |
 | Routing | long/short | `direction` | "long" or "short" |
 | Routing | Price at source_date | `entry_price` | number |
-| Routing | Attribution tier | `call_type` | "direct", "derived", or "inspired" |
+| Routing | Attribution tier | `call_type` | "direct" or "derived" |
 | Routing | "+EV above X%" | `breakeven` | string |
 | Routing | "dies if k1, k2" | `kills` | string |
 | Routing | Instrument type | `instrument` | "stock", "options", "kalshi", or "perps" |
@@ -642,7 +641,7 @@ Pure reasoning. No tool calls. Extract every directional claim using the same cr
 
 **Then add the Routing layer:**
 - `thesis` — reframed as a directional claim (may differ from author_thesis)
-- `call_type` — direct / derived / inspired based on divergence
+- `call_type` — direct / derived based on divergence
 
 **Cluster:** Same thesis expressed differently = 1 entry. Keep the strongest quote per attribution. When multiple speakers support the same thesis, capture each as a separate segment with speaker + timestamp.
 

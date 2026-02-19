@@ -120,7 +120,7 @@ export function renderForAgents(): string {
   <tr><td><code>kills</code></td><td>string</td><td></td></tr>
   <tr><td><code>source_handle</code></td><td>string</td><td></td></tr>
   <tr><td><code>source_url</code></td><td>string</td><td></td></tr>
-  <tr><td><code>call_type</code></td><td>"original" | "direct" | "derived" | "inspired"</td><td>"original"</td></tr>
+  <tr><td><code>call_type</code></td><td>"original" | "direct" | "derived"</td><td>"original"</td></tr>
   <tr><td><code>instrument</code></td><td>"stock" | "options" | "kalshi" | "perps"</td><td></td></tr>
   <tr><td><code>platform</code></td><td>"robinhood" | "kalshi" | "hyperliquid"</td><td></td></tr>
   <tr><td><code>caller_id</code></td><td>string</td><td>Auto-generated anon ID</td></tr>

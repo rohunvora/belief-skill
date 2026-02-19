@@ -320,7 +320,7 @@ export const calls: Call[] = [
     source_url: "https://x.com/nicbstme/status/2023501562480644501",
     source_date: "2026-02-17",
     conviction: "speculative",  // "the scarce inputs get more valuable" — framework observation, no trade commitment
-    call_type: "inspired",
+    call_type: "derived",
     status: "active",
     resolve_price: null,
     resolve_date: null,

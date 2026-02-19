@@ -51,7 +51,7 @@ export interface Call {
   source_url: string | null;
   source_date: string | null; // when they said it (ISO date, e.g. "2026-02-15")
   conviction: "high" | "medium" | "low" | "speculative" | null; // from language intensity
-  call_type: "original" | "direct" | "derived" | "inspired"; // attribution tier
+  call_type: "original" | "direct" | "derived"; // attribution tier
 
   // attribution
   caller_id: string;         // who submitted this routing

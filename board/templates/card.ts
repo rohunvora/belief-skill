@@ -52,9 +52,7 @@ function getAttribution(call: Call): string {
     case "direct":
       return "direct call \u00b7 belief.board";
     case "derived":
-      return handle ? `${handle}\u2019s thesis \u00b7 routed by belief.board` : "routed by belief.board";
-    case "inspired":
-      return handle ? `inspired by ${handle} \u00b7 routed by belief.board` : "routed by belief.board";
+      return handle ? `${handle}\u2019s thesis \u00b7 via belief.board` : "via belief.board";
     default:
       return "belief.board";
   }
@@ -69,8 +67,8 @@ export function renderCard(call: Call): string {
   const caller = escapeHtml(call.source_handle ?? call.caller_id);
   const quote = escapeHtml(quoteText);
 
-  // Routing line: for derived/inspired, show arrow prefix
-  const isRouted = call.call_type === "derived" || call.call_type === "inspired";
+  // Routing line: for derived, show arrow prefix
+  const isRouted = call.call_type === "derived";
   const routePrefix = isRouted ? "\u2192 " : ""; // → symbol
   const routeLine = `${routePrefix}${call.ticker} ${call.direction} \u00b7 $${call.entry_price.toLocaleString()}`;
 
@@ -95,10 +93,7 @@ export function renderCard(call: Call): string {
     pnlHtml = `<span style="color:${color};font-weight:700;margin-left:12px">${sign}${pnl.toFixed(1)}%</span>`;
   }
 
-  // Conviction badge
-  const convictionHtml = call.conviction
-    ? `<span class="conviction conviction-${call.conviction}">${call.conviction}</span>`
-    : "";
+  // Conviction badge removed — source quote carries the tone
 
   const attribution = escapeHtml(getAttribution(call));
 
@@ -146,18 +141,6 @@ export function renderCard(call: Call): string {
     font-size: 18px;
     color: #6b7280;
   }
-  .conviction {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 3px 10px;
-    border-radius: 4px;
-  }
-  .conviction-high { background: #dcfce7; color: #166534; }
-  .conviction-medium { background: #fef9c3; color: #854d0e; }
-  .conviction-low { background: #fee2e2; color: #991b1b; }
-  .conviction-speculative { background: #f3e8ff; color: #6b21a8; }
   .quote {
     font-size: ${fontSize}px;
     font-weight: 700;
@@ -207,7 +190,6 @@ export function renderCard(call: Call): string {
   <div class="header">
     <span class="caller">${caller}</span>
     <div class="header-right">
-      ${convictionHtml}
       <span class="date">${date}</span>
     </div>
   </div>

@@ -132,14 +132,6 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
       <div className="flex items-center gap-2 mb-1">
         <Avatar handle={displayHandle} size="md" />
         <span className="text-[15px] font-semibold text-gray-900">@{displayHandle}</span>
-        {call.conviction && (
-          <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-            call.conviction === "high" ? "bg-green-50 text-green-700" :
-            call.conviction === "medium" ? "bg-yellow-50 text-yellow-700" :
-            call.conviction === "low" ? "bg-red-50 text-red-700" :
-            "bg-purple-50 text-purple-700"
-          }`}>{call.conviction}</span>
-        )}
         {call.source_url && (
           <a
             href={call.source_url}
@@ -155,7 +147,7 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
         <span className="text-[11px] text-gray-400">· {timeAgo(call.source_date ?? call.created_at)}</span>
       </div>
 
-      {/* Row 2: Greentext derivation steps or thesis fallback */}
+      {/* Row 2: Reasoning steps or thesis fallback */}
       {chain.hasChain && chain.steps.length > 0 ? (
         <div className="mb-2 space-y-0.5">
           {chain.steps.map((step, i) => (
@@ -174,7 +166,7 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-1.5 py-0.5`}>
-            {(call.call_type === "derived" || call.call_type === "inspired") && <span className="text-gray-400 mr-0.5">&rarr;</span>}
+            {call.call_type === "derived" && <span className="text-gray-400 mr-0.5">&rarr;</span>}
             {dirArrow} {call.ticker}
           </span>
           <span className="text-xs text-gray-400">{formatPrice(call.entry_price)}</span>

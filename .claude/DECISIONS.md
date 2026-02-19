@@ -432,3 +432,43 @@ Executed the full two-layer data model designed in session 7. Three workstreams:
 2. Publish skill to GitHub for distribution
 3. Visual review of React SPA in browser (feed cards + detail view)
 4. Build curator submission flow (anyone can submit a routing)
+
+## 2026-02-18: Session 9 — Taxonomy Cleanup (Backstage → Frontstage)
+
+### Context
+Audit identified that every taxonomy in the codebase was designed for Claude's internal reasoning and shipped directly to the reader. Applied DDD backstage/frontstage pattern and three diagnostic tests (MECE, behavioral, rule of three) to every taxonomy. Found HIGH-priority jargon issues across attribution tiers, conviction, section headers, and step markers.
+
+### Decisions made
+
+**38. Attribution tiers collapsed from 4 to 3.** Removed "inspired" tier — merged into "derived". The distinction between "derived" (market-specific claim, no ticker) and "inspired" (cultural observation only) failed all three tests: not MECE (both route differently from author), no behavioral difference (same display, same scoring), and no real cases where distinction changed outcome. `call_type` is now `"original" | "direct" | "derived"`.
+
+**39. Conviction display removed.** Kept in data model for analysis, stopped displaying as a badge. The ordinal scale (high/medium/low/speculative) was more subjective than useful — it asks Claude to gauge language intensity, which is unreliable. The source quote already carries the tone. Reader can assess conviction themselves.
+
+**40. Leap distance = visual chain pattern, not a computed number.** Explored 3 computed metrics (inference ratio, absolute inference count, thesis-only inference count) — all failed on 4/12 test samples. Explored field comparison (author_ticker vs ticker) — too binary. Final answer: color-code evidence/inference steps on feed cards. Blue `>` for cited steps (linked to source segments), amber `>` for inferred steps (skill's contribution). The visual weight of colors communicates the leap at a glance. The reader interprets the pattern, not a formula.
+
+**41. Label renames across all UI surfaces.**
+- "The Call" → "What They Said" (section header for author's preserved signal)
+- "Derivation Chain" → "Reasoning" (section header for chain steps)
+- "evidence" → "cited" (step marker badge)
+- "inference" → "inferred" (step marker badge)
+- "routed by belief.board" → "via belief.board" (attribution line)
+- "Chose over:" → "Instead of:" (alternatives considered)
+- "routed from thesis" → "AI-routed" (call_type badge on detail page)
+- "Said X · Routed Y" → "Said X · Added Y" (dual date display)
+- "bg-purple" inference markers → "bg-amber" (consistent with feed card amber)
+
+### Files changed
+- `board/types.ts` — removed "inspired" from call_type union
+- `board/mock-data.ts` — SPGI call_type "inspired" → "derived"
+- `board/components/CallCard.tsx` — removed conviction badge, removed "inspired" ref, added color-coded chain steps (cited=blue, inferred=amber) using extractDerivationDetail()
+- `board/pages/CardDetail.tsx` — removed conviction badge, removed "inspired" case, renamed all section headers and step markers
+- `board/templates/card.ts` — removed conviction badge + CSS, removed "inspired" from getAttribution(), updated attribution text
+- `board/templates/permalink.ts` — removed conviction badge + CSS, removed "inspired" from tierLabel(), renamed all headers/markers
+- `board/templates/for-agents.ts` — updated call_type enum
+- `SKILL.md` — merged "inspired" row into "derived" in attribution tier table, updated field references
+- `tests/leap-distance-samples.ts` — 12 test samples created for metric evaluation (used to prove step-counting doesn't work)
+
+### Known issues
+- Legacy chain format (5 of 6 mock calls) shows uniform gray `>` on feed — only segment-based v2 format (DELL) shows color coding. This is correct behavior — legacy data doesn't have segment links.
+- Conviction data still stored in DB, just not displayed. Available for future analysis.
+- `chose_over` field name in DerivationChain interface not renamed (internal data, not user-facing)
