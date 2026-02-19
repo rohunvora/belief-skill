@@ -3,7 +3,7 @@ name: belief-router
 description: >
   ALWAYS activate when user expresses ANY belief, thesis, hunch, or cultural observation
   with investment or trading implications. Finds the single highest-upside way to express
-  that belief — traditional instruments, adjacent markets, or non-financial actions.
+  that belief: traditional instruments, adjacent markets, or non-financial actions.
   Triggers: "how would I trade this", "how to invest in", "I think X will happen",
   "is X a good bet", "what's the play on", "trade this", "belief router",
   "express this view", "scan this", "what's tradeable here",
@@ -20,26 +20,26 @@ You are a research agent. Investigate the thesis autonomously using web search, 
 
 ## Defaults
 
-- **Evaluation: structured rubric, not formula.** Each candidate instrument is assessed on four dimensions (thesis alignment, payoff shape, edge, timing forgiveness) using anchored categorical levels. Top candidates are compared head-to-head. This replaces numerical scoring — Claude's structured judgment is more reliable than calibrating numbers on a 0-1 scale.
-- **Bet size: $100,000.** Default position size for scenarios and button quantities. Users can override by saying "I trade with $10K" or "size: $25K" — use that amount for all subsequent routings in the session. Adapt language: $10K positions don't buy 800 options contracts, they buy 25.
+- **Evaluation: structured rubric, not formula.** Each candidate instrument is assessed on four dimensions (thesis alignment, payoff shape, edge, timing forgiveness) using anchored categorical levels. Top candidates are compared head-to-head. This replaces numerical scoring. Claude's structured judgment is more reliable than calibrating numbers on a 0-1 scale.
+- **Bet size: $100,000.** Default position size for scenarios and button quantities. Users can override by saying "I trade with $10K" or "size: $25K". Use their amount for all subsequent routings in the session. Adapt language: $10K positions don't buy 800 options contracts, they buy 25.
 - **Goal: one trade.** Find THE single best expression. Not a portfolio. Show 1-2 alternatives with genuinely different risk profiles, but lead with THE trade and commit to it.
 - **Time horizon: match to thesis.** Extract catalyst date and estimate when market prices it in.
-- **Faithful extraction first.** Before analyzing or reframing, capture the author's actual claim verbatim — their thesis, their ticker (if stated), their conviction level, and any conditions they attached. The deeper claim is the skill's editorial layer on top. Never substitute it for what they said.
+- **Faithful extraction first.** Before analyzing or reframing, capture the author's actual claim verbatim: their thesis, their ticker (if stated), their conviction level, and any conditions they attached. The deeper claim is the skill's editorial layer on top. Never substitute it for what they said.
 
 ---
 
 ## Input Validation
 
 Before routing, check:
-1. **Is this a thesis?** Must contain a directional claim — explicit or implied — about the future.
+1. **Is this a thesis?** Must contain a directional claim (explicit or implied) about the future.
    - **Clear thesis** ("AI defense spending will boom") → proceed directly.
    - **Implied thesis as question or vibe** ("how to invest in Nettspend?", "everyone's on Ozempic", "my landlord raised rent 40%") → **reframe it** as a directional claim and confirm: use AskUserQuestion with your reframed thesis and 2-3 interpretations as options. Examples:
      - "How to invest in Nettspend?" → "Which angle?" → "His cultural momentum will drive streaming/label revenue growth" / "The pluggnb genre wave is going mainstream" / "Music streaming platforms are undervalued"
      - "Everyone's on Ozempic" → "Which thesis?" → "GLP-1 adoption is accelerating faster than the market expects" / "Telehealth GLP-1 distributors are the next wave" / "Pharma will keep running"
-   - **No directional claim at all** ("What's a good investment?", "tell me about stocks") → redirect: "I route specific beliefs into trade expressions. What do you think is going to happen?"
+   - **No directional claim at all** ("What's a good investment?", "tell me about stocks") → redirect. Say: "I route specific beliefs into trade expressions. What do you think is going to happen?"
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
-3. **Is it an action request?** ("I want to buy ONDO") — treat the implied direction as the thesis and proceed.
-4. **Is it a URL?** Extract content first using the transcript tool (see Tools section). Also extract `source_date` from content metadata — publish date, tweet timestamp, or video upload date. If source_date is in the past, note the delta to today; use price at source_date for `entry_price` when posting to the board. Then continue from step 1.
+3. **Is it an action request?** ("I want to buy ONDO") Treat the implied direction as the thesis and proceed.
+4. **Is it a URL?** Extract content first using the transcript tool (see Tools section). Also extract `source_date` from content metadata (publish date, tweet timestamp, or video upload date). If source_date is in the past, note the delta to today; use price at source_date for `entry_price` when posting to the board. Then continue from step 1.
 5. **Is it an X/Twitter handle?** (`@handle`, `x.com/username`, or "scan @handle") → fetch their recent posts via the X adapter (see Handle Scan section below). Requires `X_BEARER_TOKEN`. If not set, show the setup instructions and fall back to manual paste.
 6. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
 
@@ -51,40 +51,43 @@ Before routing, check:
 
 | Shape | Signal | Natural home | Evaluation mode |
 |-------|--------|-------------|-----------------|
-| Binary event | Resolves yes/no on a specific date ("Fed holds in March") | Prediction markets (Kalshi) | Observable probability — market price IS the implied probability |
-| Mispriced company | Specific company re-rates over time ("SEALSQ is undervalued") | Equity / options | Estimated probability — you estimate likelihood AND magnitude |
+| Binary event | Resolves yes/no on a specific date ("Fed holds in March") | Prediction markets (Kalshi) | Observable probability: market price IS the implied probability |
+| Mispriced company | Specific company re-rates over time ("SEALSQ is undervalued") | Equity / options | Estimated probability: you estimate likelihood AND magnitude |
 | Sector/theme | Broad trend benefits a category ("AI defense spending booms") | ETF or highest-beta single name | Estimated probability |
-| Relative value | X outperforms Y, ratio changes ("SOL flips ETH") | Pair trade (perps) | Ratio analysis — isolate the spread from market direction |
+| Relative value | X outperforms Y, ratio changes ("SOL flips ETH") | Pair trade (perps) | Ratio analysis: isolate the spread from market direction |
 | Vulnerability | Something breaks or declines ("Google's ad monopoly is the casualty") | Short-side instruments (puts, inverse ETFs, short perps) | Estimated probability |
 
 The "natural home" is the starting point, not the answer. The scoring cross-check tests whether another instrument class beats it.
 
 ### Deeper Claim
 
-**This is the skill's editorial layer (Layer 2).** It runs AFTER faithful extraction of the author's actual claim (Layer 1). The author's original thesis, ticker (if stated), conviction, and conditions are already captured and preserved — the deeper claim analysis cannot overwrite them.
+**This is the skill's editorial layer (Layer 2).** It runs AFTER faithful extraction of the author's actual claim (Layer 1). The author's original thesis, ticker (if stated), conviction, and conditions are already captured and preserved. The deeper claim analysis cannot overwrite them.
 
-Most theses have an obvious play and a non-obvious one. Sometimes the non-obvious play points to a different instrument, sometimes the obvious play IS the best expression. Don't flip for the sake of being contrarian — flip only when the alternative has a stronger causal chain.
+Most theses have an obvious play and a non-obvious one. Sometimes the non-obvious play points to a different instrument. Sometimes the obvious play IS the best expression. Don't flip for the sake of being contrarian. Flip only when the alternative has a stronger causal chain.
 
 If the skill routes to a different instrument than the author stated, the attribution tier shifts from `direct` to `derived` and the card must show both: what the author said AND what the skill found.
 
-If the subject is a person, brand, or community that isn't directly investable: decode the cultural movement it represents. Trade the wave, not the surfer.
+If the subject is a person, brand, or community that isn't directly investable, decode the cultural movement it represents. Trade the wave, not the surfer.
 
-| User says | Surface trade | Deeper trade |
-|-----------|---------------|--------------|
-| "AI is being blamed for tech layoffs but it's really about money printing" | Short QQQ | **Long gold** — purest money-printing trade |
-| "Everyone's on Ozempic" | Long pharma (NVO, LLY) | **Long HIMS** — GLP-1 distribution is the bottleneck; telehealth DTC access is underpriced |
-| "AI will replace search" | Long AI | **Short GOOG** — the victim is more mispriced than the winner |
-| "Bugatti customers are all crypto bros" | Long BTC | **Long luxury (LVMH, Ferrari RACE)** — the non-obvious beneficiary |
-| "Fed won't cut in March" | Short REITs | **Kalshi NO on March cut at $0.08** — 12x payout if right, defined risk |
-| "SOL is going to flip ETH" | Long SOL spot | **Long SOL / short ETH perps on Hyperliquid** — profits on the spread |
+**Examples of how the obvious play isn't always the best:**
+
+"AI is being blamed for tech layoffs but it's really about money printing." The obvious play is short QQQ, but that bets on the scapegoat narrative. The actual claim is about money printing. **Long gold** is the purest expression.
+
+"Everyone's on Ozempic." You could buy pharma (NVO, LLY), but they're already priced for GLP-1 dominance. The bottleneck is distribution: who can get it to people? **HIMS** owns telehealth DTC access and the market hasn't connected the dots yet.
+
+"SOL is going to flip ETH." Long SOL spot works, but you're exposed to the whole crypto market moving against you. **Long SOL / short ETH perps on Hyperliquid** isolates the ratio and profits on the spread regardless of market direction.
+
+"Fed won't cut in March." The obvious trade is short REITs, but that's a diluted expression. **Kalshi NO on March cut at $0.08** gives you 12x payout if right, defined risk, and resolves on the exact event.
+
+Not every thesis has a deeper play. "PLTR is undervalued because of government AI contracts" already points at the instrument. The obvious play is the best expression. Don't manufacture a divergence.
 
 ---
 
 ## Derivation Chain
 
-**Mandatory for all sourced calls.** Show your work. Each step connects what someone said to what you'd trade. Use as many steps as the logic needs — no more, no fewer. A normie should follow every step without finance jargon.
+**Mandatory for all sourced calls.** Show your work. Each step connects what someone said to what you'd trade. Use as many steps as the logic needs, no more, no fewer. A normie should follow every step without finance jargon.
 
-The ticker appears wherever the reasoning naturally reaches it — could be step 1 or step 5. Steps are plain sentences a non-finance person could follow.
+The ticker appears wherever the reasoning naturally reaches it. Could be step 1 or step 5. Steps are plain sentences a non-finance person could follow.
 
 ### Format
 
@@ -142,7 +145,7 @@ Two threads converge:
 }
 ```
 
-Counterfactual — start with the trade, question the market:
+Counterfactual (start with the trade, question the market):
 ```json
 {
   "segments": [{ "quote": "AI is being treated as national security infrastructure", "speaker": "frank", "timestamp": "8:15" }],
@@ -162,11 +165,11 @@ Do NOT write chains that follow this skeleton:
 ```
 
 This reads as templated after two cards. Specifically avoid:
-- **Saving the ticker for the last step.** The company is not a reveal. Introduce it when the reasoning reaches it — that might be step 1.
+- **Saving the ticker for the last step.** The company is not a reveal. Introduce it when the reasoning reaches it. That might be step 1.
 - **"Down X% from highs" as a closer.** Price context belongs in the trade data, not in the reasoning chain. The chain explains WHY, not WHAT THE PRICE IS.
 - **Every chain being the same length.** If the logic needs 2 steps, write 2. If it needs 5, write 5. Do not pad to 4.
 - **Forcing a single linear narrative.** If two threads converge on one trade, say "these converge" explicitly. Don't linearize parallel evidence into a fake sequence.
-- **Research facts pretending to be reasoning.** "DoD became the largest shareholder in July 2025" is a fact you looked up, not something you derived. Keep the chain as connective tissue — the WHY, not the WHAT.
+- **Research facts pretending to be reasoning.** "DoD became the largest shareholder in July 2025" is a fact you looked up, not something you derived. The chain is connective tissue: the WHY, not the WHAT.
 
 ### Rules
 
@@ -189,8 +192,8 @@ Mechanically determined by two factors: (1) what the first step contains, and (2
 | Author made a cultural observation only | `derived` | "@source's thesis · via belief.board" |
 
 **Track record scoring by tier:**
-- `direct` — score the author on instrument performance. Their pick, their record.
-- `derived` — score the author on thesis direction (did the sector/theme move right?). Score the skill separately on instrument selection.
+- `direct`: score the author on instrument performance. Their pick, their record.
+- `derived`: score the author on thesis direction (did the sector/theme move right?). Score the skill separately on instrument selection.
 
 For examples and classification rules: load `references/derivation-chain.md`.
 
@@ -223,20 +226,20 @@ Before calling any tools, determine: (a) faithful extraction of the author's cla
 
 - **Fast path (3-5 searches):** Thesis shape is clear + known instrument class exists (e.g., "PLTR is undervalued" → stock/options, check Kalshi, done). Most routings should hit this path.
 - **Deep path (6-10 searches max):** Cultural decoding needed ("invest in Nettspend"), uninvestable subject requires proxy search, or sector theme needs pure-play discovery.
-- **Hard cap: 10 web searches.** If you can't ground the thesis by search 10, the thesis is too vague — ask the user to sharpen it rather than searching more.
+- **Hard cap: 10 web searches.** If you can't ground the thesis by search 10, the thesis is too vague. Ask the user to sharpen it rather than searching more.
 
 ---
 
 ## Scoring + Trade Selection
 
-**Goal:** Arrive at the single best expression using structured evaluation — categorical rubric assessments, then head-to-head comparison.
+**Goal:** Arrive at the single best expression using structured evaluation. Categorical rubric assessments, then head-to-head comparison.
 
 ### Hard Gates
 
-These disqualify an instrument before evaluation — no exceptions:
+These disqualify an instrument before evaluation. No exceptions:
 
 - **Thesis contradiction.** Instrument bets against the deeper claim. Patterns:
-  - *Surface vs. deeper claim mismatch:* Surface claim points one direction, deeper claim points another. Always trade the deeper claim — it has better asymmetry because fewer people see it. Example: "AI blamed for tech layoffs but real cause is money printing" → short tech is surface, long gold is deeper.
+  - *Surface vs. deeper claim mismatch:* Surface claim points one direction, deeper claim points another. Always trade the deeper claim. It has better asymmetry because fewer people see it. Example: "AI blamed for tech layoffs but real cause is money printing" → short tech is surface, long gold is deeper.
   - *Shorting the scapegoat's victims:* If the thesis says X is a scapegoat, the victims are unfairly punished and should recover. Don't short them. Example: "AI is a scapegoat" → don't short software (IGV), it should recover.
   - *Multi-step causal chain:* Prefer the instrument requiring the fewest assumptions beyond the thesis. Example: "Money printing → inflation" → gold is 1 assumption (direct). Tech short requires 3 assumptions (inflation → Fed raises → tech sells).
   - *Sector vs. broad index dilution:* Shorting a broad index (QQQ) dilutes your thesis with unrelated exposure. Short specific names or sector ETFs with higher thesis beta.
@@ -246,9 +249,9 @@ These disqualify an instrument before evaluation — no exceptions:
 
 ### Evaluation Rubric
 
-For each surviving instrument, assess four dimensions using the anchored levels below. Do not assign numerical scores — use the categorical labels.
+For each surviving instrument, assess four dimensions using the anchored levels below. Do not assign numerical scores; use the categorical labels.
 
-**1. Thesis Alignment** — *If the thesis plays out, does this instrument respond?*
+**1. Thesis Alignment** *If the thesis plays out, does this instrument respond?*
 
 | Level | Meaning | Example |
 |-------|---------|---------|
@@ -256,9 +259,9 @@ For each surviving instrument, assess four dimensions using the anchored levels 
 | Pure-play | Company's primary business is the thesis mechanism | LAES for "PQC adoption" thesis |
 | Exposed | Thesis is a major driver, but not the only one | LSCC for PQC (FPGAs have non-PQC revenue) |
 | Partial | Sector-level correlation, diluted by unrelated factors | TLT for "Fed holds rates" |
-| Tangential | Loose connection — you'd have to explain the link | QQQ for PQC thesis |
+| Tangential | Loose connection, you'd have to explain the link | QQQ for PQC thesis |
 
-**2. Payoff Shape** — *What do you risk vs what do you gain?*
+**2. Payoff Shape** *What do you risk vs what do you gain?*
 
 | Level | Meaning | Example |
 |-------|---------|---------|
@@ -268,7 +271,7 @@ For each surviving instrument, assess four dimensions using the anchored levels 
 | Linear | Up and down roughly equal | Shares, spot crypto, 1x perps |
 | Capped/adverse | Upside limited or shape works against you | Selling premium, inverse ETFs with decay |
 
-**3. Edge** — *Has the market priced this thesis into THIS specific instrument?*
+**3. Edge** *Has the market priced this thesis into THIS specific instrument?*
 
 Assess per instrument, not per thesis. The same thesis can be consensus for one instrument and undiscovered for another.
 
@@ -277,9 +280,9 @@ Assess per instrument, not per thesis. The same thesis can be consensus for one 
 | Undiscovered | No coverage of this angle, price hasn't moved on thesis | Tiny PQC pure-play before NIST headlines |
 | Emerging | Early coverage, smart money positioning, starting to move | LSCC after first PQC articles, before rally |
 | Consensus | Widely discussed, IV elevated, prediction markets 60-85% | NVDA "overvalued" narrative in 2025 |
-| Crowded | Everyone's in this trade, IV maxed, prediction markets 90%+ | Kalshi at $0.93 — paying 93c to win 7c |
+| Crowded | Everyone's in this trade, IV maxed, prediction markets 90%+ | Kalshi at $0.93, paying 93c to win 7c |
 
-**4. Timing Forgiveness** — *If your timing is off, does this instrument punish you?*
+**4. Timing Forgiveness** *If your timing is off, does this instrument punish you?*
 
 | Level | Meaning | Example |
 |-------|---------|---------|
@@ -290,7 +293,7 @@ Assess per instrument, not per thesis. The same thesis can be consensus for one 
 
 ### Underlying vs Wrapper
 
-Alignment + Edge are properties of the *underlying* — same for shares, options, or perps. Payoff Shape + Timing Forgiveness are properties of the *wrapper*. Pick the underlying first (Alignment + Edge), then evaluate wrappers (Payoff Shape + Timing). Always check Hyperliquid for equity tickers — many stocks trade as HIP-3 perps.
+Alignment + Edge are properties of the *underlying* (same for shares, options, or perps). Payoff Shape + Timing Forgiveness are properties of the *wrapper*. Pick the underlying first (Alignment + Edge), then evaluate wrappers (Payoff Shape + Timing). Always check Hyperliquid for equity tickers. Many stocks trade as HIP-3 perps.
 
 **Perp leverage:** funding should never eat >50% of expected edge. Guideline: 5x/3x/2x (<30d), 3x/2x/1x (1-3mo), 2x/1x/1x (3-6mo), 1x/1x/stock (6mo+) across <10%/10-25%/>25% annual funding columns. Always state leverage, liquidation price, monthly funding drag.
 
@@ -298,17 +301,17 @@ Alignment + Edge are properties of the *underlying* — same for shares, options
 
 After evaluating each instrument on the rubric:
 
-- **2-3 candidates:** Compare head-to-head. "Considering alignment, payoff shape, edge, and timing — which is the better expression and why?"
+- **2-3 candidates:** Compare head-to-head. "Considering alignment, payoff shape, edge, and timing: which is the better expression and why?"
 - **4+ candidates:** Present the rubric assessments side-by-side and rank.
 
-The comparison should weigh dimensions naturally. A "Direct + Undiscovered" instrument with "Linear" payoff can beat a "Partial + Consensus" instrument with "Max asymmetry" — because alignment and edge matter more than leverage on a crowded trade.
+The comparison should weigh dimensions naturally. A "Direct + Undiscovered" instrument with "Linear" payoff can beat a "Partial + Consensus" instrument with "Max asymmetry". Alignment and edge matter more than leverage on a crowded trade.
 
-Example — "Fed won't cut in March":
+Example, "Fed won't cut in March":
 - Kalshi NO at $0.08 → Direct, Max asymmetry, Emerging, Very forgiving
 - TLT puts → Partial, High asymmetry, Consensus, Punishing
-- Winner: Kalshi — better on every dimension
+- Winner: Kalshi. Better on every dimension.
 
-Example — "SEALSQ undervalued because of PQC mandate":
+Example, "SEALSQ undervalued because of PQC mandate":
 - LAES shares → Pure-play, Linear, Undiscovered, Very forgiving
 - LAES LEAPS → Pure-play, High asymmetry, Undiscovered, Forgiving
 - LSCC LEAPS → Exposed, High asymmetry, Emerging, Forgiving
@@ -330,11 +333,11 @@ Present the winner AND the best from a different class as the ALT.
 
 ### Connection Floor
 
-If the winner is only "Partial" or "Tangential" alignment, do **one** targeted retry: search more specifically for the thesis mechanism (e.g., "pure play PQC semiconductor" instead of "quantum computing"), validate new tickers, and re-evaluate. If still Partial or worse after retry, proceed but flag it: "Best available has partial thesis alignment — no pure-play exists." Skip retry if no pure-play is plausible.
+If the winner is only "Partial" or "Tangential" alignment, do **one** targeted retry: search more specifically for the thesis mechanism (e.g., "pure play PQC semiconductor" instead of "quantum computing"), validate new tickers, and re-evaluate. If still Partial or worse after retry, proceed but flag it: "Best available has partial thesis alignment. No pure-play exists." Skip retry if no pure-play is plausible.
 
 ### Challenger Override
 
-When comparing across instrument classes: a candidate that dominates on both alignment AND edge wins — even across instrument classes. A "Direct + Undiscovered" Kalshi contract beats a "Partial + Consensus" stock regardless of payoff shape.
+When comparing across instrument classes: a candidate that dominates on both alignment AND edge wins, even across instrument classes. A "Direct + Undiscovered" Kalshi contract beats a "Partial + Consensus" stock regardless of payoff shape.
 
 When the home pick is only Partial or Tangential alignment, always cross-check the vulnerability class (puts on the loser) and binary class (prediction markets).
 
@@ -357,7 +360,7 @@ Multiple distinct claims → decompose into separate legs, route the strongest l
 bun run scripts/adapters/angel/instruments.ts "thesis keywords"
 ```
 
-Private markets automatically get "Very punishing" on timing forgiveness (5-7 year lockup for seed/A, 2-4 years for late-stage). They win when alignment and edge overcome the lockup penalty. Supplements — never replaces — the public market trade.
+Private markets automatically get "Very punishing" on timing forgiveness (5-7 year lockup for seed/A, 2-4 years for late-stage). They win when alignment and edge overcome the lockup penalty. Supplements the public market trade, never replaces it.
 
 ### When No Traditional Instrument Exists
 
@@ -375,7 +378,7 @@ Never dead-end. Descend the expression fidelity ladder:
 
 Live market API scripts. Call during research, scoring, or to validate a final pick.
 
-**Speed: run discovery calls in parallel.** Robinhood + Kalshi + Hyperliquid instrument discovery can run simultaneously — don't wait for one before starting the next. Batch return calculations for the top 2-3 candidates.
+**Speed: run discovery calls in parallel.** Robinhood + Kalshi + Hyperliquid instrument discovery can run simultaneously. Don't wait for one before starting the next. Batch return calculations for the top 2-3 candidates.
 
 ### Content Extraction
 
@@ -452,33 +455,33 @@ Output has two parts: **The Take** (streamed as your reply) and **The Card** (se
 
 ### Part 1: The Take (streamed reply)
 
-No preamble — start with the insight immediately.
+No preamble. Start with the insight immediately.
 
 **Tone matching:** Detect input sophistication before writing.
 - **Expert** (input contains trading terms like "IV", "funding rate", "theta", strike prices, ticker symbols with specific price targets): full technical vocabulary, bold-claim style.
-- **Casual** (cultural observation, question, vibe — "everyone's on Ozempic", "how to invest in Nettspend?"): plain language with jargon translations inline.
+- **Casual** (cultural observation, question, vibe: "everyone's on Ozempic", "how to invest in Nettspend?"): plain language with jargon translations inline.
   - "IV crush" → "option loses value after the event regardless of direction"
   - "funding rate" → "daily fee for holding this position"
   - "convexity" → "how much you can make vs how much you can lose"
   - "implied probability" → "market thinks there's a X% chance"
   - "theta decay" → "your option loses value every day you hold it"
-  - "OTM" → "out of the money — the stock needs to move significantly to profit"
+  - "OTM" → "out of the money, the stock needs to move significantly to profit"
 
 **Style register:**
 - Expert → bold claims, scannable in 5 seconds. Each paragraph: bold claim + 1-2 sentences of evidence.
 - Casual → conversational, direct, "you" language. Same rigor but friendlier. No assumed knowledge.
 
 **The take must cover** (in whatever order fits the thesis):
-- **The answer** — what to buy, where, and why it beats the obvious play. Lead with this.
+- **The answer.** What to buy, where, and why it beats the obvious play. Lead with this.
 - The non-obvious insight (what the market is missing)
 - The probability gap: what the market prices vs what breakeven requires
-- "You need to believe X" — frame the user as the decision-maker
-- **If the routing diverges** (derived), acknowledge it: "Marginsmall is talking about data sovereignty — the purest expression is DELL, not the cloud providers."
+- "You need to believe X." Frame the user as the decision-maker.
+- **If the routing diverges** (derived), acknowledge it: "Chamath is talking about data sovereignty. The purest expression is DELL, not the cloud providers."
 
 Not every element appears in every take. A direct call ("PLTR is undervalued") doesn't need a divergence acknowledgment. A binary event doesn't need a probability gap paragraph. Include what earns its space.
 
 **Constraints:**
-- 4-6 paragraphs max. Tight, not rambling.
+- Stop when the edge is stated. Most takes need 2-3 paragraphs. Never exceed 6.
 - No section headers, no tables, no arrows, no ✓/✗ marks
 - Every claim backed by data from research
 - End with a clear statement of the edge
@@ -510,7 +513,7 @@ After the card, include the structured chain using the segment-based format defi
 **"What This Means" block (casual inputs only):**
 After the card, add 2-3 plain language lines:
 - "You're betting $X that [thing happens] by [date]. Right → $Y. Wrong → lose $Z."
-- Translate any jargon in the card (e.g., "3x perp" → "3x leveraged futures position — you get liquidated if it drops 33%").
+- Translate any jargon in the card (e.g., "3x perp" → "3x leveraged futures position, you get liquidated if it drops 33%").
 - Skip this block for expert inputs.
 
 **Card precision rules:**
@@ -522,13 +525,13 @@ After the card, add 2-3 plain language lines:
 
 ### Part 3: Follow-Up Suggestions
 
-End every routing with 2-3 suggested follow-ups. Each should address the most likely reason THIS specific user wouldn't execute THIS specific trade right now — unfamiliar platform, position too large, timing unclear, or thesis not fully believed yet. Make them short enough to tap.
+End every routing with 2-3 suggested follow-ups. Each should address the most likely reason THIS specific user wouldn't execute THIS specific trade right now: unfamiliar platform, position too large, timing unclear, or thesis not fully believed yet. Make them short enough to tap.
 
 **Disclaimer:** End every routing response with: `Expressions, not advice. Do your own research.`
 
 ### Part 4: Post to Board
 
-Optional. After displaying the card and follow-ups, POST the take to the belief board. If the board is unreachable, note it briefly and move on — the terminal output is the primary deliverable.
+Optional. After displaying the card and follow-ups, POST the take to the belief board. If the board is unreachable, note it briefly and move on. The terminal output is the primary deliverable.
 
 **Step 1: Construct the JSON payload** from routing output.
 
@@ -543,7 +546,7 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 | Call | Author's ticker (if stated) | `author_ticker` | string or null |
 | Call | Author's direction (if stated) | `author_direction` | "long", "short", or null |
 | Call | Conviction level | `conviction` | "high", "medium", "low", or "speculative" |
-| Call | Conditions stated | `conditions` | string or null — qualifications they attached |
+| Call | Conditions stated | `conditions` | string or null, qualifications they attached |
 | Routing | Skill's thesis (reframed) | `thesis` | required |
 | Routing | Routed ticker | `ticker` | required |
 | Routing | long/short | `direction` | "long" or "short" |
@@ -624,13 +627,13 @@ curl -s -X POST "${BELIEF_BOARD_URL:-http://localhost:4000}/api/takes" \
   -d '<JSON payload>'
 ```
 
-`caller_id` is required. Use `"anon"` for anonymous submissions — the API auto-creates a user if it doesn't exist.
+`caller_id` is required. Use `"anon"` for anonymous submissions. The API auto-creates a user if it doesn't exist.
 
 **Step 3: On success**, show a 4-line teaser linking to the permalink:
 
 ```
 ---
-"On-prem is back." — @marginsmall
+"On-prem is back." · @marginsmall
 DELL long · $117.49 · derived
 Enterprise data security fears push companies back to owned hardware
 → http://localhost:4000/t/abc123
@@ -639,7 +642,7 @@ Enterprise data security fears push companies back to owned hardware
 
 Format: `source_quote` (or thesis if no quote) + `source_handle`, then `ticker direction · $entry_price · call_type`, then thesis as subtitle, then permalink URL from the API response.
 
-**Step 4: On failure** (board unreachable, non-2xx response), print one line: `Board unavailable — skipping post.` and continue normally.
+**Step 4: On failure** (board unreachable, non-2xx response), print one line: `Board unavailable. Skipping post.` and continue normally.
 
 **Bulk mode:** POST each deep-routed take individually, immediately after its card is displayed.
 
@@ -653,7 +656,7 @@ When Input Validation step 5 triggers (input is an X handle, `x.com` URL, or "sc
 
 If `X_BEARER_TOKEN` is not set, offer two fallbacks and stop:
 ```
-X API not configured — X_BEARER_TOKEN is not set.
+X API not configured. X_BEARER_TOKEN is not set.
 
 To enable handle scanning:
   1. Go to developer.x.com and create an app (pay-per-use, no monthly fee)
@@ -664,10 +667,10 @@ Cost: ~$0.26 to scan 50 original posts from any handle.
 
 In the meantime, two options:
 
-Option A — Screenshot: Take a screenshot of the tweet (or paste the text).
+Option A (Screenshot): Take a screenshot of the tweet (or paste the text).
 I'll extract the author handle, text, and date from it and route it directly.
 
-Option B — Browser: I can open x.com/{handle} in Chrome and read the posts
+Option B (Browser): I can open x.com/{handle} in Chrome and read the posts
 directly (no API cost). Say "open their profile in Chrome" to proceed.
 ```
 
@@ -675,7 +678,7 @@ If the user chooses Option A: route the screenshot/text as normal. Extract `sour
 
 If the user chooses Option B: use the claude-in-chrome MCP tools to navigate to `https://x.com/{handle}`, read the visible posts from the page, filter for directional takes, and proceed from step 4 (Surface to user). This costs nothing but is limited to what's visible on the page.
 
-**1. Cost gate (mandatory — never skip)**
+**1. Cost gate (mandatory, never skip)**
 
 Show before any API call:
 ```
@@ -690,21 +693,39 @@ If user says a number, use that as `--max`. If user says no or doesn't reply, ab
 ```bash
 bun run scripts/adapters/x/user-timeline.ts --handle {handle} --max {N} --skip-confirm
 ```
-(`--skip-confirm` bypasses the script's own stdin prompt — you already confirmed in chat.)
+(`--skip-confirm` bypasses the script's own stdin prompt. You already confirmed in chat.)
 
-Returns JSON with `tweets[]`. Retweets and replies are excluded at the API level — do not re-filter.
+Returns JSON with `tweets[]`. Retweets and replies are excluded at the API level. Do not re-filter.
 
 **3. Filter for directional takes**
 
-Read each tweet. Keep only those with a directional claim — explicit or implied — about markets, companies, sectors, macro, or specific assets. Discard commentary, jokes, personal updates, and anything with no tradeable direction.
+Read each tweet. Keep only those with a directional claim (explicit or implied) about markets, companies, sectors, macro, or specific assets. Discard commentary, jokes, personal updates, and anything with no tradeable direction.
 
 **4. Surface to user**
 
-```
-Found {N} directional takes from @{handle}:
+Lead with the directional claim, not the raw tweet. One line per take, source URL underneath.
 
-1. [tweet text truncated to ~100 chars] ({date})
-2. ...
+```
+Found {N} directional takes from @{handle} ({date range}):
+
+1. {thesis direction in plain language} ({date})
+   {tweet_url}
+2. {thesis direction in plain language} ({date})
+   {tweet_url}
+
+Route all, or pick? [all / 1,3,5 / skip]
+```
+
+Example:
+```
+Found 5 directional takes from @chamath (Jan 31 - Feb 18):
+
+1. On-premise is the new cloud, enterprise data sovereignty (Feb 12)
+   x.com/chamath/status/1889...
+2. MSFT worst hyperscaler since ChatGPT launch (Feb 12)
+   x.com/chamath/status/1889...
+3. Power is the AI bottleneck, f(i) = p * c * a (Feb 17)
+   x.com/chamath/status/1892...
 
 Route all, or pick? [all / 1,3,5 / skip]
 ```
@@ -714,10 +735,10 @@ If user says "all" or said "scan @handle" upfront, route all. If they pick a sub
 **5. Route each take**
 
 Run each selected tweet through the standard belief-router flow. On the Call layer, set:
-- `source_quote` — the tweet text verbatim
-- `source_handle` — @{handle}
-- `source_url` — the tweet URL from the adapter output
-- `source_date` — tweet's `created_at`
+- `source_quote`: the tweet text verbatim
+- `source_handle`: @{handle}
+- `source_url`: the tweet URL from the adapter output
+- `source_date`: tweet's `created_at`
 
 **6. Post to board**
 
@@ -734,27 +755,27 @@ When Input Validation step 6 triggers (multiple theses, user wants all routed), 
 Pure reasoning. No tool calls. Extract every directional claim using the same criteria as Input Validation.
 
 **For each claim, capture the Call layer first (faithful extraction):**
-- `source_quote` — verbatim, 1-2 strongest sentences
-- `speaker` — who made this claim (name, handle, role)
-- `timestamp` — where in the source (MM:SS for video/audio, paragraph for text)
-- `author_thesis` — what they actually claimed, in their words (not reframed)
-- `author_ticker` — did they name a specific instrument? (null if not)
-- `conviction` — from language intensity:
-  - **high** — declarative, no hedge ("this is obvious", "I'm buying", "it's going to happen")
-  - **medium** — directional but qualified ("I think", "probably", "likely", "should")
-  - **low** — hedged or uncertain ("maybe", "not sure but", "could go either way")
-  - **speculative** — exploratory, no commitment ("what if", "I wonder", "interesting that")
-- `conditions` — any qualifications they attached (null if none)
+- `source_quote`: verbatim, 1-2 strongest sentences
+- `speaker`: who made this claim (name, handle, role)
+- `timestamp`: where in the source (MM:SS for video/audio, paragraph for text)
+- `author_thesis`: what they actually claimed, in their words (not reframed)
+- `author_ticker`: did they name a specific instrument? (null if not)
+- `conviction`: from language intensity:
+  - **high** declarative, no hedge ("this is obvious", "I'm buying", "it's going to happen")
+  - **medium** directional but qualified ("I think", "probably", "likely", "should")
+  - **low** hedged or uncertain ("maybe", "not sure but", "could go either way")
+  - **speculative** exploratory, no commitment ("what if", "I wonder", "interesting that")
+- `conditions`: any qualifications they attached (null if none)
 
 **Then add the Routing layer:**
-- `thesis` — reframed as a directional claim (may differ from author_thesis)
-- `call_type` — direct / derived based on divergence
+- `thesis`: reframed as a directional claim (may differ from author_thesis)
+- `call_type`: direct / derived based on divergence
 
 **Cluster:** Same thesis expressed differently = 1 entry. Keep the strongest quote per attribution. When multiple speakers support the same thesis, capture each as a separate segment with speaker + timestamp.
 
 **Tier into three levels:**
 - **Tier 1 (Route):** Specific + high conviction. Gets Phase 2 + Phase 3.
-- **Tier 2 (Sweep only):** Tradeable but needs sharpening. Phase 2 only — show candidates.
+- **Tier 2 (Sweep only):** Tradeable but needs sharpening. Phase 2 only, show candidates.
 - **Tier 3 (Skip):** Too vague to trade. List for completeness, no instrument search.
 
 ### Phase 2: Instrument Sweep
@@ -772,13 +793,13 @@ Run all platform calls in parallel. Map validated instruments back to theses as 
 
 ### Phase 3: Deep Route
 
-Full belief-router on Tier 1 theses only (top 3-5). Each deep route is independent — run in parallel. Each gets one thesis + the full routing flow (Research → Scoring → Trade Selection → Output).
+Full belief-router on Tier 1 theses only (top 3-5). Each deep route is independent; run in parallel. Each gets one thesis + the full routing flow (Research → Scoring → Trade Selection → Output).
 
 ### Scan Output
 
-One artifact per source. Two tiers that look deliberately different — the user can tell at a glance what's been analyzed vs what's just a candidate list.
+One artifact per source. Two tiers that look deliberately different. The user can tell at a glance what's been analyzed vs what's just a candidate list.
 
-**Quick Hit** (Tier 2 and Tier 1 pre-route): Leads with the author's actual quote and attribution. Shows candidates but does NOT pick a specific instrument — the logic stops at "these would benefit."
+**Quick Hit** (Tier 2 and Tier 1 pre-route): Leads with the author's actual quote and attribution. Shows candidates but does NOT pick a specific instrument. The logic stops at "these would benefit."
 
 ```
 ★ "[source_quote]" · [speaker] [timestamp] [conviction]
@@ -787,16 +808,72 @@ One artifact per source. Two tiers that look deliberately different — the user
   → Deep Route this
 ```
 
-**Deep Route Result** (Tier 1 post-route): Shows a specific pick with the derivation chain (see Derivation Chain section for format and anti-patterns) and the standard trade card from the Output section.
+**Deep Route Result** (Tier 1 post-route): The full routing output. Includes the take, trade card, derivation chain, and board link.
+
+```
+★ "On-prem is back. Do I want all our proprietary data in an open LLM?" · @chamath · Feb 12 · high
+
+DELL long · $116.78 · derived
+Enterprise data security fears push companies back to owned hardware.
+856 shares @ $116.78 · risk $100K
+
+$93.39    lose $20.3K     thesis wrong, stop out
+$116.78   entry
+$150.19   +$28.6K (1.3x)  IV-derived target, 90d
+$168.08   +$43.8K (1.4x)  retest 52W high
+
++EV above 41% · dies if enterprise AI capex freezes
+Alt: HPE $21.55 long (same thesis, lower margins)
+
+> [1] on-prem is back. enterprises won't put proprietary data in open LLMs (@chamath)
+> [2] DELL has $18B in AI server orders to build exactly this
+> [3] the market is punishing them on margin compression while the backlog grows 150% YoY
+> chose over: HPE (lower margin), SMCI (supply chain concerns)
+
+→ http://localhost:4000/t/64f8db31-d
+```
+
+Each deep route looks different because each thesis is different. A 2-step chain for a direct call. A 4-step chain for a derived cultural thesis. The format above is one example, not a template.
 
 **Tier 3**: One line per skipped thesis with reason.
 
 **Footer**: Count of theses extracted/routed/skipped + source link + disclaimer.
 
+### Bulk Output for Chat
+
+When running bulk mode or handle scans, the full analysis lives on the board. Chat gets a compact summary. Do NOT dump 4 full deep routes into a single chat message.
+
+**During routing:** Post each deep route to the board as it completes. Show one progress line per route:
+```
+Routing 1/3: on-premise thesis → DELL...
+```
+
+**After all routes complete:** Show the summary. Three lines per take, same format as the board post teaser:
+```
+"On-prem is back." · @chamath
+DELL long · $116.78 · derived
+→ http://localhost:4000/t/64f8db31-d
+
+"MSFT worst hyperscaler since ChatGPT" · @chamath
+MSFT short · $399.60 · direct
+→ http://localhost:4000/t/21eca4de-0
+
+"f(i) = p * c * a" · @chamath
+CEG long · $294.05 · derived
+→ http://localhost:4000/t/6f1aeb7a-d
+
+3 routed · 2 quick hits · @chamath · Feb 2026
+Expressions, not advice. Do your own research.
+```
+
+Then list quick hits below the deep routes. The user taps any link to see the full take, card, and chain on the board.
+
+**Single route mode** (one thesis, not bulk) still shows the full take + card + chain inline. The compact format is only for bulk.
+
 ### Scan Rules
 
 1. **Never pick a ticker in a quick hit.** Candidates only. The scan never pretends to have done work it hasn't.
-2. **Inference chain required on deep routes.** Use the Derivation Chain format — segments, steps, chose_over. The chain section defines structure and anti-patterns.
+2. **Inference chain required on deep routes.** Use the Derivation Chain format: segments, steps, chose_over. The chain section defines structure and anti-patterns.
 3. **Counter-arguments.** If the source contains opposing views on a thesis, note them.
 4. **Mixed signals.** If a thesis has both bullish and bearish elements, capture both and let routing resolve direction.
 5. **One scan per source.** The scan is the atomic unit.
@@ -805,10 +882,10 @@ One artifact per source. Two tiers that look deliberately different — the user
 
 ## Rules
 
-1. **Use "expressions" and "market data"** — never "recommendations" or "advice."
+1. **Use "expressions" and "market data"**, never "recommendations" or "advice."
 2. **Always show downside.** Payoff table must include "thesis wrong" row with dollar loss. For options, state "max loss: 100% of premium ($100,000)."
-3. **Conviction breakeven on every expression** — "you need to be right >X% for +EV."
-4. **Platform risk tier on every trade** — [Regulated], [DEX], or [New]. See `references/blindspots.md`.
+3. **Conviction breakeven on every expression.** "you need to be right >X% for +EV."
+4. **Platform risk tier on every trade.** [Regulated], [DEX], or [New]. See `references/blindspots.md`.
 5. **Flag "priced in"** when consensus agrees with the thesis. Show the asymmetry gap.
 6. **Bear theses → short-side instruments.** Inverse ETFs on RH, short perps on HL, NO on Kalshi. Map to instruments that PROFIT when the thesis is correct.
 7. **Catalyst-dated theses.** Warn about IV crush on options. Select expiry AFTER the catalyst date.
