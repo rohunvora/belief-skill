@@ -98,9 +98,9 @@ The chain has three parts: **segments** (cited source material), **steps** (the 
   "steps": [
     { "text": "step grounded in segment 0", "segment": 0 },
     { "text": "step grounded in segment 1", "segment": 1 },
-    { "text": "inference step — skill's reasoning, not from source" }
+    { "text": "inference step, skill's reasoning, not from source" }
   ],
-  "chose_over": "alternatives considered — detail page only"
+  "chose_over": "alternatives considered"
 }
 ```
 
@@ -119,7 +119,7 @@ Lead with the company, reason about it:
 {
   "segments": [{ "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "chamath" }],
   "steps": [
-    { "text": "on-prem is back — enterprises won't put proprietary data in open LLMs", "segment": 0 },
+    { "text": "on-prem is back. enterprises won't put proprietary data in open LLMs", "segment": 0 },
     { "text": "DELL has $18B in AI server orders to build exactly this" },
     { "text": "the market is punishing them on margin compression while the backlog grows 150% YoY" }
   ]
@@ -134,9 +134,9 @@ Two threads converge:
     { "quote": "the AI power problem is real, every datacenter is maxed", "speaker": "frank", "timestamp": "34:15" }
   ],
   "steps": [
-    { "text": "AI models are getting 20x cheaper — when something gets 20x cheaper, usage explodes", "segment": 0 },
-    { "text": "every AI inference needs power — if inference volume 10x, power demand 10x", "segment": 1 },
-    { "text": "those two facts converge on nuclear baseload — CEG restarted Three Mile Island for exactly this" }
+    { "text": "AI models are getting 20x cheaper. when something gets 20x cheaper, usage explodes", "segment": 0 },
+    { "text": "every inference needs power. if usage 10x, power demand 10x", "segment": 1 },
+    { "text": "those two forces converge on nuclear baseload. CEG restarted Three Mile Island for exactly this", "segment": 1 }
   ]
 }
 ```
@@ -147,7 +147,7 @@ Counterfactual — start with the trade, question the market:
   "segments": [{ "quote": "AI is being treated as national security infrastructure", "speaker": "frank", "timestamp": "8:15" }],
   "steps": [
     { "text": "for PLTR at current prices, you'd have to believe government AI spending decelerates", "segment": 0 },
-    { "text": "the opposite is happening — $10B Army contract in August, Maven hit $1B" },
+    { "text": "the opposite is happening. $10B Army contract in August, Maven hit $1B" },
     { "text": "the market still classifies it as a tech stock, but it's a defense contractor with software margins" }
   ]
 }
@@ -169,11 +169,11 @@ This reads as templated after two cards. Specifically avoid:
 
 ### Rules
 
-- Each line earns the next — no logical leaps
+- Each line earns the next, no logical leaps
 - No finance jargon (no "reversion trade", "permanent AUM", "fee compression")
 - Ticker appears naturally wherever the reasoning reaches it
 - Lowercase unless starting a proper noun or ticker
-- No arrows (→) — use natural language connectors
+- No arrows, no em dashes. One clean thought per step.
 - Vary the structure: lead with company, converge two threads, or start with what the market is getting wrong
 
 ### Attribution Tier
@@ -193,9 +193,19 @@ Mechanically determined by two factors: (1) what the first step contains, and (2
 
 For examples and classification rules: load `references/derivation-chain.md`.
 
+### Self-test
+
+Draft the chain BEFORE research. If you can't connect the source quote to a trade in 2-5 plain steps without looking anything up, the routing has a problem that research won't fix.
+
+After drafting, test it: remove any step that states a looked-up fact rather than a reasoned conclusion. If the remaining steps still connect quote to trade, the removed steps were padding. Cut them. If the chain breaks, you filled a reasoning gap with research. That means something upstream is off: the thesis doesn't naturally lead to this instrument, the selection was forced, or the obvious play was the best expression all along. Fix the routing, not the chain.
+
+The sketch also targets your research. Steps that need grounding tell you exactly what to search for. Steps that hold without data don't need searches at all.
+
 ---
 
 ## Research
+
+**First:** Draft the chain sketch (see Self-test above). The sketch tells you what data you actually need. Then research to ground the sketch, not to discover the trade.
 
 Research the thesis autonomously. You decide what to search and how deeply to go.
 
