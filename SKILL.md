@@ -40,7 +40,6 @@ Before routing, check:
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
 3. **Is it an action request?** ("I want to buy ONDO") Treat the implied direction as the thesis and proceed.
 4. **Is it a URL?** Extract content first using the transcript tool (see Tools section). Also extract `source_date` from content metadata (publish date, tweet timestamp, or video upload date). If source_date is in the past, note the delta to today; use the historical price tool to fetch `entry_price` at source_date. Then continue from step 1.
-   - **Truncation check (tweets):** If extracted tweet text is <300 chars and does not end with sentence-ending punctuation (. ! ? "), it was likely truncated (X Premium long tweets can be up to 4,000 chars). Do NOT route on truncated text. Instead: tell the user the text appears cut off and ask them to paste the full text or share a screenshot.
 5. **Is it an X/Twitter handle?** (`@handle`, `x.com/username`, or "scan @handle") → fetch their recent posts via the X adapter (see Handle Scan section below). If `X_BEARER_TOKEN` is not set, show setup instructions: go to developer.x.com, create an app (pay-per-use, no monthly fee), copy the Bearer Token, add `X_BEARER_TOKEN=your_token` to .env. Cost: ~$0.26 to scan 50 posts. Fall back to manual paste.
 6. **Is it a screenshot or image?** Extract the full text from the image (author, platform, content, timestamp if visible). Preserve the extracted text as source material in derivation chain segments, same as any other sourced input. Continue from step 1 with the extracted text.
 7. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
@@ -51,15 +50,15 @@ Before routing, check:
 
 ### Thesis Shapes
 
-| Shape | Signal | Natural home | Evaluation mode |
-|-------|--------|-------------|-----------------|
-| Binary event | Resolves yes/no on a specific date ("Fed holds in March") | Prediction markets (Kalshi) | Observable probability: market price IS the implied probability |
-| Mispriced company | Specific company re-rates over time ("SEALSQ is undervalued") | Equity / options | Estimated probability: you estimate likelihood AND magnitude |
-| Sector/theme | Broad trend benefits a category ("AI defense spending booms") | ETF or highest-beta single name | Estimated probability |
-| Relative value | X outperforms Y, ratio changes ("SOL flips ETH") | Pair trade (perps) | Ratio analysis: isolate the spread from market direction |
-| Vulnerability | Something breaks or declines ("Google's ad monopoly is the casualty") | Short-side instruments (puts, inverse ETFs, short perps) | Estimated probability |
+| Shape | Signal | Evaluation mode |
+|-------|--------|-----------------|
+| Binary event | Resolves yes/no on a specific date ("Fed holds in March") | Observable probability: market price IS the implied probability |
+| Mispriced company | Specific company re-rates over time ("SEALSQ is undervalued") | Estimated probability: you estimate likelihood AND magnitude |
+| Sector/theme | Broad trend benefits a category ("AI defense spending booms") | Estimated probability |
+| Relative value | X outperforms Y, ratio changes ("SOL flips ETH") | Ratio analysis: isolate the spread from market direction |
+| Vulnerability | Something breaks or declines ("Google's ad monopoly is the casualty") | Estimated probability |
 
-The "natural home" is the starting point, not the answer. The scoring cross-check tests whether another instrument class beats it.
+Thesis shape informs evaluation mode. It does not prescribe an instrument type. All instrument classes compete on the same rubric.
 
 ### Deeper Claim
 
@@ -325,21 +324,6 @@ Example, "SEALSQ undervalued because of PQC mandate":
 - LSCC LEAPS → Exposed, High asymmetry, Emerging, Forgiving
 - Head-to-head: LAES LEAPS beats shares (same alignment + edge, better payoff shape, slightly less forgiving but still fine). LAES LEAPS beats LSCC (better alignment + edge, same payoff shape + timing).
 
-### Prediction Market Routing (Kalshi vs Polymarket)
-
-Two prediction market adapters with different strengths. The routing principle: **Kalshi for price-range resolution, Polymarket for event resolution.**
-
-- **"Will price land in range X?"** -- Kalshi. It has strike-level granularity (26 rate thresholds per FOMC, weekly oil bands). Polymarket has no equivalent.
-- **"Will event X happen?"** -- Polymarket first. Broader universe: political, geopolitical, tech, cultural, sports, science. Fall back to Kalshi if Polymarket has no match.
-- **Both cover it?** Show the one with better liquidity. Note the other exists. Do not output two cards for the same bet.
-- **Not a prediction market thesis?** Skip both. Stock/equity theses go to Robinhood, crypto directional/pairs go to Hyperliquid.
-
-**Polymarket volume is USD. Kalshi volume is contracts (approx $1 each).** Do not compare raw numbers across platforms to pick a winner.
-
-### Binary Check
-
-If a prediction market contract exists that literally resolves on this thesis, it must be explicitly beaten. It starts at Direct alignment with Very forgiving timing. Other instruments must justify why they beat that on payoff shape or edge.
-
 ### Early Stop
 
 If you find an instrument with Direct alignment + Undiscovered/Emerging edge + High/Max asymmetry, skip exhaustive search of remaining platforms. Still cross-check ONE other instrument class (the cross-check rule stands), but don't keep hunting for marginal improvements.
@@ -356,9 +340,7 @@ If the winner is only "Partial" or "Tangential" alignment, do **one** targeted r
 
 ### Challenger Override
 
-When comparing across instrument classes: a candidate that dominates on both alignment AND edge wins, even across instrument classes. A "Direct + Undiscovered" Kalshi contract beats a "Partial + Consensus" stock regardless of payoff shape.
-
-When the home pick is only Partial or Tangential alignment, always cross-check the vulnerability class (puts on the loser) and binary class (prediction markets).
+When comparing across instrument classes: a candidate that dominates on both alignment AND edge wins, even across instrument classes. A "Direct + Undiscovered" contract beats a "Partial + Consensus" stock regardless of payoff shape.
 
 ### Stress-Test
 
@@ -433,8 +415,6 @@ bun run scripts/adapters/angel/instruments.ts "thesis keywords"
 # Polymarket: keyword search across active prediction markets
 bun run scripts/adapters/polymarket/instruments.ts "keyword phrase"
 # Returns: binary event markets filtered for relevance (keyword must appear in question)
-# Gate: fire when Kalshi returns 0 matches, OR thesis is a non-macro binary event
-# Skip for: pure stock theses, crypto pair trades, precision macro (Kalshi covers those)
 ```
 
 ### Return Calculations
@@ -448,15 +428,13 @@ bun run scripts/adapters/robinhood/returns.ts "TICKER" "long|short" "stock|etf|o
 bun run scripts/adapters/hyperliquid/returns.ts "TICKER" "long|short" "5"
 # Returns: entry, liquidation price, 30d expected move, funding cost
 
-# Kalshi: event ticker + strike + direction (strike required for returns)
+# Kalshi: event ticker + strike + direction
 bun run scripts/adapters/kalshi/returns.ts "EVENT-TICKER" "STRIKE" "yes|no"
 # Returns: buy price, implied probability, return if right, contracts per $100
 #
-# No strike → lists all available markets so you can pick one or skip Kalshi:
+# No strike → lists all available markets with prices:
 bun run scripts/adapters/kalshi/returns.ts "EVENT-TICKER"
-# Returns: all strikes with yes/no prices, implied probs, return %. Pick the strike
-# that matches the thesis price target. If the thesis is directional without a
-# specific level, no strike will match — skip Kalshi, use linear exposure instead.
+# Returns: all strikes with yes/no prices, implied probs, return %
 
 # Bankr: ticker + direction + type (15-125s)
 bun run scripts/adapters/bankr/returns.ts "TICKER" "long" "token|polymarket|treasury"

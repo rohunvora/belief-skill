@@ -277,7 +277,7 @@ async function main() {
       event_title: event.title,
       series_ticker: event.series_ticker,
       available_markets: strikes,
-      note: "No strike specified. Pick a strike that matches your thesis price target, or skip Kalshi if the thesis is directional without a specific level.",
+      note: "No strike specified. All available markets listed above.",
     }, null, 2));
     return;
   }
