@@ -1,0 +1,74 @@
+[
+  {
+    "id": "t1",
+    "thesis": "Fed won't cut rates at the March meeting",
+    "change": "comparable",
+    "detail": "Both have markets. Poly higher volume ($59.2M), Kalshi has 26 strike-level markets."
+  },
+  {
+    "id": "t2",
+    "thesis": "NVIDIA is going to $300 on inference demand",
+    "change": "no_change",
+    "detail": "Current routing sufficient."
+  },
+  {
+    "id": "t3",
+    "thesis": "SOL is going to flip ETH in market cap",
+    "change": "no_change",
+    "detail": "Current routing sufficient."
+  },
+  {
+    "id": "t4",
+    "thesis": "There's going to be a recession this year",
+    "change": "comparable",
+    "detail": "Both cover this. Kalshi: 1 markets. Poly: 1 markets."
+  },
+  {
+    "id": "t5",
+    "thesis": "Trump tariffs will crush China but Bitcoin goes to $200K as a hedge",
+    "change": "comparable",
+    "detail": "Both cover this. Kalshi: 3 markets. Poly: 3 markets."
+  },
+  {
+    "id": "t6",
+    "thesis": "AI will replace Google search",
+    "change": "better_supplement",
+    "detail": "Adds prediction market angle ($1.0M vol) alongside robinhood"
+  },
+  {
+    "id": "t7",
+    "thesis": "SpaceX IPO will be the biggest in history",
+    "change": "better_supplement",
+    "detail": "Adds prediction market angle ($195.5K vol) alongside angel"
+  },
+  {
+    "id": "t8",
+    "thesis": "Ukraine ceasefire by summer — defense stocks will dip",
+    "change": "better_supplement",
+    "detail": "Adds prediction market angle ($5.0M vol) alongside robinhood"
+  },
+  {
+    "id": "t9",
+    "thesis": "Trump will fire Jerome Powell before his term ends",
+    "change": "comparable",
+    "detail": "Both have markets. Poly higher volume ($41.4M), Kalshi has 26 strike-level markets."
+  },
+  {
+    "id": "t10",
+    "thesis": "OpenAI will release GPT-5 before July",
+    "change": "polymarket_only",
+    "detail": "Currently dead-ends. Polymarket has 15 markets."
+  },
+  {
+    "id": "t11",
+    "thesis": "California will have a major earthquake this year",
+    "change": "polymarket_only",
+    "detail": "Currently dead-ends. Polymarket has 12 markets."
+  },
+  {
+    "id": "t12",
+    "thesis": "Bitcoin ETF inflows will hit $100B total by end of year",
+    "change": "comparable",
+    "detail": "Both cover this. Kalshi: 3 markets. Poly: 4 markets."
+  }
+]

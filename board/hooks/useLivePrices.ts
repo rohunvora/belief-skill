@@ -17,7 +17,7 @@ const POLL_INTERVAL_MS = 30_000;
 const NUDGE_INTERVAL_MS = 3_000;
 
 /**
- * Fetches real prices from /api/prices, then random-walks between polls.
+ * Fetches real prices from /api/prices for all calls passed in, then random-walks between polls.
  * On mount: fetch immediately. Poll every 30s. Between polls, nudge ±0.05%.
  * When new real data arrives, snap to it.
  */
@@ -28,18 +28,16 @@ export function useLivePrices(
   const pricesRef = useRef<Map<string, number>>(new Map());
   const [tick, setTick] = useState(0);
 
-  const activeCalls = calls.filter((c) => c.status === "active");
-
-  // Initialize prices for new active calls
-  for (const call of activeCalls) {
+  // Initialize prices for new calls
+  for (const call of calls) {
     if (!pricesRef.current.has(call.id)) {
       pricesRef.current.set(call.id, call.entry_price);
     }
   }
 
-  // Remove prices for calls no longer active
+  // Remove prices for calls no longer in the list
   for (const [id] of pricesRef.current) {
-    if (!activeCalls.find((c) => c.id === id)) {
+    if (!calls.find((c) => c.id === id)) {
       pricesRef.current.delete(id);
     }
   }
@@ -78,7 +76,7 @@ export function useLivePrices(
     const prices = pricesRef.current;
     let changed = false;
 
-    for (const call of activeCalls) {
+    for (const call of calls) {
       const current = prices.get(call.id);
       if (current == null) continue;
 
@@ -93,17 +91,17 @@ export function useLivePrices(
     }
 
     if (changed) setTick((t) => t + 1);
-  }, [activeCalls.map((c) => c.id).join(",")]);
+  }, [calls.map((c) => c.id).join(",")]);
 
   useEffect(() => {
-    if (activeCalls.length === 0) return;
+    if (calls.length === 0) return;
     const timer = setInterval(nudgePrices, intervalMs);
     return () => clearInterval(timer);
-  }, [nudgePrices, intervalMs, activeCalls.length]);
+  }, [nudgePrices, intervalMs, calls.length]);
 
   // Build the result map
   const result = new Map<string, LivePriceData>();
-  for (const call of activeCalls) {
+  for (const call of calls) {
     const currentPrice = pricesRef.current.get(call.id) ?? call.entry_price;
     const changeDollars = currentPrice - call.entry_price;
     const changePercent =

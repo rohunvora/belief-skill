@@ -94,11 +94,7 @@ export const calls: Call[] = [
     source_date: "2026-02-15",
     conviction: "high",
     call_type: "derived",
-    status: "active",
-    resolve_price: null,
-    resolve_date: null,
-    resolve_pnl: null,
-    resolve_note: null,
+
     created_at: "2026-02-16T14:00:00Z",
     instrument: "stock",
     platform: "robinhood",
@@ -176,11 +172,7 @@ export const calls: Call[] = [
     source_date: "2026-02-16",
     conviction: "high",  // "100% of code is AI" — declarative, no hedge
     call_type: "derived",
-    status: "active",
-    resolve_price: null,
-    resolve_date: null,
-    resolve_pnl: null,
-    resolve_note: null,
+
     created_at: "2026-02-16T20:00:00Z",
     instrument: "stock",
     platform: "robinhood",
@@ -225,11 +217,7 @@ export const calls: Call[] = [
     source_date: "2026-02-17",
     conviction: "medium",  // analytical mechanism thesis — "Bloomberg confirmed... forced selling"
     call_type: "derived",
-    status: "active",
-    resolve_price: null,
-    resolve_date: null,
-    resolve_pnl: null,
-    resolve_note: null,
+
     created_at: "2026-02-17T10:00:00Z",
     instrument: "stock",
     platform: "robinhood",
@@ -273,11 +261,7 @@ export const calls: Call[] = [
     source_date: "2026-02-17",
     conviction: "medium",  // "the signal the IPO factory restarts" — reading a signal, not declaring certainty
     call_type: "derived",
-    status: "active",
-    resolve_price: null,
-    resolve_date: null,
-    resolve_pnl: null,
-    resolve_note: null,
+
     created_at: "2026-02-17T10:30:00Z",
     instrument: "stock",
     platform: "robinhood",
@@ -321,11 +305,7 @@ export const calls: Call[] = [
     source_date: "2026-02-17",
     conviction: "speculative",  // "the scarce inputs get more valuable" — framework observation, no trade commitment
     call_type: "derived",
-    status: "active",
-    resolve_price: null,
-    resolve_date: null,
-    resolve_pnl: null,
-    resolve_note: null,
+
     created_at: "2026-02-17T16:00:00Z",
     instrument: "stock",
     platform: "robinhood",
@@ -369,11 +349,7 @@ export const calls: Call[] = [
     source_date: "2026-02-15",
     conviction: "medium",  // "pqc software still has nist tailwinds" — hedged with "still" amid washout framing
     call_type: "derived",
-    status: "active",
-    resolve_price: null,
-    resolve_date: null,
-    resolve_pnl: null,
-    resolve_note: null,
+
     created_at: "2026-02-17T10:00:00Z",
     instrument: "stock",
     platform: "robinhood",

@@ -528,8 +528,10 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 
 | Layer | Skill output | API field | Notes |
 |---|---|---|---|
-| Call | Source @handle | `source_handle` | string |
-| Call | Source URL | `source_url` | string |
+| Call | Source @handle | `source_handle` | string, the author's handle (creates Author entity on board) |
+| Call | Source URL | `source_url` | string or null, the content URL (creates Source entity on board) |
+| Call | Source title | `source_title` | string or null, title of the content (video title, article headline, tweet text snippet) |
+| Call | Source platform | `source_platform` | string or null, where the content lives: "youtube", "x", "substack", "podcast", etc. |
 | Call | Source date | `source_date` | ISO date string, when they said it |
 | Call | Author's actual thesis | `author_thesis` | their claim in their words, not reframed |
 | Call | Author's ticker (if stated) | `author_ticker` | string or null |
@@ -539,6 +541,7 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 | Routing | Routed ticker | `ticker` | required |
 | Routing | long/short | `direction` | "long" or "short" |
 | Routing | Price at source_date | `entry_price` | number |
+| Routing | When price was fetched | `price_captured_at` | ISO datetime string, exact moment the adapter returned this price |
 | Routing | Attribution tier | `call_type` | "direct" or "derived" |
 | Routing | "+EV above X%" | `breakeven` | string |
 | Routing | "dies if k1, k2" | `kills` | string |
@@ -560,6 +563,8 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 {
   "source_handle": "chiefofautism",
   "source_url": "https://x.com/chiefofautism/status/123456",
+  "source_title": "I mapped the ENTIRE AI supply chain",
+  "source_platform": "x",
   "source_date": "2026-02-19",
   "author_thesis": "The AI supply chain has 76 nodes across 13 countries, each one a potential chokepoint",
   "author_ticker": null,
@@ -568,9 +573,10 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 
   "thesis": "AI datacenter optical interconnects are the next bottleneck after chips",
   "ticker": "COHR",
-  "caller_id": "anon",
+  "caller_id": "${BELIEF_CALLER_ID:-anon}",
   "direction": "long",
   "entry_price": 232.48,
+  "price_captured_at": "2026-02-19T14:32:00Z",
   "call_type": "derived",
   "breakeven": "+EV above 12%",
   "kills": "fiber optic overcapacity, Broadcom enters transceiver market",
@@ -614,20 +620,20 @@ curl -s -X POST "${BELIEF_BOARD_URL:-https://belief-board.fly.dev}/api/takes" \
   -d '<JSON payload>'
 ```
 
-`caller_id` is required. Use `"anon"` for anonymous submissions. The API auto-creates a user if it doesn't exist.
+`caller_id` is required. Read from the `BELIEF_CALLER_ID` env var if available, otherwise use `"anon"`. The API auto-creates a user if it doesn't exist.
 
-**Step 3: On success**, show a 4-line teaser linking to the permalink:
+**Step 3: On success**, show a 4-line teaser linking to the permalink. The API response contains `{ "id": "...", "url": "https://host/t/..." }`. Use the `url` field directly as the permalink:
 
 ```
 ---
 "76 nodes in 13 countries." · @chiefofautism
 COHR long · $232.48 · derived
 AI datacenter optical interconnects are the next bottleneck after chips
-→ https://belief-board.fly.dev/t/abc123
+→ <url from API response>
 ---
 ```
 
-Format: `source_quote` (or thesis if no quote) + `source_handle`, then `ticker direction · $entry_price · call_type`, then thesis as subtitle, then permalink URL from the API response.
+Format: `source_quote` (or thesis if no quote) + `source_handle`, then `ticker direction · $entry_price · call_type`, then thesis as subtitle, then the `url` value from the POST response JSON.
 
 **Step 4: On failure** (board unreachable, non-2xx response), print one line: `Board unavailable. Skipping post.` and continue normally.
 

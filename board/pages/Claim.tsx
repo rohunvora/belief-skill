@@ -39,10 +39,6 @@ export function Claim({ handle }: { handle: string }) {
   }
 
   // Compute stats from attributed calls
-  const resolvedCalls = attributedCalls.filter((c) => c.status === "resolved");
-  const wins = resolvedCalls.filter((c) => c.resolve_pnl != null && c.resolve_pnl > 0);
-  const accuracy = resolvedCalls.length > 0 ? wins.length / resolvedCalls.length : null;
-  const totalPnl = resolvedCalls.reduce((sum, c) => sum + (c.resolve_pnl ?? 0), 0);
   const totalWatchers = attributedCalls.reduce((sum, c) => sum + c.watchers, 0);
 
   const handleCopy = () => {
@@ -65,22 +61,10 @@ export function Claim({ handle }: { handle: string }) {
       </div>
 
       {/* Stats summary */}
-      <div className="grid grid-cols-4 gap-3 mb-6">
+      <div className="grid grid-cols-2 gap-3 mb-6">
         <div className="border border-gray-200 rounded-lg p-3 bg-white text-center">
           <div className="text-lg font-bold text-gray-900">{attributedCalls.length}</div>
-          <div className="text-xs text-gray-500">Attributed</div>
-        </div>
-        <div className="border border-gray-200 rounded-lg p-3 bg-white text-center">
-          <div className="text-lg font-bold text-gray-900">
-            {accuracy != null ? `${Math.round(accuracy * 100)}%` : "--"}
-          </div>
-          <div className="text-xs text-gray-500">Accuracy</div>
-        </div>
-        <div className="border border-gray-200 rounded-lg p-3 bg-white text-center">
-          <div className={`text-lg font-bold ${totalPnl >= 0 ? "text-green-600" : "text-red-600"}`}>
-            {resolvedCalls.length > 0 ? `${totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(1)}%` : "--"}
-          </div>
-          <div className="text-xs text-gray-500">Total P&L</div>
+          <div className="text-xs text-gray-500">Calls Attributed</div>
         </div>
         <div className="border border-gray-200 rounded-lg p-3 bg-white text-center">
           <div className="text-lg font-bold text-gray-900">
@@ -158,22 +142,16 @@ export function Claim({ handle }: { handle: string }) {
             </svg>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div className="text-center">
             <div className="text-lg font-bold text-gray-900">{attributedCalls.length}</div>
             <div className="text-xs text-gray-500">Calls</div>
           </div>
           <div className="text-center">
             <div className="text-lg font-bold text-gray-900">
-              {accuracy != null ? `${Math.round(accuracy * 100)}%` : "--"}
+              {totalWatchers >= 1000 ? `${(totalWatchers / 1000).toFixed(1)}K` : totalWatchers}
             </div>
-            <div className="text-xs text-gray-500">Accuracy</div>
-          </div>
-          <div className="text-center">
-            <div className={`text-lg font-bold ${totalPnl >= 0 ? "text-green-600" : "text-red-600"}`}>
-              {resolvedCalls.length > 0 ? `${totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(1)}%` : "--"}
-            </div>
-            <div className="text-xs text-gray-500">Total P&L</div>
+            <div className="text-xs text-gray-500">Watchers</div>
           </div>
         </div>
       </div>

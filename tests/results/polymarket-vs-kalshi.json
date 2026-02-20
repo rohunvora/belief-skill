@@ -1,0 +1,3072 @@
+[
+  {
+    "query": "fed rates",
+    "thesis_type": "macro",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 60,
+      "markets": [
+        {
+          "id": "KXFED-27APR-T0.00",
+          "title": "Will the upper bound of the federal funds rate be above 0.00% following the Fed's Apr 28, 2027 meeting?",
+          "price": 0.93,
+          "volume": 51,
+          "liquidity": 51,
+          "end_date": "2027-04-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27APR-T0.25",
+          "title": "Will the upper bound of the federal funds rate be above 0.25% following the Fed's Apr 28, 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-04-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27APR-T0.50",
+          "title": "Will the upper bound of the federal funds rate be above 0.50% following the Fed's Apr 28, 2027 meeting?",
+          "price": 0.63,
+          "volume": 1,
+          "liquidity": 1,
+          "end_date": "2027-04-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27MAR-T0.00",
+          "title": "Will the upper bound of the federal funds rate be above 0.00% following the Fed's Mar 17, 2027 meeting?",
+          "price": 0.95,
+          "volume": 1,
+          "liquidity": 1,
+          "end_date": "2027-03-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27MAR-T0.25",
+          "title": "Will the upper bound of the federal funds rate be above 0.25% following the Fed's Mar 17, 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-03-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27MAR-T0.50",
+          "title": "Will the upper bound of the federal funds rate be above 0.50% following the Fed's Mar 17, 2027 meeting?",
+          "price": 0.95,
+          "volume": 11,
+          "liquidity": 11,
+          "end_date": "2027-03-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27JAN-T0.00",
+          "title": "Will the upper bound of the federal funds rate be above 0.00% following the Fed's Jan 27, 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-01-27T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27JAN-T0.25",
+          "title": "Will the upper bound of the federal funds rate be above 0.25% following the Fed's Jan 27, 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-01-27T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-27JAN-T0.50",
+          "title": "Will the upper bound of the federal funds rate be above 0.50% following the Fed's Jan 27, 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-01-27T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26DEC-T2.75",
+          "title": "Will the upper bound of the federal funds rate be above 2.75% following the Fed's Dec 9, 2026 meeting?",
+          "price": 0.72,
+          "volume": 305,
+          "liquidity": 303,
+          "end_date": "2026-12-09T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26DEC-T3.00",
+          "title": "Will the upper bound of the federal funds rate be above 3.00% following the Fed's Dec 9, 2026 meeting?",
+          "price": 0.44,
+          "volume": 392,
+          "liquidity": 109,
+          "end_date": "2026-12-09T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26DEC-T3.25",
+          "title": "Will the upper bound of the federal funds rate be above 3.25% following the Fed's Dec 9, 2026 meeting?",
+          "price": 0.24,
+          "volume": 3031,
+          "liquidity": 995,
+          "end_date": "2026-12-09T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26OCT-T2.75",
+          "title": "Will the upper bound of the federal funds rate be above 2.75% following the Fed's Oct 28, 2026 meeting?",
+          "price": 0.78,
+          "volume": 4,
+          "liquidity": 0,
+          "end_date": "2026-10-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26OCT-T3.00",
+          "title": "Will the upper bound of the federal funds rate be above 3.00% following the Fed's Oct 28, 2026 meeting?",
+          "price": 0.62,
+          "volume": 4,
+          "liquidity": 0,
+          "end_date": "2026-10-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26OCT-T3.25",
+          "title": "Will the upper bound of the federal funds rate be above 3.25% following the Fed's Oct 28, 2026 meeting?",
+          "price": 0.43,
+          "volume": 440,
+          "liquidity": 412,
+          "end_date": "2026-10-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26SEP-T2.75",
+          "title": "Will the upper bound of the federal funds rate be above 2.75% following the Fed's Sep 16, 2026 meeting?",
+          "price": 0.77,
+          "volume": 322,
+          "liquidity": 241,
+          "end_date": "2026-09-16T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26SEP-T3.00",
+          "title": "Will the upper bound of the federal funds rate be above 3.00% following the Fed's Sep 16, 2026 meeting?",
+          "price": 0.63,
+          "volume": 45,
+          "liquidity": 15,
+          "end_date": "2026-09-16T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26SEP-T3.25",
+          "title": "Will the upper bound of the federal funds rate be above 3.25% following the Fed's Sep 16, 2026 meeting?",
+          "price": 0.35,
+          "volume": 1368,
+          "liquidity": 0,
+          "end_date": "2026-09-16T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26JUL-T2.75",
+          "title": "Will the upper bound of the federal funds rate be above 2.75% following the Fed's Jul 29, 2026 meeting?",
+          "price": 0.86,
+          "volume": 14,
+          "liquidity": 14,
+          "end_date": "2026-07-29T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26JUL-T3.00",
+          "title": "Will the upper bound of the federal funds rate be above 3.00% following the Fed's Jul 29, 2026 meeting?",
+          "price": 0.7,
+          "volume": 17,
+          "liquidity": 17,
+          "end_date": "2026-07-29T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26JUL-T3.25",
+          "title": "Will the upper bound of the federal funds rate be above 3.25% following the Fed's Jul 29, 2026 meeting?",
+          "price": 0.44,
+          "volume": 2389,
+          "liquidity": 2292,
+          "end_date": "2026-07-29T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26JUN-T2.75",
+          "title": "Will the upper bound of the federal funds rate be above 2.75% following the Fed's Jun 17, 2026 meeting?",
+          "price": 0.88,
+          "volume": 195,
+          "liquidity": 116,
+          "end_date": "2026-06-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26JUN-T3.00",
+          "title": "Will the upper bound of the federal funds rate be above 3.00% following the Fed's Jun 17, 2026 meeting?",
+          "price": 0.8,
+          "volume": 353,
+          "liquidity": 220,
+          "end_date": "2026-06-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26JUN-T3.25",
+          "title": "Will the upper bound of the federal funds rate be above 3.25% following the Fed's Jun 17, 2026 meeting?",
+          "price": 0.64,
+          "volume": 934,
+          "liquidity": 576,
+          "end_date": "2026-06-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26APR-T2.75",
+          "title": "Will the upper bound of the federal funds rate be above 2.75% following the Fed's Apr 29, 2026 meeting?",
+          "price": 0.88,
+          "volume": 166,
+          "liquidity": 116,
+          "end_date": "2026-04-29T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26APR-T3.00",
+          "title": "Will the upper bound of the federal funds rate be above 3.00% following the Fed's Apr 29, 2026 meeting?",
+          "price": 0.96,
+          "volume": 160,
+          "liquidity": 160,
+          "end_date": "2026-04-29T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26APR-T3.25",
+          "title": "Will the upper bound of the federal funds rate be above 3.25% following the Fed's Apr 29, 2026 meeting?",
+          "price": 0.98,
+          "volume": 539,
+          "liquidity": 454,
+          "end_date": "2026-04-29T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26MAR-T2.75",
+          "title": "Will the upper bound of the federal funds rate be above 2.75% following the Fed's Mar 18, 2026 meeting?",
+          "price": 0.99,
+          "volume": 14513,
+          "liquidity": 14511,
+          "end_date": "2026-03-18T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26MAR-T3.00",
+          "title": "Will the upper bound of the federal funds rate be above 3.00% following the Fed's Mar 18, 2026 meeting?",
+          "price": 0.99,
+          "volume": 20058,
+          "liquidity": 20058,
+          "end_date": "2026-03-18T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFED-26MAR-T3.25",
+          "title": "Will the upper bound of the federal funds rate be above 3.25% following the Fed's Mar 18, 2026 meeting?",
+          "price": 0.97,
+          "volume": 37203,
+          "liquidity": 35289,
+          "end_date": "2026-03-18T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-28JAN-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their January 2028 meeting?",
+          "price": 0.1,
+          "volume": 283,
+          "liquidity": 63,
+          "end_date": "2028-01-26T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-28JAN-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their January 2028 meeting?",
+          "price": 0.15,
+          "volume": 585,
+          "liquidity": 565,
+          "end_date": "2028-01-26T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-28JAN-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their January 2028 meeting?",
+          "price": 0.65,
+          "volume": 830,
+          "liquidity": 295,
+          "end_date": "2028-01-26T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27DEC-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their December 2027 meeting?",
+          "price": 0.1,
+          "volume": 113,
+          "liquidity": 113,
+          "end_date": "2027-12-08T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27DEC-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their December 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-12-08T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27DEC-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their December 2027 meeting?",
+          "price": 0.58,
+          "volume": 116,
+          "liquidity": 81,
+          "end_date": "2027-12-08T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27OCT-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their October 2027 meeting?",
+          "price": 0.01,
+          "volume": 210,
+          "liquidity": 5,
+          "end_date": "2027-10-27T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27OCT-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their October 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-10-27T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27OCT-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their October 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-10-27T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27SEP-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their September 2027 meeting?",
+          "price": 0.01,
+          "volume": 22,
+          "liquidity": 0,
+          "end_date": "2027-09-15T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27SEP-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their September 2027 meeting?",
+          "price": 0.31,
+          "volume": 157,
+          "liquidity": 157,
+          "end_date": "2027-09-15T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27SEP-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their September 2027 meeting?",
+          "price": 0.69,
+          "volume": 14,
+          "liquidity": 14,
+          "end_date": "2027-09-15T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JUL-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their July 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-07-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JUL-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their July 2027 meeting?",
+          "price": 0.24,
+          "volume": 163,
+          "liquidity": 163,
+          "end_date": "2027-07-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JUL-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their July 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-07-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JUN-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their June 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-06-09T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JUN-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their June 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-06-09T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JUN-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their June 2027 meeting?",
+          "price": 0.6,
+          "volume": 141,
+          "liquidity": 100,
+          "end_date": "2027-06-09T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27APR-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their April 2027 meeting?",
+          "price": 0.08,
+          "volume": 121,
+          "liquidity": 121,
+          "end_date": "2027-04-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27APR-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their April 2027 meeting?",
+          "price": 0.15,
+          "volume": 2,
+          "liquidity": 0,
+          "end_date": "2027-04-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27APR-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their April 2027 meeting?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2027-04-28T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27MAR-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their March 2027 meeting?",
+          "price": 0.09,
+          "volume": 365,
+          "liquidity": 365,
+          "end_date": "2027-03-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27MAR-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their March 2027 meeting?",
+          "price": 0.27,
+          "volume": 160,
+          "liquidity": 158,
+          "end_date": "2027-03-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27MAR-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their March 2027 meeting?",
+          "price": 0.63,
+          "volume": 425,
+          "liquidity": 341,
+          "end_date": "2027-03-17T18:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JAN-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their January 2027 meeting?",
+          "price": 0.08,
+          "volume": 112,
+          "liquidity": 112,
+          "end_date": "2027-01-27T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JAN-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their January 2027 meeting?",
+          "price": 0.26,
+          "volume": 8,
+          "liquidity": 8,
+          "end_date": "2027-01-27T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-27JAN-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their January 2027 meeting?",
+          "price": 0.66,
+          "volume": 2182,
+          "liquidity": 839,
+          "end_date": "2027-01-27T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-26DEC-C26",
+          "title": "Will the Federal Reserve Cut rates by >25bps at their December 2026 meeting?",
+          "price": 0.08,
+          "volume": 20,
+          "liquidity": 20,
+          "end_date": "2026-12-09T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-26DEC-C25",
+          "title": "Will the Federal Reserve Cut rates by 25bps at their December 2026 meeting?",
+          "price": 0.24,
+          "volume": 1464,
+          "liquidity": 1457,
+          "end_date": "2026-12-09T19:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXFEDDECISION-26DEC-H0",
+          "title": "Will the Federal Reserve Hike rates by 0bps at their December 2026 meeting?",
+          "price": 0.72,
+          "volume": 2123,
+          "liquidity": 1266,
+          "end_date": "2026-12-09T19:05:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 1675
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 24,
+      "markets": [
+        {
+          "id": "0xdeb615a52cd114e5aa27d8344ae506a72bea81f6ed13f5915f050b615a193c20",
+          "title": "Will the Fed decrease interest rates by 50+ bps after the March 2026 meeting?",
+          "price": 0.007,
+          "volume": 59236469.615883,
+          "liquidity": 1964312.7063,
+          "end_date": "2026-03-18T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd6c49a94948e365aa74c09eef54d907b7ca534b243c387c375305d5cdd1afef3",
+          "title": "Will the Fed decrease interest rates by 25 bps after the March 2026 meeting?",
+          "price": 0.045,
+          "volume": 17714379.390018,
+          "liquidity": 785416.8016,
+          "end_date": "2026-03-18T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x257b18205f908aef01ef2d1d50e6fea7d29cf5486fe04031d8b101394476faed",
+          "title": "Will there be no change in Fed interest rates after the March 2026 meeting?",
+          "price": 0.94,
+          "volume": 17136663.488096,
+          "liquidity": 1171317.85833,
+          "end_date": "2026-03-18T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x61b66d02793b4a68ab0cc25be60d65f517fe18c7d654041281bb130341244fcc",
+          "title": "Will Trump nominate Kevin Warsh as the next Fed chair?",
+          "price": 0.942,
+          "volume": 41425414.027191,
+          "liquidity": 492443.39898,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdcc87b9ca36015e396bd0eebca29e854a136ed2b0b701049d1ee9da6bee3eb35",
+          "title": "Will Trump nominate Kevin Hassett as the next Fed chair?",
+          "price": 0.002,
+          "volume": 29128494.613047,
+          "liquidity": 917005.44669,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x705371444684d676041d1010a94cae3a657340fa4809b4307de3c173a35e0957",
+          "title": "Will Trump nominate Christopher Waller as the next Fed chair?",
+          "price": 0.004,
+          "volume": 23181203.680064,
+          "liquidity": 254572.52833,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x21450e1d9c581df3cb90cfb1da5694af1d425f62837a2f39bad7e8f4163cbc17",
+          "title": "Judy Shelton Fed Chair Nomination Odds >5% by Feb 20?",
+          "price": 0.115,
+          "volume": 125991.257047,
+          "liquidity": 34354.9997,
+          "end_date": "2026-02-20T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x6bd56256d77ad8fae80e0ed39cbbf1f5aa14b6f252a39bb1130bf6444caed650",
+          "title": "Judy Shelton Fed Chair Nomination Odds >10% by Feb 20?",
+          "price": 0.024,
+          "volume": 335837.151289,
+          "liquidity": 36508.4258,
+          "end_date": "2026-02-20T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd4e77ba6f29fc093509d24f508631abd445ecf506bbdc9c4c80e60256a318527",
+          "title": "Will no Fed rate cuts happen in 2026?",
+          "price": 0.086,
+          "volume": 1436299.191359,
+          "liquidity": 66031.10833,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x5e082f0b57f47a29044aa35b4c5658393122e659d5feae521c06b57cdd7f905c",
+          "title": "Will 1 Fed rate cut happen in 2026?",
+          "price": 0.18,
+          "volume": 506374.052566,
+          "liquidity": 67823.2805,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe0d9f508a249e0070db06eb7d1e1fb17eb23c963f6fb722c4c3f81e23240c1cd",
+          "title": "Will 2 Fed rate cuts happen in 2026?",
+          "price": 0.28,
+          "volume": 447306.614294,
+          "liquidity": 73764.3532,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd72622d154dfe65b9c019d6afcfe75a55717e5c502db611f555b101aafbf6ec5",
+          "title": "Will the Fed decrease interest rates by 50+ bps after the April 2026 meeting?",
+          "price": 0.019,
+          "volume": 859446.381144,
+          "liquidity": 155940.39257,
+          "end_date": "2026-04-29T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x0d14f5dc9fb3250ec888b1ac8d9fe9a0ce06f9d3ea60fdf138e8690622fea84c",
+          "title": "Will the Fed decrease interest rates by 25 bps after the April 2026 meeting?",
+          "price": 0.18,
+          "volume": 520913.074625,
+          "liquidity": 59938.3313,
+          "end_date": "2026-04-29T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x36e8ca24d2a13435f519f15580d42b45cdbe3bc425fb39a7c2733260357af0fa",
+          "title": "Will there be no change in Fed interest rates after the April 2026 meeting?",
+          "price": 0.81,
+          "volume": 345238.073182,
+          "liquidity": 57753.1722,
+          "end_date": "2026-04-29T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdde06286a7b9464d344f410ab0b3d2ebc6469904e72c27fd982f65fdbf78768d",
+          "title": "Will the Fed decrease interest rates by 25 bps after the June 2026 meeting?",
+          "price": 0.47,
+          "volume": 70343.92789,
+          "liquidity": 35086.0112,
+          "end_date": "2026-06-17T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xa7cb4135c6d9c36da0e343874dd5b455de739c6d1b9f9f5583dd9320aacf5db2",
+          "title": "Will the Fed increase interest rates by 25 bps after the June 2026 meeting?",
+          "price": 0.007,
+          "volume": 56378.733358,
+          "liquidity": 72963.44778,
+          "end_date": "2026-06-17T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x4e4a7df876b0c04f0b8b29b9073eddfbaf5c787192da825ae7ca1031bc8cfd15",
+          "title": "Will the Fed decrease interest rates by 50+ bps after the June 2026 meeting?",
+          "price": 0.06,
+          "volume": 82532.77119,
+          "liquidity": 69442.9721,
+          "end_date": "2026-06-17T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x4b23c2e3ee806915cc1186641d292acbc6b26d7a7746ee93c910b8b0c87d4bca",
+          "title": "Will the Fed Cut–Pause–Pause in the next three decisions (Dec–Jan–Mar)?",
+          "price": 0.94,
+          "volume": 173328.128914,
+          "liquidity": 69990.7463,
+          "end_date": "2026-03-18T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x462af602f9e70174a8ef72ec9278106a098cc40c8ff41025e6ae0766c74c9bee",
+          "title": "Will the Fed Cut–Cut–Pause in the next three decisions (Dec–Jan–Mar)?",
+          "price": 0.001,
+          "volume": 77631.17676,
+          "liquidity": null,
+          "end_date": "2026-03-18T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x4c2ebb79d89f1bb925bcdb95ce14534992ed00fd1596c33b0e72369a8cca1b3f",
+          "title": "Will the Fed Pause–Pause–Pause in the next three decisions (Dec–Jan–Mar)?",
+          "price": 1,
+          "volume": 93636.30559,
+          "liquidity": null,
+          "end_date": "2026-03-18T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x622c081d57a0fd170629dcc54e583c849d989888d3a22e60d363789a305ae866",
+          "title": "March Fed Derivative: \"25bps cut\" flips \"Pause\" by Feb 28?",
+          "price": 0.014,
+          "volume": 81237.725123,
+          "liquidity": 80073.95746,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xa1b91b95e0941fafb86b8e55f5f8051bf5620f5b03d8547dfb1cf81e10abf077",
+          "title": "Jerome Powell out as Fed Chair by May 14, 2026?",
+          "price": 0.061,
+          "volume": 482003.522495,
+          "liquidity": 69513.80387,
+          "end_date": "2026-05-14T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x72f2eafdddbe76af4dc3add2f0f8aff93520400d423b347655c2eaa10d0f099f",
+          "title": "Jerome Powell out as Fed Chair by March 31, 2026?",
+          "price": 0.015,
+          "volume": 649068.835417,
+          "liquidity": 55997.07467,
+          "end_date": "2026-05-14T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x80b3af88cb991980e8da1ce86b9794a0957f96ec98c29319dd7ba65e9744d82b",
+          "title": "Fed rate hike in 2026?",
+          "price": 0.11,
+          "volume": 50143.603643,
+          "liquidity": 14337.522,
+          "end_date": "2026-12-09T00:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 335
+    },
+    "verdict": "Both (K:60 P:24) | Poly volume >>> | latency K:1675ms P:335ms"
+  },
+  {
+    "query": "trump",
+    "thesis_type": "political",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 0,
+      "markets": [],
+      "latency_ms": 0,
+      "error": "No series mapping for this query"
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 23,
+      "markets": [
+        {
+          "id": "0x61b66d02793b4a68ab0cc25be60d65f517fe18c7d654041281bb130341244fcc",
+          "title": "Will Trump nominate Kevin Warsh as the next Fed chair?",
+          "price": 0.942,
+          "volume": 41425414.027191,
+          "liquidity": 492443.39898,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdcc87b9ca36015e396bd0eebca29e854a136ed2b0b701049d1ee9da6bee3eb35",
+          "title": "Will Trump nominate Kevin Hassett as the next Fed chair?",
+          "price": 0.002,
+          "volume": 29128494.613047,
+          "liquidity": 917005.44669,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x705371444684d676041d1010a94cae3a657340fa4809b4307de3c173a35e0957",
+          "title": "Will Trump nominate Christopher Waller as the next Fed chair?",
+          "price": 0.004,
+          "volume": 23181203.680064,
+          "liquidity": 254572.52833,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x35bb21df72dfd9ce9bb57e14fd449ff339f51dcb6a91e3604b1748ccf2f85b1c",
+          "title": "Will Trump say \"Crypto\" or \"Bitcoin\" this week? (February 22)",
+          "price": 0.16,
+          "volume": 5437.323407,
+          "liquidity": 1036.0927,
+          "end_date": "2026-02-22T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x89fbf3db5a1ea3e71631f9309f020f02286557ebcef627d79cc595f9541bf6ac",
+          "title": "Will Trump say \"Make America Great Again\" this week? (February 22)",
+          "price": 0.999,
+          "volume": 13051.44873,
+          "liquidity": null,
+          "end_date": "2026-02-22T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0xbdd086524a93823a836292305828736ff32831aa935494206fbc3889b1fba225",
+          "title": "Will Trump say \"Sleepy Joe\" this week? (February 22)",
+          "price": 0.999,
+          "volume": 19798.384989,
+          "liquidity": null,
+          "end_date": "2026-02-22T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x690943971c6055658aaa54649cb491c70f404c64207c413eb7720e3e825e4c45",
+          "title": "Will Trump say \"Job\" 20+ times during the 2026 State of the Union address?",
+          "price": 0.6,
+          "volume": 26479.775408,
+          "liquidity": 8866.0546,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x8d7ff276b2a74beed4a15fd0f1744ecf05cfad7ed0c69aa01310e24b3b820bb3",
+          "title": "Will Trump say \"Crypto\" or \"Bitcoin\" during the 2026 State of the Union address?",
+          "price": 0.25,
+          "volume": 58774.864183,
+          "liquidity": 21385.3457,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd8a28866d2c180b9b08f5d72bbbfc9a965652cde471a2859e37100f452493e09",
+          "title": "Will Trump say \"MAGA\" or \"Make America Great Again\" during the 2026 State of the Union address?",
+          "price": 0.78,
+          "volume": 3470.292612,
+          "liquidity": 3799.0533,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xfc9ee9c25abd5b966088767214c22dcf3ad1c72548e9a1dbef9d4328c170e5b5",
+          "title": "Trump out as President by March 31?",
+          "price": 0.027,
+          "volume": 3263700.623764,
+          "liquidity": 166469.65777,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x01497e4bf7ddebf62ac619054e43f2168a22a086b66d708307b0efb7a093ef67",
+          "title": "Will Donald Trump post 0-19 Truth Social posts from February 13 to February 20, 2026?",
+          "price": 0.001,
+          "volume": 37405.030879,
+          "liquidity": null,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x8ac12345e202e79de8b9f680b797377db93e7eb2dea64ecf5ca227bcfe97f961",
+          "title": "Will Donald Trump post 20-39 Truth Social posts from February 13 to February 20, 2026?",
+          "price": 0.001,
+          "volume": 30872.500316,
+          "liquidity": null,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x0b64b666ec4c6ea6b956346012c891939b38a831caa3c2219e5705e0673bf198",
+          "title": "Will Donald Trump post 40-59 Truth Social posts from February 13 to February 20, 2026?",
+          "price": 0.001,
+          "volume": 25439.395081,
+          "liquidity": null,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0xaf9d0e448129a9f657f851d49495ba4742055d80e0ef1166ba0ee81d4d594214",
+          "title": "Will Trump deport less than 250,000?",
+          "price": 0.037,
+          "volume": 1197184.712951,
+          "liquidity": 19605.62263,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x49686d26fb712515cd5e12c23f0a1c7e10214c7faa3cb0a730aabe0c33694082",
+          "title": "Will Trump deport 250,000-500,000 people?",
+          "price": 0.963,
+          "volume": 7508558.005443,
+          "liquidity": 8244.91854,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x2393ed0b0fdc450054c7b9071907eca75cf4fc36e385adf4a0a5f99ee62243e8",
+          "title": "Will Trump deport 500,000-750,000- people?",
+          "price": 0.015,
+          "volume": 527781.686951,
+          "liquidity": 4867.17669,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x48b0b0bca515f68fccf95af4793dbd0edbfec1f8ec6e8df2c0f69ba74f8c4722",
+          "title": "Trump out as President before 2027?",
+          "price": 0.16,
+          "volume": 3297128.069178,
+          "liquidity": 182621.379,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x89139e34f67d6f79ac8309ec1c579ea5bf7319fd894fe5708d53dcdc98faafc8",
+          "title": "Will Trump say \"Ayatollah\" or \"Khamenei\" during the State of the Union address?",
+          "price": 0.13,
+          "volume": 813.758329,
+          "liquidity": 983.7545,
+          "end_date": "2026-02-24T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x146e8b06a6b7133319182531a1529f3db2aa5c041f89f6d1e69f5781bea93d2d",
+          "title": "Will Trump say \"Beckstrom\" during the State of the Union address?",
+          "price": 0.51,
+          "volume": 5629.227521,
+          "liquidity": 797.3466,
+          "end_date": "2026-02-24T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xc9d2d74929256cc3f9d4ab3d024557624fc8110c3e2242376f969e5c69fe3877",
+          "title": "Will Trump say \"Bessent\" during the State of the Union address?",
+          "price": 0.48,
+          "volume": 9664.320284,
+          "liquidity": 1754.6148,
+          "end_date": "2026-02-24T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd595eb9b81885ff018738300c79047e3ec89e87294424f57a29a7fa9162bf116",
+          "title": "Will Trump acquire Greenland before 2027?",
+          "price": 0.112,
+          "volume": 28132749.188892,
+          "liquidity": 705078.08585,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xbd237bc177d934486e7d31df298162e04474017d528d609971d6928e09aaf4d4",
+          "title": "Odds Trump acquires Greenland before 2027 hit 30% by March 31?",
+          "price": 0.027,
+          "volume": 681395.498224,
+          "liquidity": 31048.03076,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x33086d942ec3fdcbaebd8a145eaf957903a9bb8b36682c4c69fee1089e4e528a",
+          "title": "Odds Trump acquires Greenland before 2027 hit 50% by March 31?",
+          "price": 0.013,
+          "volume": 307219.027407,
+          "liquidity": 21327.46597,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 253
+    },
+    "verdict": "Polymarket only (23 markets)"
+  },
+  {
+    "query": "bitcoin",
+    "thesis_type": "crypto",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 9,
+      "markets": [
+        {
+          "id": "KXBTCMAXY-26DEC31-99999.99",
+          "title": "Will Bitcoin be above $99,999.99 by Dec 31, 2026 at 11:59 PM ET?",
+          "price": 0.38,
+          "volume": 477702,
+          "liquidity": 147882,
+          "end_date": "2027-01-01T04:59:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTCMAXY-26DEC31-109999.99",
+          "title": "Will Bitcoin be above $109,999.99 by Dec 31, 2026 at 11:59 PM ET?",
+          "price": 0.32,
+          "volume": 190981,
+          "liquidity": 48533,
+          "end_date": "2027-01-01T04:59:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTCMAXY-26DEC31-119999.99",
+          "title": "Will Bitcoin be above $119,999.99 by Dec 31, 2026 at 11:59 PM ET?",
+          "price": 0.23,
+          "volume": 213107,
+          "liquidity": 85874,
+          "end_date": "2027-01-01T04:59:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTC-26FEB2017-T54750",
+          "title": "Bitcoin price range  on Feb 20, 2026?",
+          "price": 0.02,
+          "volume": 2322,
+          "liquidity": 2194,
+          "end_date": "2026-02-20T22:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTC-26FEB2017-B55000",
+          "title": "Bitcoin price range  on Feb 20, 2026?",
+          "price": 0.01,
+          "volume": 2923,
+          "liquidity": 2923,
+          "end_date": "2026-02-20T22:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTC-26FEB2017-B55500",
+          "title": "Bitcoin price range  on Feb 20, 2026?",
+          "price": 0.01,
+          "volume": 1247,
+          "liquidity": 1247,
+          "end_date": "2026-02-20T22:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTC-26FEB2011-T57750",
+          "title": "Bitcoin price range  on Feb 20, 2026?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2026-02-20T16:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTC-26FEB2011-B57875",
+          "title": "Bitcoin price range  on Feb 20, 2026?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2026-02-20T16:05:00Z",
+          "active": true
+        },
+        {
+          "id": "KXBTC-26FEB2011-B58125",
+          "title": "Bitcoin price range  on Feb 20, 2026?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2026-02-20T16:05:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 599
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 28,
+      "markets": [
+        {
+          "id": "0x5e5c9dfaf695371a0cc321b47b35f66a6dbd1482f0503526603d2bd2a91bfdc7",
+          "title": "Will Bitcoin reach $150,000 in February?",
+          "price": 0.001,
+          "volume": 21253865.408516,
+          "liquidity": 1994413.17546,
+          "end_date": "2026-03-01T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xee97e9edec0727d16dcfe4040dca1c949d45e4010de05569fb5a4e7a9873a83d",
+          "title": "Will Bitcoin reach $120,000 in February?",
+          "price": 0.002,
+          "volume": 2906359.484321,
+          "liquidity": 765163.11507,
+          "end_date": "2026-03-01T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x32a238c48ede8bc6386efceae61286deeb8528aec51d312e01082cf962280b4e",
+          "title": "Will Bitcoin reach $125,000 in February?",
+          "price": 0.001,
+          "volume": 3233489.487261,
+          "liquidity": 404727.06955,
+          "end_date": "2026-03-01T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x619ebacab7045c37a3a96009d726fb41230be0b010507d99da8abc1817c8a133",
+          "title": "Will the price of Bitcoin be above $68,000 on February 20?",
+          "price": 0.09,
+          "volume": 815839.085579,
+          "liquidity": 23256.7007,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x6c87c5da24dbce78d85255852b1165af0636492d78b722a99611c9c1ae5feae7",
+          "title": "Will the price of Bitcoin be above $70,000 on February 20?",
+          "price": 0.003,
+          "volume": 921021.473306,
+          "liquidity": 64715.53523,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf3fac6e60049709b19e33bd4b08aaf443d015040fe0d6fff9c1fd82cf56a3b11",
+          "title": "Will the price of Bitcoin be above $72,000 on February 20?",
+          "price": 0.001,
+          "volume": 865651.454253,
+          "liquidity": 50226.74284,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xbae3a830488cc31ae2ddf3b8915efd3bb0e82922926a3b5fbe1380caa25416d9",
+          "title": "Will the price of Bitcoin be above $64,000 on February 21?",
+          "price": 0.966,
+          "volume": 102011.030294,
+          "liquidity": 22338.94126,
+          "end_date": "2026-02-21T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x62f1335fd07e424487e1703dcc92b896699ff150a3da0492619628d476c7b59b",
+          "title": "Will the price of Bitcoin be above $66,000 on February 21?",
+          "price": 0.77,
+          "volume": 94950.55932,
+          "liquidity": 18579.5512,
+          "end_date": "2026-02-21T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe89cdfa298d0527375b9d286dadc3cee3fb562969987562dd43a65b05cfbc690",
+          "title": "Will the price of Bitcoin be above $68,000 on February 21?",
+          "price": 0.26,
+          "volume": 144446.710176,
+          "liquidity": 19398.3133,
+          "end_date": "2026-02-21T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x743cc8182923478d7bd8843a84ea4f676bedf85330f281d75293519ab5fd402a",
+          "title": "Will the price of Bitcoin be between $60,000 and $62,000 on February 20?",
+          "price": 0.001,
+          "volume": 52138.009539,
+          "liquidity": 18742.8825,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x119860011b0830415941fa1a9e13d7c2c833348a367f66221dc4efe4bc39fe43",
+          "title": "Will the price of Bitcoin be between $66,000 and $68,000 on February 20?",
+          "price": 0.88,
+          "volume": 293569.42097,
+          "liquidity": 12627.2152,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdf192b7b1335acede9baf00a40d21f6bce69928acaced6a7e82f0c796d42c6f3",
+          "title": "Will the price of Bitcoin be between $68,000 and $70,000 on February 20?",
+          "price": 0.08,
+          "volume": 221002.187411,
+          "liquidity": 14019.667,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xac32e73aa9e0dae801d88d4f81efd2ef3fa0f04b815f3a0e74426f0762e668cd",
+          "title": "Will Bitcoin reach $200,000 by December 31, 2026?",
+          "price": 0.06,
+          "volume": 620889.417662,
+          "liquidity": 63221.4679,
+          "end_date": "2027-01-01T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x799c35de1e5f3ebd75053643e020e6df9e9a3f477e3d6066eb0a8565f65d547f",
+          "title": "Will Bitcoin reach $180,000 by December 31, 2026?",
+          "price": 0.06,
+          "volume": 308372.659761,
+          "liquidity": 43124.1333,
+          "end_date": "2027-01-01T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x472c9035786b390c08e674fc60bddda488957e1b8aecad3f5480cc531a0754b0",
+          "title": "Will Bitcoin reach $160,000 by December 31, 2026?",
+          "price": 0.08,
+          "volume": 282920.036828,
+          "liquidity": 58064.5901,
+          "end_date": "2027-01-01T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x011f93a2e64988a21f3f184c5cd5fc68a35012122d6a8d7def9ef386fd84b663",
+          "title": "Will Bitcoin reach $82,000 February 16-22?",
+          "price": 0.001,
+          "volume": 133201.944753,
+          "liquidity": 45598.06752,
+          "end_date": "2026-02-23T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x2743406656f585a268e19e37bfaeef08aaca89f33c27e55e3235b6c3be153533",
+          "title": "Will Bitcoin reach $80,000 February 16-22?",
+          "price": 0.002,
+          "volume": 50058.618005,
+          "liquidity": 38797.46793,
+          "end_date": "2026-02-23T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xc3ec2dd3971a6a07e9ff3f26cb964ea830d0a97c0c1697d1c748d1812a123225",
+          "title": "Will Bitcoin reach $78,000 February 16-22?",
+          "price": 0.004,
+          "volume": 34492.79474,
+          "liquidity": 40907.00208,
+          "end_date": "2026-02-23T05:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xce49ffea731a327b61ef3939608c6a02fa9436f74449e9004e73ecaa80a2caa6",
+          "title": "Bitcoin Up or Down on February 20?",
+          "price": 0.9,
+          "volume": 603571.258418,
+          "liquidity": 24361.8159,
+          "end_date": "2026-02-20T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x5a748a4286e4cdc9dffce8fb5ca3adf62cf4c5257043c0b835abf16d25ad52e3",
+          "title": "Will the price of Bitcoin be above $76,000 on February 22?",
+          "price": 0.004,
+          "volume": 9779.14024,
+          "liquidity": 17595.19339,
+          "end_date": "2026-02-22T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x003e12bdab6898b6581cf7a14bc8d2419f07a6d0124659db0f88a9928c107836",
+          "title": "Will the price of Bitcoin be above $78,000 on February 22?",
+          "price": 0.003,
+          "volume": 4657.739217,
+          "liquidity": 29332.64792,
+          "end_date": "2026-02-22T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdcb9b86949b009116924b4c6db25cb8edf53c719f10cac4f2f9bbeaf1400193a",
+          "title": "Will the price of Bitcoin be above $70,000 on February 22?",
+          "price": 0.07,
+          "volume": 80871.938361,
+          "liquidity": 19020.7034,
+          "end_date": "2026-02-22T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9d7f2b778bec571d213aeb8d4b043d9a4fceae281cd375d4e4c85ab9894cd857",
+          "title": "Will the price of Bitcoin be greater than $78,000 on February 21?",
+          "price": 0.001,
+          "volume": 24416.08339,
+          "liquidity": 34020.9035,
+          "end_date": "2026-02-21T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x8051eabea03c10844b1e73fd7771e3ab7ad559ce414645fb0bffc959933e3cb4",
+          "title": "Will the price of Bitcoin be less than $60,000 on February 21?",
+          "price": 0.01,
+          "volume": 23945.243703,
+          "liquidity": 14861.99676,
+          "end_date": "2026-02-21T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x204915db75d8990515393191f8c8ca103b6c8c432eb3de068bc595d272134e05",
+          "title": "Will the price of Bitcoin be between $60,000 and $62,000 on February 21?",
+          "price": 0.009,
+          "volume": 14648.111658,
+          "liquidity": 12794.96708,
+          "end_date": "2026-02-21T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x26c1db42bd307ebfba9e8224c515ae1778f7319ce32551f312c8a39aace1c917",
+          "title": "Will the price of Bitcoin be above $58,000 on February 23?",
+          "price": 0.989,
+          "volume": 26831.424391,
+          "liquidity": 18666.04464,
+          "end_date": "2026-02-23T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x3f029e60fe31ad280c862e45c598bf2d204b90d81cf09b2c4f8a8a9553218623",
+          "title": "Will the price of Bitcoin be above $60,000 on February 23?",
+          "price": 0.969,
+          "volume": 23087.801496,
+          "liquidity": 20227.55351,
+          "end_date": "2026-02-23T17:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x7f19af643ee025cd8c09b0be55b9743e8cc9c873afea0036b231898e673a13ae",
+          "title": "Will the price of Bitcoin be above $62,000 on February 23?",
+          "price": 0.959,
+          "volume": 29139.649947,
+          "liquidity": 16878.57713,
+          "end_date": "2026-02-23T17:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 223
+    },
+    "verdict": "Both (K:9 P:28) | Poly volume >>> | latency K:599ms P:223ms"
+  },
+  {
+    "query": "AI",
+    "thesis_type": "tech",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 0,
+      "markets": [],
+      "latency_ms": 0,
+      "error": "No series mapping for this query"
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 30,
+      "markets": [
+        {
+          "id": "0x6a0e818ffb431a5ea38af7d2b99c4ce2a1a3f51d83a1ff69a3b85d0471c3bdba",
+          "title": "Will Moonshot have the best AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 1001811.110399,
+          "liquidity": 369786.64801,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x406a62740107092e26426b8bb42fceb0a698b79c7ec3bf6955ece180b0fda107",
+          "title": "Will Alibaba have the best AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 1224977.504075,
+          "liquidity": 335161.36885,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf71a77a4ce45e5230aea3135bf1b7b814351f05bbd8e2fdf4e01fbe95d817877",
+          "title": "Will Company B have the best AI model at the end of February 2026?",
+          "price": null,
+          "volume": null,
+          "liquidity": null,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0xa3681c6be3faf6b4f05918ed0bc9786e41e600d9882c335907b5a3402bf93494",
+          "title": "Will Google have the top AI model at the end of June 2026?",
+          "price": 0.37,
+          "volume": 3737.544149,
+          "liquidity": 16587.8178,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x2bdf398464f6ab3c974eaf70a1f1f0dbd63d96507a2605f7e7cf9bbbbd78bbc8",
+          "title": "Will OpenAI have the top AI model at the end of June 2026?",
+          "price": 0.09,
+          "volume": 36405.836029,
+          "liquidity": 15620.9368,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x62d3940c2c5881f4f380a416f329bfd654b4d8045a74e1cdbcc2a232eb113a83",
+          "title": "Will Z.ai have the top AI model at the end of June 2026?",
+          "price": 0.077,
+          "volume": 88652.582721,
+          "liquidity": 16696.74285,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x0dd9378e404c2b77d5bdaabe50187635e7fc25f064d1f0563040b9b46ac4e0b2",
+          "title": "Will Google have the best AI model at the end of March 2026?",
+          "price": 0.34,
+          "volume": 346942.116279,
+          "liquidity": 15901.184,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf76bd0b3d8326ba4dbe9a56236bf083ac6097c6e1c940739e056625229de0b22",
+          "title": "Will OpenAI have the best AI model at the end of March 2026?",
+          "price": 0.057,
+          "volume": 177502.116016,
+          "liquidity": 12141.97452,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xbbbb08ce3ed8389596b50e67bb8ad6ae64d512901536b94a5e05269403777083",
+          "title": "Will Baidu have the best AI model at the end of March 2026?",
+          "price": 0.008,
+          "volume": 148903.012902,
+          "liquidity": 14790.53593,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xaec744acc776760b5ae4ea624392701e5be37f226030347437abdb6df9c1d184",
+          "title": "Will Google have the best AI model for coding on March 31?",
+          "price": 0.058,
+          "volume": 44604.676506,
+          "liquidity": 6155.9571,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x5ed8142bfb7dedd29123c51d93e78d41bb11347a9dc99af028f8c26d379f7991",
+          "title": "Will OpenAI have the best AI model for coding on March 31?",
+          "price": 0.78,
+          "volume": 39084.197875,
+          "liquidity": 6691.7925,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xad1d3f37d4b3e994cf6e345342e4c6d77b847c125d222144c583ef5c4bd2f84a",
+          "title": "Will Z.ai have the best AI model for coding on March 31?",
+          "price": 0.002,
+          "volume": 37926.774005,
+          "liquidity": 9954.54083,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe31c723904acac71cc80162b26c6c9a9e8247cf9fd3f62ce588012a1b1d102dd",
+          "title": "Will Google have the second-best AI model at the end of February 2026?",
+          "price": 0.25,
+          "volume": 108673.782966,
+          "liquidity": 6035.85353,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe5bd02f2f9768b85096c4642a44740a0f4d91483aef5a3dbeb577f1ec043af2e",
+          "title": "Will Moonshot have the second-best AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 29258.341499,
+          "liquidity": 8865.6643,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x52390ee63e385c6f1693c878174b679e5e9577ad076e25931d90aa4b8aff7d77",
+          "title": "Will Z.ai have the second-best AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 36351.087424,
+          "liquidity": 14553.66691,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x10e9522505ae7e53fae6644360f23cfb273162dc3ee673791cda5549ea78ca08",
+          "title": "Will Google have the #1 AI model at the end of February 2026?",
+          "price": 0.116,
+          "volume": 113100.604722,
+          "liquidity": 5327.73428,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x950cfb4974be7e01ead66b0ad4c08c057d8753342a61e70bad13588425e2f89c",
+          "title": "Will Z.ai have the #1 AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 45464.573814,
+          "liquidity": 14079.37841,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x3f53cc90235d0841412e85c81fbb4f04e3cda115c7ca81a39d652e69ea791c53",
+          "title": "Will any other company have the #1 AI model at the end of February 2026?",
+          "price": null,
+          "volume": null,
+          "liquidity": null,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x6e5177c73186a77fba0d2039dfe3432bebf7f4ab9775570de88bf6ffbd780339",
+          "title": "Will Google have the third-best AI model at the end of February 2026?",
+          "price": 0.7,
+          "volume": 17316.844578,
+          "liquidity": 3268.8686,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x1dae86f0e9cbcdda568d176766073b7f027c4437f73dd151307851428cc8e210",
+          "title": "Will Baidu have the third-best AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 10114.442891,
+          "liquidity": 6501.63259,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x784107b24a520704ebf57702b112f83c98502bdb98608f445de51a287c789dd8",
+          "title": "Will Meituan have the third-best AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 28901.88675,
+          "liquidity": 5880.61637,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe1da8f4246002fb20157a152e349dc2f9d5439d4ac65dae7ef131e05894f136a",
+          "title": "Will Meituan have the #3 AI model at the end of February 2026?",
+          "price": 0.001,
+          "volume": 6291.999059,
+          "liquidity": 4115.74181,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x768e65064f55342aaa45924a272a1dfe2f318b9999777c41abd5447940e104b6",
+          "title": "Will Company B have the #3 AI model at the end of February 2026?",
+          "price": null,
+          "volume": null,
+          "liquidity": null,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x5d86d1e0a34c0e4451b725d65a08fdd2f8cc8918c2202c9a4780c89a1e17584b",
+          "title": "Will Company D have the #3 AI model at the end of February 2026?",
+          "price": null,
+          "volume": null,
+          "liquidity": null,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x6ce3a601f36204ac03affd9f11bf4ce575158b6e0fb04d5a3bae78df69fcf890",
+          "title": "Will Google have the #2 AI model at the end of February 2026?",
+          "price": 0.043,
+          "volume": 31636.102777,
+          "liquidity": 3132.5955,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x62aa4a33b2a98e7d86b5681bfd07d6ea4acfa98323415f9c27b65b984f1ca731",
+          "title": "Will Anthropic have the #2 AI model at the end of February 2026?",
+          "price": 0.8,
+          "volume": 22308.844455,
+          "liquidity": 3091.8453,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x29468e9b141d5843e1d637bcd96024f3cd77d022b49762a5755ce290140c55c1",
+          "title": "Will Company A have the #2 AI model at the end of February 2026?",
+          "price": null,
+          "volume": null,
+          "liquidity": null,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x0bd1b836a2494f80aaee62927cf01e5f6fceb19114e96fc517c6440aea4576e4",
+          "title": "Will Google have the best AI model at the end of June 2026?",
+          "price": 0.45,
+          "volume": 263204.506562,
+          "liquidity": 15225.3312,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x734c6c32a62f8a27035a222e45fc388d59eeffe89bb31ab26054bc29bcc3eee7",
+          "title": "Will OpenAI have the best AI model at the end of June 2026?",
+          "price": 0.11,
+          "volume": 39858.721084,
+          "liquidity": 20707.9864,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9812b1740a7dc0ec0318f66577bd40305576ad43cfcd732399dc02a328035ef2",
+          "title": "Will Z.ai have the best AI model at the end of June 2026?",
+          "price": 0.007,
+          "volume": 66699.813632,
+          "liquidity": 21302.00776,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 215
+    },
+    "verdict": "Polymarket only (30 markets)"
+  },
+  {
+    "query": "recession",
+    "thesis_type": "macro",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 1,
+      "markets": [
+        {
+          "id": "KXRECSSNBER-26",
+          "title": "Will there be a recession in 2026?",
+          "price": 0.23,
+          "volume": 382130,
+          "liquidity": 172952,
+          "end_date": "2027-01-31T15:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 434
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 2,
+      "markets": [
+        {
+          "id": "0xfdc73f10edf0266756686f35b5712cffa828b0940fc015e0426c76c934c2105d",
+          "title": "US recession by end of 2026?",
+          "price": 0.22,
+          "volume": 236823.704789,
+          "liquidity": 42179.7882,
+          "end_date": "2027-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x01677ae80095732d69ef484b859460b69d21714dd370b9e4f377469c35fac05d",
+          "title": "Canada recession before 2027?",
+          "price": 0.4,
+          "volume": 25792.400347,
+          "liquidity": 9508.3536,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 187
+    },
+    "verdict": "Both (K:1 P:2) | Kalshi volume > | latency K:434ms P:187ms"
+  },
+  {
+    "query": "spacex",
+    "thesis_type": "tech",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 0,
+      "markets": [],
+      "latency_ms": 0,
+      "error": "No series mapping for this query"
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 26,
+      "markets": [
+        {
+          "id": "0x61ab8a9019da7012cacf68afadd484ca68bcecde8f53f5426fbf4c174e2de623",
+          "title": "Will SpaceX's market cap be between $500B and $600B at market close on IPO day?",
+          "price": 0.007,
+          "volume": 195454.718133,
+          "liquidity": 17438.6297,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x36f44c4409cd8e1e3aab863f9692bac2d78073b33b3b10cb10a2685ba1ad94b4",
+          "title": "Will SpaceX's market cap be between $900B and $1T at market close on IPO day?",
+          "price": 0.02,
+          "volume": 207276.066724,
+          "liquidity": 12893.99875,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xc7af6cffebfc1c0d3b19d66a2495a19a12b41a63af98e40d70f2bc710c7f1561",
+          "title": "Will SpaceX's market cap be less than $500B at market close on IPO day?",
+          "price": 0.005,
+          "volume": 198165.940556,
+          "liquidity": 15575.44744,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xfacf82cdf9eeea5d4c0a450acf939bbeab9fe307b5e53191a59171d12072adbf",
+          "title": "SpaceX IPO closing market cap above $1T?",
+          "price": 0.91,
+          "volume": 193498.642338,
+          "liquidity": 15981.5641,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x6113371e7e1a872fbb238ab0697c52757b1cdcff77a3dbd6ac1541604dfa6388",
+          "title": "SpaceX IPO closing market cap above $1.4T?",
+          "price": 0.78,
+          "volume": 56887.221896,
+          "liquidity": 4099.095,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x1f31af453f8396fad7664485160aacf7bfbec04c366b5c4c04a1cd2ad2338f38",
+          "title": "SpaceX IPO closing market cap above $1.2T?",
+          "price": 0.87,
+          "volume": 150565.024354,
+          "liquidity": 9884.7903,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xc8034ffc35d47f966646cd1807900b415365f759bac771e3d7d9cfce3cf2a9ea",
+          "title": "Will SpaceX's market cap be between $1.6T and $1.8T at market close on IPO day?",
+          "price": 0.156,
+          "volume": 12613.005779,
+          "liquidity": 2634.48881,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x897b618a599afc4106593a796bac1a5ba29935bd1f7584536e3ae957450ab30e",
+          "title": "Will SpaceX not IPO by December 31, 2027?",
+          "price": 0.037,
+          "volume": 35734.771924,
+          "liquidity": 6785.49049,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xfa928bde6b984b65611fd3a9fde594ae7daafc38572121f6dcc4ac4aaba03df8",
+          "title": "Will SpaceX's market cap be less than $1.0T at market close on IPO day?",
+          "price": 0.09,
+          "volume": 20914.409198,
+          "liquidity": 7844.2511,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x07fcb32d51714dfb8253a04819405060ee268e3922ad6ae5e3cbfa7f43e6ecd8",
+          "title": "Will SpaceX Starship Flight Test 12 launch by November 30?",
+          "price": 1,
+          "volume": 43846.099912,
+          "liquidity": null,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x6e7f9ca2cf14c89b5c43186b391636fe3257b6e54561af8435690c8e558a7739",
+          "title": "Will SpaceX Starship Flight Test 12 Superheavy explode?",
+          "price": 0.63,
+          "volume": 149397.191984,
+          "liquidity": 1477.3238,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xc6853f6ca9bb4b31241069f0243326dda991661e173de4518b95483ec01c5a3c",
+          "title": "Will SpaceX Starship Flight Test 12 launch by December 31?",
+          "price": 1,
+          "volume": 257949.49806,
+          "liquidity": null,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0xa0c74b84a77ba0af05e374f85d3e95d5de47f2e940e25947e514e53fded9a8d5",
+          "title": "Will SpaceX have less than or equal to 5 launches in February?",
+          "price": 0.002,
+          "volume": 34699.640481,
+          "liquidity": null,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0xd67c812cb6c281a616a4966570e32c0cb21d452c2793bd0b5ef9077cbc00264d",
+          "title": "Will SpaceX have exactly 7 launches in February?",
+          "price": 0.001,
+          "volume": 15317.434936,
+          "liquidity": 8536.70339,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9db7345b406b8fb4cee96ed52540110f50793e035f05c8c1a55b032daa7b5ac9",
+          "title": "Will SpaceX have exactly 9 launches in February?",
+          "price": 0.008,
+          "volume": 10862.602834,
+          "liquidity": 4460.50899,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xff83d3ad56a0a5242523fa0263c10e6591c71874568050941d7a9bee90ee29f7",
+          "title": "Will SpaceX’s initial public offering occur in February 2026 (ET)?",
+          "price": 0.002,
+          "volume": 992.036,
+          "liquidity": 3985.24907,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x8e0642bdd3ca43d22bd5c5e1516547e39d08a6d729ea60262f558cb143cf56a4",
+          "title": "Will SpaceX’s initial public offering occur in March 2026 (ET)?",
+          "price": 0.018,
+          "volume": 736.622849,
+          "liquidity": 1964.29118,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x03b6f5bafa7c7f14274438562650314f06947bd6d9ef94b2d2b014346bdc4ce8",
+          "title": "Will SpaceX’s initial public offering occur in April 2026 (ET)?",
+          "price": 0.197,
+          "volume": 473.704477,
+          "liquidity": 1660.45729,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xafacd019af8894c0a0dd2581bd6b4b2572ece03bb8a98fdde905e68825b4d07f",
+          "title": "Will SpaceX or OpenAI IPO first?",
+          "price": 0.85,
+          "volume": 24690.282717,
+          "liquidity": 2946.0934,
+          "end_date": "2027-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf89ba0a4af6cf971d1d6eb1b0fca2194ace4dfb3e492821e16a4ed49a365a5a1",
+          "title": "Will SpaceX have less than 100 launches in 2026?",
+          "price": 0.003,
+          "volume": 1230.754395,
+          "liquidity": 3139.07645,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x29bb6476b63fda2d1324cfb123652c018057e1ba1565e07482e945a24b334816",
+          "title": "Will SpaceX have between 120-139 launches in 2026?",
+          "price": 0.011,
+          "volume": 1132.640205,
+          "liquidity": 977.96349,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9ca98e91ad1810e7375d0fad4c01dab0ba7001fd9e2391b25569dc0207f508ab",
+          "title": "Will SpaceX have between 160-179 launches in 2026?",
+          "price": 0.33,
+          "volume": 40971.317535,
+          "liquidity": 1130.5713,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xa8e3a62f9261f3f12287d41bea9ca4efea4d221aae79bc0cec695bb1882bb7b3",
+          "title": "Tesla and SpaceX merger officially announced by June 30?",
+          "price": 0.13,
+          "volume": 99014.858664,
+          "liquidity": 8735.513,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xacff734fd12b552ebab5edb2220cf23c19bda7728b3673a44b0c515a2c60c3d5",
+          "title": "Will less than 5 SpaceX Starship launches successfully reach Space in 2026?",
+          "price": 0.15,
+          "volume": 24512.022154,
+          "liquidity": 1221.6872,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x16ffe828264931ee812ab6ba10c018c5e263506e015b07c51faa49a6272dca87",
+          "title": "Will 11-12 SpaceX Starship launches successfully reach Space in 2026?",
+          "price": 0.062,
+          "volume": 2099.574412,
+          "liquidity": 1959.85243,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x1fc6ebc7c289f983c41bbbabcb8f89c40dd6e1775c3fef1d4db27345900918c2",
+          "title": "Will 5-6 SpaceX Starship launches successfully reach Space in 2026?",
+          "price": 0.29,
+          "volume": 48709.166744,
+          "liquidity": 1613.0428,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 173
+    },
+    "verdict": "Polymarket only (26 markets)"
+  },
+  {
+    "query": "ukraine",
+    "thesis_type": "geopolitical",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 0,
+      "markets": [],
+      "latency_ms": 0,
+      "error": "No series mapping for this query"
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 18,
+      "markets": [
+        {
+          "id": "0x60c7d191ee2808417523e00ac85a4682324af4f1d887243f9f69b388524d6942",
+          "title": "Russia x Ukraine ceasefire by February 28, 2026?",
+          "price": 0.005,
+          "volume": 4961911.963603,
+          "liquidity": 316614.05737,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x1d54eb5eac2cee8f595f3097c65da7d07f8ab5dee63d7c0c6883eb70e1e9af30",
+          "title": "Russia x Ukraine ceasefire by March 31, 2026?",
+          "price": 0.035,
+          "volume": 18633131.687265,
+          "liquidity": 842479.82566,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xaeea5f917fc5746387b5f9c0a4263dba035dbb3f0ac6ad72bf92183d21e26739",
+          "title": "Russia x Ukraine ceasefire by end of 2026?",
+          "price": 0.37,
+          "volume": 10033602.644673,
+          "liquidity": 509401.5443,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe546672750517f62c45a5a00067481981e62b9c20fa8220203232c9dc8fd2093",
+          "title": "Russia x Ukraine ceasefire by June 30, 2026?",
+          "price": 0.18,
+          "volume": 1592578.076159,
+          "liquidity": 160914.1042,
+          "end_date": "2026-06-30T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x895aef0f7bcd24e44ef80077534bdf560d29d8577d3681d30ed0952d74cad442",
+          "title": "Zelenskyy out as Ukraine president by March 31, 2026?",
+          "price": 0.025,
+          "volume": 323865.792645,
+          "liquidity": 16817.51271,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x21bf9a7dae81b6bd51acae73185686ab8997b81b1401e4be10e114d472599c26",
+          "title": "Will Ukraine agree to cede territory to Russia before 2027?",
+          "price": 0.28,
+          "volume": 465171.672503,
+          "liquidity": 50851.0947,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf3d74c153a35436ff82a5f78200104975c5841140ace763f2954adb340cca511",
+          "title": "Ukraine election called in 2025?",
+          "price": 1,
+          "volume": 982716.694339,
+          "liquidity": null,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x707125b175feb87a7d28c1e3b0e8e834f11c0dff65edac8c4fe5d1e12bf8fc33",
+          "title": "Ukraine election called by June 30, 2026?",
+          "price": 0.18,
+          "volume": 174860.573417,
+          "liquidity": 7993.4097,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdab71ad1d7d7661435f2556eb8e29473d322d9d8af2705a9732c4872629de090",
+          "title": "Ukraine election called by March 31, 2026?",
+          "price": 0.05,
+          "volume": 186523.309052,
+          "liquidity": 23052.5258,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xeec8878a64e41f43b81c4402f6b93f07899a85aff3be0683565aedbd23f99d6b",
+          "title": "Ukraine officially agrees to a US backed ceasefire framework by December 31?",
+          "price": 1,
+          "volume": 710796.187517,
+          "liquidity": null,
+          "end_date": "2025-12-31T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x06bc56c24529ad696f19a3672874fb476ae024acaf98b40789022ccdc339f5ae",
+          "title": "Ukraine officially agrees to a US backed ceasefire framework by January 31?",
+          "price": 0.001,
+          "volume": 493717.46762,
+          "liquidity": null,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0x0050f8aef29c23b6796398e97ad355b46c9780450fc68f40b283bb0a9bb61189",
+          "title": "Ukraine officially agrees to a US backed ceasefire framework by March 31?",
+          "price": 0.11,
+          "volume": 137766.752312,
+          "liquidity": 8920.6785,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x591f785022238c7ea2563553d93c024e451a18ea74d9bbd79a6126c0267c588a",
+          "title": "Ukraine recognizes Russian sovereignty over its territory by December 31, 2025?",
+          "price": 1,
+          "volume": 2130098.430134,
+          "liquidity": null,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": false
+        },
+        {
+          "id": "0xbca45186bc1f8ad2912f79f22c6e37c0946f6619bbfbd0f97ad93d9b525a6293",
+          "title": "Ukraine recognizes Russian sovereignty over its territory by June 30, 2026?",
+          "price": 0.06,
+          "volume": 152727.008806,
+          "liquidity": 12646.6991,
+          "end_date": "2025-12-31T12:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x3e4e5225054ad5168e0b249164f643453ba97a8947f84d7aacb4c768275d48e9",
+          "title": "Ukraine recognizes Russian sovereignty over its territory by December 31, 2026?",
+          "price": 0.18,
+          "volume": 3618.342942,
+          "liquidity": 10464.195,
+          "end_date": "2026-12-31T12:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xfce35d103bf3d132e222b26642b98eb7463ce36c649743ad69dbd5749f50d6c4",
+          "title": "Ukraine hits Moscow by February 14, 2026?",
+          "price": 0.001,
+          "volume": 21197.165064,
+          "liquidity": 7088.71875,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x4e2b1a4b37eedfd93471e3600e6a503391fd7953f6f5b6326c131beb99a93709",
+          "title": "Ukraine hits Moscow by February 28, 2026?",
+          "price": 0.039,
+          "volume": 37800.896745,
+          "liquidity": 8974.0122,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9b2241e5023cf5a319268637c6b525b29527ff627fea24d7ff11bf8dbbbce515",
+          "title": "Ukraine hits Moscow by March 31, 2026?",
+          "price": 0.29,
+          "volume": 3.448274,
+          "liquidity": 2860.3562,
+          "end_date": "2026-03-31T00:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 326
+    },
+    "verdict": "Polymarket only (18 markets)"
+  },
+  {
+    "query": "inflation",
+    "thesis_type": "macro",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 12,
+      "markets": [
+        {
+          "id": "KXCPIYOY-26MAR-T1.8",
+          "title": "Will the rate of CPI inflation be above 1.8% for the year ending in March 2026?",
+          "price": 0.95,
+          "volume": 210,
+          "liquidity": 210,
+          "end_date": "2026-04-10T13:56:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPIYOY-26MAR-T1.9",
+          "title": "Will the rate of CPI inflation be above 1.9% for the year ending in March 2026?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2026-04-10T13:56:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPIYOY-26MAR-T2.0",
+          "title": "Will the rate of CPI inflation be above 2.0% for the year ending in March 2026?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2026-04-10T13:56:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPIYOY-26FEB-T2.2",
+          "title": "Will the rate of CPI inflation be above 2.2% for the year ending in February 2026?",
+          "price": 0.97,
+          "volume": 31279,
+          "liquidity": 29833,
+          "end_date": "2026-03-11T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPIYOY-26FEB-T2.3",
+          "title": "Will the rate of CPI inflation be above 2.3% for the year ending in February 2026?",
+          "price": 0.78,
+          "volume": 35220,
+          "liquidity": 27749,
+          "end_date": "2026-03-11T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPIYOY-26FEB-T2.4",
+          "title": "Will the rate of CPI inflation be above 2.4% for the year ending in February 2026?",
+          "price": 0.44,
+          "volume": 31006,
+          "liquidity": 16265,
+          "end_date": "2026-03-11T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPICOREYOY-26MAR-T1.9",
+          "title": "Will the rate of core CPI inflation be above 1.9% for the year ending in March 2026?",
+          "price": 0.99,
+          "volume": 4,
+          "liquidity": 4,
+          "end_date": "2026-04-10T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPICOREYOY-26MAR-T2.0",
+          "title": "Will the rate of core CPI inflation be above 2.0% for the year ending in March 2026?",
+          "price": 0.99,
+          "volume": 2,
+          "liquidity": 2,
+          "end_date": "2026-04-10T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPICOREYOY-26MAR-T2.1",
+          "title": "Will the rate of core CPI inflation be above 2.1% for the year ending in March 2026?",
+          "price": 0.99,
+          "volume": 4,
+          "liquidity": 4,
+          "end_date": "2026-04-10T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPICOREYOY-26FEB-T2.1",
+          "title": "Will the rate of core CPI inflation be above 2.1% for the year ending in February 2026?",
+          "price": null,
+          "volume": 0,
+          "liquidity": 0,
+          "end_date": "2026-03-11T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPICOREYOY-26FEB-T2.2",
+          "title": "Will the rate of core CPI inflation be above 2.2% for the year ending in February 2026?",
+          "price": 0.93,
+          "volume": 69,
+          "liquidity": 69,
+          "end_date": "2026-03-11T14:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXCPICOREYOY-26FEB-T2.3",
+          "title": "Will the rate of core CPI inflation be above 2.3% for the year ending in February 2026?",
+          "price": 0.94,
+          "volume": 8,
+          "liquidity": 8,
+          "end_date": "2026-03-11T14:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 617
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 30,
+      "markets": [
+        {
+          "id": "0xa3e398119c99b0d039a9f3b230c1f4ea7d4740ad1596eb60fbe0ed72821216df",
+          "title": "Will monthly inflation increase by 0.2% in February?",
+          "price": 0.28,
+          "volume": 7528.292006,
+          "liquidity": 3490.6602,
+          "end_date": "2026-03-11T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xce0d783de3f4dc446a0afd6cc800b79b817a5f5e7bb25f196daff8572b0782f7",
+          "title": "Will monthly inflation increase by 0.0% or less in February?",
+          "price": 0.06,
+          "volume": 500.604577,
+          "liquidity": 2405.26532,
+          "end_date": "2026-03-11T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xfbe0226bd1d1001f3b62d978c8011e3052f2ce231c037d05922530bff339bd02",
+          "title": "Will monthly inflation increase by 0.1% in February?",
+          "price": 0.14,
+          "volume": 607.05025,
+          "liquidity": 2451.894,
+          "end_date": "2026-03-11T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xa9dc73df7dd37d98724e32bd7d3d65f14868cf2d45a0e292d4742c516604a682",
+          "title": "Will annual inflation increase by ≤2.1% in February?",
+          "price": 0.029,
+          "volume": 4583.006254,
+          "liquidity": 9935.31667,
+          "end_date": "2026-03-11T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xb9f2a360e640e06c675635a64e31604f30657de02c22ed0a4641c8b3084143f1",
+          "title": "Will annual inflation increase by 2.2% in February?",
+          "price": 0.04,
+          "volume": 2862.609825,
+          "liquidity": 9043.96911,
+          "end_date": "2026-03-11T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xb7c9963469ff182981085fba3d92ce51e5677bb21f27928f37f4914dc4f8d609",
+          "title": "Will annual inflation increase by 2.3% in February?",
+          "price": 0.17,
+          "volume": 2524.109953,
+          "liquidity": 8987.4666,
+          "end_date": "2026-03-11T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x1f61db83c47fc787f44997af53d517cc4775e813b169d0b8ae2ad3bff316d052",
+          "title": "Will inflation reach more than 4% in 2026?",
+          "price": 0.13,
+          "volume": 11435.36939,
+          "liquidity": 5235.2538,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x024418fa74e0a95fe9102b5681b73fdc18b7729edbb6550f6322845084c74fea",
+          "title": "Will inflation reach more than 10% in 2026?",
+          "price": 0.027,
+          "volume": 324.670106,
+          "liquidity": 6614.38877,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xa792f029046f2c926ee81c7d9802c21a4a651d33cf7e1bf991ba800ae002f59f",
+          "title": "Will inflation reach more than 5% in 2026?",
+          "price": 0.07,
+          "volume": 2464.857148,
+          "liquidity": 6371.6917,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x88954b37d642e7a59c64a5684d9d6c38b36c24afff625df886f34268f2ad6b78",
+          "title": "Will Argentina’s monthly inflation in February 2026 be 3.7% or higher?",
+          "price": 0.046,
+          "volume": 306.08774,
+          "liquidity": 2104.02381,
+          "end_date": "2026-03-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x336590832395638bc44ff0aa02a4bb183258aa8fc8b406adb2842466d1481395",
+          "title": "Will Argentina’s monthly inflation in February 2026 be less than or equal to 2.1%?",
+          "price": 0.17,
+          "volume": 362.175922,
+          "liquidity": 2568.3159,
+          "end_date": "2026-03-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x0a3eb5a6d617332b6e55b433720bb54b7fcac040beb107bafc2780cd3fb8d3c3",
+          "title": "Will Argentina’s monthly inflation in February 2026 be between 2.8% and 3.0%?",
+          "price": 0.35,
+          "volume": 3038.247343,
+          "liquidity": 3353.1865,
+          "end_date": "2026-03-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x8c52b5498d48981d12b4e56bedaa011f8ea1db871528d321c248233b1da4b5cd",
+          "title": "Will China's annual inflation in 2026 be less than -1.0%?",
+          "price": 0.03,
+          "volume": 1285.488893,
+          "liquidity": 2821.6444,
+          "end_date": "2027-01-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf2b7f54d9b88d9baeddb2a541d503cafd7bbe35fdf0ebd3bdf9adb44432dcfe1",
+          "title": "Will China's annual inflation in 2026 be between 0.6% and 1.0%?",
+          "price": 0.37,
+          "volume": 757.25217,
+          "liquidity": 2367.0594,
+          "end_date": "2027-01-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x0643a9edd0e8b0dbe0e471371818f5c61a84949ae1e3fc72c8e4572be3a0fe3c",
+          "title": "Will China's annual inflation in 2026 be between 0.1% and 0.5%?",
+          "price": 0.14,
+          "volume": 885.23753,
+          "liquidity": 1303.9464,
+          "end_date": "2027-01-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x8fe695298af16094b3809429af799d42abf8edab8c2347c4c8a6ac036df98d13",
+          "title": "Will Brazil’s Annual Inflation in 2026 be less than 3.00%?",
+          "price": 0.018,
+          "volume": 842.816205,
+          "liquidity": 2082.24252,
+          "end_date": "2027-01-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9895931ad8be33553d943057162e15f9221ab448c5c384759a8f0ed7a76e6428",
+          "title": "Will Brazil’s Annual Inflation in 2026 be between 3.00% and 3.49%?",
+          "price": 0.21,
+          "volume": 1093.887145,
+          "liquidity": 2540.2069,
+          "end_date": "2027-01-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x045a227ee1a01e36ee49b7d935820d6cfea60e7d4998eaef105c17f749fc5522",
+          "title": "Will Brazil’s Annual Inflation in 2026 be between 3.50% and 3.99%?",
+          "price": 0.5,
+          "volume": 2245.350453,
+          "liquidity": 2739.051,
+          "end_date": "2027-01-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x2091f233d41008fb13d4cf8f105630947d1bf0f054e42db8a3b2276dad7d4db0",
+          "title": "Will annual inflation increase by 2.2% in March?",
+          "price": 0.08,
+          "volume": 536.17,
+          "liquidity": 3791.0351,
+          "end_date": "2026-04-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xcfe2adf287d2b09ee6640e05e36070ffa6b90dd1c292a977ff378d66188d36fd",
+          "title": "Will annual inflation increase by 2.4% in March?",
+          "price": 0.14,
+          "volume": 540.745713,
+          "liquidity": 2805.1781,
+          "end_date": "2026-04-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x8018480ae01e45888bbe48c9caa95ad978b5989274707ed4e11a21fd092a52c7",
+          "title": "Will annual inflation increase by 2.7% in March?",
+          "price": 0.06,
+          "volume": 475.17,
+          "liquidity": 4050.19537,
+          "end_date": "2026-04-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x5c4b3811fd26a0352c710dfd45f0855c44eac0f48490d61d1f0e47c8845a7e01",
+          "title": "Will India’s 2026 Annual Inflation be between 1.50% and 2.24%?",
+          "price": 0.06,
+          "volume": 137.0925,
+          "liquidity": 644.0383,
+          "end_date": "2027-01-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x99f9b93f2a1722242f785513441a6b53329b974016cee38cc18ab7a6d9580734",
+          "title": "Will India’s 2026 Annual Inflation be between 3.75% and 4.49%?",
+          "price": 0.2,
+          "volume": 22630.060455,
+          "liquidity": 570.4717,
+          "end_date": "2027-01-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x4c3eb9cc59964dbf8afc1b778c3178c5af15c5dd4686b1ea8da979a52d0a932b",
+          "title": "Will India’s 2026 Annual Inflation be at least 4.50%?",
+          "price": 0.3,
+          "volume": 10263.657893,
+          "liquidity": 1805.4747,
+          "end_date": "2027-01-12T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xc97f915b033f2176eb9f62dc9d184899e51f4803bc2bb23b20e4fb85e6c41912",
+          "title": "Will the Eurozone's 2026 Annual Inflation be between 1.0% and 1.2%?",
+          "price": 0.004,
+          "volume": 390.976151,
+          "liquidity": 2314.36939,
+          "end_date": "2027-01-19T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x7cddc2578e74d176486689addf13091311ff6d08756e2661d5b4a1c17248a384",
+          "title": "Will the Eurozone's 2026 Annual Inflation be between 1.6% and 1.8%?",
+          "price": 0.017,
+          "volume": 438.06,
+          "liquidity": 958.4747,
+          "end_date": "2027-01-19T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xbeb692033effc758cea5b40a5b50a1f0cbb00c260afd1d3ed676bdb9e16c3c82",
+          "title": "Will the Eurozone's 2026 Annual Inflation be between 2.2% and 2.4%?",
+          "price": 0.018,
+          "volume": 386.683125,
+          "liquidity": 1922.99075,
+          "end_date": "2027-01-19T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x0256fee8c98ffd1dc894d310a772cfcd9ca0095f3f584c86c991d59ec6004091",
+          "title": "Will Argentina’s annual inflation in 2026 be between 20% and 24.9%?",
+          "price": 0.3,
+          "volume": 324.434124,
+          "liquidity": 1628.1559,
+          "end_date": "2027-01-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdfd83fe76d9fc1d00e961f9ae72e6f41f10e682ef9a913d090d757becd458bcb",
+          "title": "Will Argentina’s annual inflation in 2026 be between 30% and 34.9%?",
+          "price": 0.17,
+          "volume": 282.225719,
+          "liquidity": 1345.67071,
+          "end_date": "2027-01-10T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x444cb85ce07d3fb4e7628e9eb5d53d66da6211b8edbb608fac736b7b06addfa9",
+          "title": "Will Argentina’s annual inflation in 2026 be at least 45%?",
+          "price": 0.069,
+          "volume": 221.775333,
+          "liquidity": 1875.84366,
+          "end_date": "2027-01-10T00:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 214
+    },
+    "verdict": "Both (K:12 P:30) | Kalshi volume > | latency K:617ms P:214ms"
+  },
+  {
+    "query": "oil",
+    "thesis_type": "commodity",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 3,
+      "markets": [
+        {
+          "id": "KXWTIW-26FEB20-T58.00",
+          "title": "Will the WTI front-month settle oil price  be <58.00 on Feb 20, 2026?",
+          "price": 0.01,
+          "volume": 1182,
+          "liquidity": 912,
+          "end_date": "2026-02-20T15:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXWTIW-26FEB20-B58.5",
+          "title": "Will the WTI front-month settle oil price  be Between 58.00 and 58.99 on Feb 20, 2026?",
+          "price": 0.01,
+          "volume": 1620,
+          "liquidity": 1620,
+          "end_date": "2026-02-20T15:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXWTIW-26FEB20-B59.5",
+          "title": "Will the WTI front-month settle oil price  be Between 59.00 and 59.99 on Feb 20, 2026?",
+          "price": 0.01,
+          "volume": 496,
+          "liquidity": 496,
+          "end_date": "2026-02-20T15:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 447
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 23,
+      "markets": [
+        {
+          "id": "0xa32bd28c0c288da3ddf21b34f6a86679c2ae81232f03441df6b9eff63d16a6cf",
+          "title": "US seizes an Iran-linked oil tanker by Feb 28?",
+          "price": 0.44,
+          "volume": 14747.165742,
+          "liquidity": 6036.1099,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x28f262f83978e0a29a25a36ac81a99990abcc8246f6fd349736d01eaa48fd20a",
+          "title": "Will Venezuelan crude oil production reach 1.7m barrels per day in 2026?",
+          "price": 0.05,
+          "volume": 2702.624312,
+          "liquidity": 8217.3736,
+          "end_date": "2027-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x294517aabac969add6c08806c376d4f89c248c04ddc5232e3a0a18ac41ccf834",
+          "title": "Will Venezuelan crude oil production reach 2m barrels per day in 2026?",
+          "price": 0.035,
+          "volume": 9836.571364,
+          "liquidity": 8900.93059,
+          "end_date": "2027-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x49c778d7b068e7d031b272b2660d829448f7d1e17cecf792416cba15cac56431",
+          "title": "Will Venezuelan crude oil production reach 1m barrels per day in 2026?",
+          "price": 0.68,
+          "volume": 13335.430037,
+          "liquidity": 3490.0457,
+          "end_date": "2027-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9d3dceb7232c08d60366ad965f031ef2993e5f015155666239944d0425eb2b4f",
+          "title": "Will Crude Oil (CL) hit (HIGH) $80 by end of February?",
+          "price": 0.13,
+          "volume": 5855.748542,
+          "liquidity": 675.79239,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x11c391e69b005e9708b881eea3dbeaeb47a5e99dcc76451acb7f3b8523946134",
+          "title": "Will Crude Oil (CL) hit (HIGH) $72 by end of February?",
+          "price": 0.95,
+          "volume": 170.233996,
+          "liquidity": 105.7011,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd9d5a08f6489dd67d2676b6c167c8f688b4eadea8d3963f7550cf95464b5acf1",
+          "title": "Will Crude Oil (CL) hit (HIGH) $70 by end of February?",
+          "price": 0.54,
+          "volume": 11.90165,
+          "liquidity": 243.6876,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xfc6aa4d4df442ddd9b04f375dc70eb20284e3ac16625e888d730139dd01a8fbd",
+          "title": "U.S. forces seize another oil tanker by February 21, 2026?",
+          "price": 0.07,
+          "volume": 13575.532914,
+          "liquidity": 3108.8206,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x9010a5a60ac26fda9ce84dd307eec73fd6495595db016da4903144dcf8a846f6",
+          "title": "U.S. forces seize another oil tanker by February 28, 2026?",
+          "price": 0.61,
+          "volume": 9675.953043,
+          "liquidity": 6766.7654,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf923bf5b4df1b39d882be2210065b4596ede7646ae52e2199c4bc9370e7b8c26",
+          "title": "Will Crude Oil (CL) hit (HIGH) $90 by end of June?",
+          "price": 0.68,
+          "volume": 358.467576,
+          "liquidity": 1308.5824,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0xf8199f18d375257e255668e9b43fbab5c0ee8d1dc27ddb78e7459cec4d681652",
+          "title": "Will Crude Oil (CL) hit (HIGH) $56 by end of June?",
+          "price": 1,
+          "volume": 875.3288,
+          "liquidity": null,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": false
+        },
+        {
+          "id": "0x5d10eef98670a12c53e98bc683d68d1b0954a90206b70a5aad0ff85fdfd8de3b",
+          "title": "Will Crude Oil (CL) hit (HIGH) $65 by end of June?",
+          "price": 0.999,
+          "volume": 50260.055742,
+          "liquidity": null,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": false
+        },
+        {
+          "id": "0x2232160c7b9a9607a506b46872f1f3501a3dccdf8384c7572a1617956a86797a",
+          "title": "French forces seize another oil tanker by Feb 28?",
+          "price": 0.021,
+          "volume": 17002.001019,
+          "liquidity": 2555.03092,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x3d61c9d321e41dd111b2a17944f200eb2a55a86c9031c59dbf0cc546f7ee06dc",
+          "title": "Will Crude Oil (CL) settle over $52 on the final trading day of June 2026?",
+          "price": 0.95,
+          "volume": 1.05262,
+          "liquidity": 13.3976,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x2c50e53f3546e82024279f67fc51db167b56d2d79580d731098d8d8862bd8140",
+          "title": "Will Crude Oil (CL) settle over $90 on the final trading day of June 2026?",
+          "price": 0.06,
+          "volume": 13164.767575,
+          "liquidity": 145.0919,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x19809b31c5e72a9c7cfedfc83d221c8e62c3542f607ffc3a9986ede513d3b487",
+          "title": "Will Crude Oil (CL) settle over $65 on the final trading day of June 2026?",
+          "price": 0.455,
+          "volume": null,
+          "liquidity": 13.3339,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x1586a5bab3594cc4b0b20f9300e086c4c6e2736e7f7ce698d5b65afaf46c2c80",
+          "title": "Will Crude Oil (CL) settle at $42-$49 in June?",
+          "price": 0.11,
+          "volume": 206.330773,
+          "liquidity": 80.4431,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x4de2b48513b109163c89c77d860fcce3f091d8e754ba5f49a9377b052aee35d9",
+          "title": "Will Crude Oil (CL) settle at $56-$63 in June?",
+          "price": 0.355,
+          "volume": 188.88,
+          "liquidity": 94.0573,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x34a4d29cc8e7227543fd3bbe7b6b2313fac9cc3b2ae9bcace5f88bd17c990b67",
+          "title": "Will Crude Oil (CL) settle at >$84 in June?",
+          "price": 0.14,
+          "volume": 515.53,
+          "liquidity": 141.2036,
+          "end_date": "2026-06-30T18:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe76735a93ac21c5b529f7e67302eb05c47418dea8feb9e645238d455a6e67dbc",
+          "title": "Will Crude Oil (CL) settle over $80 on the final trading day of February 2026?",
+          "price": 0.09,
+          "volume": 101.30222,
+          "liquidity": 103.609,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x3b1a2730c802bc5b43638c04b3ec686d94130f97666ea200ab7a1f50bcb33b4b",
+          "title": "Will Crude Oil (CL) settle over $76 on the final trading day of February 2026?",
+          "price": 0.5,
+          "volume": null,
+          "liquidity": 12.7556,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x4efc8baedc7e0b5864585932b8f0193d59d7bd14e0282b6635bd54ab10e75982",
+          "title": "Will Crude Oil (CL) settle over $72 on the final trading day of February 2026?",
+          "price": 0.5,
+          "volume": null,
+          "liquidity": 12.5493,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x676845b49fff253c19df4a6fd737906b3db4e34ef07ef2545602819cc37327d2",
+          "title": "Crude Oil (CL) Up or Down on February 20?",
+          "price": 0.65,
+          "volume": 2.415382,
+          "liquidity": 67.7663,
+          "end_date": "2026-02-20T21:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 320
+    },
+    "verdict": "Both (K:3 P:23) | Poly volume >>> | latency K:447ms P:320ms"
+  },
+  {
+    "query": "gold",
+    "thesis_type": "commodity",
+    "kalshi": {
+      "platform": "kalshi",
+      "market_count": 3,
+      "markets": [
+        {
+          "id": "KXGOLDMON-26FEB2717-T4559.99",
+          "title": "Will the gold open price be above $4559.99 at Feb 27, 2026 at 5pm EST?",
+          "price": 0.88,
+          "volume": 16,
+          "liquidity": 16,
+          "end_date": "2026-02-27T22:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXGOLDMON-26FEB2717-T4579.99",
+          "title": "Will the gold open price be above $4579.99 at Feb 27, 2026 at 5pm EST?",
+          "price": 0.99,
+          "volume": 45,
+          "liquidity": 45,
+          "end_date": "2026-02-27T22:00:00Z",
+          "active": true
+        },
+        {
+          "id": "KXGOLDMON-26FEB2717-T4599.99",
+          "title": "Will the gold open price be above $4599.99 at Feb 27, 2026 at 5pm EST?",
+          "price": 0.83,
+          "volume": 123,
+          "liquidity": 123,
+          "end_date": "2026-02-27T22:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 445
+    },
+    "polymarket": {
+      "platform": "polymarket",
+      "market_count": 28,
+      "markets": [
+        {
+          "id": "0x9bd1851cfe883d474d125e12ce69eca3eecb700f4ce3f942880fe61047ec154d",
+          "title": "Will Gold (GC) hit (HIGH) $5,800 by end of February?",
+          "price": 0.015,
+          "volume": 442365.94722,
+          "liquidity": 70259.97874,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd795477b55d0f2e1d1beaf3a5ba8d8dd6aeb07cbdb8e935737bf0a08feb34ef4",
+          "title": "Will Gold (GC) hit (HIGH) $6,400 by end of February?",
+          "price": 0.009,
+          "volume": 285408.207693,
+          "liquidity": 39677.47783,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x04fcba309e6574a2a680af1d765b22bb9881700281d589599773a6c00e6c3d68",
+          "title": "Will Gold (GC) hit (HIGH) $7,000 by end of February?",
+          "price": 0.003,
+          "volume": 608304.353577,
+          "liquidity": 108432.63671,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xa5e7d10be376119fb259e6a5943b72802ba120278d78cac17dc69bc69ce7dd80",
+          "title": "Will Gold (GC) hit (HIGH) $8,000 by end of June?",
+          "price": 0.064,
+          "volume": 85465.234587,
+          "liquidity": 51988.99985,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x8a62a7f7a9affdded6b3947b0fb63a5e8701e544a263d76d200599642c97d956",
+          "title": "Will Gold (GC) hit (HIGH) $7,000 by end of June?",
+          "price": 0.125,
+          "volume": 81337.454346,
+          "liquidity": 56837.99779,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0xb5799004182dc796006345365f449ceead54be4f8f20e5e1290ce57d16d2b8a3",
+          "title": "Will Gold (GC) hit (HIGH) $6,500 by end of June?",
+          "price": 0.19,
+          "volume": 64293.355665,
+          "liquidity": 30887.2034,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd0da5ddd9747f6e296e320148fde8b9dd69bd3ac1283fab01458e65488bcaa24",
+          "title": "Will Gold (GC) settle over $7,000 on the final trading day of February 2026?",
+          "price": 0.005,
+          "volume": 8836.524487,
+          "liquidity": 1946.41386,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xed90153c891314919afd6e5737bc48ff3eda3320a5d48bb748776729e246a0cd",
+          "title": "Will Gold (GC) settle over $6,500 on the final trading day of February 2026?",
+          "price": 0.01,
+          "volume": 1949.966904,
+          "liquidity": 1530.54202,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xef3bab05b781184ffa164ae23e37138dfef7ded00339d7d74370d6020ff84ab9",
+          "title": "Will Gold (GC) settle over $6,000 on the final trading day of February 2026?",
+          "price": 0.039,
+          "volume": 2685.103082,
+          "liquidity": 1073.30716,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x3f973c672acd8233f5b953a9eaece0c41d82b932354f14cca316c8c8adbc5430",
+          "title": "Will Gold (GC) settle at <$3,800 in June?",
+          "price": 0.054,
+          "volume": 53522.977791,
+          "liquidity": 13805.68879,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x5b87791e06388b1a91fd402c29e483842da0f9fec156bb3cefe9d58275a0373b",
+          "title": "Will Gold (GC) settle at $3,800-$4,200 in June?",
+          "price": 0.063,
+          "volume": 24022.020566,
+          "liquidity": 10204.51006,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0xa19142e40da92f4110d29f63475ed9689f1471f8963c87e3220a989cdb356d45",
+          "title": "Will Gold (GC) settle at $4,200-$4,600 in June?",
+          "price": 0.113,
+          "volume": 24621.379134,
+          "liquidity": 6530.6738,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x63f5b6ea5e29aa1e198e76b2a3a2da75ca0ab11981a7086acaec87bff5a74072",
+          "title": "Will Gold (GC) hit (HIGH) $10,000 by end of December?",
+          "price": 0.11,
+          "volume": 7779.441757,
+          "liquidity": 7129.5472,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xd004d5dfba46e636f05909046ec09eba1fdf8eb21d9466f64228053e98e8f87f",
+          "title": "Will Gold (GC) hit (HIGH) $12,000 by end of December?",
+          "price": 0.051,
+          "volume": 22512.788152,
+          "liquidity": 11790.19102,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x284e9f6e1308f42c1f4d400b7b3f9614d27a3f11714ccde9fe005b0bf9646c66",
+          "title": "Will Gold (GC) hit (HIGH) $7,000 by end of December?",
+          "price": 0.36,
+          "volume": 2597.164943,
+          "liquidity": 5512.0887,
+          "end_date": "2026-12-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xff10e8942f0f6e70dd39aad7f3ea53f77744a798bc77aaf23bc4993df9a2924d",
+          "title": "Will Gold (GC) settle at <$4,475 in February?",
+          "price": 0.04,
+          "volume": 248.725349,
+          "liquidity": 1382.7778,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x48636138fb01cd047a48435796ec4aad39f4a772713c0853456855c37beb5b8a",
+          "title": "Will Gold (GC) settle at $4,475-$4,600 in February?",
+          "price": 0.06,
+          "volume": 307.67555,
+          "liquidity": 1103.8071,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xeda8cbbf00ef876cf8533048959d908a003e16e412fee954aee810abdaefb201",
+          "title": "Will Gold (GC) settle at $4,600-$4,725 in February?",
+          "price": 0.08,
+          "volume": 220.960811,
+          "liquidity": 891.3202,
+          "end_date": "2026-02-28T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x17e3a56b12b4bffe3d1eaf5e08d2ee65f3e766cac6db29f0bf4c82a444bb57de",
+          "title": "Will Gold (GC) settle over $8,000 on the final trading day of June 2026?",
+          "price": 0.06,
+          "volume": 961.727555,
+          "liquidity": 8301.2855,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x21ba1dc113f1e86bc3e09dad3be1e75a6d60b7f54fa99b5744f67d58eece37eb",
+          "title": "Will Gold (GC) settle over $7,000 on the final trading day of June 2026?",
+          "price": 0.077,
+          "volume": 2805.849911,
+          "liquidity": 2977.17509,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x89ca73b4555a163f3aba0f46f007d405d1387b2148699e03c0c0caa248fd2fb2",
+          "title": "Will Gold (GC) settle over $6,500 on the final trading day of June 2026?",
+          "price": 0.041,
+          "volume": 574.780735,
+          "liquidity": 4120.05861,
+          "end_date": "2026-06-30T17:30:00Z",
+          "active": true
+        },
+        {
+          "id": "0x1dd72aff479d3a4ac427aea04d2eafcfabaccdf649002e95dea448cd7a44354b",
+          "title": "Will Bitcoin outperform NVIDIA (NVDA) in February 2026?",
+          "price": 0.08,
+          "volume": 13323.540111,
+          "liquidity": 6503.281,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xb4c934c828b5e200642a60d9615462bd7792db585a44bc20250483dd9d291df1",
+          "title": "Will Bitcoin outperform Silver in February 2026?",
+          "price": 0.22,
+          "volume": 95767.402156,
+          "liquidity": 3300.5419,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x2cb558f9b55fd00fbda451c60c30fea1ceb9e4558571e7f71252998a7c290525",
+          "title": "Will Bitcoin outperform Gold in February 2026?",
+          "price": 0.051,
+          "volume": 8524.163453,
+          "liquidity": 8322.17097,
+          "end_date": "2026-01-31T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xe8638a8ac2eac663300764cb61ab42f59684d7ba172327f6ffeb772956c038c7",
+          "title": "Will Eileen Gu record the most gold medals at the 2026 Winter Olympics?",
+          "price": 0.001,
+          "volume": 4114.148703,
+          "liquidity": 1659.5414,
+          "end_date": "2026-02-23T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xdc01690e91d5eedb05cc55603eb4171144994bd1b5f7855245981b1d7e7c274e",
+          "title": "Will Einar Hedegart record the most gold medals at the 2026 Winter Olympics?",
+          "price": 0.001,
+          "volume": 2701.76075,
+          "liquidity": 1770.49145,
+          "end_date": "2026-02-23T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0xb07d94a24284d9b94c123168bf43afd877418cc9e0c1d718b1819fd29e6c41b6",
+          "title": "Will Nika Prevc record the most gold medals at the 2026 Winter Olympics?",
+          "price": 0.001,
+          "volume": 3626.937083,
+          "liquidity": 1756.32528,
+          "end_date": "2026-02-23T00:00:00Z",
+          "active": true
+        },
+        {
+          "id": "0x5c154bf4edb02acfc4ba85c32582bb7183cf621da407e830640ff532ccf43190",
+          "title": "Gold (GC) Up or Down on February 20?",
+          "price": 0.89,
+          "volume": 8.035003,
+          "liquidity": 30.2379,
+          "end_date": "2026-02-20T21:00:00Z",
+          "active": true
+        }
+      ],
+      "latency_ms": 265
+    },
+    "verdict": "Both (K:3 P:28) | Poly volume >>> | latency K:445ms P:265ms"
+  }
+]

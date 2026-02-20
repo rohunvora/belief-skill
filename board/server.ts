@@ -1,5 +1,12 @@
 import index from "./index.html";
-import { getActiveCalls, getCall, listCalls, insertCall, updatePrice, insertUser, getUserByHandle, listUsers } from "./db";
+import {
+  getAllCalls, getCall, listCalls, insertCall, updatePrice,
+  insertUser, getUserByHandle, listUsers, getSubmitterProfile,
+  listAuthors, getAuthorWithCalls, getQuotesByCall,
+  listSources, getSourceWithDetail,
+  listTickers, getTickerWithCalls,
+  ensureAuthor, ensureSource, ensureTicker,
+} from "./db";
 import { renderCard } from "./templates/card";
 import { renderPermalink } from "./templates/permalink";
 import type { Call } from "./types";
@@ -69,10 +76,10 @@ async function fetchAllPrices(): Promise<Record<string, PriceResult>> {
     return priceCache;
   }
 
-  const activeCalls = getActiveCalls();
+  const allCalls = getAllCalls();
 
   const results = await Promise.allSettled(
-    activeCalls.map(async (call) => {
+    allCalls.map(async (call) => {
       const price = await fetchPriceForCall(call.platform, call.ticker);
       if (price != null) {
         updatePrice(call.id, price);
@@ -152,6 +159,27 @@ Bun.serve({
             });
           }
 
+          // Resolve entities: find existing or create new Author, Source, Ticker
+          const authorId = body.source_handle
+            ? ensureAuthor(body.source_handle)
+            : null;
+
+          const sourceId = (body.source_url || body.source_title)
+            ? ensureSource({
+                url: body.source_url ?? null,
+                title: body.source_title ?? null,
+                platform: body.source_platform ?? null,
+                publishedAt: body.source_date ?? null,
+                submittedBy: body.caller_id,
+              })
+            : null;
+
+          const tickerId = ensureTicker({
+            symbol: body.routed_ticker ?? body.ticker,
+            instrument: body.instrument ?? null,
+            platform: body.platform ?? null,
+          });
+
           const call = insertCall({
             ...body,
             id: body.id || "",
@@ -161,18 +189,23 @@ Bun.serve({
             call_type: body.call_type ?? "original",
             source_date: body.source_date ?? null,
             conviction: body.conviction ?? null,
-            status: "active",
-            resolve_price: null,
-            resolve_date: null,
-            resolve_pnl: null,
-            resolve_note: null,
+            author_id: authorId,
+            source_id: sourceId,
+            ticker_id: tickerId,
+            submitted_by: body.caller_id,
+            price_captured_at: body.price_captured_at ?? null,
             created_at: body.created_at ?? new Date().toISOString(),
             votes: 0,
             watchers: 0,
             comments: 0,
           } as Call);
 
-          return Response.json({ id: call.id, url: `/t/${call.id}` }, { status: 201 });
+          const baseUrl = req.headers.get("x-forwarded-host")
+            ? `https://${req.headers.get("x-forwarded-host")}`
+            : req.headers.get("host")
+            ? `${req.url.startsWith("https") ? "https" : "http"}://${req.headers.get("host")}`
+            : "";
+          return Response.json({ id: call.id, url: `${baseUrl}/t/${call.id}` }, { status: 201 });
         } catch (err) {
           console.error("POST /api/takes error:", err);
           return Response.json({ error: "Invalid request body" }, { status: 400 });
@@ -182,6 +215,56 @@ Bun.serve({
     "/api/users": {
       GET: () => {
         return Response.json(listUsers());
+      },
+    },
+    // ── Entity API Routes ─────────────────────────────────────
+    "/api/authors": {
+      GET: () => {
+        return Response.json(listAuthors());
+      },
+    },
+    "/api/authors/:handle": {
+      GET: (req) => {
+        const data = getAuthorWithCalls(req.params.handle);
+        if (!data) return Response.json({ error: "Author not found" }, { status: 404 });
+        return Response.json(data);
+      },
+    },
+    "/api/sources": {
+      GET: () => {
+        return Response.json(listSources());
+      },
+    },
+    "/api/sources/:id": {
+      GET: (req) => {
+        const data = getSourceWithDetail(req.params.id);
+        if (!data) return Response.json({ error: "Source not found" }, { status: 404 });
+        return Response.json(data);
+      },
+    },
+    "/api/tickers": {
+      GET: () => {
+        return Response.json(listTickers());
+      },
+    },
+    "/api/tickers/:symbol": {
+      GET: (req) => {
+        const data = getTickerWithCalls(req.params.symbol);
+        if (!data) return Response.json({ error: "Ticker not found" }, { status: 404 });
+        return Response.json(data);
+      },
+    },
+    "/api/profile/:handle": {
+      GET: (req) => {
+        const data = getSubmitterProfile(req.params.handle);
+        if (!data) return Response.json({ error: "User not found" }, { status: 404 });
+        return Response.json(data);
+      },
+    },
+    "/api/calls/:id/quotes": {
+      GET: (req) => {
+        const quotes = getQuotesByCall(req.params.id);
+        return Response.json(quotes);
       },
     },
     // ── Server-rendered card: /t/:id/card (before catch-all) ──

@@ -1,3 +1,55 @@
+// ── Entity Types (normalized schema) ────────────────────────────────
+
+/** Source author — person whose claims get routed. May never sign up as a user. */
+export interface Author {
+  id: string;
+  handle: string;
+  name: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+  twitter_url: string | null;
+  youtube_url: string | null;
+  platform: string | null;       // primary platform: 'twitter', 'youtube', 'substack'
+  created_at: string;
+}
+
+/** Source — a specific piece of content (tweet, video, article) that was processed. */
+export interface Source {
+  id: string;
+  url: string | null;            // nullable: some sources have no URL
+  title: string | null;
+  platform: string | null;       // 'twitter', 'youtube', 'substack', 'podcast'
+  published_at: string | null;
+  submitted_by: string;          // FK -> users.id
+  created_at: string;
+}
+
+/** Quote — verbatim extraction from source material. First-class, queryable, linkable. */
+export interface Quote {
+  id: string;
+  source_id: string;             // FK -> sources.id
+  text: string;
+  speaker: string | null;        // who said it (for multi-speaker sources)
+  timestamp: string | null;      // "42:15" for video/audio
+  paragraph_ref: string | null;  // for articles
+  created_at: string;
+}
+
+/** Ticker — any instrument you can take a position in. */
+export interface TickerEntity {
+  id: string;
+  symbol: string;
+  name: string | null;
+  instrument_type: string;       // 'stock', 'etf', 'perps', 'prediction'
+  platform: string;              // 'robinhood', 'hyperliquid', 'kalshi', 'polymarket'
+  sector: string | null;
+  logo_url: string | null;
+  expires_at: string | null;     // prediction markets only
+  underlying_event: string | null; // prediction markets: "Will the Fed cut at March FOMC?"
+}
+
+// ── Legacy Types (preserved for derivation chain display) ───────────
+
 /** Source evidence unit — a specific quote from the source material. */
 export interface Segment {
   quote: string;             // verbatim quote from source
@@ -53,15 +105,22 @@ export interface Call {
   conviction: "high" | "medium" | "low" | "speculative" | null; // from language intensity
   call_type: "original" | "direct" | "derived"; // attribution tier
 
-  // attribution
+  // attribution (legacy fields kept for backward compat)
   caller_id: string;         // who submitted this routing
 
-  // resolution
-  status: "active" | "resolved" | "closed" | "expired";
-  resolve_price: number | null;
-  resolve_date: string | null;
-  resolve_pnl: number | null;
-  resolve_note: string | null;
+  // ── Entity FKs (new normalized schema) ──
+  author_id: string | null;      // FK -> authors.id
+  source_id: string | null;      // FK -> sources.id
+  ticker_id: string | null;      // FK -> tickers.id
+  submitted_by: string | null;   // FK -> users.id (same as caller_id, normalized name)
+  price_captured_at: string | null; // when entry_price was actually fetched
+
+  // resolution (optional — calls are timestamped belief snapshots, P&L is always live)
+  status?: string;
+  resolve_price?: number | null;
+  resolve_date?: string | null;
+  resolve_pnl?: number | null;
+  resolve_note?: string | null;
 
   // metadata
   created_at: string;        // when the routing was processed

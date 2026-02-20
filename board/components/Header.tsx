@@ -23,14 +23,14 @@ export function Header() {
         {/* Right section */}
         <div className="flex items-center gap-3 shrink-0">
           <a
-            href="#/leaderboard"
+            href="#/contributors"
             onClick={(e) => {
               e.preventDefault();
-              navigate("/leaderboard");
+              navigate("/contributors");
             }}
             className="text-sm text-gray-500 hover:text-gray-700 transition-colors hidden sm:inline"
           >
-            Leaderboard
+            Contributors
           </a>
           <a
             href="#/how-it-works"
@@ -49,10 +49,10 @@ export function Header() {
             Make Your Call
           </button>
           <a
-            href="#/u/satoshi"
+            href="#/profile/satoshi"
             onClick={(e) => {
               e.preventDefault();
-              navigate("/u/satoshi");
+              navigate("/profile/satoshi");
             }}
             className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-sm font-medium text-gray-600 hover:bg-gray-400 transition-colors"
             title="@satoshi"

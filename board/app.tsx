@@ -8,6 +8,9 @@ import { Leaderboard } from "./pages/Leaderboard";
 import { Profile } from "./pages/Profile";
 import { Claim } from "./pages/Claim";
 import { HowItWorks } from "./pages/HowItWorks";
+import { AuthorPage } from "./pages/AuthorPage";
+import { SourcePage } from "./pages/SourcePage";
+import { TickerPage } from "./pages/TickerPage";
 import { BoardDataProvider } from "./hooks/useData";
 
 function parseHash(): { path: string; params: Record<string, string> } {
@@ -26,7 +29,7 @@ function matchRoute(path: string): React.ReactNode {
     return <CardDetail id={callMatch[1]!} />;
   }
 
-  if (path === "/leaderboard") {
+  if (path === "/leaderboard" || path === "/contributors") {
     return <Leaderboard />;
   }
 
@@ -34,7 +37,7 @@ function matchRoute(path: string): React.ReactNode {
     return <HowItWorks />;
   }
 
-  const profileMatch = path.match(/^\/u\/(.+)$/);
+  const profileMatch = path.match(/^\/(?:u|profile)\/(.+)$/);
   if (profileMatch) {
     return <Profile handle={profileMatch[1]!} />;
   }
@@ -42,6 +45,22 @@ function matchRoute(path: string): React.ReactNode {
   const claimMatch = path.match(/^\/claim\/(.+)$/);
   if (claimMatch) {
     return <Claim handle={claimMatch[1]!} />;
+  }
+
+  // Entity pages
+  const authorMatch = path.match(/^\/author\/(.+)$/);
+  if (authorMatch) {
+    return <AuthorPage handle={authorMatch[1]!} />;
+  }
+
+  const sourceMatch = path.match(/^\/source\/(.+)$/);
+  if (sourceMatch) {
+    return <SourcePage id={sourceMatch[1]!} />;
+  }
+
+  const tickerMatch = path.match(/^\/ticker\/(.+)$/);
+  if (tickerMatch) {
+    return <TickerPage symbol={tickerMatch[1]!} />;
   }
 
   // Default: feed

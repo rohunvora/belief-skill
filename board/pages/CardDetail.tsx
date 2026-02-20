@@ -110,13 +110,13 @@ function CommentItem({ comment }: { comment: Comment }) {
 
   return (
     <div className="flex gap-3 py-3">
-      <a href={`#/u/${handle}`} onClick={(e) => e.stopPropagation()}>
+      <a href={`#/author/${handle}`} onClick={(e) => e.stopPropagation()}>
         <Avatar handle={handle} size="sm" />
       </a>
       <div className="flex-1 min-w-0">
         <div className="text-xs text-gray-500 mb-0.5">
           <a
-            href={`#/u/${handle}`}
+            href={`#/author/${handle}`}
             className="text-gray-700 hover:underline font-medium"
           >
             @{handle}
@@ -165,41 +165,27 @@ export function CardDetail({ id }: { id: string }) {
   const callerHandle = caller?.handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
   const displayUser = getUserByHandle(displayHandle);
+  const submitter = call.submitted_by ? getUserById(call.submitted_by) : null;
   const comments: Comment[] = [];
-
-  const isResolved = call.status === "resolved";
-  const isExpired = call.status === "expired";
-  const isClosed = call.status === "closed";
-  const isActive = call.status === "active";
 
   // Live price for this single call
   const singleCallArray = useMemo(() => [call], [call.id]);
   const livePrices = useLivePrices(singleCallArray);
   const livePrice = livePrices.get(call.id);
 
-  // Compute current P&L
-  const pnl = isResolved
-    ? call.resolve_pnl
-    : livePrice
-      ? computePnl(call.entry_price, livePrice.currentPrice, call.direction)
-      : null;
+  // P&L always from live price
+  const pnl = livePrice
+    ? computePnl(call.entry_price, livePrice.currentPrice, call.direction)
+    : null;
 
   const isWinning = pnl != null && pnl >= 0;
 
-  // Border accent based on status + performance
-  const borderAccent = isResolved
+  // Border accent based on performance
+  const borderAccent = pnl != null
     ? isWinning
-      ? "border-l-green-500"
-      : "border-l-red-500"
-    : isExpired
-      ? "border-l-gray-300"
-      : isClosed
-        ? "border-l-gray-400"
-        : pnl != null
-          ? isWinning
-            ? "border-l-green-400"
-            : "border-l-red-400"
-          : "border-l-gray-200";
+      ? "border-l-green-400"
+      : "border-l-red-400"
+    : "border-l-gray-200";
 
   const copyLink = () => {
     const url = `${window.location.origin}${window.location.pathname}#/call/${call.id}`;
@@ -229,7 +215,7 @@ export function CardDetail({ id }: { id: string }) {
             <div>
               <div className="flex items-center gap-1.5">
                 <a
-                  href={`#/u/${displayHandle}`}
+                  href={`#/author/${displayHandle}`}
                   className="text-base font-semibold text-gray-900 hover:underline"
                 >
                   @{displayHandle}
@@ -253,7 +239,7 @@ export function CardDetail({ id }: { id: string }) {
                     <span className="text-xs text-gray-500">
                       via{" "}
                       <a
-                        href={`#/u/${callerHandle}`}
+                        href={`#/author/${callerHandle}`}
                         className="hover:underline"
                       >
                         @{callerHandle}
@@ -270,7 +256,14 @@ export function CardDetail({ id }: { id: string }) {
                 {call.scan_source && (
                   <span className="text-xs text-gray-500">
                     &middot;{" "}
-                    {call.source_url ? (
+                    {call.source_id ? (
+                      <a
+                        href={`#/source/${call.source_id}`}
+                        className="hover:underline"
+                      >
+                        {call.scan_source}
+                      </a>
+                    ) : call.source_url ? (
                       <a
                         href={call.source_url}
                         target="_blank"
@@ -293,6 +286,14 @@ export function CardDetail({ id }: { id: string }) {
                     {call.call_type === "direct" ? "direct call" :
                      call.call_type === "derived" ? "AI-routed" :
                      call.call_type}
+                  </span>
+                )}
+                {submitter && submitter.handle !== displayHandle && (
+                  <span className="text-xs text-gray-400">
+                    &middot; submitted by{" "}
+                    <a href={`#/profile/${submitter.handle}`} className="hover:underline hover:text-gray-600">
+                      @{submitter.handle}
+                    </a>
                   </span>
                 )}
               </div>
@@ -334,6 +335,14 @@ export function CardDetail({ id }: { id: string }) {
                     ) : (
                       `@${call.source_handle}`
                     )}
+                    {call.source_id && (
+                      <a
+                        href={`#/source/${call.source_id}`}
+                        className="ml-1.5 text-gray-400 hover:text-gray-600 hover:underline"
+                      >
+                        Source details
+                      </a>
+                    )}
                     {call.source_url && (
                       <a
                         href={call.source_url}
@@ -341,7 +350,7 @@ export function CardDetail({ id }: { id: string }) {
                         rel="noopener noreferrer"
                         className="ml-1.5 text-gray-400 hover:text-gray-600 hover:underline"
                       >
-                        View source &rarr;
+                        View original &rarr;
                       </a>
                     )}
                   </p>
@@ -373,7 +382,7 @@ export function CardDetail({ id }: { id: string }) {
         <div className="flex items-baseline justify-between mb-3">
           <div className="flex items-baseline gap-2">
             <a
-              href={`#/?ticker=${call.ticker}`}
+              href={`#/ticker/${call.ticker}`}
               className="text-lg font-bold text-gray-700 hover:underline"
             >
               {call.ticker}
@@ -411,43 +420,10 @@ export function CardDetail({ id }: { id: string }) {
               {pnl.toFixed(1)}%
             </span>
           )}
-
-          {isExpired && pnl == null && (
-            <span className="text-sm font-bold text-gray-500">EXPIRED</span>
-          )}
-          {isClosed && pnl == null && (
-            <span className="text-sm font-bold text-gray-500">CLOSED</span>
-          )}
         </div>
 
-        {/* Resolved badge + context */}
-        {isResolved && call.resolve_pnl != null && (
-          <div className="mb-3">
-            <span
-              className={`text-xs font-bold px-2 py-0.5 rounded ${
-                call.resolve_pnl >= 0
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {call.resolve_pnl >= 0 ? "CALLED IT" : "MISSED"}
-            </span>
-            {call.resolve_date && (
-              <span className="text-xs text-gray-500 ml-2">
-                {formatDate(call.created_at)} &rarr;{" "}
-                {formatDate(call.resolve_date)}
-              </span>
-            )}
-            {call.resolve_price != null && (
-              <span className="text-xs text-gray-500 ml-2">
-                exit {formatPrice(call.resolve_price)}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Live price context for active calls */}
-        {isActive && livePrice && (
+        {/* Live price context */}
+        {livePrice && (
           <div className="text-sm text-gray-500 mb-3">
             Now {formatPrice(livePrice.currentPrice)}
             <span className="text-gray-300 mx-1">&middot;</span>
@@ -598,12 +574,6 @@ export function CardDetail({ id }: { id: string }) {
         {call.kills && (
           <p className="text-xs text-gray-500 mb-3">
             Invalidated if: {call.kills}
-          </p>
-        )}
-
-        {isResolved && call.resolve_note && (
-          <p className="text-sm text-gray-600 italic mb-3">
-            {call.resolve_note}
           </p>
         )}
 

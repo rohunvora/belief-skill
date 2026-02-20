@@ -1,0 +1,15 @@
+# Don't send these to Docker build context
+node_modules
+.git
+.env
+board/board.db
+board/board.db-shm
+board/board.db-wal
+docs/
+thoughts/
+tests/results/
+tests/golden/
+.cursor/
+.vercel
+.DS_Store
+*.md

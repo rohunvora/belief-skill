@@ -136,17 +136,12 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
   const caller = getUserById(call.caller_id);
   const callerHandle = caller?.handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
+  const submitter = call.submitted_by ? getUserById(call.submitted_by) : null;
 
-  const isResolved = call.status === "resolved";
-  const isClosed = call.status === "closed";
-  const isExpired = call.status === "expired";
-
-  // P&L: resolved uses resolve_pnl, active uses live price
-  const pnl = isResolved
-    ? call.resolve_pnl
-    : livePrice
-      ? computePnl(call.entry_price, livePrice.currentPrice, call.direction)
-      : null;
+  // P&L always from live price
+  const pnl = livePrice
+    ? computePnl(call.entry_price, livePrice.currentPrice, call.direction)
+    : null;
 
   // Direction styling
   const isLong = call.direction === "long";
@@ -158,24 +153,39 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
 
   return (
     <article
-      className={`py-3 cursor-pointer ${isExpired ? "opacity-60" : ""}`}
+      className="py-3 cursor-pointer"
       onClick={onClick}
     >
       {/* Row 1: Avatar + @handle + source icon + time */}
       <div className="flex items-center gap-2 mb-1">
-        <Avatar handle={displayHandle} size="md" />
-        <span className="text-[15px] font-semibold text-gray-900">@{displayHandle}</span>
+        <a href={`#/author/${displayHandle}`} onClick={(e) => e.stopPropagation()}>
+          <Avatar handle={displayHandle} size="md" />
+        </a>
+        <a href={`#/author/${displayHandle}`} onClick={(e) => e.stopPropagation()} className="text-[15px] font-semibold text-gray-900 hover:underline">@{displayHandle}</a>
         {call.source_url && (
-          <a
-            href={call.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="opacity-60 hover:opacity-100 transition-opacity"
-            title={call.source_url}
-          >
-            <SourceIcon url={call.source_url} />
-          </a>
+          <span className="flex items-center gap-1">
+            {call.source_id ? (
+              <a
+                href={`#/source/${call.source_id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="opacity-60 hover:opacity-100 transition-opacity"
+                title="View source details"
+              >
+                <SourceIcon url={call.source_url} />
+              </a>
+            ) : (
+              <a
+                href={call.source_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="opacity-60 hover:opacity-100 transition-opacity"
+                title={call.source_url}
+              >
+                <SourceIcon url={call.source_url} />
+              </a>
+            )}
+          </span>
         )}
         <span className="text-[11px] text-gray-400">· {timeAgo(call.source_date ?? call.created_at)}</span>
       </div>
@@ -198,11 +208,11 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
       {/* Row 3: Ticker badge + price + P&L / status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-1.5 py-0.5`}>
+          <a href={`#/ticker/${call.ticker}`} onClick={(e) => e.stopPropagation()} className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-1.5 py-0.5 hover:opacity-80 transition-opacity`}>
             {call.call_type === "derived" && <span className="text-gray-400 mr-0.5">&rarr;</span>}
             <TickerLogo ticker={call.ticker} platform={call.platform} instrument={call.instrument} />
             {dirArrow} {call.ticker}
-          </span>
+          </a>
           <span className="text-xs text-gray-400">{formatPrice(call.entry_price)}</span>
         </div>
         <div className="flex items-center gap-2">
@@ -215,25 +225,21 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
               {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%
             </span>
           )}
-          {isResolved && call.resolve_pnl != null && (
-            <span
-              className={`text-[10px] font-bold px-1 py-0.5 rounded ${
-                call.resolve_pnl >= 0
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {call.resolve_pnl >= 0 ? "HIT" : "MISS"}
-            </span>
-          )}
-          {isExpired && pnl == null && (
-            <span className="text-[10px] font-bold text-gray-400">EXPIRED</span>
-          )}
-          {isClosed && pnl == null && (
-            <span className="text-[10px] font-bold text-gray-400">CLOSED</span>
-          )}
         </div>
       </div>
+
+      {/* Submitted by attribution */}
+      {submitter && submitter.handle !== displayHandle && (
+        <div className="mt-1">
+          <a
+            href={`#/profile/${submitter.handle}`}
+            onClick={(e) => e.stopPropagation()}
+            className="text-[11px] text-gray-400 hover:text-gray-600 hover:underline"
+          >
+            submitted by @{submitter.handle}
+          </a>
+        </div>
+      )}
     </article>
   );
 }

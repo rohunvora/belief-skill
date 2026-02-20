@@ -83,20 +83,24 @@ function RawTake() {
   );
 }
 
-/** Mini leaderboard for the "track records" step */
-function MiniLeaderboard() {
-  const { users } = useBoardData();
+/** Mini contributors list for the "track records" step */
+function MiniContributors() {
+  const { users, calls } = useBoardData();
 
-  // Pick users with the most calls, or just the first few
+  // Rank by total calls submitted
   const topUsers = users
+    .map((u) => ({
+      ...u,
+      total_calls: calls.filter((c) => c.caller_id === u.id).length,
+    }))
     .filter((u) => u.total_calls > 0)
-    .sort((a, b) => b.watchers - a.watchers)
+    .sort((a, b) => b.total_calls - a.total_calls)
     .slice(0, 4);
 
   if (topUsers.length === 0) {
     return (
       <div className="text-sm text-gray-500 py-4">
-        No callers tracked yet.
+        No contributors yet.
       </div>
     );
   }
@@ -105,16 +109,6 @@ function MiniLeaderboard() {
     <div className="border border-gray-200 rounded-lg bg-white">
       {topUsers.map((user, i) => {
         const rank = i + 1;
-        const accuracy =
-          user.accuracy != null ? Math.round(user.accuracy * 100) : null;
-        const accColor =
-          accuracy != null
-            ? accuracy >= 60
-              ? "text-green-600"
-              : accuracy < 40
-                ? "text-red-600"
-                : "text-gray-900"
-            : "text-gray-300";
 
         return (
           <div
@@ -145,16 +139,14 @@ function MiniLeaderboard() {
                 {user.total_calls} calls
               </span>
             </div>
-            <span
-              className={`text-lg font-extrabold tabular-nums ${accColor}`}
-            >
-              {accuracy != null ? `${accuracy}%` : "--"}
+            <span className="text-lg font-extrabold tabular-nums text-gray-900">
+              {user.total_calls}
             </span>
           </div>
         );
       })}
       <div className="px-4 py-2 border-t border-gray-100">
-        <Label color="gray">Ranked by accuracy, not followers</Label>
+        <Label color="gray">Ranked by total calls submitted</Label>
       </div>
     </div>
   );
@@ -169,17 +161,11 @@ export function HowItWorks() {
     );
   }
 
-  // Pick a real active call and a real resolved call from seed data
-  const exampleActive = calls.find(
-    (c) => c.status === "active" && c.ticker === "DELL"
-  ) || calls.find((c) => c.status === "active");
+  // Pick example calls from seed data
+  const exampleCall = calls.find((c) => c.ticker === "DELL") || calls[0];
+  const exampleCall2 = calls.find((c) => c.id !== exampleCall?.id) || null;
 
-  const exampleResolved = calls.find(
-    (c) => c.status === "resolved" && c.resolve_pnl != null
-  );
-
-  // If we don't have DELL, fall back to any active call
-  const structuredCall = exampleActive || calls[0];
+  const structuredCall = exampleCall || calls[0];
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -237,24 +223,23 @@ export function HowItWorks() {
         context="P&L updates with live prices. Green when winning, red when losing. No editing, no deleting. The market decides."
       >
         <div className="flex flex-col gap-3">
-          {/* Show both a winning and losing example if we have them */}
-          {exampleActive && (
+          {exampleCall && (
             <CallCard
-              call={exampleActive}
+              call={exampleCall}
               onClick={() => {
-                window.location.hash = `/call/${exampleActive.id}`;
+                window.location.hash = `/call/${exampleCall.id}`;
               }}
             />
           )}
-          {exampleResolved && (
+          {exampleCall2 && (
             <CallCard
-              call={exampleResolved}
+              call={exampleCall2}
               onClick={() => {
-                window.location.hash = `/call/${exampleResolved.id}`;
+                window.location.hash = `/call/${exampleCall2.id}`;
               }}
             />
           )}
-          {!exampleActive && !exampleResolved && (
+          {!exampleCall && !exampleCall2 && (
             <div className="text-sm text-gray-500 py-4">
               No tracked calls yet.
             </div>
@@ -270,9 +255,9 @@ export function HowItWorks() {
       <Step
         number={4}
         heading="Track records reveal who's actually good"
-        context="Resolved calls build a permanent record. The leaderboard ranks by accuracy, not follower count. Over time, the best callers surface."
+        context="Every call lives forever with live P&L. Contributors are ranked by volume. Over time, the best callers surface."
       >
-        <MiniLeaderboard />
+        <MiniContributors />
       </Step>
 
       {/* CTA */}
@@ -288,10 +273,10 @@ export function HowItWorks() {
             Explore the feed
           </a>
           <a
-            href="#/leaderboard"
+            href="#/contributors"
             className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
           >
-            View leaderboard
+            View contributors
           </a>
         </div>
       </div>

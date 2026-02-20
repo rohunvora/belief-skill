@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>belief.board — Architecture Map</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  h1 span { color: #666; font-weight: 400; }
+
+  .subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 48px;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 32px;
+    background: #141414;
+    border-radius: 8px;
+    padding: 3px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    color: #666;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab:hover { color: #999; }
+  .tab.active { background: #1e1e1e; color: #fff; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── Section blocks ── */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #555;
+    margin-bottom: 16px;
+  }
+
+  .section h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+  }
+
+  .section p {
+    color: #999;
+    font-size: 14px;
+    margin-bottom: 16px;
+    max-width: 640px;
+  }
+
+  /* ── Comparison boxes ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .compare { grid-template-columns: 1fr; }
+  }
+
+  .compare-box {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .compare-box h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .compare-box .tag {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .compare-box pre {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #888;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  .compare-box pre .key { color: #7aa2f7; }
+  .compare-box pre .str { color: #9ece6a; }
+  .compare-box pre .comment { color: #444; }
+  .compare-box pre .highlight { color: #e0af68; }
+
+  /* ── Flow diagram ── */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 24px;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .flow-line {
+    width: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flow-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #333;
+    border: 2px solid #555;
+    flex-shrink: 0;
+    margin-top: 14px;
+  }
+
+  .flow-dot.active { background: #7aa2f7; border-color: #7aa2f7; }
+  .flow-dot.green { background: #9ece6a; border-color: #9ece6a; }
+  .flow-dot.gold { background: #e0af68; border-color: #e0af68; }
+  .flow-dot.purple { background: #bb9af7; border-color: #bb9af7; }
+
+  .flow-connector {
+    width: 2px;
+    flex: 1;
+    background: #222;
+    min-height: 8px;
+  }
+
+  .flow-content {
+    flex: 1;
+    padding: 10px 0;
+  }
+
+  .flow-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .flow-content p {
+    font-size: 13px;
+    color: #666;
+  }
+
+  /* ── Schema table ── */
+  .schema-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    font-size: 13px;
+  }
+
+  .schema-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: #141414;
+    color: #666;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #222;
+  }
+
+  .schema-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #999;
+  }
+
+  .schema-table td:first-child {
+    font-family: 'SF Mono', monospace;
+    color: #7aa2f7;
+    font-size: 12px;
+  }
+
+  .schema-table tr:hover td { background: #111; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .badge-blue { background: #1a2744; color: #7aa2f7; }
+  .badge-green { background: #1a3a1a; color: #9ece6a; }
+  .badge-gold { background: #3a2e1a; color: #e0af68; }
+  .badge-purple { background: #2a1a44; color: #bb9af7; }
+  .badge-gray { background: #1e1e1e; color: #666; }
+
+  /* ── Protocol visual ── */
+  .protocol-visual {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .protocol-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  .protocol-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .protocol-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .protocol-header p {
+    font-size: 12px;
+    color: #666;
+  }
+
+  .protocol-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .protocol-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: #1a1a1a;
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  .protocol-field .fname {
+    font-family: 'SF Mono', monospace;
+    color: #7aa2f7;
+    font-size: 11px;
+  }
+
+  .protocol-field .fdesc {
+    color: #555;
+    font-size: 11px;
+  }
+
+  /* ── Order chain ── */
+  .order-chain {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .order-card {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .order-card:hover { border-color: #333; }
+  .order-card.expanded { border-color: #444; }
+
+  .order-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .order-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .order-header h4 {
+    font-size: 14px;
+    font-weight: 600;
+    flex: 1;
+  }
+
+  .order-toggle {
+    color: #444;
+    font-size: 18px;
+    transition: transform 0.2s;
+  }
+
+  .order-card.expanded .order-toggle { transform: rotate(45deg); }
+
+  .order-detail {
+    display: none;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #1e1e1e;
+  }
+
+  .order-card.expanded .order-detail { display: block; }
+
+  .order-detail p {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  .order-detail .example {
+    background: #1a1a1a;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-family: 'SF Mono', monospace;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  /* ── Directory tree ── */
+  .tree {
+    font-family: 'SF Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #888;
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .tree .dir { color: #7aa2f7; }
+  .tree .file { color: #666; }
+  .tree .md { color: #9ece6a; }
+  .tree .ts { color: #e0af68; }
+  .tree .comment { color: #333; }
+
+  /* ── Endgame ── */
+  .endgame {
+    background: linear-gradient(135deg, #141414 0%, #1a1a24 100%);
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .endgame h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+
+  .endgame p {
+    color: #666;
+    font-size: 14px;
+    max-width: 500px;
+    margin: 0 auto 24px;
+  }
+
+  .endgame-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .endgame-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .endgame-item {
+    padding: 16px 8px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+  }
+
+  .endgame-item .num {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .endgame-item .label {
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Insight callout ── */
+  .insight {
+    border-left: 3px solid #333;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    background: #111;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .insight p {
+    color: #999;
+    font-size: 14px;
+  }
+
+  .insight strong { color: #e0e0e0; }
+
+  /* ── Parallel columns ── */
+  .parallel {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 0;
+    align-items: start;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .parallel { grid-template-columns: 1fr; }
+    .parallel-arrow { display: none; }
+  }
+
+  .parallel-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+    color: #333;
+    font-size: 20px;
+  }
+
+  .parallel-col {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .parallel-col h4 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .parallel-col ul {
+    list-style: none;
+    font-size: 13px;
+  }
+
+  .parallel-col li {
+    padding: 6px 0;
+    border-bottom: 1px solid #1a1a1a;
+    color: #888;
+  }
+
+  .parallel-col li:last-child { border: none; }
+  .parallel-col li span { color: #555; }
+
+  /* ── Moat visual ── */
+  .moat-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 24px;
+  }
+
+  .moat-layer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+
+  .moat-layer .time {
+    font-family: 'SF Mono', monospace;
+    font-size: 11px;
+    color: #555;
+    width: 72px;
+    flex-shrink: 0;
+  }
+
+  .moat-layer .bar {
+    height: 6px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .moat-layer .desc {
+    color: #888;
+    flex: 1;
+  }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid #1a1a1a;
+    margin: 40px 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>belief.board <span>architecture</span></h1>
+  <p class="subtitle">The prediction verification layer for the internet</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('insight')">Core Insight</button>
+    <button class="tab" onclick="showTab('protocol')">TRADE.md Protocol</button>
+    <button class="tab" onclick="showTab('schema')">Universal Schema</button>
+    <button class="tab" onclick="showTab('incentives')">Incentive Chain</button>
+    <button class="tab" onclick="showTab('endgame')">Endgame</button>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TAB 1: CORE INSIGHT                             -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-insight">
+
+    <div class="section">
+      <div class="section-label">The Problem</div>
+      <h2>Predictions are everywhere. Verification is nowhere.</h2>
+      <p>Everyone makes predictions — finance Twitter, sports bettors, political pundits, podcast hosts. But there's no canonical place to verify who was right. Screenshots are fakeable. Memory is selective. Track records don't exist.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-label">The Insight</div>
+      <h2>SKILL.md taught agents new capabilities.<br>TRADE.md teaches the board new domains.</h2>
+      <p>Just like anyone can write a SKILL.md to extend what Claude can do, anyone can write a TRADE.md to extend what kinds of predictions the board can handle. The spec file is the extension mechanism — not code changes.</p>
+    </div>
+
+    <div class="parallel">
+      <div class="parallel-col">
+        <h4 style="color: #7aa2f7">SKILL.md</h4>
+        <ul>
+          <li><strong>Frontmatter:</strong> <span>name, triggers, description</span></li>
+          <li><strong>Body:</strong> <span>instructions, constraints, output format</span></li>
+          <li><strong>Scripts:</strong> <span>deterministic operations</span></li>
+          <li><strong>References:</strong> <span>detailed docs (loaded on demand)</span></li>
+          <li><strong>Effect:</strong> <span>Claude learns a new capability</span></li>
+        </ul>
+      </div>
+      <div class="parallel-arrow">→</div>
+      <div class="parallel-col">
+        <h4 style="color: #9ece6a">TRADE.md</h4>
+        <ul>
+          <li><strong>Frontmatter:</strong> <span>domain, resolution type, sources</span></li>
+          <li><strong>Body:</strong> <span>position schema, resolution rules, display</span></li>
+          <li><strong>Scripts:</strong> <span>validate, resolve, fetch prices</span></li>
+          <li><strong>References:</strong> <span>domain knowledge (instruments, leagues)</span></li>
+          <li><strong>Effect:</strong> <span>Board handles a new prediction type</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="insight">
+      <p><strong>The principle:</strong> The spec file IS the extension point. Adding crypto DeFi predictions, weather predictions, or startup outcome predictions doesn't touch the board's core code. A new domain author writes one TRADE.md and optionally some scripts. The board reads it and knows what to do.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TAB 2: TRADE.MD PROTOCOL                        -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-protocol">
+
+    <div class="section">
+      <div class="section-label">File Structure</div>
+      <h2>Each domain is a self-contained plugin</h2>
+      <p>The board discovers domains by scanning the domains/ directory. Each has a TRADE.md manifest and optional scripts for validation, resolution, and live pricing.</p>
+    </div>
+
+    <div class="tree">
+<span class="dir">board/</span>
+├── server.ts              <span class="comment">← universal envelope handler</span>
+├── db.ts                  <span class="comment">← one table, domain-agnostic</span>
+├── types.ts               <span class="comment">← Prediction envelope (9 fields)</span>
+└── <span class="dir">domains/</span>
+    ├── <span class="dir">finance/</span>
+    │   ├── <span class="md">TRADE.md</span>        <span class="comment">← schema + rules + display</span>
+    │   └── <span class="dir">scripts/</span>
+    │       ├── <span class="ts">validate.ts</span> <span class="comment">← is this a valid finance prediction?</span>
+    │       ├── <span class="ts">resolve.ts</span>  <span class="comment">← check outcome against price</span>
+    │       └── <span class="ts">price.ts</span>    <span class="comment">← live price for active predictions</span>
+    ├── <span class="dir">sports/</span>
+    │   ├── <span class="md">TRADE.md</span>
+    │   └── <span class="dir">scripts/</span>
+    │       ├── <span class="ts">validate.ts</span>
+    │       └── <span class="ts">resolve.ts</span>  <span class="comment">← fetch box score, compare to line</span>
+    └── <span class="dir">politics/</span>
+        ├── <span class="md">TRADE.md</span>
+        └── <span class="dir">scripts/</span>
+            └── <span class="ts">resolve.ts</span>
+    </div>
+
+    <div class="section">
+      <div class="section-label">How the board uses TRADE.md</div>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot active"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>POST /api/predictions</h4>
+          <p>Caller sends { claim, domain, meta: {...} }</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot active"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Route by domain</h4>
+          <p>Board reads domains/{domain}/TRADE.md frontmatter</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot green"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Validate meta blob</h4>
+          <p>Run domains/{domain}/scripts/validate.ts against the meta</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot green"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Insert into universal table</h4>
+          <p>9 envelope columns + JSON meta blob. One table for all domains.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot gold"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Resolution tick (periodic)</h4>
+          <p>For each domain: run scripts/resolve.ts on active predictions. Update status to won/lost/expired.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot purple"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Render by domain</h4>
+          <p>Feed, card, and detail page use domain's display rules from TRADE.md</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-box">
+        <h3>Finance TRADE.md</h3>
+        <div class="tag">domains/finance/TRADE.md</div>
+        <pre>---
+<span class="key">domain</span>: <span class="str">finance</span>
+<span class="key">resolution_type</span>: <span class="str">price</span>
+<span class="key">resolution_cadence</span>: <span class="str">realtime</span>
+<span class="key">sources</span>:
+  - <span class="str">yahoo-finance</span>
+  - <span class="str">hyperliquid-api</span>
+  - <span class="str">kalshi-api</span>
+---
+
+<span class="comment"># Position Schema</span>
+<span class="highlight">ticker</span>    string  required
+<span class="highlight">direction</span> long|short  required
+<span class="highlight">instrument</span> string  required
+<span class="highlight">platform</span>  string  required
+<span class="highlight">entry_price</span> number required
+
+<span class="comment"># Resolution</span>
+Won = price moved 20%+ in direction
+Lost = hit kill condition or 20%+ against
+Expired = past resolve_by, no move</pre>
+      </div>
+      <div class="compare-box">
+        <h3>Sports TRADE.md</h3>
+        <div class="tag">domains/sports/TRADE.md</div>
+        <pre>---
+<span class="key">domain</span>: <span class="str">sports</span>
+<span class="key">resolution_type</span>: <span class="str">threshold</span>
+<span class="key">resolution_cadence</span>: <span class="str">event</span>
+<span class="key">sources</span>:
+  - <span class="str">espn-api</span>
+  - <span class="str">nba-stats</span>
+---
+
+<span class="comment"># Position Schema</span>
+<span class="highlight">player</span>    string  required
+<span class="highlight">league</span>    string  required
+<span class="highlight">stat</span>      string  required
+<span class="highlight">line</span>      number  required
+<span class="highlight">direction</span> over|under  required
+<span class="highlight">game_date</span> ISO date  required
+
+<span class="comment"># Resolution</span>
+Won = actual stat exceeds line (over)
+Lost = actual stat under line
+Voided = player DNP / postponed</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TAB 3: UNIVERSAL SCHEMA                         -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-schema">
+
+    <div class="section">
+      <div class="section-label">The Typed Envelope</div>
+      <h2>9 universal columns. Everything else in the blob.</h2>
+      <p>The envelope answers every question the UI needs to ask. The blob holds domain-specific detail that only matters on the detail page.</p>
+    </div>
+
+    <table class="schema-table">
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Type</th>
+          <th>Purpose</th>
+          <th>Used by</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>id</td>
+          <td>TEXT PK</td>
+          <td>Unique identifier</td>
+          <td><span class="badge badge-gray">all</span></td>
+        </tr>
+        <tr>
+          <td>claim</td>
+          <td>TEXT NOT NULL</td>
+          <td>The prediction in plain language</td>
+          <td><span class="badge badge-blue">feed</span> <span class="badge badge-purple">card</span></td>
+        </tr>
+        <tr>
+          <td>author_id</td>
+          <td>TEXT NOT NULL</td>
+          <td>Who made it (FK → users)</td>
+          <td><span class="badge badge-blue">feed</span> <span class="badge badge-gold">leaderboard</span></td>
+        </tr>
+        <tr>
+          <td>domain</td>
+          <td>TEXT NOT NULL</td>
+          <td>"finance" / "sports" / "politics"</td>
+          <td><span class="badge badge-blue">feed</span> <span class="badge badge-green">routing</span></td>
+        </tr>
+        <tr>
+          <td>status</td>
+          <td>TEXT NOT NULL</td>
+          <td>"open" / "won" / "lost" / "expired" / "voided"</td>
+          <td><span class="badge badge-blue">feed</span> <span class="badge badge-gold">leaderboard</span></td>
+        </tr>
+        <tr>
+          <td>confidence</td>
+          <td>REAL</td>
+          <td>0.0–1.0 (nullable)</td>
+          <td><span class="badge badge-gold">leaderboard</span></td>
+        </tr>
+        <tr>
+          <td>source_url</td>
+          <td>TEXT</td>
+          <td>Where the claim came from</td>
+          <td><span class="badge badge-purple">card</span></td>
+        </tr>
+        <tr>
+          <td>created_at</td>
+          <td>TEXT NOT NULL</td>
+          <td>When the prediction was made</td>
+          <td><span class="badge badge-blue">feed</span></td>
+        </tr>
+        <tr>
+          <td>resolved_at</td>
+          <td>TEXT</td>
+          <td>When it was settled</td>
+          <td><span class="badge badge-gold">leaderboard</span></td>
+        </tr>
+        <tr>
+          <td>meta</td>
+          <td>TEXT (JSON)</td>
+          <td>Domain-specific blob, validated by TRADE.md</td>
+          <td><span class="badge badge-purple">detail</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight">
+      <p><strong>Design rule:</strong> Columns answer list questions (feed, filter, leaderboard). Blob answers detail questions (one prediction at a time). If you're only ever reading it for one specific prediction, it goes in the blob.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Same table, different domains</div>
+      <h2>What POSTs look like from different callers</h2>
+    </div>
+
+    <div class="compare">
+      <div class="compare-box">
+        <h3>Your belief router skill</h3>
+        <div class="tag">domain: finance</div>
+        <pre>{
+  <span class="key">"claim"</span>: <span class="str">"SEALSQ hits $40 by June"</span>,
+  <span class="key">"author_id"</span>: <span class="str">"anon"</span>,
+  <span class="key">"domain"</span>: <span class="str">"finance"</span>,
+  <span class="key">"confidence"</span>: 0.8,
+  <span class="key">"source_url"</span>: <span class="str">"https://x.com/..."</span>,
+  <span class="key">"meta"</span>: {
+    <span class="key">"ticker"</span>: <span class="str">"SEALSQ"</span>,
+    <span class="key">"direction"</span>: <span class="str">"long"</span>,
+    <span class="key">"instrument"</span>: <span class="str">"stock"</span>,
+    <span class="key">"platform"</span>: <span class="str">"robinhood"</span>,
+    <span class="key">"entry_price"</span>: 8.52,
+    <span class="key">"derivation"</span>: { ... },
+    <span class="key">"price_ladder"</span>: [ ... ]
+  }
+}</pre>
+      </div>
+      <div class="compare-box">
+        <h3>Friend's PrizePicks bot</h3>
+        <div class="tag">domain: sports</div>
+        <pre>{
+  <span class="key">"claim"</span>: <span class="str">"Tatum over 28.5 pts"</span>,
+  <span class="key">"author_id"</span>: <span class="str">"mikepicks"</span>,
+  <span class="key">"domain"</span>: <span class="str">"sports"</span>,
+  <span class="key">"confidence"</span>: 0.72,
+  <span class="key">"meta"</span>: {
+    <span class="key">"player"</span>: <span class="str">"Jayson Tatum"</span>,
+    <span class="key">"league"</span>: <span class="str">"nba"</span>,
+    <span class="key">"stat"</span>: <span class="str">"pts"</span>,
+    <span class="key">"line"</span>: 28.5,
+    <span class="key">"direction"</span>: <span class="str">"over"</span>,
+    <span class="key">"game_date"</span>: <span class="str">"2026-02-20"</span>,
+    <span class="key">"platform"</span>: <span class="str">"prizepicks"</span>,
+    <span class="key">"model_score"</span>: 0.72
+  }
+}</pre>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Universal metric</div>
+      <h2>Accuracy is universal. PnL is domain-specific.</h2>
+      <p>Won/lost works for everything: stocks, sports props, elections. "73% accuracy over 400 predictions" is meaningful across all domains. PnL is computed by each domain's resolve.ts and stored in the blob — never as a top-level column.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TAB 4: INCENTIVE CHAIN                          -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-incentives">
+
+    <div class="section">
+      <div class="section-label">Why strategy builders join</div>
+      <h2>The verified track record is the atomic incentive</h2>
+      <p>He doesn't come for your traffic. He doesn't come for the promise of monetization. He comes because belief.board gives him the one thing he can't build himself: a verified, immutable, public track record.</p>
+    </div>
+
+    <div class="order-chain">
+
+      <div class="order-card" onclick="toggleOrder(this)">
+        <div class="order-header">
+          <div class="order-num" style="background:#1a2744;color:#7aa2f7">0</div>
+          <h4>The Hook — Verified Track Record</h4>
+          <div class="order-toggle">+</div>
+        </div>
+        <div class="order-detail">
+          <p>Every prediction timestamped before the outcome. Every result auto-resolved by the domain's resolve.ts. A public URL showing 71.3% accuracy over 412 picks, every one clickable and verifiable. He can't fake it. He can't delete the losses.</p>
+          <div class="example">belief.board/u/mikepicks
+━━━━━━━━━━━━━━━━━━━━━━━━
+412 predictions · 71.3% accuracy
+Sports: 388 picks (72.1%)
+Finance: 24 picks (62.5%)
+━━━━━━━━━━━━━━━━━━━━━━━━
+Last 30 days: 78.2% (45/58)</div>
+        </div>
+      </div>
+
+      <div class="order-card" onclick="toggleOrder(this)">
+        <div class="order-header">
+          <div class="order-num" style="background:#1a2744;color:#7aa2f7">1</div>
+          <h4>Order 1 — Distribution</h4>
+          <div class="order-toggle">+</div>
+        </div>
+        <div class="order-detail">
+          <p>You go viral with finance cards. The board has eyeballs. He posts his picks and gets discovered by people who would never have found his Discord. Free distribution for writing a POST request.</p>
+          <div class="example">Board gets 50K monthly visitors from finance cards
+→ Sports pickers show up in "trending" alongside finance
+→ Finance audience discovers sports picks
+→ Cross-pollination neither could get alone</div>
+        </div>
+      </div>
+
+      <div class="order-card" onclick="toggleOrder(this)">
+        <div class="order-header">
+          <div class="order-num" style="background:#1a3a1a;color:#9ece6a">2</div>
+          <h4>Order 2 — Credibility Export</h4>
+          <div class="order-toggle">+</div>
+        </div>
+        <div class="order-detail">
+          <p>His belief.board profile becomes his resume. When someone in his Discord asks "why should I trust you?", he links his profile. The board becomes proof-of-skill that he uses everywhere else.</p>
+          <div class="example">"Why should I pay for your picks?"
+→ "Here's my verified track record"
+→ belief.board/u/mikepicks
+→ 412 predictions, 71.3%, fully auditable
+→ Like GitHub's contribution graph for predictions</div>
+        </div>
+      </div>
+
+      <div class="order-card" onclick="toggleOrder(this)">
+        <div class="order-header">
+          <div class="order-num" style="background:#3a2e1a;color:#e0af68">3</div>
+          <h4>Order 3 — Status Game</h4>
+          <div class="order-toggle">+</div>
+        </div>
+        <div class="order-detail">
+          <p>Cross-domain leaderboard. His 71% in sports sits next to someone's 68% in finance and 74% in politics. Competing for rank against people in completely different domains. Strava for predictions.</p>
+          <div class="example">LEADERBOARD (all domains)
+━━━━━━━━━━━━━━━━━━━━━━━━━
+#1  @electionwiz  politics  74.1%
+#2  @mikepicks    sports    71.3%
+#3  @frankdegods  finance   68.9%
+#4  @cryptowhale  finance   67.2%
+━━━━━━━━━━━━━━━━━━━━━━━━━
+More picks → rank climbs → dopamine → more picks</div>
+        </div>
+      </div>
+
+      <div class="order-card" onclick="toggleOrder(this)">
+        <div class="order-header">
+          <div class="order-num" style="background:#2a1a44;color:#bb9af7">4</div>
+          <h4>Order 4 — Audience Lock-in</h4>
+          <div class="order-toggle">+</div>
+        </div>
+        <div class="order-detail">
+          <p>People follow him on the board. They get notified on new picks. His audience lives on your platform now. He can't leave without abandoning his verified history and followers.</p>
+          <div class="example">@mikepicks has 2,147 followers
+→ His picks get instant eyeballs
+→ Followers came for verified track record
+→ Leaving = starting from zero
+→ Same lock-in as Substack subscriber lists</div>
+        </div>
+      </div>
+
+      <div class="order-card" onclick="toggleOrder(this)">
+        <div class="order-header">
+          <div class="order-num" style="background:#3a1a1a;color:#f7768e">5</div>
+          <h4>Order 5 — Monetization</h4>
+          <div class="order-toggle">+</div>
+        </div>
+        <div class="order-detail">
+          <p>2,000 followers. 71% verified accuracy. He wants to charge. Free users see his picks after the game. Paid subscribers see them before. He charges $20/month. You take 10%.</p>
+          <div class="example">@mikepicks Premium — $20/month
+━━━━━━━━━━━━━━━━━━━━━━━━━
+FREE:  see picks after game ends
+PAID:  see picks 2 hours before tipoff
+━━━━━━━━━━━━━━━━━━━━━━━━━
+2,000 followers × 5% conversion = 100 subs
+100 × $20 = $2,000/mo revenue
+You take 10% = $200/mo from ONE builder
+
+Multiply × hundreds of strategy builders
+across finance, sports, politics, crypto...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="insight">
+      <p><strong>The Substack model for predictions:</strong> Free to post. Build audience with your verified track record. Eventually monetize the signal. Platform provides verification + distribution + payments. Strategy builder provides the edge.</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════ -->
+  <!-- TAB 5: ENDGAME                                  -->
+  <!-- ════════════════════════════════════════════════ -->
+  <div class="panel" id="panel-endgame">
+
+    <div class="section">
+      <div class="section-label">The Moat</div>
+      <h2>The database of verified predictions is the asset</h2>
+      <p>Every day the database gets deeper. Track records spanning months and years can't be replicated by anyone who starts later. The data appreciates over time.</p>
+    </div>
+
+    <div class="moat-layers">
+      <div class="moat-layer">
+        <div class="time">Month 1</div>
+        <div class="bar" style="width:60px;background:#333"></div>
+        <div class="desc">500 predictions. Finance only. Track records starting.</div>
+      </div>
+      <div class="moat-layer">
+        <div class="time">Month 3</div>
+        <div class="bar" style="width:120px;background:#444"></div>
+        <div class="desc">5,000 predictions. Sports domain added. Early outcomes resolving.</div>
+      </div>
+      <div class="moat-layer">
+        <div class="time">Month 6</div>
+        <div class="bar" style="width:200px;background:#555"></div>
+        <div class="desc">25,000 predictions. Leaderboards meaningful. First monetized strategies.</div>
+      </div>
+      <div class="moat-layer">
+        <div class="time">Year 1</div>
+        <div class="bar" style="width:320px;background:#7aa2f7"></div>
+        <div class="desc">100,000+ predictions. Multi-domain. Track records span 12+ months. Unreplicable.</div>
+      </div>
+      <div class="moat-layer">
+        <div class="time">Year 2+</div>
+        <div class="bar" style="width:500px;background:#9ece6a"></div>
+        <div class="desc">Data moat. "belief.board accuracy" means something. The h-index for predictions.</div>
+      </div>
+    </div>
+
+    <div class="endgame">
+      <h3>belief.board becomes...</h3>
+      <p>The canonical place where prediction accuracy is verified across every domain</p>
+      <div class="endgame-grid">
+        <div class="endgame-item">
+          <div class="num" style="color:#7aa2f7">GitHub</div>
+          <div class="label">for code contributions</div>
+        </div>
+        <div class="endgame-item">
+          <div class="num" style="color:#9ece6a">Strava</div>
+          <div class="label">for athletic achievement</div>
+        </div>
+        <div class="endgame-item">
+          <div class="num" style="color:#e0af68">Scholar</div>
+          <div class="label">for academic citations</div>
+        </div>
+        <div class="endgame-item">
+          <div class="num" style="color:#bb9af7">belief.board</div>
+          <div class="label">for prediction accuracy</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="section">
+      <div class="section-label">Buyer Tiers</div>
+      <h2>Who pays for the data</h2>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot active"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Tier 1: Crypto funds & trading desks</h4>
+          <p>Real-time feed of "what is CT translating beliefs into right now" — not sentiment, specific instruments with reasoning. Wintermute, GSR, Amber.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot green"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Tier 2: Quant alternative data buyers</h4>
+          <p>Historical database for backtesting, then live feed if signal proves. Point72, Citadel, Two Sigma. $500K–$5M/year per unique data source.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot gold"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Tier 3: Prediction market platforms</h4>
+          <p>"What markets should we create?" Routing convergence = demand signal. Kalshi, Polymarket.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot purple"></div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <h4>Tier 4: Broker-dealers and platforms</h4>
+          <p>"Trending beliefs" feature — more predictive than trending tickers. Robinhood, eToro, Coinbase.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <p><strong>The revenue stack:</strong> (1) Strategy builders monetize their picks — you take 10%. (2) Data buyers pay for the database — unique alternative data. (3) Prediction platforms pay for demand signals. Three layers, each unlocked at a different gate milestone.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+function toggleOrder(el) {
+  el.classList.toggle('expanded');
+}
+</script>
+</body>
+</html>
