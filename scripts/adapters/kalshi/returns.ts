@@ -78,56 +78,68 @@ async function fetchOrderbook(marketTicker: string): Promise<Orderbook> {
 }
 
 /**
- * Find the specific market within an event.
- * If strike is provided (e.g., "T3.50"), match by ticker suffix.
- * If no strike, use the first (or only) market.
+ * Find the specific market within an event by strike.
+ * Returns null if strike doesn't match any active market.
  */
-function findMarket(event: KalshiEvent, strike: string, direction: "yes" | "no"): KalshiMarket | null {
+function findMarket(event: KalshiEvent, strike: string): KalshiMarket | null {
+  const markets = event.markets?.filter(m => m.status === "active" || m.status === "open") ?? [];
+  if (markets.length === 0 || !strike) return null;
+
+  // Match strike in ticker (e.g., "KXFED-26MAR-T3.50" contains "T3.50")
+  const strikeLower = strike.toLowerCase();
+  const match = markets.find(m => m.ticker.toLowerCase().includes(strikeLower));
+  if (match) return match;
+
+  // Also try matching in title
+  const titleMatch = markets.find(m => m.title.toLowerCase().includes(strikeLower));
+  if (titleMatch) return titleMatch;
+
+  console.error(`[kalshi/returns] Strike "${strike}" not found. Available markets:`);
+  for (const m of markets) {
+    console.error(`  ${m.ticker}: ${m.title} (last: ${m.last_price}c)`);
+  }
+  return null;
+}
+
+/** Summary of one strike for the menu output */
+interface StrikeSummary {
+  ticker: string;
+  title: string;
+  yes_price: number;
+  no_price: number;
+  implied_prob_pct: number;
+  return_if_yes_pct: number;
+  return_if_no_pct: number;
+  volume: number;
+  open_interest: number;
+}
+
+/**
+ * List all active markets for an event, sorted by strike price (lowest YES price last).
+ * Used when no strike is specified so the skill can see the full menu and decide
+ * whether any strike matches the thesis -- or skip Kalshi entirely.
+ */
+function listAvailableStrikes(event: KalshiEvent): StrikeSummary[] {
   const markets = event.markets?.filter(m => m.status === "active" || m.status === "open") ?? [];
 
-  if (markets.length === 0) return null;
+  // Sort by YES price descending (highest probability / lowest strike first)
+  markets.sort((a, b) => (b.last_price || 0) - (a.last_price || 0));
 
-  if (strike) {
-    // Match strike in ticker (e.g., "KXFED-26MAR-T3.50" contains "T3.50")
-    const strikeLower = strike.toLowerCase();
-    const match = markets.find(m => m.ticker.toLowerCase().includes(strikeLower));
-    if (match) return match;
-
-    // Also try matching in title
-    const titleMatch = markets.find(m => m.title.toLowerCase().includes(strikeLower));
-    if (titleMatch) return titleMatch;
-
-    console.error(`[kalshi/returns] Strike "${strike}" not found. Available markets:`);
-    for (const m of markets) {
-      console.error(`  ${m.ticker}: ${m.title} (last: ${m.last_price}c)`);
-    }
-    return null;
-  }
-
-  // No strike specified — pick direction-aware "sweet spot" market
-  // For "yes": pick market where YES price is 20-70c (meaningful bet, reasonable odds)
-  // For "no": pick market where NO price is 20-70c (YES price 30-80c)
-  const sweetSpot = markets.filter((m) => {
+  return markets.map((m) => {
     const yesPrice = m.last_price || 50;
-    if (direction === "yes") {
-      return yesPrice >= 20 && yesPrice <= 70;
-    } else {
-      const noPrice = 100 - yesPrice;
-      return noPrice >= 20 && noPrice <= 70;
-    }
+    const noPrice = 100 - yesPrice;
+    return {
+      ticker: m.ticker,
+      title: m.title,
+      yes_price: yesPrice,
+      no_price: noPrice,
+      implied_prob_pct: yesPrice,
+      return_if_yes_pct: Math.round(((100 - yesPrice) / yesPrice) * 100),
+      return_if_no_pct: Math.round((yesPrice / noPrice) * 100),
+      volume: m.volume,
+      open_interest: m.open_interest,
+    };
   });
-
-  if (sweetSpot.length > 0) {
-    // Among sweet-spot markets, pick highest volume
-    sweetSpot.sort((a, b) => b.volume - a.volume);
-    console.error(`[kalshi/returns] Direction-aware pick: ${sweetSpot[0].ticker} (${sweetSpot[0].last_price}c YES, ${sweetSpot.length} in sweet spot)`);
-    return sweetSpot[0];
-  }
-
-  // Fallback: highest volume if no market in the sweet spot
-  console.error(`[kalshi/returns] No market in 20-70c sweet spot for ${direction}, falling back to highest volume`);
-  markets.sort((a, b) => b.volume - a.volume);
-  return markets[0];
 }
 
 /**
@@ -234,9 +246,9 @@ function strike(ticker: string): string {
 // --- CLI entry point ---
 async function main() {
   const args = process.argv.slice(2);
-  if (args.length < 2) {
+  if (args.length < 1) {
     console.error('Usage: bun run scripts/adapters/kalshi/returns.ts "KXFED-26MAR" "T3.50" "yes"');
-    console.error('       bun run scripts/adapters/kalshi/returns.ts "KXRECSSNBER-26" "" "no"');
+    console.error('       bun run scripts/adapters/kalshi/returns.ts "KXSOLMAXY-27JAN01"              (no strike → list all available)');
     process.exit(1);
   }
 
@@ -249,11 +261,31 @@ async function main() {
     process.exit(1);
   }
 
-  console.error(`[kalshi/returns] Fetching event: ${eventTicker}, strike: ${strikeArg || "(auto)"}, direction: ${direction}`);
-
-  // Fetch event and find market
+  // Fetch event
   const event = await fetchEvent(eventTicker);
-  const market = findMarket(event, strikeArg, direction);
+
+  // No strike → list all available markets so the skill can decide
+  if (!strikeArg) {
+    const strikes = listAvailableStrikes(event);
+    console.error(`[kalshi/returns] No strike specified. ${strikes.length} markets available for ${eventTicker}:`);
+    for (const s of strikes) {
+      console.error(`  ${s.title}: YES ${s.yes_price}c (${s.implied_prob_pct}% implied) | vol ${s.volume} | OI ${s.open_interest}`);
+    }
+
+    console.log(JSON.stringify({
+      event_ticker: event.event_ticker,
+      event_title: event.title,
+      series_ticker: event.series_ticker,
+      available_markets: strikes,
+      note: "No strike specified. Pick a strike that matches your thesis price target, or skip Kalshi if the thesis is directional without a specific level.",
+    }, null, 2));
+    return;
+  }
+
+  // Strike specified → compute returns for that specific market
+  console.error(`[kalshi/returns] Fetching event: ${eventTicker}, strike: ${strikeArg}, direction: ${direction}`);
+
+  const market = findMarket(event, strikeArg);
 
   if (!market) {
     console.error(`[kalshi/returns] No matching market found in event ${eventTicker}`);

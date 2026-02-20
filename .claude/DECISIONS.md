@@ -790,3 +790,33 @@ Calls were modeled as positions with a lifecycle: active -> resolved/closed/expi
 **71. Leaderboard renamed to Contributors.** Without resolved calls, accuracy and total P&L metrics are meaningless. Contributors ranked by total calls submitted. Volume is the only honest metric until we have real outcome tracking infrastructure.
 
 **72. DB schema unchanged.** Columns preserved for backward compatibility and future use. SQLite DEFAULT handles new inserts. No migration needed. The change is purely in what the application reads and displays.
+
+---
+
+## 2026-02-20: Session — X API Long Tweet Truncation Fix
+
+### What happened
+Testing @punter_punts tweet (long-form, ~1189 chars) revealed the X API was silently truncating to ~271 chars. The skill routed on "surprised by SOL's strength" (fragment) instead of the actual thesis (bad-news-exhaustion / momentum pivot). Resulted in Kalshi SOL $170 YES at $0.37, which is the wrong instrument for a momentum pivot thesis.
+
+### What we fixed
+- **user-timeline.ts**: Added `note_tweet` to `tweet.fields` in X API v2 request. Long tweets now return full text via `note_tweet.text` (was: only `text` field, truncated to ~280 chars).
+- **transcript/extract.ts**: Rewrote with tweet-specific extraction. Three-tier fallback:
+  1. X API v2 with `note_tweet` (if `X_BEARER_TOKEN` set)
+  2. fxtwitter.com (free, no auth, handles long tweets)
+  3. vxtwitter.com (backup)
+- **SKILL.md Input Validation**: Added truncation detection (step 4), screenshot/image handling (new step 6), improved X API onboarding instructions (step 5).
+
+### Verified
+- X API path: 1189 chars extracted (was 271). All 5 bullet points present.
+- fxtwitter fallback: 1189 chars, `is_note_tweet: true`. Works with no auth.
+
+### Open issue
+- **Kalshi strike selection is not thesis-aware.** The `findMarket()` sweet-spot filter picks strikes based on odds (20-70c range), not the thesis. For a momentum pivot thesis, the $170 binary cliff is wrong. Linear exposure (spot/perp) captures the full move. Task #5 remains open.
+
+### Decisions made
+
+**73. Tweet extraction uses tiered fallback, never silently truncates.** X API v2 (best, needs token) → fxtwitter (free, no auth) → vxtwitter (backup). If all fail, error message includes setup instructions. Never route on partial input.
+
+**74. fxtwitter.com is the primary no-auth tweet extraction method.** Free, no API key, returns full long tweets with metrics. Third-party dependency risk is acceptable because: (a) vxtwitter backup exists, (b) X API is the preferred path anyway, (c) the skill warns users to set up X_BEARER_TOKEN.
+
+**75. Screenshots are a first-class input path.** Added as step 6 in Input Validation. Vision model reads the image, extracted text is preserved as source material in derivation chain segments, same as URL or pasted text.

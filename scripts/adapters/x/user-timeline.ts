@@ -164,7 +164,7 @@ export async function fetchTimeline(
   const params = new URLSearchParams({
     max_results: String(max),
     exclude: "retweets,replies",                          // HARDCODED — do not remove
-    "tweet.fields": "created_at,public_metrics,entities",
+    "tweet.fields": "created_at,public_metrics,entities,note_tweet",
     expansions: "author_id",
     "user.fields": "username,name",
   });
@@ -189,6 +189,7 @@ export async function fetchTimeline(
       created_at: string;
       author_id: string;
       public_metrics: { like_count: number; impression_count: number };
+      note_tweet?: { text: string };
     }>;
     includes?: { users?: Array<{ id: string; username: string }> };
     meta?: { next_token?: string; newest_id?: string; oldest_id?: string; result_count?: number };
@@ -197,7 +198,9 @@ export async function fetchTimeline(
   const username = data.includes?.users?.[0]?.username ?? handle.replace(/^@/, "");
   const tweets: Tweet[] = (data.data ?? []).map((t) => ({
     id: t.id,
-    text: t.text,
+    // X Premium long tweets (>280 chars) store full text in note_tweet.text;
+    // the top-level text field is truncated to ~280 chars for those posts
+    text: t.note_tweet?.text ?? t.text,
     created_at: t.created_at,
     url: `https://x.com/${username}/status/${t.id}`,
     likes: t.public_metrics?.like_count ?? 0,

@@ -40,8 +40,10 @@ Before routing, check:
 2. **Is it specific enough?** If ambiguous, use AskUserQuestion to clarify BEFORE researching. Use the fewest questions possible (prefer 1), only ask if it changes the trade, give 2-4 structured options. Skip if the thesis is clear.
 3. **Is it an action request?** ("I want to buy ONDO") Treat the implied direction as the thesis and proceed.
 4. **Is it a URL?** Extract content first using the transcript tool (see Tools section). Also extract `source_date` from content metadata (publish date, tweet timestamp, or video upload date). If source_date is in the past, note the delta to today; use the historical price tool to fetch `entry_price` at source_date. Then continue from step 1.
-5. **Is it an X/Twitter handle?** (`@handle`, `x.com/username`, or "scan @handle") → fetch their recent posts via the X adapter (see Handle Scan section below). Requires `X_BEARER_TOKEN`. If not set, show the setup instructions and fall back to manual paste.
-6. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
+   - **Truncation check (tweets):** If extracted tweet text is <300 chars and does not end with sentence-ending punctuation (. ! ? "), it was likely truncated (X Premium long tweets can be up to 4,000 chars). Do NOT route on truncated text. Instead: tell the user the text appears cut off and ask them to paste the full text or share a screenshot.
+5. **Is it an X/Twitter handle?** (`@handle`, `x.com/username`, or "scan @handle") → fetch their recent posts via the X adapter (see Handle Scan section below). If `X_BEARER_TOKEN` is not set, show setup instructions: go to developer.x.com, create an app (pay-per-use, no monthly fee), copy the Bearer Token, add `X_BEARER_TOKEN=your_token` to .env. Cost: ~$0.26 to scan 50 posts. Fall back to manual paste.
+6. **Is it a screenshot or image?** Extract the full text from the image (author, platform, content, timestamp if visible). Preserve the extracted text as source material in derivation chain segments, same as any other sourced input. Continue from step 1 with the extracted text.
+7. **Multiple theses?** If the input contains several directional claims (transcript, article, tweet thread, or any multi-thesis content): ask "I found N theses here. Route all, or which one?" If the user says "all" or said "scan this" upfront, run the Bulk Mode pipeline below. If they pick one, route it normally.
 
 ---
 
@@ -446,9 +448,15 @@ bun run scripts/adapters/robinhood/returns.ts "TICKER" "long|short" "stock|etf|o
 bun run scripts/adapters/hyperliquid/returns.ts "TICKER" "long|short" "5"
 # Returns: entry, liquidation price, 30d expected move, funding cost
 
-# Kalshi: event ticker + optional strike + direction
-bun run scripts/adapters/kalshi/returns.ts "EVENT-TICKER" "" "yes|no"
+# Kalshi: event ticker + strike + direction (strike required for returns)
+bun run scripts/adapters/kalshi/returns.ts "EVENT-TICKER" "STRIKE" "yes|no"
 # Returns: buy price, implied probability, return if right, contracts per $100
+#
+# No strike → lists all available markets so you can pick one or skip Kalshi:
+bun run scripts/adapters/kalshi/returns.ts "EVENT-TICKER"
+# Returns: all strikes with yes/no prices, implied probs, return %. Pick the strike
+# that matches the thesis price target. If the thesis is directional without a
+# specific level, no strike will match — skip Kalshi, use linear exposure instead.
 
 # Bankr: ticker + direction + type (15-125s)
 bun run scripts/adapters/bankr/returns.ts "TICKER" "long" "token|polymarket|treasury"
