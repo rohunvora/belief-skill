@@ -69,13 +69,11 @@ If the skill routes to a different instrument than the author stated, the attrib
 
 If the subject is a person, brand, or community that isn't directly investable, decode the cultural movement it represents. Trade the wave, not the surfer.
 
-**Examples of how the obvious play isn't always the best:**
+**Examples:**
 
-"AI is being blamed for tech layoffs but it's really about money printing." The obvious play is short QQQ, but that bets on the scapegoat narrative. The actual claim is about money printing. **Long gold** is the purest expression.
+"AI is being blamed for tech layoffs but it's really about money printing." The obvious play is short QQQ, but that bets on the scapegoat narrative. The actual claim is monetary debasement. **Long gold** is the purest expression.
 
-"Everyone's on Ozempic." You could buy pharma (NVO, LLY), but they're already priced for GLP-1 dominance. The bottleneck is distribution: who can get it to people? **HIMS** owns telehealth DTC access and the market hasn't connected the dots yet.
-
-"SOL is going to flip ETH." Long SOL spot works, but you're exposed to the whole crypto market moving against you. **Long SOL / short ETH perps on Hyperliquid** isolates the ratio and profits on the spread regardless of market direction.
+"Everyone's on Ozempic." The clever play is HIMS: telehealth distribution, the market hasn't connected the dots. But NVO at a PE of 13, down 40% from highs, IS Ozempic. When the obvious company is mispriced this heavily, the obvious play is the best expression.
 
 "Fed won't cut in March." The obvious trade is short REITs, but that's a diluted expression. **Kalshi NO on March cut at $0.08** gives you 12x payout if right, defined risk, and resolves on the exact event.
 
@@ -121,11 +119,11 @@ The chain has three parts: **segments** (cited source material), **steps** (the 
 Lead with the company, reason about it:
 ```json
 {
-  "segments": [{ "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "chamath" }],
+  "segments": [{ "quote": "76 nodes in 13 countries with 10 layers, from a quartz mine to your chat window", "speaker": "chiefofautism" }],
   "steps": [
-    { "text": "on-prem is back. enterprises won't put proprietary data in open LLMs", "segment": 0 },
-    { "text": "DELL has $18B in AI server orders to build exactly this" },
-    { "text": "the market is punishing them on margin compression while the backlog grows 150% YoY" }
+    { "text": "76 nodes means 76 potential chokepoints. companies owning irreplaceable nodes have pricing power", "segment": 0 },
+    { "text": "COHR controls ~40% of AI datacenter optical transceivers, the next bottleneck after chips" },
+    { "text": "ASML is the obvious chokepoint play but it's fully priced at ATH. COHR is the next layer down" }
   ]
 }
 ```
@@ -169,7 +167,7 @@ This reads as templated after two cards. Specifically avoid:
 - **"Down X% from highs" as a closer.** Price context belongs in the trade data, not in the reasoning chain. The chain explains WHY, not WHAT THE PRICE IS.
 - **Every chain being the same length.** If the logic needs 2 steps, write 2. If it needs 5, write 5. Do not pad to 4.
 - **Forcing a single linear narrative.** If two threads converge on one trade, say "these converge" explicitly. Don't linearize parallel evidence into a fake sequence.
-- **Decorative facts pretending to be reasoning.** "DoD became the largest shareholder in July 2025" adds credibility but doesn't advance the logic. Remove the step and the chain still connects. Compare: "DELL has $18B in AI server orders" is load-bearing because it's WHY you pick DELL over HPE. Test: does removing the step break the chain? If yes, keep it. If no, cut it.
+- **Decorative facts pretending to be reasoning.** "DoD became the largest shareholder in July 2025" adds credibility but doesn't advance the logic. Remove the step and the chain still connects. Compare: "COHR controls ~40% of AI datacenter optical transceivers" is load-bearing because it's WHY you pick COHR over ASML. Test: does removing the step break the chain? If yes, keep it. If no, cut it.
 
 ### Rules
 
@@ -201,7 +199,7 @@ For examples and classification rules: load `references/derivation-chain.md`.
 
 Draft the chain BEFORE research. If you can't connect the source quote to a trade in 2-5 plain steps without looking anything up, the routing has a problem that research won't fix.
 
-After drafting, test it: remove any step where the fact is decorative (it adds color but the chain still connects without it). Those are padding. Cut them. Keep steps where the fact IS the connection: "DELL has $18B in AI server orders" advances the WHY (why DELL specifically); "DoD became the largest shareholder in July 2025" does not (it's a credential, not a reason). If removing a fact breaks the chain, the fact was load-bearing. Keep it. If removing it leaves the chain intact, it was padding.
+After drafting, test it: remove any step where the fact is decorative (it adds color but the chain still connects without it). Those are padding. Cut them. Keep steps where the fact IS the connection: "COHR controls ~40% of AI datacenter optical transceivers" advances the WHY (why COHR specifically); "DoD became the largest shareholder in July 2025" does not (it's a credential, not a reason). If removing a fact breaks the chain, the fact was load-bearing. Keep it. If removing it leaves the chain intact, it was padding.
 
 The sketch also targets your research. Steps that need grounding tell you exactly what to search for. Steps that hold without data don't need searches at all.
 
@@ -239,9 +237,9 @@ Before calling any tools, determine: (a) faithful extraction of the author's cla
 These disqualify an instrument before evaluation. No exceptions:
 
 - **Thesis contradiction.** Instrument bets against the deeper claim. Patterns:
-  - *Surface vs. deeper claim mismatch:* Surface claim points one direction, deeper claim points another. Always trade the deeper claim. It has better asymmetry because fewer people see it. Example: "AI blamed for tech layoffs but real cause is money printing" → short tech is surface, long gold is deeper.
+  - *Surface vs. deeper claim mismatch:* Surface claim points one direction, deeper claim points another. Always trade the deeper claim. It has better asymmetry because fewer people see it.
   - *Shorting the scapegoat's victims:* If the thesis says X is a scapegoat, the victims are unfairly punished and should recover. Don't short them. Example: "AI is a scapegoat" → don't short software (IGV), it should recover.
-  - *Multi-step causal chain:* Prefer the instrument requiring the fewest assumptions beyond the thesis. Example: "Money printing → inflation" → gold is 1 assumption (direct). Tech short requires 3 assumptions (inflation → Fed raises → tech sells).
+  - *Multi-step causal chain:* Prefer the instrument requiring the fewest assumptions beyond the thesis. Example: "Nuclear is the AI power solution." CEG (operates nuclear plants, signed AI PPAs) requires 1 assumption. Uranium miners require 2: nuclear adoption AND uranium price increase.
   - *Sector vs. broad index dilution:* Shorting a broad index (QQQ) dilutes your thesis with unrelated exposure. Short specific names or sector ETFs with higher thesis beta.
   For close alternatives between instrument types, load `references/instrument-reasoning.md`.
 - **Liquidity.** Can't fill $100K without >2% slippage.
@@ -293,9 +291,17 @@ Assess per instrument, not per thesis. The same thesis can be consensus for one 
 
 ### Underlying vs Wrapper
 
-Alignment + Edge are properties of the *underlying* (same for shares, options, or perps). Payoff Shape + Timing Forgiveness are properties of the *wrapper*. Pick the underlying first (Alignment + Edge), then evaluate wrappers (Payoff Shape + Timing). Always check Hyperliquid for equity tickers. Many stocks trade as HIP-3 perps.
+Alignment + Edge are properties of the *underlying* (same for shares, options, or perps). Payoff Shape + Timing Forgiveness are properties of the *wrapper*. Pick the underlying first (Alignment + Edge), then evaluate wrappers (Payoff Shape + Timing).
 
-**Perp leverage:** funding should never eat >50% of expected edge. Guideline: 5x/3x/2x (<30d), 3x/2x/1x (1-3mo), 2x/1x/1x (3-6mo), 1x/1x/stock (6mo+) across <10%/10-25%/>25% annual funding columns. Always state leverage, liquidation price, monthly funding drag.
+**Hyperliquid check.** After picking the underlying, check if it trades on Hyperliquid. Not just crypto: equities, gold, and commodities are listed as HIP-3 perps on the xyz dex. If it does, check the funding rate. Funding determines whether HL is the best wrapper or the worst:
+
+- **Funding favors your direction** (negative for longs, high positive for shorts): genuine edge. You get paid to hold a position you'd hold anyway. Compare HL against shares or options with this income factored in.
+- **Funding is near zero** (<5% annualized): essentially free leverage. HL beats options (no theta decay) for directional trades without a specific catalyst date.
+- **Funding works against you** (high positive for longs, negative for shorts): HL is expensive. Shares, ETFs, or options are likely better. Example: gold perps at +17% annualized funding cost more to hold than GLD shares.
+
+Funding rates are dynamic. A ticker that had -26% funding last month may have +5% today. Always check at routing time using the adapter. Never assume.
+
+**Perp leverage:** Funding should never eat >50% of expected edge. Guideline: 5x/3x/2x (<30d), 3x/2x/1x (1-3mo), 2x/1x/1x (3-6mo), 1x/1x/stock (6mo+) across <10%/10-25%/>25% annual funding columns. Always state leverage, liquidation price, monthly funding drag.
 
 ### Comparing Candidates
 
@@ -552,51 +558,51 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 
 ```json
 {
-  "source_handle": "marginsmall",
-  "source_url": "https://x.com/marginsmall/status/123456",
-  "source_date": "2026-02-15",
-  "author_thesis": "Enterprise data sovereignty will push companies back to owned infrastructure",
+  "source_handle": "chiefofautism",
+  "source_url": "https://x.com/chiefofautism/status/123456",
+  "source_date": "2026-02-19",
+  "author_thesis": "The AI supply chain has 76 nodes across 13 countries, each one a potential chokepoint",
   "author_ticker": null,
   "author_direction": null,
   "conditions": null,
 
-  "thesis": "Enterprise data security fears push companies back to owned hardware",
-  "ticker": "DELL",
+  "thesis": "AI datacenter optical interconnects are the next bottleneck after chips",
+  "ticker": "COHR",
   "caller_id": "anon",
   "direction": "long",
-  "entry_price": 117.49,
+  "entry_price": 232.48,
   "call_type": "derived",
-  "breakeven": "+EV above 8%",
-  "kills": "cloud pricing drops, enterprise capex freeze",
+  "breakeven": "+EV above 12%",
+  "kills": "fiber optic overcapacity, Broadcom enters transceiver market",
   "instrument": "stock",
   "platform": "robinhood",
 
-  "source_quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM? The answer is no.",
+  "source_quote": "i mapped the ENTIRE supply chain behind a single ChatGPT query. 76 nodes in 13 countries with 10 layers, from a quartz mine in North Carolina to your chat window",
   "segments": [
-    { "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "marginsmall" }
+    { "quote": "76 nodes in 13 countries with 10 layers, from a quartz mine to your chat window", "speaker": "chiefofautism" }
   ],
   "derivation": {
     "segments": [
-      { "quote": "On-prem is back. Do I, if I'm Geico, want all our proprietary data in an open LLM?", "speaker": "marginsmall" }
+      { "quote": "76 nodes in 13 countries with 10 layers, from a quartz mine to your chat window", "speaker": "chiefofautism" }
     ],
     "steps": [
-      { "text": "on-prem is back", "segment": 0 },
-      { "text": "companies buying their own AI servers instead of cloud" },
-      { "text": "DELL has $18B in orders to build them" }
+      { "text": "76 nodes means 76 potential chokepoints", "segment": 0 },
+      { "text": "ASML owns lithography (100% EUV share) but trades at ATH, fully priced" },
+      { "text": "COHR controls ~40% of AI datacenter optical transceivers. the next chokepoint down that isn't priced in" }
     ],
-    "chose_over": "HPE (lower margin), SMCI (supply chain concerns)"
+    "chose_over": "ASML (fully priced at ATH), MU (already 6.8x from lows)"
   },
-  "reasoning": "Enterprise spending shifting from cloud back to owned infrastructure due to data sovereignty concerns",
-  "edge": "Market pricing DELL as commodity PC maker, missing enterprise infrastructure pivot",
-  "counter": "Cloud providers could drop prices aggressively to retain enterprise customers",
+  "reasoning": "AI supply chain concentration creates pricing power at each irreplaceable node. Optical interconnects are the bottleneck after chips.",
+  "edge": "COHR at $232 while datacenter transceiver revenue growing 80% YoY. Market sees legacy fiber, missing AI pivot.",
+  "counter": "Intel or Broadcom could enter the transceiver market and compress margins",
   "price_ladder": [
-    { "price": 105.74, "pnl_pct": -10, "pnl_dollars": -1000, "label": "stop loss, 10% below entry" },
-    { "price": 135.00, "pnl_pct": 15, "pnl_dollars": 1500, "label": "reclaim 50-day MA" },
-    { "price": 165.00, "pnl_pct": 40, "pnl_dollars": 4000, "label": "midpoint 52W range" },
-    { "price": 200.00, "pnl_pct": 70, "pnl_dollars": 7000, "label": "retest 52W high" }
+    { "price": 197.61, "pnl_pct": -15, "pnl_dollars": -1500, "label": "stop loss, 15% below entry" },
+    { "price": 280.00, "pnl_pct": 20, "pnl_dollars": 2000, "label": "reclaim 50-day MA" },
+    { "price": 350.00, "pnl_pct": 51, "pnl_dollars": 5100, "label": "retest 52W high" },
+    { "price": 420.00, "pnl_pct": 81, "pnl_dollars": 8100, "label": "re-rate as AI infrastructure" }
   ],
-  "alternative": "HPE $18 long (lower margin but similar thesis, cheaper entry)",
-  "scan_source": "@marginsmall tweet (Feb 2026)"
+  "alternative": "MU $417 long (HBM memory shortage, further from source thesis)",
+  "scan_source": "@chiefofautism tweet (Feb 2026)"
 }
 ```
 
@@ -614,9 +620,9 @@ curl -s -X POST "${BELIEF_BOARD_URL:-https://belief-board.fly.dev}/api/takes" \
 
 ```
 ---
-"On-prem is back." · @marginsmall
-DELL long · $117.49 · derived
-Enterprise data security fears push companies back to owned hardware
+"76 nodes in 13 countries." · @chiefofautism
+COHR long · $232.48 · derived
+AI datacenter optical interconnects are the next bottleneck after chips
 → https://belief-board.fly.dev/t/abc123
 ---
 ```
@@ -787,16 +793,16 @@ One artifact per source. Two tiers that look deliberately different. The user ca
 **Deep Route Result** (Tier 1 post-route): The full routing output as prose. Includes the take, derivation chain, and board link.
 
 ```
-★ "On-prem is back. Do I want all our proprietary data in an open LLM?" · @chamath · Feb 12
+★ "MSFT worst-performing hyperscaler since ChatGPT launch, significantly underperformed Nasdaq" · @chamath · Feb 12
 
-DELL at $116.78. 856 shares. Enterprise AI server backlog is $18B and growing 150% YoY while the market punishes them on margin compression. The on-prem thesis has a pure-play and nobody's pricing it. Dies if enterprise AI capex freezes. Alt: HPE $21.55 (same thesis, lower margins).
+MSFT short at $399.60. 250 shares. META up 454%, AMZN and GOOG both beat Nasdaq in the same window. MSFT alone lagged. They committed $13B+ to OpenAI with no visible monetization in current earnings while capex balloons for Azure AI infra. IV at 26% prices MSFT as a stable blue chip. Dies if Azure AI revenue inflects next quarter. Alt: AMZN long (if the thesis is "pick the winning hyperscaler," go long the winner instead of short the loser).
 
-> [1] on-prem is back. enterprises won't put proprietary data in open LLMs (@chamath)
-> [2] DELL has $18B in AI server orders to build exactly this
-> [3] the market is punishing them on margin compression while the backlog grows 150% YoY
-> chose over: HPE (lower margin), SMCI (supply chain concerns)
+> [1] MSFT worst-performing hyperscaler since ChatGPT launch (@chamath)
+> [2] META up 454%, AMZN and GOOG both beat Nasdaq. MSFT alone lagged
+> [3] $13B+ committed to OpenAI, investment illiquid, unmonetized, while capex balloons
+> chose over: SQQQ (too diluted), AMZN short (wrong direction)
 
-→ https://belief-board.fly.dev/t/64f8db31-d
+→ https://belief-board.fly.dev/t/21eca4de-0
 ```
 
 Each deep route looks different because each thesis is different. A 2-step chain for a direct call. A 4-step chain for a derived cultural thesis.
@@ -811,15 +817,11 @@ When running bulk mode or handle scans, the full analysis lives on the board. Ch
 
 **During routing:** Post each deep route to the board as it completes. Show one progress line per route:
 ```
-Routing 1/3: on-premise thesis → DELL...
+Routing 1/2: MSFT underperformance thesis...
 ```
 
 **After all routes complete:** Show the summary. Three lines per take, same format as the board post teaser:
 ```
-"On-prem is back." · @chamath
-DELL long · $116.78 · derived
-→ https://belief-board.fly.dev/t/64f8db31-d
-
 "MSFT worst hyperscaler since ChatGPT" · @chamath
 MSFT short · $399.60 · direct
 → https://belief-board.fly.dev/t/21eca4de-0
@@ -828,7 +830,7 @@ MSFT short · $399.60 · direct
 CEG long · $294.05 · derived
 → https://belief-board.fly.dev/t/6f1aeb7a-d
 
-3 routed · 2 quick hits · @chamath · Feb 2026
+2 routed · 3 quick hits · @chamath · Feb 2026
 Expressions, not advice. Do your own research.
 ```
 

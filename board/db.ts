@@ -4,7 +4,10 @@ import { Database } from "bun:sqlite";
 import { join } from "path";
 import type { Call, User, DerivationChain, PriceLadderStep, Segment } from "./types";
 
-const DB_PATH = join(import.meta.dir, "board.db");
+// DB_PATH: use DATA_DIR env var (for persistent volumes in prod) or fall back to source dir
+const DATA_DIR = process.env.DATA_DIR || import.meta.dir;
+const DB_PATH = join(DATA_DIR, "board.db");
+console.log(`[db] SQLite path: ${DB_PATH}`);
 const db = new Database(DB_PATH);
 
 db.run("PRAGMA journal_mode = WAL");

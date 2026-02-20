@@ -140,7 +140,7 @@ export function renderForAgents(): string {
 </table>
 
 <h3 style="font-size:13px; color:#6b7280; margin-bottom:8px; margin-top:16px;">Example request</h3>
-<pre>curl -X POST http://localhost:4000/api/takes \\
+<pre>curl -X POST https://belief-board.fly.dev/api/takes \\
   -H "Content-Type: application/json" \\
   -d '{
   "thesis": "NVIDIA will beat earnings on data center demand",

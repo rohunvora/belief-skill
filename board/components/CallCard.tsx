@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Call } from "../types";
 import { extractChainDisplay } from "../types";
 import type { LivePriceData } from "../hooks/useLivePrices";
 import { useBoardData } from "../hooks/useData";
 import { timeAgo, formatPrice, computePnl } from "../utils";
+import { getLogoUrl } from "../logos";
 
 /** Avatar circle — uses twitter pfp if available, falls back to letter */
 export function Avatar({
@@ -89,6 +90,38 @@ function SourceIcon({ url }: { url: string }) {
   return <img src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`} className={`${size} rounded-sm`} alt={hostname} />;
 }
 
+/** Inline ticker logo — company/coin/platform logo with letter fallback */
+function TickerLogo({ ticker, platform, instrument }: {
+  ticker: string;
+  platform: string | null;
+  instrument: string | null;
+}) {
+  const [failed, setFailed] = useState(false);
+  const url = getLogoUrl(ticker, platform, instrument);
+
+  if (!url || failed) {
+    // Colored letter fallback (same hash pattern as Avatar)
+    const letter = (ticker[0] ?? "?").toUpperCase();
+    let hash = 0;
+    for (const c of ticker) hash = (hash * 31 + c.charCodeAt(0)) | 0;
+    const bg = ["bg-gray-500", "bg-gray-600", "bg-gray-700"][Math.abs(hash) % 3];
+    return (
+      <span className={`w-4 h-4 ${bg} rounded-full inline-flex items-center justify-center text-white text-[8px] font-bold shrink-0 leading-none`}>
+        {letter}
+      </span>
+    );
+  }
+
+  return (
+    <img
+      src={url}
+      alt={ticker}
+      className="w-4 h-4 rounded-full object-contain bg-white shrink-0"
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 /** Re-export formatPrice for consumers that import from CallCard */
 export { formatPrice } from "../utils";
 
@@ -167,6 +200,7 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
         <div className="flex items-center gap-2">
           <span className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-1.5 py-0.5`}>
             {call.call_type === "derived" && <span className="text-gray-400 mr-0.5">&rarr;</span>}
+            <TickerLogo ticker={call.ticker} platform={call.platform} instrument={call.instrument} />
             {dirArrow} {call.ticker}
           </span>
           <span className="text-xs text-gray-400">{formatPrice(call.entry_price)}</span>

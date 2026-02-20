@@ -579,3 +579,102 @@ Primary use case is NOT normie cultural observations — it's **trust-to-trade**
 - `~/.claude/skills/x-research/references/x-api.md` — pay-per-use pricing, user lookup + timeline endpoints
 - `SKILL.md` — Input Validation step 5, Handle Scan section
 - `README.md` — bumped to v5.4
+
+---
+
+## 2026-02-19: Session — Audit of corrupted session + Output redesign
+
+### Context
+
+A previous Claude Code session completed an 8-task "Time-Aware Output Redesign" plan but suffered terminal rendering corruption before the changes could be verified. This session audited every change, tested against real chatlog data, and redesigned the Output section based on what we learned.
+
+### What the corrupted session changed (all in SKILL.md)
+
+1. **Exposure Type concept** — new subsection naming the underlying exposure before instrument search
+2. **Data Confidence** — grounded vs estimated numbers, 3+ rubric dimension rule
+3. **"Instrument class" → "delivery mechanism"** — language change throughout Cross-Check, Early Stop, Challenger Override
+4. **Output restructure** — card moved before reasoning, medium detection (telegram/markdown), reasoning capped at 4 paragraphs
+5. **Gate loosening** — "never estimate" changed to "mark with (est)"
+6. **Board URLs** — localhost:4000 → belief-board.fly.dev
+7. **Board prod hardening** — DATA_DIR env var, HMR conditional
+
+### Audit findings (tested against belief-router-test-2026-02-19.md)
+
+| Change | Verdict | Evidence |
+|---|---|---|
+| Exposure Type | Overfitting | Model already found IVOL for rate vol thesis without the concept |
+| Data Confidence | Overfitting | No hallucinated numbers in test data; solves anticipated problem |
+| Delivery mechanism | Overfitting | Model already compared TLT strangle vs IVOL naturally |
+| Output restructure | Partially validated | Card-first was good, but card format itself was the wrong thing to optimize |
+| Gate loosening | Harmful | Weakened strictest quality gate without evidence it was needed |
+| Board URLs | Valid | Infrastructure, keep |
+| Board prod hardening | Valid | Infrastructure, keep |
+
+### The key insight: the card doesn't belong in chat
+
+Real test data showed: users never asked about the price ladder. User rated output 3.5/5 with feedback "hard to read/digest." The best parts of every test output were the PROSE explanations, not the formatted cards. The price ladder numbers are arbitrary (model picks anchor prices and computes precise-looking P&L from them). Entry price is exact. Targets are guesses dressed up as math.
+
+### Decisions made
+
+**52. Reverted Exposure Type, Data Confidence, delivery mechanism, gate loosening.** All four were overfitting to anticipated problems not observed in test data. The model already handles instrument comparison well without these concepts. Keeping them adds skill weight without improving output.
+
+**53. Kept board URLs and prod hardening.** Infrastructure changes, not skill logic.
+
+**54. Output is now prose, not a formatted card.** The Reply (chat) is written like telling a friend the trade: ticker+price in first sentence, insight, edge as verifiable fact, kill condition, alt. No price ladder, no column-aligned box, no scenario table. The Record (board POST) remains structured JSON with price_ladder for the frontend to render.
+
+**55. Honest precision.** Entry price and share count are exact (from tools). Upside is a range ("could 2-3x"), not a target ("+$35.9K (1.4x)"). The old format attached specific dollar amounts to arbitrary price anchors, creating false precision that users correctly rejected as "wut are these numbers."
+
+**56. Reasoning cap tightened.** Old: 2-6 paragraphs before the card. New: 2-4 sentences after the opening line, never exceeding 2 paragraphs. The opening line IS the answer. The rest explains why.
+
+**57. Board renders the full card.** Price ladder, comparables, derivation chain, interactive data all live on the board frontend. Chat links to it. The chat reply and the board record serve different purposes for different audiences.
+
+### Files changed
+- `SKILL.md` — Output section rewritten (Parts 1-3), bulk mode deep route example updated, board URLs
+- `board/db.ts` — DATA_DIR env var (from corrupted session, kept)
+- `board/server.ts` — HMR conditional (from corrupted session, kept)
+- `board/templates/for-agents.ts` — localhost → fly.dev (missed by corrupted session)
+
+---
+
+## 2026-02-20: Session — Overfitting fix + HL funding principle + ticker logos
+
+### Context
+
+SKILL.md examples were causing the model to pattern-match instead of reason. Fresh agents (given source quotes without SKILL.md influence) produced equal or better instrument choices in 4/4 cases, proving the model is smart enough to route from first principles. The examples were constraining it.
+
+### Evidence
+
+Spawned 4 parallel agents to route source quotes without SKILL.md:
+- @chamath "on-prem" → fresh agent confirmed DELL is correct (template was right but for wrong reasons: repetition, not analysis)
+- @marginsmall "duration mismatch" → fresh agent chose Kalshi, not IVOL (revealed equity/ETF bias)
+- "AI layoffs/money printing" → fresh agent chose GDX over plain gold (sharper instrument)
+- "Everyone's on Ozempic" → fresh agent chose NVO at PE 13 over HIMS (obvious play IS the best when mispriced)
+
+User caught that replacement examples generated BY the biased skill carry the same patterns ("contamination loop"). Fresh agents bypassed this.
+
+### Decisions made
+
+**58. Subtractive approach to examples.** Instead of replacing bad examples with better ones, strip most examples out. Keep only those teaching concepts the model genuinely can't derive from first principles. The model reasons better without template-matching to examples.
+
+**59. Deeper Claim rebalanced (4 examples, 4 patterns).** Was 5 examples with 4 teaching "flip to non-obvious" and 1 teaching "don't flip." Now:
+- Gold/money printing: trade the deeper claim, not the scapegoat (flip)
+- NVO/Ozempic: obvious play IS the best when it's mispriced (replaces HIMS)
+- Fed/Kalshi: prediction market as primary for binary events (kept)
+- PLTR: don't manufacture a divergence (kept)
+- SOL/ETH pair trade: removed (not from a real routing, user didn't remember it)
+
+**60. DELL fully diversified out.** Was 6 appearances across 4 sections. Now zero. Replaced with COHR (from chiefofautism real routing) in chain example + POST payload + teaser, and MSFT short (from chamath real routing) in bulk mode. No ticker appears more than twice.
+
+**61. HL funding-aware routing principle.** Replaced static "always check Hyperliquid for equity tickers" with dynamic evaluation: check if asset is on HL, check funding rate, determine if funding favors your direction. Three states: funding favors (edge), near-zero (free leverage), funding against (avoid HL). Tested with real adapter data: gold at +17.5% funding makes HL worse than GLD shares. SOL at -17% makes HL strictly better than spot. Funding is dynamic, always check at routing time.
+
+**62. Leverage follows from thesis properties, not a separate decision.** Structural thesis (no catalyst) = moderate leverage (2-3x). Catalyst within 30 days = higher (3-5x). The instrument choice naturally encodes leverage: shares (none), options (time-limited), perps (persistent, your choice).
+
+**63. Hard Gates deduplicated.** Gold/money-printing thesis appeared 3 times (Deeper Claim + 2x in Hard Gates). Removed redundant worked example from surface vs deeper claim mismatch. Changed multi-step causal chain example from gold to CEG/nuclear.
+
+**64. Ticker logos on board cards.** Tiered logo resolution: crypto → cryptocurrency-icons CDN, stocks/ETFs → Parqet CDN, prediction markets → platform favicon via icon.horse. Falls back to colored letter circle. Added as `TickerLogo` component in CallCard.
+
+### Key files
+- `SKILL.md` — Deeper Claim, Underlying vs Wrapper, derivation chain examples, POST payload, bulk mode
+- `board/logos.ts` — new file, logo URL resolution
+- `board/components/CallCard.tsx` — TickerLogo component
+- `tests/real-routings.md` — new file, catalog of 6 real routing sessions used for audit

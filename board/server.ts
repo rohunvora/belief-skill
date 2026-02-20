@@ -207,10 +207,13 @@ Bun.serve({
     // SPA catch-all — Bun handles bundling of .tsx/.css imports
     "/*": index,
   },
-  development: {
-    hmr: true,
-    console: true,
-  },
+  // Only enable HMR/console in local dev, not production
+  ...(process.env.NODE_ENV !== "production" && {
+    development: {
+      hmr: true,
+      console: true,
+    },
+  }),
 });
 
 console.log(`belief.board running at http://localhost:${PORT}`);
