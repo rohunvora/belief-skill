@@ -198,7 +198,9 @@ For examples and classification rules: load `references/derivation-chain.md`.
 
 ### Self-test
 
-Draft the chain BEFORE research. If you can't connect the source quote to a trade in 2-5 plain steps without looking anything up, the routing has a problem that research won't fix.
+Draft the chain BEFORE research as a hypothesis. If you can't connect the source quote to a trade in 2-5 plain steps without looking anything up, the routing has a problem that research won't fix.
+
+The sketch is built on your training knowledge, which has a cutoff. Any factual premise in the sketch (company structure, ownership, product lines, market dynamics) may be stale. Flag these premises explicitly. They are the first things research must validate.
 
 After drafting, test it: remove any step where the fact is decorative (it adds color but the chain still connects without it). Those are padding. Cut them. Keep steps where the fact IS the connection: "COHR controls ~40% of AI datacenter optical transceivers" advances the WHY (why COHR specifically); "DoD became the largest shareholder in July 2025" does not (it's a credential, not a reason). If removing a fact breaks the chain, the fact was load-bearing. Keep it. If removing it leaves the chain intact, it was padding.
 
@@ -208,7 +210,11 @@ The sketch also targets your research. Steps that need grounding tell you exactl
 
 ## Research
 
-**First:** Draft the chain sketch (see Self-test above). The sketch tells you what data you actually need. Then research to ground the sketch, not to discover the trade.
+**First:** Draft the chain sketch (see Self-test above). The sketch is a hypothesis, not a conclusion. Research can kill it.
+
+**Phase 1: Validate.** Your first 1-2 searches must test the sketch's factual premises. Does the company still operate in this space? Has the instrument been restructured, divested, or delisted? Is the competitive landscape still as you assume? If a premise fails, kill the sketch and redraft from what you found. Do not patch a broken sketch with caveats.
+
+**Phase 2: Ground.** Once premises are validated, research to fill in the specifics: pricing, market data, consensus, timing.
 
 Research the thesis within the budget below. You decide WHAT to search; the budget caps HOW MANY searches.
 

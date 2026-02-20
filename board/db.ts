@@ -989,6 +989,13 @@ export function getAllCalls(): Call[] {
   return listCalls({ limit: 200 });
 }
 
+export function deleteCall(id: string): boolean {
+  const result = db.prepare("DELETE FROM calls WHERE id = ?").run(id);
+  // Clean up quote links
+  db.prepare("DELETE FROM call_quotes WHERE call_id = ?").run(id);
+  return result.changes > 0;
+}
+
 export function updatePrice(id: string, price: number): void {
   db.prepare(
     "UPDATE calls SET current_price = ?, price_updated_at = datetime('now') WHERE id = ?"

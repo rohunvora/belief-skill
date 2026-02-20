@@ -1,6 +1,6 @@
 import index from "./index.html";
 import {
-  getAllCalls, getCall, listCalls, insertCall, updatePrice,
+  getAllCalls, getCall, listCalls, insertCall, updatePrice, deleteCall,
   insertUser, getUserByHandle, listUsers, getSubmitterProfile,
   listAuthors, getAuthorWithCalls, getQuotesByCall,
   listSources, getSourceWithDetail,
@@ -210,6 +210,13 @@ Bun.serve({
           console.error("POST /api/takes error:", err);
           return Response.json({ error: "Invalid request body" }, { status: 400 });
         }
+      },
+    },
+    "/api/takes/:id": {
+      DELETE: (req) => {
+        const deleted = deleteCall(req.params.id);
+        if (!deleted) return Response.json({ error: "Not found" }, { status: 404 });
+        return Response.json({ deleted: true });
       },
     },
     "/api/users": {
