@@ -317,6 +317,17 @@ Example, "SEALSQ undervalued because of PQC mandate":
 - LSCC LEAPS → Exposed, High asymmetry, Emerging, Forgiving
 - Head-to-head: LAES LEAPS beats shares (same alignment + edge, better payoff shape, slightly less forgiving but still fine). LAES LEAPS beats LSCC (better alignment + edge, same payoff shape + timing).
 
+### Prediction Market Routing (Kalshi vs Polymarket)
+
+Two prediction market adapters with different strengths. The routing principle: **Kalshi for price-range resolution, Polymarket for event resolution.**
+
+- **"Will price land in range X?"** -- Kalshi. It has strike-level granularity (26 rate thresholds per FOMC, weekly oil bands). Polymarket has no equivalent.
+- **"Will event X happen?"** -- Polymarket first. Broader universe: political, geopolitical, tech, cultural, sports, science. Fall back to Kalshi if Polymarket has no match.
+- **Both cover it?** Show the one with better liquidity. Note the other exists. Do not output two cards for the same bet.
+- **Not a prediction market thesis?** Skip both. Stock/equity theses go to Robinhood, crypto directional/pairs go to Hyperliquid.
+
+**Polymarket volume is USD. Kalshi volume is contracts (approx $1 each).** Do not compare raw numbers across platforms to pick a winner.
+
 ### Binary Check
 
 If a prediction market contract exists that literally resolves on this thesis, it must be explicitly beaten. It starts at Direct alignment with Very forgiving timing. Other instruments must justify why they beat that on payoff shape or edge.
@@ -378,7 +389,7 @@ Never dead-end. Descend the expression fidelity ladder:
 
 Live market API scripts. Call during research, scoring, or to validate a final pick.
 
-**Speed: run discovery calls in parallel.** Robinhood + Kalshi + Hyperliquid instrument discovery can run simultaneously. Don't wait for one before starting the next. Batch return calculations for the top 2-3 candidates.
+**Speed: run discovery calls in parallel.** Robinhood + Kalshi + Hyperliquid + Polymarket instrument discovery can run simultaneously. Don't wait for one before starting the next. Batch return calculations for the top 2-3 candidates.
 
 ### Content Extraction
 
@@ -410,6 +421,12 @@ bun run scripts/adapters/bankr/instruments.ts "thesis text"
 # Angel: keyword search across Republic, Wefunder, Crunchbase
 bun run scripts/adapters/angel/instruments.ts "thesis keywords"
 # Returns: active raises matching the thesis
+
+# Polymarket: keyword search across active prediction markets
+bun run scripts/adapters/polymarket/instruments.ts "keyword phrase"
+# Returns: binary event markets filtered for relevance (keyword must appear in question)
+# Gate: fire when Kalshi returns 0 matches, OR thesis is a non-macro binary event
+# Skip for: pure stock theses, crypto pair trades, precision macro (Kalshi covers those)
 ```
 
 ### Return Calculations
@@ -434,6 +451,11 @@ bun run scripts/adapters/bankr/returns.ts "TICKER" "long" "token|polymarket|trea
 # Angel: stage + sector (no live pricing)
 bun run scripts/adapters/angel/returns.ts "stage" "sector"
 # Returns: stage-based venture return distribution
+
+# Polymarket: slug or conditionId + direction
+bun run scripts/adapters/polymarket/returns.ts "SLUG_OR_CID" "yes|no"
+# Returns: binary payoff (same math as Kalshi), orderbook depth, implied probability
+# Prices are 0-1 (not cents). Volume is USD.
 ```
 
 For bearish theses on Robinhood: propose inverse ETFs directly (SQQQ, SRS, TBT, etc.).
@@ -462,87 +484,37 @@ Use when `source_date` is in the past and you need the entry_price at that date,
 
 ## Output
 
-Output has two parts: **The Take** (streamed as your reply) and **The Card** (sent via message tool with buttons).
+Output has two layers: **The Reply** (streamed to the user in chat) and **The Record** (POSTed to the board as structured data). The reply is prose. The structured card lives on the board.
 
-### Part 1: The Take (streamed reply)
+### Part 1: The Reply
 
-No preamble. Start with the insight immediately.
+Prose, not a card. Write like you're telling a friend the trade.
 
-**Tone matching:** Detect input sophistication before writing.
-- **Expert** (input contains trading terms like "IV", "funding rate", "theta", strike prices, ticker symbols with specific price targets): full technical vocabulary, bold-claim style.
-- **Casual** (cultural observation, question, vibe: "everyone's on Ozempic", "how to invest in Nettspend?"): plain language with jargon translations inline.
-  - "IV crush" → "option loses value after the event regardless of direction"
-  - "funding rate" → "daily fee for holding this position"
-  - "convexity" → "how much you can make vs how much you can lose"
-  - "implied probability" → "market thinks there's a X% chance"
-  - "theta decay" → "your option loses value every day you hold it"
-  - "OTM" → "out of the money, the stock needs to move significantly to profit"
+**Source excerpt first** for sourced calls (Input Validation steps 4-6). One line: the key quote + attribution. For user's own thesis (steps 1-3), skip it. The excerpt grounds derived calls where the routing diverges from the source.
 
-**Style register:**
-- Expert → bold claims, scannable in 5 seconds. Each paragraph: bold claim + 1-2 sentences of evidence.
-- Casual → conversational, direct, "you" language. Same rigor but friendlier. No assumed knowledge.
+**Ticker and price early.** The reader should know what to buy within the first two sentences.
 
-**The take must cover** (in whatever order fits the thesis):
-- **The answer.** What to buy, where, and why it beats the obvious play. Lead with this.
-- The non-obvious insight (what the market is missing)
-- The probability gap: what the market prices vs what breakeven requires
-- "You need to believe X." Frame the user as the decision-maker.
-- **If the routing diverges** (derived), acknowledge it: "Chamath is talking about data sovereignty. The purest expression is DELL, not the cloud providers."
+**The reply must contain** (in whatever order fits this specific thesis): the trade (ticker, price, quantity), what the market is missing, a verifiable edge (a fact, not a computed number), what kills it, and the alt. For options: strike, expiry, breakeven, max loss. For perps: leverage, liquidation, funding. For Kalshi: implied probability, payout. Include only what earns its space.
 
-Not every element appears in every take. A direct call ("PLTR is undervalued") doesn't need a divergence acknowledgment. A binary event doesn't need a probability gap paragraph. Include what earns its space.
+**Honest precision.** Entry price and share count are exact (from tools). Upside is a range ("could 2-3x"), not a fake target ("+$35.9K (1.4x)"). State verifiable facts ("TLT IV at 10%"), not computed conclusions ("+EV above 28%").
 
-**Constraints:**
-- Stop when the edge is stated. Most takes need 2-3 paragraphs. Never exceed 6.
-- No section headers, no tables, no arrows, no ✓/✗ marks
-- Every claim backed by data from research
-- End with a clear statement of the edge
+**Tone matching.** Expert inputs (trading jargon, tickers, strike prices) get full technical vocabulary. Casual inputs ("everyone's on Ozempic") get plain language with jargon translated inline. Casual replies end with one plain-language summary: "You're betting $X that [thing]. Right, [outcome]. Wrong, [loss]."
 
-### Part 2: The Card
+**Derivation chain (sourced calls).** After the prose, include the chain from the Derivation Chain section. Provenance, not a second explanation.
 
-After the take, include the trade card. Fixed format every time.
+**Board link.** After the chain, show the board teaser (see Part 3).
 
-**Card template:**
+**Constraints:** Never exceed two paragraphs of reasoning. No section headers, no formatted boxes, no column-aligned tables. Every claim backed by data. Stop when the edge is stated.
 
-```
-[TICKER] · [INSTRUMENT] · [DIRECTION]
-[QTY] @ $[PRICE] · risk $[AMOUNT]
-
-$[price]   [lose/gain $XK]   [condition]
-$[price]   [lose/gain $XK]   [condition]
-$[price]   [+$XK (Nx)]       [condition]
-$[price]   [+$XK (Nx)]       [condition]
-
-+EV above [X]% · dies if [k1], [k2]
-Alt: [TICKER] $[price] [dir] ([1 sentence])
-```
-
-**≤10 lines** for the trade card itself (header through Alt line). The card is a spec sheet, not a story.
-
-**Derivation chain (sourced calls only):**
-Separate section after the card. Include the structured chain using the segment-based format defined in the Derivation Chain section. Evidence steps link to source segments; inference steps stand alone. This is both displayed to the user and included in the board POST. Not counted in the card's 10-line limit.
-
-**"What This Means" block (casual inputs only):**
-After the card, add 2-3 plain language lines:
-- "You're betting $X that [thing happens] by [date]. Right → $Y. Wrong → lose $Z."
-- Translate any jargon in the card (e.g., "3x perp" → "3x leveraged futures position, you get liquidated if it drops 33%").
-- Skip this block for expert inputs.
-
-**Card precision rules:**
-- **Equity:** target price = target MC ÷ shares outstanding. Multiple = target ÷ entry.
-- **Options:** state strike, expiry, premium. P&L = contracts × (intrinsic − premium) × 100. State breakeven price.
-- **Kalshi:** P&L = contracts × (payout − entry). State implied probability.
-- **Perps:** P&L = size × leverage × move %. State liquidation price in worst row.
-- **Kill conditions:** specific + observable. "NIST delays mandate" not "thesis is wrong."
-
-### Part 3: Follow-Up Suggestions
+### Part 2: Follow-Up Suggestions
 
 End every routing with 2-3 suggested follow-ups. Each should address the most likely reason THIS specific user wouldn't execute THIS specific trade right now: unfamiliar platform, position too large, timing unclear, or thesis not fully believed yet. Make them short enough to tap.
 
 **Disclaimer:** End every routing response with: `Expressions, not advice. Do your own research.`
 
-### Part 4: Post to Board
+### Part 3: Post to Board
 
-After displaying the card and follow-ups, POST the take to the belief board. Always attempt the POST. If the board is unreachable, note it briefly and move on.
+After the reply and follow-ups, POST the structured record to the belief board. The board renders the full card (price ladder, comparables, derivation chain) from this data. The chat reply doesn't need to contain all of it. Always attempt the POST. If the board is unreachable, note it briefly and move on.
 
 **Step 1: Construct the JSON payload** from routing output.
 
@@ -631,7 +603,7 @@ The payload contains both layers: the **Call** (author's signal, faithfully pres
 **Step 2: POST to the board:**
 
 ```bash
-curl -s -X POST "${BELIEF_BOARD_URL:-http://localhost:4000}/api/takes" \
+curl -s -X POST "${BELIEF_BOARD_URL:-https://belief-board.fly.dev}/api/takes" \
   -H "Content-Type: application/json" \
   -d '<JSON payload>'
 ```
@@ -645,7 +617,7 @@ curl -s -X POST "${BELIEF_BOARD_URL:-http://localhost:4000}/api/takes" \
 "On-prem is back." · @marginsmall
 DELL long · $117.49 · derived
 Enterprise data security fears push companies back to owned hardware
-→ http://localhost:4000/t/abc123
+→ https://belief-board.fly.dev/t/abc123
 ---
 ```
 
@@ -812,32 +784,22 @@ One artifact per source. Two tiers that look deliberately different. The user ca
   → Deep Route this
 ```
 
-**Deep Route Result** (Tier 1 post-route): The full routing output. Includes the take, trade card, derivation chain, and board link.
+**Deep Route Result** (Tier 1 post-route): The full routing output as prose. Includes the take, derivation chain, and board link.
 
 ```
 ★ "On-prem is back. Do I want all our proprietary data in an open LLM?" · @chamath · Feb 12
 
-DELL long · $116.78 · derived
-Enterprise data security fears push companies back to owned hardware.
-856 shares @ $116.78 · risk $100K
-
-$93.39    lose $20.3K     thesis wrong, stop out
-$116.78   entry
-$150.19   +$28.6K (1.3x)  IV-derived target, 90d
-$168.08   +$43.8K (1.4x)  retest 52W high
-
-+EV above 41% · dies if enterprise AI capex freezes
-Alt: HPE $21.55 long (same thesis, lower margins)
+DELL at $116.78. 856 shares. Enterprise AI server backlog is $18B and growing 150% YoY while the market punishes them on margin compression. The on-prem thesis has a pure-play and nobody's pricing it. Dies if enterprise AI capex freezes. Alt: HPE $21.55 (same thesis, lower margins).
 
 > [1] on-prem is back. enterprises won't put proprietary data in open LLMs (@chamath)
 > [2] DELL has $18B in AI server orders to build exactly this
 > [3] the market is punishing them on margin compression while the backlog grows 150% YoY
 > chose over: HPE (lower margin), SMCI (supply chain concerns)
 
-→ http://localhost:4000/t/64f8db31-d
+→ https://belief-board.fly.dev/t/64f8db31-d
 ```
 
-Each deep route looks different because each thesis is different. A 2-step chain for a direct call. A 4-step chain for a derived cultural thesis. The format above is one example, not a template.
+Each deep route looks different because each thesis is different. A 2-step chain for a direct call. A 4-step chain for a derived cultural thesis.
 
 **Tier 3**: One line per skipped thesis with reason.
 
@@ -856,15 +818,15 @@ Routing 1/3: on-premise thesis → DELL...
 ```
 "On-prem is back." · @chamath
 DELL long · $116.78 · derived
-→ http://localhost:4000/t/64f8db31-d
+→ https://belief-board.fly.dev/t/64f8db31-d
 
 "MSFT worst hyperscaler since ChatGPT" · @chamath
 MSFT short · $399.60 · direct
-→ http://localhost:4000/t/21eca4de-0
+→ https://belief-board.fly.dev/t/21eca4de-0
 
 "f(i) = p * c * a" · @chamath
 CEG long · $294.05 · derived
-→ http://localhost:4000/t/6f1aeb7a-d
+→ https://belief-board.fly.dev/t/6f1aeb7a-d
 
 3 routed · 2 quick hits · @chamath · Feb 2026
 Expressions, not advice. Do your own research.
@@ -872,7 +834,7 @@ Expressions, not advice. Do your own research.
 
 Then list quick hits below the deep routes. The user taps any link to see the full take, card, and chain on the board.
 
-**Single route mode** (one thesis, not bulk) still shows the full take + card + chain inline. The compact format is only for bulk.
+**Single route mode** (one thesis, not bulk) still shows the full prose reply + chain inline. The compact format is only for bulk.
 
 ### Scan Rules
 

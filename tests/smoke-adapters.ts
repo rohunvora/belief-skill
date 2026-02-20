@@ -276,8 +276,71 @@ const tests: TestCase[] = [
     validate: (o) => {
       if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
       if (o.platform !== "angel") return `Wrong platform: ${o.platform}`;
-      // Angel results are often empty — just verify it returns valid structure
+      // Angel results are often empty -- just verify it returns valid structure
       if (!Array.isArray(o.instruments)) return "Missing instruments array";
+      return null;
+    },
+  },
+
+  // === POLYMARKET ===
+  {
+    name: "Polymarket instruments: trump (political, should find markets)",
+    command: `${SCRIPTS}/polymarket/instruments.ts "trump"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      if (o.platform !== "polymarket") return `Wrong platform: ${o.platform}`;
+      if (!o.instruments?.length) return "No instruments found for 'trump'";
+      // Verify relevance filter: every result should mention "trump"
+      const bad = o.instruments.find((i: any) => !i.name.toLowerCase().includes("trump"));
+      if (bad) return `Irrelevant result leaked through filter: "${bad.name}"`;
+      return null;
+    },
+  },
+  {
+    name: "Polymarket instruments: ukraine ceasefire (geopolitical)",
+    command: `${SCRIPTS}/polymarket/instruments.ts "ukraine ceasefire"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      if (!o.instruments?.length) return "No instruments found for 'ukraine ceasefire'";
+      const hasCeasefire = o.instruments.some((i: any) =>
+        i.name.toLowerCase().includes("ceasefire") || i.name.toLowerCase().includes("ukraine")
+      );
+      if (!hasCeasefire) return "No ceasefire-related markets found";
+      return null;
+    },
+  },
+  {
+    name: "Polymarket instruments: SOL ETH (noise filter, should return empty)",
+    command: `${SCRIPTS}/polymarket/instruments.ts "SOL ETH"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      if (o.platform !== "polymarket") return `Wrong platform: ${o.platform}`;
+      // Noise filter: short all-caps tickers use case-sensitive matching.
+      // "SOL" should NOT match "Sol Vega" or "Solange".
+      const noise = o.instruments?.find((i: any) =>
+        i.name.toLowerCase().includes("brother") ||
+        i.name.toLowerCase().includes("sol vega") ||
+        i.name.toLowerCase().includes("solange")
+      );
+      if (noise) return `Noise leaked through: "${noise.name}"`;
+      return null;
+    },
+  },
+  {
+    name: "Polymarket instruments: valid structure check",
+    command: `${SCRIPTS}/polymarket/instruments.ts "recession 2026"`,
+    validate: (o) => {
+      if (!o || o.__error) return `Error: ${o?.__error || "no output"}`;
+      if (o.platform !== "polymarket") return `Wrong platform: ${o.platform}`;
+      if (o.search_method !== "public_search") return `Wrong search method: ${o.search_method}`;
+      if (!Array.isArray(o.instruments)) return "instruments is not an array";
+      // If we got results, verify each has required fields
+      for (const inst of o.instruments) {
+        if (!inst.ticker) return "Missing ticker on instrument";
+        if (!inst.name) return "Missing name on instrument";
+        if (!inst.relevance) return "Missing relevance on instrument";
+        if (!inst.why) return "Missing why on instrument";
+      }
       return null;
     },
   },

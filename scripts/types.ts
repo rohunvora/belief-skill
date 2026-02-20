@@ -4,7 +4,7 @@
  * enabling cross-platform comparison.
  */
 
-export type Platform = "hyperliquid" | "kalshi" | "robinhood" | "bankr" | "angel";
+export type Platform = "hyperliquid" | "kalshi" | "robinhood" | "bankr" | "angel" | "polymarket";
 export type Direction = "long" | "short" | "yes" | "no";
 export type Liquidity = "high" | "medium" | "low";
 export type ThesisDirection = "bullish" | "bearish" | "neutral";
@@ -102,5 +102,6 @@ export const PLATFORM_RISK: Record<Platform, { tier: PlatformRiskTier; note: str
   robinhood: { tier: "regulated", note: "FINRA/SEC regulated broker-dealer" },
   hyperliquid: { tier: "dex", note: "DEX on Arbitrum — 3 withdrawal freezes in 2025 (JELLY, July, POPCAT)" },
   bankr: { tier: "new", note: "Non-custodial, alpha-stage SDK, limited track record" },
-  angel: { tier: "new", note: "Private market — illiquid, 5-7yr lockup, binary outcomes" },
+  angel: { tier: "new", note: "Private market -- illiquid, 5-7yr lockup, binary outcomes" },
+  polymarket: { tier: "dex", note: "Crypto-native prediction market on Polygon, no CFTC regulation" },
 };

@@ -9,6 +9,7 @@
  */
 
 import type { TradeExpression, ReturnProfile, Liquidity } from "../../types";
+import { binaryPayoff, binaryConfidenceNote } from "../shared/binary-payoff";
 
 const API_BASE = "https://api.elections.kalshi.com/trade-api/v2";
 
@@ -174,14 +175,8 @@ function calculateReturns(
   // Clamp to valid range
   buyPriceCents = Math.max(1, Math.min(99, buyPriceCents));
 
-  // Binary payoff math
-  // Win: pay buyPriceCents, receive 100 cents
-  const returnIfRightPct = ((100 / buyPriceCents) - 1) * 100;
-  // Lose: pay buyPriceCents, receive 0 cents
-  const returnIfWrongPct = -100;
-
-  // Market-implied probability
-  const impliedProb = buyPriceCents / 100;
+  // Shared binary math: Kalshi prices are in cents, convert to 0-1
+  const payoff = binaryPayoff(buyPriceCents / 100);
 
   // Time horizon from expiration
   const expirationStr = market.expected_expiration_time || market.close_time || market.expiration_time;
@@ -197,24 +192,16 @@ function calculateReturns(
     }
   }
 
-  // Capital required: normalized to $100 basis
-  // Actual cost per contract = buyPriceCents / 100 dollars
-  // For $100 capital, you get 100 / (buyPriceCents/100) = 10000/buyPriceCents contracts
-  const capitalRequired = 100;
-
   const expression: TradeExpression = {
     platform: "kalshi",
     instrument: strike(market.ticker),
     instrument_name: `${event.title} -- ${market.title}`,
     direction: direction,
 
-    capital_required: capitalRequired,
-    return_if_right_pct: Math.round(returnIfRightPct * 10) / 10,
-    return_if_wrong_pct: returnIfWrongPct,
+    capital_required: 100,
+    ...payoff,
 
     time_horizon: timeHorizon,
-    leverage: 999, // Binary = effectively infinite leverage (999 = sentinel)
-    market_implied_prob: impliedProb,
     liquidity: classifyLiquidity(market.open_interest),
 
     execution_details: {
@@ -222,7 +209,7 @@ function calculateReturns(
       event_ticker: event.event_ticker,
       series_ticker: event.series_ticker,
       buy_price_cents: buyPriceCents,
-      contracts_per_100: Math.floor(10000 / buyPriceCents),
+      contracts_per_100: payoff.contracts_per_100,
       volume: market.volume,
       open_interest: market.open_interest,
       yes_bid: market.yes_bid,
@@ -232,13 +219,11 @@ function calculateReturns(
     },
   };
 
-  const confidenceNote = direction === "yes"
-    ? `Market implies ${(impliedProb * 100).toFixed(0)}% probability. Your thesis needs >${(impliedProb * 100).toFixed(0)}% conviction to be +EV.`
-    : `Market implies ${((1 - impliedProb) * 100).toFixed(0)}% probability the event does NOT happen. Your thesis needs >${((1 - impliedProb) * 100).toFixed(0)}% conviction to be +EV.`;
-
-  const riskNote = `Binary contract -- max loss is 100% of capital ($${capitalRequired}). No margin calls or liquidation risk beyond the initial stake.`;
-
-  return { expression, confidence_note: confidenceNote, risk_note: riskNote };
+  return {
+    expression,
+    confidence_note: binaryConfidenceNote(payoff.market_implied_prob, direction),
+    risk_note: `Binary contract -- max loss is 100% of capital ($100). No margin calls or liquidation risk beyond the initial stake.`,
+  };
 }
 
 /** Format the instrument string: keep ticker as-is */
