@@ -1,0 +1,2920 @@
+{
+  "users": [
+    {
+      "id": "u_satoshi",
+      "handle": "satoshi",
+      "bio": "Routing the best takes on the internet.",
+      "twitter": "satoshi",
+      "avatar_url": null,
+      "verified": 1,
+      "created_at": "2025-11-01T00:00:00Z"
+    },
+    {
+      "id": "u_marginsmall",
+      "handle": "marginsmall",
+      "bio": "PQC, defense tech, asymmetric bets.",
+      "twitter": "marginsmall",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1528733512861351936/0S5zDezo_400x400.jpg",
+      "verified": 0,
+      "created_at": "2025-12-15T00:00:00Z"
+    },
+    {
+      "id": "u_chamath",
+      "handle": "chamath",
+      "bio": "CEO of Social Capital. All-In Podcast.",
+      "twitter": "chamath",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1883600182165848064/-9LbG3md_400x400.jpg",
+      "verified": 0,
+      "created_at": "2026-02-16T00:00:00Z"
+    },
+    {
+      "id": "u_threadguy",
+      "handle": "threadguy",
+      "bio": "Streams. Threads. Trades.",
+      "twitter": "notthreadguy",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1920651894982066176/ssOaEU8k_400x400.jpg",
+      "verified": 0,
+      "created_at": "2026-02-16T00:00:00Z"
+    },
+    {
+      "id": "u_shkreli",
+      "handle": "martinshkreli",
+      "bio": "Pharma, biotech, deep value. You know who I am.",
+      "twitter": "MartinShkreli",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1904997844748005376/wFfbBUBD_400x400.jpg",
+      "verified": 0,
+      "created_at": "2026-02-17T00:00:00Z"
+    },
+    {
+      "id": "u_nicbstme",
+      "handle": "nicbstme",
+      "bio": "Financial data infrastructure, moat analysis.",
+      "twitter": "nicbstme",
+      "avatar_url": null,
+      "verified": 0,
+      "created_at": "2026-02-17T00:00:00Z"
+    },
+    {
+      "id": "anon",
+      "handle": "youtube_creator",
+      "bio": null,
+      "twitter": "youtube_creator",
+      "avatar_url": null,
+      "verified": 0,
+      "created_at": "2026-02-19T00:33:03.205Z"
+    }
+  ],
+  "calls": [
+    {
+      "id": "c_dell_long",
+      "thesis": "Enterprise data security fears + cloud cost explosion will drive massive on-prem AI infrastructure spend",
+      "ticker": "DELL",
+      "direction": "long",
+      "entry_price": 117.49,
+      "breakeven": "50% to be +EV",
+      "kills": "Cloud AI costs drop 80%; enterprises abandon data sovereignty",
+      "caller_id": "u_satoshi",
+      "source_handle": "chamath",
+      "source_url": "https://www.youtube.com/watch?v=allin-feb2026",
+      "source_date": "2026-02-15",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_chamath",
+      "source_id": "src_001",
+      "ticker_id": "tkr_dell",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-16T14:00:00Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 67,
+      "watchers": 3400,
+      "comments": 24,
+      "trade_data": {
+        "source_quote": "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no. That's obvious.",
+        "author_thesis": "Enterprise data sovereignty will push companies back to owned infrastructure",
+        "segments": [
+          {
+            "quote": "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no.",
+            "speaker": "chamath",
+            "timestamp": "42:15",
+            "source_url": "https://www.youtube.com/watch?v=allin-feb2026"
+          },
+          {
+            "quote": "Too expensive.",
+            "speaker": "friedberg",
+            "timestamp": "43:30",
+            "source_url": "https://www.youtube.com/watch?v=allin-feb2026"
+          }
+        ],
+        "reasoning": "Dell shipped $10B in AI servers in H1 FY2026 alone. Revenue guidance raised to $111.7B (+17% YoY). The stock is at $117 — 30% below its 52-week high of $168 — while its AI backlog ($18.4B) is at all-time records growing 150% YoY. The market is punishing DELL on margin compression fears while ignoring that the on-prem enterprise shift is just beginning.",
+        "edge": "Stock sold off 30% while fundamentals accelerated. Market is pricing margin pressure from commodity servers, not the enterprise on-prem security premium — where enterprises will pay more to keep data in-house.",
+        "counter": "Friedberg pushed back on cloud private instances: \"Too expensive.\" Chamath agreed. This actually reinforces DELL — if cloud-hosted private AI is too expensive, physical on-prem from Dell/HPE are the alternative.",
+        "price_ladder": [
+          {
+            "price": 89.55,
+            "pnl_pct": -24,
+            "pnl_dollars": -2375,
+            "label": "thesis wrong, AI server demand slows"
+          },
+          {
+            "price": 117.49,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "breakeven"
+          },
+          {
+            "price": 140,
+            "pnl_pct": 19,
+            "pnl_dollars": 1913,
+            "label": "re-rates to 200-day MA"
+          },
+          {
+            "price": 168,
+            "pnl_pct": 43,
+            "pnl_dollars": 4293,
+            "label": "returns to 52-week high"
+          },
+          {
+            "price": 180,
+            "pnl_pct": 53,
+            "pnl_dollars": 5313,
+            "label": "backlog converts, market re-prices on-prem"
+          }
+        ],
+        "alternative": "GLD $462 long (pure debasement hedge — less thesis-specific, more consensus)",
+        "scan_source": "All-In Podcast (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no.",
+              "speaker": "chamath",
+              "timestamp": "42:15",
+              "source_url": "https://www.youtube.com/watch?v=allin-feb2026"
+            },
+            {
+              "quote": "Too expensive.",
+              "speaker": "friedberg",
+              "timestamp": "43:30",
+              "source_url": "https://www.youtube.com/watch?v=allin-feb2026"
+            }
+          ],
+          "steps": [
+            {
+              "text": "on-prem is back — enterprises won't put proprietary data in open LLMs",
+              "segment": 0
+            },
+            {
+              "text": "cloud private AI is \"too expensive\" — reinforces physical on-prem",
+              "segment": 1
+            },
+            {
+              "text": "companies buying their own AI servers instead of cloud"
+            },
+            {
+              "text": "DELL has $18.4B AI server backlog growing 150% YoY, stock -30% from highs"
+            }
+          ],
+          "chose_over": "HPE (lower AI backlog growth), SMCI (accounting risk) — Dell has the enterprise relationship + backlog proof"
+        }
+      }
+    },
+    {
+      "id": "c_msft_long",
+      "thesis": "MSFT owns the literal pipeline through which all AI-generated code flows — and it's at its cheapest multiple in 3 years",
+      "ticker": "MSFT",
+      "direction": "long",
+      "entry_price": 401,
+      "breakeven": "32% to be +EV",
+      "kills": "Copilot share drops below 30%; Azure revenue declines",
+      "caller_id": "u_satoshi",
+      "source_handle": "threadguy",
+      "source_url": "https://www.youtube.com/watch?v=threadguy-feb16",
+      "source_date": "2026-02-16",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_threadguy",
+      "source_id": "src_002",
+      "ticker_id": "tkr_msft",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-16T20:00:00Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 31,
+      "watchers": 890,
+      "comments": 9,
+      "trade_data": {
+        "source_quote": "100% of code is AI. Five SWEs independently confirmed they write zero human code post-Feb 5. Every one of those engineers runs their code through MSFT's tollbooth: VS Code, GitHub, Copilot, Azure, OpenAI.",
+        "author_thesis": "100% of code is AI-generated — every engineer runs through MSFT's tollbooth",
+        "reasoning": "GitHub Copilot has 20M+ users, 42% market share, and 90% of the Fortune 100. Copilot alone now generates more revenue than GitHub did when MSFT acquired it for $7.5B. MSFT trades at 25.2x earnings — 20% below its 3-year average of 33.8x. At its historical average P/E, MSFT is a $530 stock — 32% upside before a single dollar of incremental AI revenue.",
+        "edge": "Market is punishing MSFT for capex spending while ignoring that the AI coding market grew from $4.9B to $7.4B in a single year, projected to hit $30B by 2032. MSFT owns 42% of it.",
+        "counter": "Cursor (18% share) and Claude Code are eating into Copilot's lead. But even if Copilot's share drops to 30%, the total market is growing 27% annually — MSFT's absolute revenue still grows. Plus many competitors run on Azure. MSFT collects rent either way.",
+        "price_ladder": [
+          {
+            "price": 361,
+            "pnl_pct": -10,
+            "pnl_dollars": -100,
+            "label": "stop / broad selloff"
+          },
+          {
+            "price": 401,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "breakeven"
+          },
+          {
+            "price": 461,
+            "pnl_pct": 15,
+            "pnl_dollars": 149,
+            "label": "50-day MA recovery"
+          },
+          {
+            "price": 530,
+            "pnl_pct": 32,
+            "pnl_dollars": 322,
+            "label": "P/E re-rates to 3yr avg"
+          },
+          {
+            "price": 555,
+            "pnl_pct": 38,
+            "pnl_dollars": 384,
+            "label": "52-week high"
+          }
+        ],
+        "alternative": "ACN $224 short (AI kills billable hours — buy puts at open)",
+        "scan_source": "THREADGUY Stream (Feb 16, 2026)",
+        "derivation": {
+          "source_said": "100% of code is AI.",
+          "implies": "ai coding is universal dependency → tollbooth owner collects rent",
+          "searching_for": "Companies owning the AI coding tollbooth (IDE, hosting, model API), trading below historical multiples",
+          "found_because": "MSFT owns VS Code + GitHub + Copilot (42% share) + Azure + OpenAI stake, at 25.2x earnings vs 33.8x 3yr avg",
+          "chose_over": "GOOG (competing but no IDE lock-in), ADBE (creative not code) — MSFT owns the full stack: IDE + host + model"
+        }
+      }
+    },
+    {
+      "id": "c_laes_long",
+      "thesis": "NIST PQC mandate creates a new hardware upgrade cycle — LAES is the only public pure-play making the silicon for it",
+      "ticker": "LAES",
+      "direction": "long",
+      "entry_price": 3.88,
+      "breakeven": "40% to be +EV",
+      "kills": "NIST delays mandate past 2028; QS7001 commercialization slips",
+      "caller_id": "u_satoshi",
+      "source_handle": "marginsmall",
+      "source_url": null,
+      "source_date": "2026-02-15",
+      "conviction": "medium",
+      "call_type": "derived",
+      "author_id": "auth_marginsmall",
+      "source_id": "src_005",
+      "ticker_id": "tkr_laes",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-17T10:00:00Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 5,
+      "watchers": 1200,
+      "comments": 8,
+      "trade_data": {
+        "source_quote": "ai overbuild, 2027 compute glut, 2028/2030 washout, quantum plugs into ai subsidised infra to meet 2030/2035 nist deadline. saas meltdown but pqc software still has nist tailwinds via us gov",
+        "author_thesis": "PQC software still has NIST tailwinds via US gov, even through AI/SaaS washout",
+        "conditions": "assumes 2027 compute glut leads to 2028/2030 washout; quantum plugs into AI subsidized infra",
+        "segments": [
+          {
+            "quote": "ai overbuild, 2027 compute glut, 2028/2030 washout, quantum plugs into ai subsidised infra to meet 2030/2035 nist deadline. saas meltdown but pqc software still has nist tailwinds via us gov",
+            "speaker": "marginsmall"
+          }
+        ],
+        "reasoning": "SEALSQ makes the QS7001, the first hardware-embedded post-quantum chip. Revenue hit $18M for FY 2025, up 66% YoY, with Q4 alone doing $8M. Pipeline is $200M through 2028, with $60M+ tied to PQC-specific products. Federal systems must start transitioning to CNSA 2.0 by January 2027. RSA and ECDSA get deprecated by 2030, fully disallowed by 2035. This isn't optional — it's a compliance mandate that creates a new hardware upgrade cycle.",
+        "edge": "LSCC launched CNSA 2.0-compliant FPGAs and trades at $97.50 with a $13.3B market cap, but PQC is a feature for Lattice, not the business. The stock already ran from $35 to $98. LAES at $694M market cap with PQC as 100% of the story has more thesis beta. If the PQC mandate drives the spending, LAES moves multiples, not percentages.",
+        "counter": "LAES is a $694M micro-cap doing $18M revenue — speculative growth. If QS7001 commercialization slips past H2 2026 or the $200M pipeline doesn't convert, the stock can revisit $2. The 52-week low is $1.99. Counter: revenue is accelerating (Q4 alone was $8M — annualized run rate $32M) and the government mandate is non-discretionary.",
+        "price_ladder": [
+          {
+            "price": 1.99,
+            "pnl_pct": -49,
+            "pnl_dollars": -48700,
+            "label": "thesis wrong, revisit 52W low"
+          },
+          {
+            "price": 3.88,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "breakeven"
+          },
+          {
+            "price": 5.4,
+            "pnl_pct": 39,
+            "pnl_dollars": 39200,
+            "label": "pipeline converts, QS7001 ships"
+          },
+          {
+            "price": 6.17,
+            "pnl_pct": 59,
+            "pnl_dollars": 59000,
+            "label": "IV-implied 90-day target"
+          },
+          {
+            "price": 8.71,
+            "pnl_pct": 124,
+            "pnl_dollars": 124500,
+            "label": "52W high retest"
+          }
+        ],
+        "alternative": "LSCC $97.50 long (PQC via FPGA, safer but diluted + already ran 181%)",
+        "scan_source": "marginsmall (Feb 2026)",
+        "derivation": {
+          "source_said": "pqc software still has nist tailwinds via us gov",
+          "implies": "nist pqc deadline → mandatory quantum-resistant hardware upgrades",
+          "searching_for": "Pure-play PQC semiconductor companies with government contract pipeline",
+          "found_because": "LAES is the only public pure-play PQC chip company — QS7001 shipping, $18M rev (+66% YoY), $200M pipeline through 2028",
+          "chose_over": "LSCC (CNSA 2.0 FPGAs but PQC is <10% of revenue, already +181%), MCHP (crypto-agile MCUs, even more diluted) — LAES is 100% PQC, highest thesis beta"
+        }
+      }
+    },
+    {
+      "id": "c_ionq_long",
+      "thesis": "Quantum selloff was mechanical (quant unwind), not fundamental — IonQ is cheaper than its private peers at $12.3B",
+      "ticker": "IONQ",
+      "direction": "long",
+      "entry_price": 34.11,
+      "breakeven": "40% to be +EV",
+      "kills": "Rate cuts delayed past Q3; DARPA Stage C rejection",
+      "caller_id": "u_satoshi",
+      "source_handle": "martinshkreli",
+      "source_url": null,
+      "source_date": "2026-02-17",
+      "conviction": "medium",
+      "call_type": "derived",
+      "author_id": "auth_martinshkreli",
+      "source_id": "src_003",
+      "ticker_id": "tkr_ionq",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-17T10:00:00Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 18,
+      "watchers": 1400,
+      "comments": 7,
+      "trade_data": {
+        "source_quote": "Bloomberg confirmed quants suffered their worst drawdown since October in the first two weeks of January, down 2.8% per UBS prime book estimates. Goldman prime data showed systematic long-short managers in their worst 10-day stretch simultaneously. This wasn't a story about quantum fundamentals deteriorating — it was forced selling by systematic strategies rotating out of last year's hottest momentum factor.",
+        "author_thesis": "Quantum selloff was mechanical (quant unwind), not fundamental deterioration",
+        "reasoning": "The public-private disconnect is real and measurable. Quantinuum closed at $10B, PsiQuantum raised at $7B from BlackRock and Nvidia's venture arm — both rising. Meanwhile IonQ trades at $12.3B after a 60% drawdown, with a stronger government contract book than either private peer ($100M+ USAF contracts, DARPA QBI Stage B selection). Rigetti at $5.3B is cheaper than PsiQuantum's private round despite having live hardware and revenue.",
+        "edge": "Catalyst calendar is dense: DARPA Stage C selections in 2026, EU Quantum Grand Challenge funding, Xanadu's $3.1B SPAC closing Q1 2026 repricing every public comp. The US government is discussing taking equity stakes in quantum companies — a structure that puts a floor under valuations.",
+        "counter": "These are still 300x revenue companies. The quant rebalancing narrative is convenient but valuations were objectively stretched before the selloff. Quantum's commercial timeline (DARPA says utility-scale by 2033) is 7+ years out. Private market raises have survivorship bias.",
+        "price_ladder": [
+          {
+            "price": 30.7,
+            "pnl_pct": -10,
+            "pnl_dollars": -100,
+            "label": "stop loss, 10% below entry"
+          },
+          {
+            "price": 45.97,
+            "pnl_pct": 35,
+            "pnl_dollars": 344,
+            "label": "reclaim 50-day MA"
+          },
+          {
+            "price": 69.48,
+            "pnl_pct": 104,
+            "pnl_dollars": 1026,
+            "label": "midpoint 52W range (2x)"
+          },
+          {
+            "price": 84.64,
+            "pnl_pct": 148,
+            "pnl_dollars": 1466,
+            "label": "retest 52W high (2.5x)"
+          }
+        ],
+        "alternative": "RGTI $16.09 long (higher beta, -72% drawdown, no DARPA Stage B)",
+        "scan_source": "Martin Shkreli (Feb 2026)",
+        "derivation": {
+          "source_said": "Quantum selloff was mechanical, not fundamental.",
+          "implies": "quant unwind sold public quantum below private valuations → reversion trade",
+          "searching_for": "Public quantum companies trading below comparable private round valuations, with upcoming catalysts",
+          "found_because": "IonQ at $12.3B after -60% drawdown, stronger gov contracts than Quantinuum ($10B private) or PsiQuantum ($7B private)",
+          "chose_over": "RGTI (higher beta but no DARPA Stage B), QBTS (thinner contract book) — IonQ has strongest gov pipeline"
+        }
+      }
+    },
+    {
+      "id": "c_evr_long",
+      "thesis": "IPO wave is consensus for MS/GS but the non-obvious play is Evercore — pure advisory, more leverage to the fee surge",
+      "ticker": "EVR",
+      "direction": "long",
+      "entry_price": 322,
+      "breakeven": "55% to be +EV",
+      "kills": "IPO freeze; credit event shuts the window",
+      "caller_id": "u_satoshi",
+      "source_handle": "martinshkreli",
+      "source_url": null,
+      "source_date": "2026-02-17",
+      "conviction": "medium",
+      "call_type": "derived",
+      "author_id": "auth_martinshkreli",
+      "source_id": "src_003",
+      "ticker_id": "tkr_evr",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-17T10:30:00Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 12,
+      "watchers": 780,
+      "comments": 3,
+      "trade_data": {
+        "source_quote": "Michael Grimes walking back into Morgan Stanley in February 2026 is the signal the IPO factory restarts at full capacity. Goldman CEO Solomon is calling 2026 a 'record-breaking year for M&A,' SEC Chair Atkins is coordinating what they're both calling the 'Great IPO Wave.' Pipeline is real: SpaceX ($1.5T), Databricks ($134B), Stripe ($120B), potentially OpenAI and Anthropic.",
+        "author_thesis": "Michael Grimes returning to Morgan Stanley signals the IPO factory restarts",
+        "reasoning": "MS at $171 and GS at $905 have already priced in a strong 2026. MS consensus target is $180-195 — that's 5-14% upside. IPO underwriting is one revenue stream among many. The non-obvious play is Evercore: pure-play advisory, no trading desk, no consumer banking diluting the story. Fee-based revenue at 50%+ margins. At $322, it's 17% below its 52W high of $389 and below its 50-day MA — a better entry than MS.",
+        "edge": "When IPO volume surges, boutique advisors get pulled into every deal as co-advisors and fairness opinion providers. EVR has more leverage to the thesis than the diversified banks, with a better technical entry.",
+        "counter": "IPO windows slam shut overnight — tariffs, credit events, or AI winter freeze the pipeline. EVR advises but doesn't underwrite (less direct than MS/GS). Stock already ran 116% in 12 months.",
+        "price_ladder": [
+          {
+            "price": 290,
+            "pnl_pct": -10,
+            "pnl_dollars": -97,
+            "label": "stop loss, IPO window closes"
+          },
+          {
+            "price": 352,
+            "pnl_pct": 9,
+            "pnl_dollars": 89,
+            "label": "50-day MA reclaim"
+          },
+          {
+            "price": 370,
+            "pnl_pct": 15,
+            "pnl_dollars": 143,
+            "label": "multiple IPO mandates announced"
+          },
+          {
+            "price": 389,
+            "pnl_pct": 21,
+            "pnl_dollars": 201,
+            "label": "52W high retest, record IPO year"
+          }
+        ],
+        "alternative": "IPO ETF $43.46 long (higher beta on IPO performance, -20% from highs)",
+        "scan_source": "Martin Shkreli (Feb 2026)",
+        "derivation": {
+          "source_said": "Michael Grimes is back at Morgan Stanley. The IPO factory restarts.",
+          "implies": "ipo wave is consensus for MS/GS → non-obvious play is pure-play advisory",
+          "searching_for": "Boutique advisory firms with pure fee exposure to IPO/M&A volume, better entry than diversified banks",
+          "found_because": "EVR: pure advisory, 50%+ margins, -17% from 52W high vs MS/GS already at consensus targets",
+          "chose_over": "MS (already at consensus target, diversified), GS (same) — EVR is pure advisory, 50%+ margins, better entry"
+        }
+      }
+    },
+    {
+      "id": "c_spgi_long",
+      "thesis": "S&P Global is a regulatory fortress disguised as a financial data terminal — the market is selling it like it's another search layer over public data",
+      "ticker": "SPGI",
+      "direction": "long",
+      "entry_price": 409.54,
+      "breakeven": "35% to be +EV",
+      "kills": "Credit issuance collapses; NRSRO deregulated; AI displaces ratings oligopoly",
+      "caller_id": "u_satoshi",
+      "source_handle": "nicbstme",
+      "source_url": "https://x.com/nicbstme/status/2023501562480644501",
+      "source_date": "2026-02-17",
+      "conviction": "speculative",
+      "call_type": "derived",
+      "author_id": "auth_nicbstme",
+      "source_id": "src_004",
+      "ticker_id": "tkr_spgi",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-17T16:00:00Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 8,
+      "watchers": 620,
+      "comments": 4,
+      "trade_data": {
+        "author_thesis": "When the interface layer gets commoditized, the scarce inputs get more valuable",
+        "reasoning": "The market dropped SPGI 29% alongside FactSet's 57% decline, painting every financial data company with the same 'AI disrupts terminals' brush. But SPGI passes all three survival tests: proprietary data (credit ratings), regulatory lock-in (NRSRO designation), and transaction embedding (S&P indices power $7T+ in passive investing). A $0.35 EPS miss triggered a 25% selloff on a company guiding 6-8% organic revenue growth. Forward P/E compressed from ~30x to ~21x — a level SPGI hasn't traded at since the 2020 panic.",
+        "edge": "Insiders buying the dip. Wall Street consensus remains 'Strong Buy' with $528 average target. The selloff was driven by a small EPS miss, not structural failure. An LLM can't issue an NRSRO-certified rating any more than it can perform surgery.",
+        "counter": "FactSet short is the obvious play (already down 57%, 13x P/E — multiple already compressed from 40x). MCO has purer ratings exposure but trades at 33x with binary earnings risk. SPGI's Market Intelligence segment (~45% of revenue) IS exposed to AI search disruption, but multi-year contracts provide 12-24 months of floor.",
+        "price_ladder": [
+          {
+            "price": 382,
+            "pnl_pct": -7,
+            "pnl_dollars": -55,
+            "label": "52W low / recession"
+          },
+          {
+            "price": 410,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "breakeven — dead money"
+          },
+          {
+            "price": 493,
+            "pnl_pct": 20,
+            "pnl_dollars": 167,
+            "label": "50-day MA reversion"
+          },
+          {
+            "price": 528,
+            "pnl_pct": 29,
+            "pnl_dollars": 237,
+            "label": "analyst consensus"
+          },
+          {
+            "price": 558,
+            "pnl_pct": 36,
+            "pnl_dollars": 297,
+            "label": "pre-selloff levels"
+          }
+        ],
+        "alternative": "MCO $426 long (purer ratings, but 33x P/E + earnings tomorrow)",
+        "scan_source": "nicbstme AI vs Financial Data (Feb 2026)",
+        "derivation": {
+          "source_said": "When the interface layer gets commoditized, the scarce inputs get more valuable",
+          "implies": "proprietary data creators benefit from ai disrupting terminals",
+          "searching_for": "Financial data companies with regulatory lock-in or benchmark ownership, recently sold off",
+          "found_because": "NRSRO-certified credit ratings + $7T indexed to S&P indices — scarce inputs AI can't replicate — but sold off 29% alongside FactSet",
+          "chose_over": "MCO (purer ratings but 33x P/E + earnings risk), FactSet short (already -57%, obvious) — SPGI has ratings + indices, dual moat"
+        }
+      }
+    },
+    {
+      "id": "72573558-7",
+      "thesis": "If AI is military spending, the software OS for the US military is the most protected revenue stream — PLTR is the pick-and-shovel",
+      "ticker": "PLTR",
+      "direction": "long",
+      "entry_price": 135.38,
+      "breakeven": "+EV above 41% win rate",
+      "kills": "defense budget cuts, commercial segment misses, DOGE slashes AI contracts",
+      "caller_id": "u_satoshi",
+      "source_handle": "youtube_creator",
+      "source_url": "https://www.youtube.com/watch?v=1fevAtp8yvI",
+      "source_date": "2026-02-19",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_youtube_creator",
+      "source_id": "src_006",
+      "ticker_id": "tkr_pltr",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T00:33:03.206Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "The United States is going to categorize AI as a military proxy, it is going to be heavily funded and the United States is going to do everything in our power to make sure we win this AI race.",
+        "author_thesis": "The US government will backstop AI spending because losing the AI race to China is a national security catastrophe",
+        "author_direction": "long",
+        "conditions": "assumes US-China AI race continues to intensify",
+        "segments": [
+          {
+            "quote": "The United States is going to categorize AI as a military proxy, it is going to be heavily funded and the United States is going to do everything in our power to make sure we win this AI race.",
+            "speaker": "creator"
+          }
+        ],
+        "reasoning": "PLTR won a $10B Army software contract in August 2025, Maven Smart System raised to $1B+. Trading 35% below 52W high while government contracts accelerate. Market prices it as a tech growth stock; the thesis reprices it as a defense contractor with AI.",
+        "edge": "Market treats PLTR as SaaS. The thesis says it is a defense contractor with AI capabilities. Defense contractors trade at 15-25x earnings on guaranteed revenue. PLTR has both.",
+        "counter": "PLTR at $135 is still rich on fundamentals. If commercial segment disappoints or defense contracts get delayed, the valuation has no margin of safety.",
+        "price_ladder": [
+          {
+            "price": 107.32,
+            "pnl_pct": -21,
+            "pnl_dollars": -21000,
+            "label": "stop loss"
+          },
+          {
+            "price": 135.38,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry"
+          },
+          {
+            "price": 160.76,
+            "pnl_pct": 19,
+            "pnl_dollars": 19000,
+            "label": "reclaim 200-day MA"
+          },
+          {
+            "price": 175.46,
+            "pnl_pct": 30,
+            "pnl_dollars": 30000,
+            "label": "IV-implied 90d target"
+          },
+          {
+            "price": 207.52,
+            "pnl_pct": 53,
+            "pnl_dollars": 53000,
+            "label": "reclaim 52W high"
+          }
+        ],
+        "alternative": "NVDA $188 long (consensus compute play, better liquidity, less thesis beta)",
+        "scan_source": "YouTube — China Maxing (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "The United States is going to categorize AI as a military proxy, it is going to be heavily funded and the United States is going to do everything in our power to make sure we win this AI race.",
+              "speaker": "creator"
+            }
+          ],
+          "steps": [
+            {
+              "text": "AI is being treated as national security infrastructure — the US cannot afford to lose",
+              "segment": 0
+            },
+            {
+              "text": "if AI is defense spending, the money flows to whoever operationalizes AI for the military"
+            },
+            {
+              "text": "PLTR won a $10B Army software contract in August 2025 and Maven Smart System hit $1B+"
+            },
+            {
+              "text": "PLTR is down 35% from its high while government AI contracts accelerate — the market missed the reclassification"
+            }
+          ],
+          "chose_over": "NVDA (consensus, less pure-play on defense), MSFT (too diversified), defense ETFs (diluted)"
+        }
+      }
+    },
+    {
+      "id": "f5f2dab0-e",
+      "thesis": "When model quality gets commoditized, inference volume explodes (Jevons Paradox) — the bottleneck shifts to electrons, not chips or models. CEG is the nuclear power pure-play for AI datacenters, down 29% from highs.",
+      "ticker": "CEG",
+      "direction": "long",
+      "entry_price": 294.05,
+      "breakeven": "+EV above 40% win rate",
+      "kills": "hyperscalers pull data center capex, nuclear permitting stalls, CEG Microsoft contract repriced",
+      "caller_id": "u_satoshi",
+      "source_handle": "youtube_creator",
+      "source_url": "https://www.youtube.com/watch?v=1fevAtp8yvI",
+      "source_date": "2026-02-19",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_youtube_creator",
+      "source_id": "src_006",
+      "ticker_id": "tkr_ceg",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T00:33:03.255Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "The Chinese AI models are completely on par if not superior to the US models and are dominating us in usage. Minimax 2.5 is 27 cents per million tokens. Opus 4.6 is $5. It is 20x cheaper.",
+        "author_thesis": "Chinese AI models are on par with US models at 1/20th the cost, eating into profits of Anthropic, OpenAI, Google",
+        "segments": [
+          {
+            "quote": "The Chinese AI models are completely on par if not superior to the US models and are dominating us in usage. Minimax 2.5 is 27 cents per million tokens. Opus 4.6 is $5. It is 20x cheaper.",
+            "speaker": "creator"
+          }
+        ],
+        "reasoning": "Cheap AI drives more inference, not less — Jevons Paradox. Every token needs electrons. CEG restarted Three Mile Island for Microsoft data center power. Only pure-play nuclear for AI baseload. Down 29% from highs on AI spending uncertainty — punished for the exact thesis that makes it more valuable.",
+        "edge": "NVDA is the consensus AI commoditization play. CEG is the non-obvious Jevons Paradox play — off highs, undiscovered angle.",
+        "counter": "If hyperscalers pull capex on AI (DeepSeek shock causing spend reconsideration), power demand slows. Nuclear permitting is slow. One bad regulatory decision stops a plant.",
+        "price_ladder": [
+          {
+            "price": 235.24,
+            "pnl_pct": -20,
+            "pnl_dollars": -20000,
+            "label": "stop loss"
+          },
+          {
+            "price": 294.05,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry"
+          },
+          {
+            "price": 350,
+            "pnl_pct": 19,
+            "pnl_dollars": 19000,
+            "label": "resistance / AI narrative re-rates"
+          },
+          {
+            "price": 412.7,
+            "pnl_pct": 40,
+            "pnl_dollars": 40000,
+            "label": "reclaim 52W high"
+          },
+          {
+            "price": 450,
+            "pnl_pct": 53,
+            "pnl_dollars": 53000,
+            "label": "new high, nuclear premium priced"
+          }
+        ],
+        "alternative": "VST $171 long (natural gas + nuclear mix, similar thesis, smaller cap)",
+        "scan_source": "YouTube — China Maxing (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "The Chinese AI models are completely on par if not superior to the US models and are dominating us in usage. Minimax 2.5 is 27 cents per million tokens. Opus 4.6 is $5. It is 20x cheaper.",
+              "speaker": "creator"
+            }
+          ],
+          "steps": [
+            {
+              "text": "Chinese models are 20x cheaper and open source — model quality is being commoditized",
+              "segment": 0
+            },
+            {
+              "text": "when something gets 20x cheaper, total consumption typically explodes — Jevons Paradox"
+            },
+            {
+              "text": "every AI inference needs power; if inference volume 10x, power demand 10x"
+            },
+            {
+              "text": "CEG restarted Three Mile Island for Microsoft data centers — only pure-play nuclear for AI baseload, down 29% from highs"
+            }
+          ],
+          "chose_over": "NVDA (consensus, less edge on this specific angle), short AI labs (private companies), VST (less pure nuclear)"
+        }
+      }
+    },
+    {
+      "id": "14ac0a5d-f",
+      "thesis": "Bits to atoms: AI commoditizes software, physical infrastructure becomes the bottleneck — CAT is the pick-and-shovel for every capex project in the US-China rebalancing",
+      "ticker": "CAT",
+      "direction": "long",
+      "entry_price": 751.97,
+      "breakeven": "+EV above 50% win rate",
+      "kills": "global recession, US infrastructure spend pauses, China-US trade deal collapses industrial demand",
+      "caller_id": "u_satoshi",
+      "source_handle": "youtube_creator",
+      "source_url": "https://www.youtube.com/watch?v=1fevAtp8yvI",
+      "source_date": "2026-02-19",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_youtube_creator",
+      "source_id": "src_006",
+      "ticker_id": "tkr_cat",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T00:33:46.871Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "Software gets commoditized and then the bottleneck becomes the industrial side. China hyperfocused on industrials. Everything is produced in China. They have a complete monopoly over the atoms thing.",
+        "author_thesis": "Software is being commoditized by AI — the next 30 years will be about physical manufacturing and infrastructure (bits to atoms)",
+        "author_direction": "long",
+        "segments": [
+          {
+            "quote": "Software gets commoditized and then the bottleneck becomes the industrial side. China hyperfocused on industrials. Everything is produced in China. They have a complete monopoly over the atoms thing.",
+            "speaker": "creator"
+          }
+        ],
+        "reasoning": "CAT generates $10B+ in operating cash flow and sits at the intersection of every infrastructure buildout: data center site prep, energy infrastructure, defense construction, reshoring factories. Near 52W highs — most priced-in of the four theses but also most reliable.",
+        "edge": "This is the most consensus thesis. Edge is thin. Flag: buying CAT is buying the trend, not the discovery. Higher conviction on the other three theses.",
+        "counter": "CAT near 52W highs. China already owns atoms — the US catching up is a decade-long project. CAT revenues are global, so a China slowdown hurts CAT even in a US-China rebalancing scenario.",
+        "price_ladder": [
+          {
+            "price": 601.58,
+            "pnl_pct": -20,
+            "pnl_dollars": -20000,
+            "label": "stop loss (below 200-day MA)"
+          },
+          {
+            "price": 751.97,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry"
+          },
+          {
+            "price": 789.81,
+            "pnl_pct": 5,
+            "pnl_dollars": 5000,
+            "label": "reclaim 52W high"
+          },
+          {
+            "price": 850,
+            "pnl_pct": 13,
+            "pnl_dollars": 13000,
+            "label": "infrastructure re-rate"
+          },
+          {
+            "price": 950,
+            "pnl_pct": 26,
+            "pnl_dollars": 26000,
+            "label": "full bits-to-atoms re-rate"
+          }
+        ],
+        "alternative": "XLI $175 (industrial ETF — diversified, lower conviction, lower risk)",
+        "scan_source": "YouTube — China Maxing (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "Software gets commoditized and then the bottleneck becomes the industrial side. China hyperfocused on industrials. Everything is produced in China. They have a complete monopoly over the atoms thing.",
+              "speaker": "creator"
+            }
+          ],
+          "steps": [
+            {
+              "text": "AI commoditizes software — the value creation frontier shifts to physical manufacturing",
+              "segment": 0
+            },
+            {
+              "text": "US is behind on physical manufacturing and needs to rebuild industrial capacity"
+            },
+            {
+              "text": "every reshoring factory, data center build, energy project, and defense facility needs heavy equipment"
+            },
+            {
+              "text": "CAT is the pick-and-shovel for all physical infrastructure — $10B+ operating cash flow, near 52W highs"
+            }
+          ],
+          "chose_over": "DE (farm equipment, less aligned to US reshoring), XLI ETF (diluted), pure reshoring plays (no liquidity)"
+        }
+      }
+    },
+    {
+      "id": "707d404a-d",
+      "thesis": "The DoD just became the largest shareholder in the only US rare earth company. China tightened rare earth controls in October 2025. MP Materials is the literal embodiment of this thesis.",
+      "ticker": "MP",
+      "direction": "long",
+      "entry_price": 57.94,
+      "breakeven": "+EV above 42% win rate",
+      "kills": "US-China trade deal removes urgency, rare earth prices collapse, 10X facility delayed",
+      "caller_id": "u_satoshi",
+      "source_handle": "youtube_creator",
+      "source_url": "https://www.youtube.com/watch?v=1fevAtp8yvI",
+      "source_date": "2026-02-19",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_youtube_creator",
+      "source_id": "src_006",
+      "ticker_id": "tkr_mp",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T00:33:46.873Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "China critical mineral control. Out of 100 things made in the military, there are like 80 that the process is traced back to China. If there were a conflict, these factories get cut off and suddenly you cannot make drones or bullets.",
+        "author_thesis": "US military supply chain is 80% dependent on China — we cannot get into a conflict with them",
+        "author_direction": "long",
+        "conditions": "US-China tensions continue to escalate",
+        "segments": [
+          {
+            "quote": "Out of 100 things made in the military, there are like 80 that the process is traced back to China. If there were a conflict, these factories get cut off and suddenly you cannot make drones or bullets.",
+            "speaker": "creator"
+          }
+        ],
+        "reasoning": "DoD became largest shareholder of MP Materials in July 2025. China imposed sweeping rare earth sector controls in October 2025. MP is building a 10X facility to match total US consumption of NdFeB magnets by 2028. Stock ran $18 to $100 on the DoD deal, now at $57 — 42% below highs. The real catalysts (10X facility, China restriction impact) are still ahead.",
+        "edge": "DoD equity stake means there is now a government buyer with unlimited backstop interest. China tightening controls in October 2025 confirms the urgency. Stock is off highs because the market priced the announcement, not the execution.",
+        "counter": "MP ran 3x from its low already. Execution risk on the 10X facility is real — it does not open until 2028. Rare earth processing profitability swings with global prices. At $57, you are not getting in cheap.",
+        "price_ladder": [
+          {
+            "price": 41.66,
+            "pnl_pct": -28,
+            "pnl_dollars": -28000,
+            "label": "stop loss (IV-implied downside)"
+          },
+          {
+            "price": 57.94,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry (42% below DoD deal highs)"
+          },
+          {
+            "price": 81.2,
+            "pnl_pct": 40,
+            "pnl_dollars": 40000,
+            "label": "IV-implied 90d target"
+          },
+          {
+            "price": 100.25,
+            "pnl_pct": 73,
+            "pnl_dollars": 73000,
+            "label": "reclaim 52W high (DoD deal re-rate)"
+          },
+          {
+            "price": 120,
+            "pnl_pct": 107,
+            "pnl_dollars": 107000,
+            "label": "10X facility confirmed on track"
+          }
+        ],
+        "alternative": "HII $425 long (only US nuclear sub builder, $57B backlog — defense reshoring but execution risk on shipyard labor)",
+        "scan_source": "YouTube — China Maxing (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "Out of 100 things made in the military, there are like 80 that the process is traced back to China. If there were a conflict, these factories get cut off and suddenly you cannot make drones or bullets.",
+              "speaker": "creator"
+            }
+          ],
+          "steps": [
+            {
+              "text": "80% of US military production traces back to Chinese supply chains",
+              "segment": 0
+            },
+            {
+              "text": "rare earth magnets are in every drone, fighter jet, and guided missile — the atom of atoms"
+            },
+            {
+              "text": "DoD became the largest shareholder in MP Materials in July 2025 to fix this — and China tightened rare earth controls in October 2025 confirming the urgency"
+            },
+            {
+              "text": "MP is down 42% from its DoD-deal high while the fundamental situation has gotten more urgent, not less"
+            }
+          ],
+          "chose_over": "HII (shipbuilding pure-play but execution risk and near 52W highs), LMT/RTX (diversified, consensus) — MP is the most direct critical minerals expression"
+        }
+      }
+    },
+    {
+      "id": "64f8db31-d",
+      "thesis": "Enterprise data sovereignty fears are redirecting AI capex from cloud to owned hardware",
+      "ticker": "DELL",
+      "direction": "long",
+      "entry_price": 116.78,
+      "breakeven": "+EV above 41%",
+      "kills": "enterprise AI capex freezes, DeepSeek-style efficiency kills server demand",
+      "caller_id": "u_satoshi",
+      "source_handle": "chamath",
+      "source_url": "https://x.com/chamath/status/2022009107964899755",
+      "source_date": "2026-02-12",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_chamath",
+      "source_id": "src_007",
+      "ticker_id": "tkr_dell",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T04:22:39.421Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "Is on-premise the new cloud? I'm beginning to think yes. It's the only way for companies to not blow themselves up and have some semblance of capability in an AI world.",
+        "author_thesis": "Is on-premise the new cloud? I'm beginning to think yes. It's the only way for companies to not blow themselves up and have some semblance of capability in an AI world.",
+        "segments": [
+          {
+            "quote": "Is on-premise the new cloud? I'm beginning to think yes. It's the only way for companies to not blow themselves up and have some semblance of capability in an AI world.",
+            "speaker": "chamath"
+          },
+          {
+            "quote": "How many white collar workers are currently feverishly uploading decks, models, PDFs and other documents into open LLMs",
+            "speaker": "chamath"
+          }
+        ],
+        "reasoning": "Enterprise spending shifting from cloud to owned infrastructure due to data sovereignty concerns. DELL's AI server backlog of $18.4B with $12.3B new orders in one quarter is being ignored by a market that still prices it as a PC maker.",
+        "edge": "PC company multiple on an AI infrastructure company with an $18.4B backlog",
+        "counter": "DeepSeek-style efficiency gains could reduce enterprise server demand",
+        "price_ladder": [
+          {
+            "price": 93.39,
+            "pnl_pct": -20,
+            "pnl_dollars": -20300,
+            "label": "stop loss, thesis wrong"
+          },
+          {
+            "price": 124,
+            "pnl_pct": 6,
+            "pnl_dollars": 6200,
+            "label": "reclaim 50-day MA"
+          },
+          {
+            "price": 150.19,
+            "pnl_pct": 29,
+            "pnl_dollars": 28600,
+            "label": "IV-derived target, 90d"
+          },
+          {
+            "price": 168.08,
+            "pnl_pct": 44,
+            "pnl_dollars": 43800,
+            "label": "retest 52W high"
+          }
+        ],
+        "alternative": "HPE $21.55 long (same thesis, lower margins, 19% below 52W high)",
+        "scan_source": "@chamath tweet (Feb 12, 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "Is on-premise the new cloud? I'm beginning to think yes.",
+              "speaker": "chamath"
+            },
+            {
+              "quote": "How many white collar workers are currently feverishly uploading decks, models, PDFs and other documents into open LLMs",
+              "speaker": "chamath"
+            }
+          ],
+          "steps": [
+            {
+              "text": "on-prem is winning: enterprises won't trust proprietary data to cloud AI",
+              "segment": 0
+            },
+            {
+              "text": "confidentiality is the forcing function — legal, financial, and healthcare data can't go to open LLMs",
+              "segment": 1
+            },
+            {
+              "text": "DELL has $18.4B AI server backlog, guided FY2026 AI server revenue to $25B (up from $20B), $12.3B in new orders in Q3 alone"
+            },
+            {
+              "text": "market prices DELL at $116 — 30% below highs — as a PC company while the server business grows at record pace"
+            }
+          ],
+          "chose_over": "HPE (lower margin), SMCI (supply chain concerns)"
+        }
+      }
+    },
+    {
+      "id": "21eca4de-0",
+      "thesis": "MSFT's OpenAI investment has not been value-accretive; AI capex is a drag without proportional revenue uplift vs peers",
+      "ticker": "MSFT",
+      "direction": "short",
+      "entry_price": 399.6,
+      "breakeven": "+EV above 41%",
+      "kills": "Azure AI revenue accelerates sharply next earnings, MSFT unlocks OpenAI stake value",
+      "caller_id": "u_satoshi",
+      "source_handle": "chamath",
+      "source_url": "https://x.com/chamath/status/2021823986477510829",
+      "source_date": "2026-02-12",
+      "conviction": "high",
+      "call_type": "direct",
+      "author_id": "auth_chamath",
+      "source_id": "src_008",
+      "ticker_id": "tkr_msft",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T04:22:39.460Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "Microsoft has been the worst-performing stock of the hyperscalers since the November 30, 2022 launch of ChatGPT and has significantly underperformed the Nasdaq during that period.",
+        "author_thesis": "Microsoft has been the worst-performing stock of the hyperscalers since the November 30, 2022 launch of ChatGPT and has significantly underperformed the Nasdaq during that period.",
+        "author_ticker": "MSFT",
+        "author_direction": "short",
+        "segments": [
+          {
+            "quote": "Microsoft has been the worst-performing stock of the hyperscalers since the November 30, 2022 launch of ChatGPT and has significantly underperformed the Nasdaq during that period.",
+            "speaker": "chamath"
+          }
+        ],
+        "reasoning": "MSFT's $13B+ OpenAI bet has generated no stock alpha while peers captured AI gains directly. Azure AI capex is rising while revenue growth lags. IV at 26% is cheap for this setup.",
+        "edge": "Market prices MSFT as low-volatility blue chip; doesn't discount OpenAI illiquidity or capex drag",
+        "counter": "Azure AI revenue could accelerate sharply in next earnings cycle",
+        "price_ladder": [
+          {
+            "price": 436.14,
+            "pnl_pct": -9,
+            "pnl_dollars": -9100,
+            "label": "stop loss, thesis wrong"
+          },
+          {
+            "price": 370,
+            "pnl_pct": 7,
+            "pnl_dollars": 7400,
+            "label": "prior support"
+          },
+          {
+            "price": 347.4,
+            "pnl_pct": 13,
+            "pnl_dollars": 13100,
+            "label": "IV-derived target, 90d"
+          },
+          {
+            "price": 330,
+            "pnl_pct": 17,
+            "pnl_dollars": 17400,
+            "label": "retest pre-AI-hype range"
+          }
+        ],
+        "alternative": "AMZN $204.79 long (same thesis from the winning side — AWS is the clean AI infra play)",
+        "scan_source": "@chamath tweet (Feb 12, 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "Microsoft has been the worst-performing stock of the hyperscalers since the November 30, 2022 launch of ChatGPT and has significantly underperformed the Nasdaq during that period.",
+              "speaker": "chamath"
+            }
+          ],
+          "steps": [
+            {
+              "text": "MSFT worst-performing hyperscaler since ChatGPT launch, significantly underperformed Nasdaq",
+              "segment": 0
+            },
+            {
+              "text": "META up 454%, AMZN and GOOG both beat Nasdaq in same period — MSFT alone lagged"
+            },
+            {
+              "text": "MSFT committed $13B+ to OpenAI; investment is illiquid, unmonetized in current earnings, while capex balloons for Azure AI infra"
+            },
+            {
+              "text": "IV at 26% prices MSFT as a stable blue chip — market isn't discounting the OpenAI overhang"
+            }
+          ],
+          "chose_over": "AMZN short (wrong direction — AWS is the winner), SQQQ (too diluted)"
+        }
+      }
+    },
+    {
+      "id": "6f1aeb7a-d",
+      "thesis": "Power infrastructure is the multiplicative constraint on AI — nuclear is the only carbon-free baseload that scales for data centers",
+      "ticker": "CEG",
+      "direction": "long",
+      "entry_price": 294.05,
+      "breakeven": "+EV above 41%",
+      "kills": "data center power demand stalls, nuclear regulation tightens, AI capex freezes across hyperscalers",
+      "caller_id": "u_satoshi",
+      "source_handle": "chamath",
+      "source_url": "https://x.com/chamath/status/2023826795448217714",
+      "source_date": "2026-02-17",
+      "conviction": "high",
+      "call_type": "derived",
+      "author_id": "auth_chamath",
+      "source_id": "src_009",
+      "ticker_id": "tkr_ceg",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T04:22:39.481Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "f(i) = p x c x a — if power is negative, intelligence is zero.",
+        "author_thesis": "f(i) = p x c x a where i=intelligence, p=power, c=compute, a=algorithms, multiplied together. This means negative any one = zero intelligence.",
+        "segments": [
+          {
+            "quote": "f(i) = p x c x a where i=intelligence, p=power, c=compute, a=algorithms, multiplied together. This means negative any one = zero intelligence.",
+            "speaker": "chamath"
+          }
+        ],
+        "reasoning": "AI power demand is multiplicative — if power fails, no AI. Nuclear is the only solution providing carbon-free always-on baseload at scale. CEG has signed deals with Meta (20yr PPA) and Microsoft (TMI restart) locking in decade-long revenue.",
+        "edge": "29% pullback from highs despite signed multi-decade PPAs with Meta and Microsoft — revenue is locked in, market missed the re-entry",
+        "counter": "Nuclear regulation or safety incident could halt a plant",
+        "price_ladder": [
+          {
+            "price": 229.27,
+            "pnl_pct": -22,
+            "pnl_dollars": -22000,
+            "label": "stop loss, thesis wrong"
+          },
+          {
+            "price": 323.98,
+            "pnl_pct": 10,
+            "pnl_dollars": 10200,
+            "label": "reclaim 50-day MA"
+          },
+          {
+            "price": 386.59,
+            "pnl_pct": 31,
+            "pnl_dollars": 31500,
+            "label": "IV-derived target, 90d"
+          },
+          {
+            "price": 412.7,
+            "pnl_pct": 40,
+            "pnl_dollars": 40400,
+            "label": "retest 52W high"
+          }
+        ],
+        "alternative": "CCJ $116.50 long (uranium fuel supply — benefits from same nuclear buildout, less PPA lock-in)",
+        "scan_source": "@chamath tweet (Feb 17, 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "f(i) = p x c x a — negative any factor = zero intelligence",
+              "speaker": "chamath"
+            }
+          ],
+          "steps": [
+            {
+              "text": "power is the multiplicative constraint — every AI cluster needs 24/7 baseload, not intermittent renewables",
+              "segment": 0
+            },
+            {
+              "text": "nuclear is the only carbon-free baseload that scales: CEG signed 20-year PPA with Meta (June 2025), restarted TMI for Microsoft"
+            },
+            {
+              "text": "CEG at $294 — 29% below $412 high — despite locked multi-decade revenue from the two largest AI spenders on earth"
+            }
+          ],
+          "chose_over": "CCJ (uranium, one step removed from PPA revenue), VST (nat gas, no carbon-free advantage), NRG (no nuclear focus)"
+        }
+      }
+    },
+    {
+      "id": "24362ed0-7",
+      "thesis": "Passive flows propped up overvalued growth stocks for 15 years. As flows stall, pure value stocks re-rate upward.",
+      "ticker": "RPV",
+      "direction": "long",
+      "entry_price": 113.31,
+      "breakeven": "+EV above 40%",
+      "kills": "tech earnings reaccelerate, passive flows resume at scale",
+      "caller_id": "u_satoshi",
+      "source_handle": "akshaybd",
+      "source_url": "https://x.com/akshaybd/status/2017858554871570655",
+      "source_date": "2026-02-01",
+      "conviction": null,
+      "call_type": "derived",
+      "author_id": "auth_akshaybd",
+      "source_id": "src_010",
+      "ticker_id": "tkr_rpv",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T06:46:14.816Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "the *secular* bull mkt in tech is over. inflation kills long duration assets. cashflow is king.",
+        "author_thesis": "the secular bull mkt in tech is over. if ai fulfills its promise, lots of software goes to zero. if ai doesn't, most of software goes to zero. inflation kills long duration assets. cashflow is king.",
+        "segments": [
+          {
+            "quote": "the *secular* bull mkt in tech is over",
+            "speaker": "akshaybd"
+          },
+          {
+            "quote": "financial engineering papered over by unstoppable passive flows has been at the heart of price action of many US public companies. as flows stall, it'll force a [reckoning]",
+            "speaker": "akshaybd"
+          }
+        ],
+        "reasoning": "Passive flows propped up growth for 15 years. When they stall, the most inflated stocks suffer most. RPV holds the cheapest S&P 500 stocks by every valuation metric. In early 2026, value is up 8.5% while growth is down 4.7%. The secular rotation has started but most investors still treat it as tactical.",
+        "edge": "Most investors treat value outperformance as a tactical rotation. Akshay is calling it a 15-year regime change. If secular, RPV near 52W high is the beginning, not the end.",
+        "counter": "Tech earnings could reaccelerate from AI monetization, pulling flows back to growth. Passive flows show no structural sign of slowing globally.",
+        "price_ladder": [
+          {
+            "price": 101.98,
+            "pnl_pct": -10,
+            "pnl_dollars": -997,
+            "label": "10% drawdown, thesis stalls"
+          },
+          {
+            "price": 113.31,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry"
+          },
+          {
+            "price": 130.31,
+            "pnl_pct": 15,
+            "pnl_dollars": 1496,
+            "label": "value leads next leg"
+          },
+          {
+            "price": 147.3,
+            "pnl_pct": 30,
+            "pnl_dollars": 2991,
+            "label": "secular rotation confirmed"
+          }
+        ],
+        "alternative": "VLUE $152.30 long (similar thesis, MSCI value factor, less pure tilt)",
+        "scan_source": "@akshaybd tweets (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "the *secular* bull mkt in tech is over",
+              "speaker": "akshaybd"
+            },
+            {
+              "quote": "financial engineering papered over by unstoppable passive flows has been at the heart of price action of many US public companies. as flows stall, it'll force a [reckoning]",
+              "speaker": "akshaybd"
+            }
+          ],
+          "steps": [
+            {
+              "text": "passive flows have been propping up overvalued growth stocks for 15 years",
+              "segment": 1
+            },
+            {
+              "text": "when flows stall, the companies most inflated by index inclusion suffer most",
+              "segment": 1
+            },
+            {
+              "text": "RPV holds the cheapest S&P 500 stocks by book value, earnings, and sales. it is the anti-passive play"
+            }
+          ],
+          "chose_over": "SQQQ (decay makes it unsuitable for secular thesis), IGV puts (software already -30%, edge is Consensus)"
+        }
+      }
+    },
+    {
+      "id": "00647c32-0",
+      "thesis": "European financials re-rate from single-digit P/E toward US bank multiples as capital rotates out of US tech dominance.",
+      "ticker": "EUFN",
+      "direction": "long",
+      "entry_price": 37.62,
+      "breakeven": "+EV above 35%",
+      "kills": "ECB rate cuts stall earnings growth, EU recession materializes",
+      "caller_id": "u_satoshi",
+      "source_handle": "akshaybd",
+      "source_url": "https://x.com/akshaybd/status/2023782015301284325",
+      "source_date": "2026-02-17",
+      "conviction": null,
+      "call_type": "derived",
+      "author_id": "auth_akshaybd",
+      "source_id": "src_011",
+      "ticker_id": "tkr_eufn",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T06:46:28.239Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "european banks outperformed the mag7 in the last year (and YTD). the next cycle's breakout assets may not be low calorie",
+        "author_thesis": "european banks outperformed the mag7 in the last year (and YTD). the next cycle's breakout assets may not be low calorie",
+        "author_direction": "long",
+        "segments": [
+          {
+            "quote": "european banks outperformed the mag7 in the last year (and YTD)",
+            "speaker": "akshaybd"
+          },
+          {
+            "quote": "the bet is simply that the pendulum will swing back from peak US (v. international)",
+            "speaker": "akshaybd"
+          }
+        ],
+        "reasoning": "European banks had their best year ever in 2025 (+76%). Despite that, they still trade at single-digit P/E. US tech trades at 30x+. The capital rotation from US to international is just getting started. JPM forecasts 9.7% earnings growth through 2027 with continued buybacks.",
+        "edge": "76% rally in 2025 looks like consensus. But European banks still trade at 7-8x P/E vs US banks at 12-15x. The rally was earnings catch-up; the re-rating to fair multiples has not happened yet.",
+        "counter": "European banks already rallied 76% in 2025. The easy money may be made. EU growth is fragile and geopolitical risk (Ukraine, energy) persists.",
+        "price_ladder": [
+          {
+            "price": 33.86,
+            "pnl_pct": -10,
+            "pnl_dollars": -996,
+            "label": "10% pullback"
+          },
+          {
+            "price": 37.62,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry"
+          },
+          {
+            "price": 45,
+            "pnl_pct": 19.6,
+            "pnl_dollars": 1956,
+            "label": "P/E re-rating begins"
+          },
+          {
+            "price": 52,
+            "pnl_pct": 38.2,
+            "pnl_dollars": 3811,
+            "label": "convergence with US bank multiples"
+          }
+        ],
+        "alternative": "EFA $104.34 long (broader international, less concentrated in financials)",
+        "scan_source": "@akshaybd tweets (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "european banks outperformed the mag7 in the last year (and YTD)",
+              "speaker": "akshaybd"
+            },
+            {
+              "quote": "the bet is simply that the pendulum will swing back from peak US (v. international)",
+              "speaker": "akshaybd"
+            }
+          ],
+          "steps": [
+            {
+              "text": "European banks outperformed Mag7 in 2025 and YTD 2026",
+              "segment": 0
+            },
+            {
+              "text": "despite a 76% rally in 2025, they still trade at single-digit P/E. US tech trades at 30x+",
+              "segment": 1
+            },
+            {
+              "text": "JPM forecasts 9.7% earnings growth through 2027 with continued buybacks. the P/E convergence has barely started"
+            }
+          ],
+          "chose_over": "EFA (broader but diluted, includes non-financials), individual European bank ADRs (less accessible)"
+        }
+      }
+    },
+    {
+      "id": "a62faa7c-b",
+      "thesis": "Every macro trend (AI, reshoring, EVs, defense) converges on electrical infrastructure. Eaton is the picks-and-shovels play from grid to chip.",
+      "ticker": "ETN",
+      "direction": "long",
+      "entry_price": 380.38,
+      "breakeven": "+EV above 30%",
+      "kills": "infrastructure spending delayed by Congress, data center buildout slows",
+      "caller_id": "u_satoshi",
+      "source_handle": "akshaybd",
+      "source_url": "https://x.com/akshaybd/status/2020410434130702525",
+      "source_date": "2026-02-08",
+      "conviction": null,
+      "call_type": "derived",
+      "author_id": "auth_akshaybd",
+      "source_id": "src_012",
+      "ticker_id": "tkr_etn",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T06:46:44.317Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "electricity is the new oil. entering a golden age for electrification driven by reshoring, data centre needs, and energy independence",
+        "author_thesis": "electricity is the new oil. entering a golden age for electrification driven by reshoring, data centre needs, and energy independence",
+        "segments": [
+          {
+            "quote": "electricity is the new oil. entering a golden age for electrification driven by reshoring, data centre needs, and energy independence",
+            "speaker": "akshaybd"
+          }
+        ],
+        "reasoning": "Every trend Akshay names needs electrical infrastructure. AI needs data centers, reshoring needs factories, EVs need chargers, defense needs secure power. Eaton makes the electrical components from grid to chip. Record Q3 2025, accelerating orders, $1.2B invested in manufacturing.",
+        "edge": "Market prices ETN as a cyclical industrial. But electrification is secular, not cyclical. Record orders and backlog growth confirm multi-year demand, not a one-time spike.",
+        "counter": "ETN already up 64% from 52W low. Valuation is stretched. If data center capex pauses (as some hyperscalers hinted), orders could decelerate.",
+        "price_ladder": [
+          {
+            "price": 342.34,
+            "pnl_pct": -10,
+            "pnl_dollars": -989,
+            "label": "10% pullback, capex concerns"
+          },
+          {
+            "price": 380.38,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry"
+          },
+          {
+            "price": 437.44,
+            "pnl_pct": 15,
+            "pnl_dollars": 1484,
+            "label": "grid buildout continues"
+          },
+          {
+            "price": 494.49,
+            "pnl_pct": 30,
+            "pnl_dollars": 2967,
+            "label": "backlog converts, secular re-rate"
+          }
+        ],
+        "alternative": "PWR $519.31 long (transmission/distribution focus, similar thesis exposure)",
+        "scan_source": "@akshaybd tweets (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "electricity is the new oil. entering a golden age for electrification driven by reshoring, data centre needs, and energy independence",
+              "speaker": "akshaybd"
+            }
+          ],
+          "steps": [
+            {
+              "text": "every trend Akshay names: AI, reshoring, EVs, defense. all of them need power and grid infrastructure",
+              "segment": 0
+            },
+            {
+              "text": "ETN makes the electrical components from grid to chip. $1.2B invested in North American manufacturing since 2023"
+            },
+            {
+              "text": "record Q3 2025 with accelerating orders and growing backlog. $1.2 trillion in IIJA funding flows through their products"
+            }
+          ],
+          "chose_over": "PWR (transmission only, narrower), XLU (utilities are partial, not infrastructure builders)"
+        }
+      }
+    },
+    {
+      "id": "ad074dd4-6",
+      "thesis": "Copper is the physical world's bottleneck resource. Inflation, electrification, data centers, and atoms > bits all converge on it.",
+      "ticker": "FCX",
+      "direction": "long",
+      "entry_price": 62.55,
+      "breakeven": "+EV above 25%",
+      "kills": "copper surplus materializes, global recession kills demand",
+      "caller_id": "u_satoshi",
+      "source_handle": "akshaybd",
+      "source_url": "https://x.com/akshaybd/status/2022370256698917068",
+      "source_date": "2026-02-13",
+      "conviction": null,
+      "call_type": "derived",
+      "author_id": "auth_akshaybd",
+      "source_id": "src_013",
+      "ticker_id": "tkr_fcx",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T06:46:54.835Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "inflation is a monetary phenomenon. tech people calling for deflation will likely be wrong. if you're in bits, pivot to atoms.",
+        "author_thesis": "inflation is a monetary phenomenon. tech people calling for deflation will likely be wrong",
+        "segments": [
+          {
+            "quote": "inflation is a monetary phenomenon. tech people calling for deflation will likely be wrong",
+            "speaker": "akshaybd"
+          },
+          {
+            "quote": "if you're in bits, pivot to atoms",
+            "speaker": "akshaybd"
+          }
+        ],
+        "reasoning": "Copper is the physical world's bottleneck resource. Electrification needs copper for every wire and connection. Data centers need 50,000 tonnes each. The International Copper Study Group forecasts a 150,000 tonne deficit in 2026. JP Morgan says 330,000 tonnes. FCX is the largest publicly traded copper producer.",
+        "edge": "Market treats FCX as a cyclical commodity stock. But copper demand is structurally growing from electrification, AI infrastructure, and grid modernization simultaneously. The supply deficit is fundamental, not cyclical.",
+        "counter": "Red Cloud forecasts a 126,000 tonne surplus in 2026 from tariff-related demand destruction. If global recession hits, copper is historically volatile to the downside.",
+        "price_ladder": [
+          {
+            "price": 56.3,
+            "pnl_pct": -10,
+            "pnl_dollars": -994,
+            "label": "demand softens, surplus scenario"
+          },
+          {
+            "price": 62.55,
+            "pnl_pct": 0,
+            "pnl_dollars": 0,
+            "label": "entry"
+          },
+          {
+            "price": 69.44,
+            "pnl_pct": 11,
+            "pnl_dollars": 1095,
+            "label": "retest 52W high"
+          },
+          {
+            "price": 80,
+            "pnl_pct": 28,
+            "pnl_dollars": 2775,
+            "label": "copper deficit priced in"
+          },
+          {
+            "price": 90,
+            "pnl_pct": 44,
+            "pnl_dollars": 4367,
+            "label": "electrification supercycle"
+          }
+        ],
+        "alternative": "BHP $74.53 long (diversified miner, broader commodity exposure, lower beta)",
+        "scan_source": "@akshaybd tweets (Feb 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "inflation is a monetary phenomenon. tech people calling for deflation will likely be wrong",
+              "speaker": "akshaybd"
+            },
+            {
+              "quote": "if you're in bits, pivot to atoms",
+              "speaker": "akshaybd"
+            }
+          ],
+          "steps": [
+            {
+              "text": "inflation persists. commodity prices rise with the money supply",
+              "segment": 0
+            },
+            {
+              "text": "copper sits at the intersection of every leg: electrification needs it, data centers need it, the grid needs it",
+              "segment": 1
+            },
+            {
+              "text": "International Copper Study Group forecasts 150,000 tonne deficit in 2026. JP Morgan says 330,000 tonnes"
+            }
+          ],
+          "chose_over": "GLD (pure inflation but Consensus, up 75% already), BHP (diversified but lower beta to copper supply deficit)"
+        }
+      }
+    },
+    {
+      "id": "2adf621a-1",
+      "thesis": "Crowded duration positioning creates volatility risk regardless of rate direction",
+      "ticker": "IVOL",
+      "direction": "long",
+      "entry_price": 18.99,
+      "breakeven": "+EV above 28%",
+      "kills": "rates glide smoothly, no vol event by Q3",
+      "caller_id": "u_satoshi",
+      "source_handle": "marginsmall",
+      "source_url": "https://x.com/marginsmall/status/2024598307335786811",
+      "source_date": "2026-02-19",
+      "conviction": null,
+      "call_type": "derived",
+      "author_id": "auth_marginsmall",
+      "source_id": "src_014",
+      "ticker_id": "tkr_ivol",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-19T21:41:38.647Z",
+      "instrument": "etf",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "market all in on duration mismatch",
+        "author_thesis": "market all in on duration mismatch",
+        "segments": [
+          {
+            "quote": "market all in on duration mismatch",
+            "speaker": "marginsmall"
+          }
+        ],
+        "reasoning": "Crowded duration positioning creates volatility risk regardless of rate direction. IVOL holds OTC interest rate options that gain value when the yield curve moves sharply.",
+        "edge": "Nobody positioning for rate volatility itself. Market focused on direction (up or down), not the crowding risk.",
+        "counter": "Rates could glide smoothly lower as the Fed cuts methodically, and crowded trades unwind gradually without a vol event.",
+        "price_ladder": [
+          {
+            "price": 14.22,
+            "pnl_pct": -25.12,
+            "pnl_dollars": -25100,
+            "label": "crowding resolves gently, vol stays flat"
+          },
+          {
+            "price": 20.26,
+            "pnl_pct": 6.7,
+            "pnl_dollars": 6700,
+            "label": "retest 52W high, mild vol spike"
+          },
+          {
+            "price": 23,
+            "pnl_pct": 21.1,
+            "pnl_dollars": 21100,
+            "label": "moderate curve dislocation"
+          },
+          {
+            "price": 25.8,
+            "pnl_pct": 35.9,
+            "pnl_dollars": 35900,
+            "label": "full unwind, rate vol spikes"
+          }
+        ],
+        "alternative": "KRE $71 puts (SVB replay, banks eat duration losses)",
+        "scan_source": "@marginsmall tweet (Feb 19, 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "market all in on duration mismatch",
+              "speaker": "marginsmall"
+            }
+          ],
+          "steps": [
+            {
+              "text": "market all in on duration mismatch",
+              "segment": 0
+            },
+            {
+              "text": "hedge funds running leveraged Treasury spread trades showing signs of strain and early deleveraging (Bloomberg, Feb 5)"
+            },
+            {
+              "text": "the risk from crowded positioning is not directional. it is volatility. when everyone unwinds the same trade, the curve whips regardless of where rates settle"
+            }
+          ],
+          "chose_over": "TBT (directional, decays daily), KRE puts (SVB replay, already priced since 2023)"
+        }
+      }
+    },
+    {
+      "id": "7f40b1f3-f",
+      "thesis": "Test entity creation on ingest",
+      "ticker": "TEST",
+      "direction": "long",
+      "entry_price": 100,
+      "breakeven": null,
+      "kills": null,
+      "caller_id": "u_satoshi",
+      "source_handle": "test_newauthor",
+      "source_url": "https://x.com/test_newauthor/status/999",
+      "source_date": "2026-02-20",
+      "conviction": null,
+      "call_type": "direct",
+      "author_id": "9524f767-7",
+      "source_id": "099f600c-3",
+      "ticker_id": "e87dd883-f",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": "2026-02-20T10:00:00Z",
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-20T18:31:30.593Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {}
+    },
+    {
+      "id": "626c2ba3-1",
+      "thesis": "Three megatrends (AI compute, monetary debasement, industrial reshoring) converge on energy supply that has been structurally underbuilt. Existing nuclear operators are the only immediate beneficiary.",
+      "ticker": "CEG",
+      "direction": "long",
+      "entry_price": 294.5,
+      "breakeven": "+EV above 12%",
+      "kills": "nuclear relicensing delays, natural gas wins AI power race faster",
+      "caller_id": "u_satoshi",
+      "source_handle": "akshaybd",
+      "source_url": "https://x.com/akshaybd/status/2024867338424922455",
+      "source_date": "2026-02-20",
+      "conviction": null,
+      "call_type": "derived",
+      "author_id": "auth_akshaybd",
+      "source_id": "961e6b77-2",
+      "ticker_id": "tkr_ceg",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-20T19:32:10.444Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "all of our future ambitions (good money, infinite intelligence, national capacity) are a bid on energy -- and we have underinvested in the global energy for generation",
+        "author_thesis": "all of our future ambitions (good money, infinite intelligence, national capacity) are a bid on energy -- and we have underinvested in the global energy for generation",
+        "segments": [
+          {
+            "quote": "all of our future ambitions (good money, infinite intelligence, national capacity) are a bid on energy -- and we have underinvested in the global energy for generation",
+            "speaker": "akshaybd"
+          }
+        ],
+        "reasoning": "The tweet frames energy as the foundational input to civilization's next chapter. Three distinct demand curves converge on supply that has been underbuilt. Nuclear operators with existing plants and signed PPAs capture the AI demand directly without the lead time of new construction.",
+        "edge": "CEG is 29% off its 52W high of $412 while the AI PPA thesis has gotten stronger. Three Mile Island is operating. More PPAs are being signed. The market derisked the trade; the fundamentals did not.",
+        "counter": "Natural gas plus carbon capture deploys faster and cheaper than nuclear restarts. Grid interconnection queues slow data center buildout near nuclear sites.",
+        "price_ladder": [
+          {
+            "price": 258.06,
+            "pnl_pct": -12,
+            "pnl_dollars": -12000,
+            "label": "stop loss"
+          },
+          {
+            "price": 346.56,
+            "pnl_pct": 18,
+            "pnl_dollars": 18000,
+            "label": "recover 50-day MA"
+          },
+          {
+            "price": 380,
+            "pnl_pct": 29,
+            "pnl_dollars": 29000,
+            "label": "retest prior consolidation zone"
+          },
+          {
+            "price": 412.7,
+            "pnl_pct": 40,
+            "pnl_dollars": 40000,
+            "label": "retest 52W high"
+          }
+        ],
+        "alternative": "CCJ $119.87 long (upstream uranium, more leveraged to nuclear capacity growth, higher IV at 64%)",
+        "scan_source": "@akshaybd tweet (Feb 20, 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "all of our future ambitions (good money, infinite intelligence, national capacity) are a bid on energy -- and we have underinvested in the global energy for generation",
+              "speaker": "akshaybd"
+            }
+          ],
+          "steps": [
+            {
+              "text": "three megatrends converge on one input: AI inference runs on power, dollar debasement drives capital into hard energy assets, reshoring puts manufacturing load back onshore",
+              "segment": 0
+            },
+            {
+              "text": "nuclear is the only baseload source that scales without emissions constraints and can contract directly with AI data centers today"
+            },
+            {
+              "text": "CEG restarted Three Mile Island in September 2024 for a direct Microsoft PPA. the model is replicable across its existing fleet"
+            },
+            {
+              "text": "CEG has pulled back from $412 to $295 while the AI PPA model has gotten more proven, not less. market skepticism here is an entry, not a warning"
+            }
+          ],
+          "chose_over": "CCJ (uranium miner, one step upstream, more commodity exposure than operator exposure), PWR (grid infrastructure, benefits all energy scenarios but already at 52W highs)"
+        }
+      }
+    },
+    {
+      "id": "39461bc4-e",
+      "thesis": "permalink test",
+      "ticker": "TEST",
+      "direction": "long",
+      "entry_price": 1,
+      "breakeven": null,
+      "kills": null,
+      "caller_id": "u_satoshi",
+      "source_handle": null,
+      "source_url": null,
+      "source_date": null,
+      "conviction": null,
+      "call_type": "original",
+      "author_id": null,
+      "source_id": null,
+      "ticker_id": "e87dd883-f",
+      "submitted_by": "u_satoshi",
+      "price_captured_at": null,
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-20T19:35:59.930Z",
+      "instrument": null,
+      "platform": null,
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {}
+    },
+    {
+      "id": "9dc252ec-9",
+      "thesis": "SOL momentum is pivoting. Sellers are exhausted after front-running the risk contraction. Bad news absorption signals the bottom.",
+      "ticker": "SOL",
+      "direction": "long",
+      "entry_price": 84.37,
+      "breakeven": "SOL stays above $84.60 (0.3% covers 30d funding at 3.35% annualized)",
+      "kills": "sustained macro risk-off if tariffs actually escalate, BTC breaks below $50K dragging all crypto, SOL-specific regulatory news",
+      "caller_id": "anon",
+      "source_handle": "punter_punts",
+      "source_url": "https://x.com/punter_punts/status/2024928536214069366",
+      "source_date": "2026-02-20",
+      "conviction": null,
+      "call_type": "direct",
+      "author_id": "7a68d274-2",
+      "source_id": "7a11f8d5-1",
+      "ticker_id": "30417e01-0",
+      "submitted_by": "anon",
+      "price_captured_at": "2026-02-20T22:00:00Z",
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-20T22:25:58.497Z",
+      "instrument": "perps",
+      "platform": "hyperliquid",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "crypto is not as sensitive to bad news currently as it already frontran the contraction of risk; it's horrendously beaten down. the classic adage: when bad news stops being treated as bad news, signals pivot points in momentum",
+        "author_thesis": "Crypto has already front-run the risk contraction. SOL shrugged off tariff news. When bad news stops being treated as bad news, that signals a momentum pivot.",
+        "author_ticker": "SOL",
+        "author_direction": "long",
+        "segments": [
+          {
+            "quote": "crypto is not as sensitive to bad news currently as it already frontran the contraction of risk; it's horrendously beaten down",
+            "speaker": "punter_punts"
+          },
+          {
+            "quote": "when bad news stops being treated as bad news, signals pivot points in momentum",
+            "speaker": "punter_punts"
+          }
+        ],
+        "reasoning": "Momentum pivot thesis. SOL absorbed tariff news without breaking down. At $84, it's down ~60% from ATH. 3x perp on HL with 3.35% annualized funding is essentially free leverage with no expiry.",
+        "edge": "101% annualized realized vol at $84 price level. Funding at 3.35% means longs are not crowded. SOL absorbed Supreme Court tariff news with a muted reaction, then reverted the headline candle entirely.",
+        "counter": "Tariff posturing could escalate into actual legislation. If BTC breaks $50K support, SOL correlates and the momentum pivot thesis fails.",
+        "price_ladder": [
+          {
+            "price": 56.24,
+            "pnl_pct": -100,
+            "pnl_dollars": -100,
+            "label": "liquidation at 3x"
+          },
+          {
+            "price": 71.71,
+            "pnl_pct": -45,
+            "pnl_dollars": -45,
+            "label": "stop loss, SOL -15%"
+          },
+          {
+            "price": 101.24,
+            "pnl_pct": 60,
+            "pnl_dollars": 60,
+            "label": "SOL reclaims $100"
+          },
+          {
+            "price": 126.55,
+            "pnl_pct": 150,
+            "pnl_dollars": 150,
+            "label": "retest Q4 2025 levels"
+          }
+        ],
+        "alternative": "Kalshi KXSOLMAXY-27JAN01-150 YES at 48c (108% return if SOL hits $150 before Jan 2027, but binary: zero if it only rallies 50%)",
+        "scan_source": "@punter_punts tweet (Feb 20, 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "crypto is not as sensitive to bad news currently as it already frontran the contraction of risk; it's horrendously beaten down",
+              "speaker": "punter_punts"
+            },
+            {
+              "quote": "when bad news stops being treated as bad news, signals pivot points in momentum",
+              "speaker": "punter_punts"
+            }
+          ],
+          "steps": [
+            {
+              "text": "SOL shrugged off tariff headlines that would have tanked it a month ago",
+              "segment": 0
+            },
+            {
+              "text": "when an asset stops going down on bad news, the sellers are exhausted",
+              "segment": 1
+            },
+            {
+              "text": "SOL on Hyperliquid at 3x with 3.35% annualized funding captures the reversal with defined risk and no theta decay"
+            }
+          ],
+          "chose_over": "Kalshi $150+ YES contracts (cheapest strike requires SOL to nearly double; binary with no partial credit if SOL rallies 30%)"
+        }
+      }
+    },
+    {
+      "id": "c21eff6e-1",
+      "thesis": "Market sold cybersecurity stocks indiscriminately on Claude Code Security news. CRWD does endpoint security, not code scanning, and partners with Anthropic. The sell-off is narrative contagion.",
+      "ticker": "CRWD",
+      "direction": "long",
+      "entry_price": 388.6,
+      "breakeven": "CRWD recovers above $388.60 (pre-announcement was ~$422)",
+      "kills": "Anthropic expands into endpoint security, broader SaaSpocalypse sell-off accelerates, CRWD earnings miss on March 3",
+      "caller_id": "anon",
+      "source_handle": "claudeai",
+      "source_url": "https://x.com/claudeai/status/2024907535145468326",
+      "source_date": "2026-02-20",
+      "conviction": null,
+      "call_type": "derived",
+      "author_id": "b36e38f3-0",
+      "source_id": "2cba2895-a",
+      "ticker_id": "f494d3d3-7",
+      "submitted_by": "anon",
+      "price_captured_at": "2026-02-20T22:30:00Z",
+      "status": "active",
+      "resolve_price": null,
+      "resolve_date": null,
+      "resolve_pnl": null,
+      "resolve_note": null,
+      "created_at": "2026-02-20T23:04:07.027Z",
+      "instrument": "stock",
+      "platform": "robinhood",
+      "votes": 0,
+      "watchers": 0,
+      "comments": 0,
+      "trade_data": {
+        "source_quote": "scans codebases for vulnerabilities and suggests targeted software patches for human review, allowing teams to find and fix issues that traditional tools often miss",
+        "author_thesis": "Claude Code Security scans codebases for vulnerabilities and suggests targeted software patches, finding issues that traditional tools often miss",
+        "conditions": "limited research preview",
+        "segments": [
+          {
+            "quote": "scans codebases for vulnerabilities and suggests targeted software patches for human review, allowing teams to find and fix issues that traditional tools often miss",
+            "speaker": "claudeai"
+          }
+        ],
+        "reasoning": "Claude Code Security targets development-phase code scanning, not runtime endpoint protection. Pure-play targets are private. Market sold the entire cybersecurity sector as proxy. CRWD is the most mispriced because it partners with Anthropic and operates in a different security segment entirely.",
+        "edge": "CRWD IV at 12.7% says options market thinks this is noise. CRWD partners with Anthropic. Endpoint security benefits from more AI threats, not less.",
+        "counter": "Anthropic could expand beyond code scanning into endpoint detection. The SaaSpocalypse narrative could intensify regardless of fundamentals. CRWD earnings March 3 could disappoint.",
+        "price_ladder": [
+          {
+            "price": 350,
+            "pnl_pct": -10,
+            "pnl_dollars": -972,
+            "label": "SaaSpocalypse accelerates, sector keeps selling"
+          },
+          {
+            "price": 371.45,
+            "pnl_pct": -4.4,
+            "pnl_dollars": -430,
+            "label": "stop loss"
+          },
+          {
+            "price": 422,
+            "pnl_pct": 8.6,
+            "pnl_dollars": 836,
+            "label": "recovers to pre-announcement level"
+          },
+          {
+            "price": 460,
+            "pnl_pct": 18.4,
+            "pnl_dollars": 1788,
+            "label": "reclaims 50-day MA"
+          }
+        ],
+        "alternative": "FROG short at $37.75 if you believe the disruption thesis has further to run despite the 25% same-day drop",
+        "scan_source": "@claudeai tweet (Feb 20, 2026)",
+        "derivation": {
+          "segments": [
+            {
+              "quote": "scans codebases for vulnerabilities... find and fix issues that traditional tools often miss",
+              "speaker": "claudeai"
+            }
+          ],
+          "steps": [
+            {
+              "text": "Claude Code Security displaces traditional vulnerability scanning tools (Veracode, Snyk, Checkmarx). all private, no public short.",
+              "segment": 0
+            },
+            {
+              "text": "market sells cybersecurity broadly: FROG -25%, CRWD -8%, NET -8%, OKTA -9%. the actual targets are private, so the market sells the public sector as proxy."
+            },
+            {
+              "text": "CRWD does endpoint security, not code scanning, and partners with Anthropic. the 8% sell-off is narrative contagion, not a fundamental threat to Falcon."
+            }
+          ],
+          "chose_over": "FROG short (edge gone after 25% same-day drop), BUG short (crowded at 52W low after months of SaaSpocalypse), NET long (less direct partnership angle)"
+        }
+      }
+    }
+  ],
+  "authors": [
+    {
+      "id": "auth_marginsmall",
+      "handle": "marginsmall",
+      "name": null,
+      "bio": "PQC, defense tech, asymmetric bets.",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1528733512861351936/0S5zDezo_400x400.jpg",
+      "twitter_url": "https://x.com/marginsmall",
+      "youtube_url": null,
+      "platform": "twitter",
+      "created_at": "2025-12-15T00:00:00Z"
+    },
+    {
+      "id": "auth_chamath",
+      "handle": "chamath",
+      "name": null,
+      "bio": "CEO of Social Capital. All-In Podcast.",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1883600182165848064/-9LbG3md_400x400.jpg",
+      "twitter_url": "https://x.com/chamath",
+      "youtube_url": null,
+      "platform": "twitter",
+      "created_at": "2026-02-16T00:00:00Z"
+    },
+    {
+      "id": "auth_threadguy",
+      "handle": "threadguy",
+      "name": null,
+      "bio": "Streams. Threads. Trades.",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1920651894982066176/ssOaEU8k_400x400.jpg",
+      "twitter_url": "https://x.com/notthreadguy",
+      "youtube_url": null,
+      "platform": "twitter",
+      "created_at": "2026-02-16T00:00:00Z"
+    },
+    {
+      "id": "auth_martinshkreli",
+      "handle": "martinshkreli",
+      "name": null,
+      "bio": "Pharma, biotech, deep value. You know who I am.",
+      "avatar_url": "https://pbs.twimg.com/profile_images/1904997844748005376/wFfbBUBD_400x400.jpg",
+      "twitter_url": "https://x.com/MartinShkreli",
+      "youtube_url": null,
+      "platform": "twitter",
+      "created_at": "2026-02-17T00:00:00Z"
+    },
+    {
+      "id": "auth_nicbstme",
+      "handle": "nicbstme",
+      "name": null,
+      "bio": "Financial data infrastructure, moat analysis.",
+      "avatar_url": null,
+      "twitter_url": "https://x.com/nicbstme",
+      "youtube_url": null,
+      "platform": "twitter",
+      "created_at": "2026-02-17T00:00:00Z"
+    },
+    {
+      "id": "auth_youtube_creator",
+      "handle": "youtube_creator",
+      "name": null,
+      "bio": null,
+      "avatar_url": null,
+      "twitter_url": "https://x.com/youtube_creator",
+      "youtube_url": null,
+      "platform": "youtube",
+      "created_at": "2026-02-19T00:33:03.205Z"
+    },
+    {
+      "id": "auth_akshaybd",
+      "handle": "akshaybd",
+      "name": null,
+      "bio": null,
+      "avatar_url": null,
+      "twitter_url": null,
+      "youtube_url": null,
+      "platform": "twitter",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "9524f767-7",
+      "handle": "test_newauthor",
+      "name": null,
+      "bio": null,
+      "avatar_url": null,
+      "twitter_url": "https://x.com/test_newauthor",
+      "youtube_url": null,
+      "platform": null,
+      "created_at": "2026-02-20T18:31:30.593Z"
+    },
+    {
+      "id": "7a68d274-2",
+      "handle": "punter_punts",
+      "name": null,
+      "bio": null,
+      "avatar_url": null,
+      "twitter_url": "https://x.com/punter_punts",
+      "youtube_url": null,
+      "platform": null,
+      "created_at": "2026-02-20T20:29:52.173Z"
+    },
+    {
+      "id": "b36e38f3-0",
+      "handle": "claudeai",
+      "name": null,
+      "bio": null,
+      "avatar_url": null,
+      "twitter_url": "https://x.com/claudeai",
+      "youtube_url": null,
+      "platform": null,
+      "created_at": "2026-02-20T23:04:07.027Z"
+    }
+  ],
+  "sources": [
+    {
+      "id": "src_001",
+      "url": "https://www.youtube.com/watch?v=allin-feb2026",
+      "title": "All-In Podcast (Feb 2026)",
+      "platform": "youtube",
+      "published_at": "2026-02-15",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_002",
+      "url": "https://www.youtube.com/watch?v=threadguy-feb16",
+      "title": "THREADGUY Stream (Feb 16, 2026)",
+      "platform": "youtube",
+      "published_at": "2026-02-16",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_003",
+      "url": null,
+      "title": "Martin Shkreli (Feb 2026)",
+      "platform": null,
+      "published_at": "2026-02-17",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_004",
+      "url": "https://x.com/nicbstme/status/2023501562480644501",
+      "title": "nicbstme AI vs Financial Data (Feb 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-17",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_005",
+      "url": null,
+      "title": "marginsmall (Feb 2026)",
+      "platform": null,
+      "published_at": "2026-02-15",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_006",
+      "url": "https://www.youtube.com/watch?v=1fevAtp8yvI",
+      "title": "YouTube — China Maxing (Feb 2026)",
+      "platform": "youtube",
+      "published_at": "2026-02-19",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_007",
+      "url": "https://x.com/chamath/status/2022009107964899755",
+      "title": "@chamath tweet (Feb 12, 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-12",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_008",
+      "url": "https://x.com/chamath/status/2021823986477510829",
+      "title": "@chamath tweet (Feb 12, 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-12",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.548Z"
+    },
+    {
+      "id": "src_009",
+      "url": "https://x.com/chamath/status/2023826795448217714",
+      "title": "@chamath tweet (Feb 17, 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-17",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "src_010",
+      "url": "https://x.com/akshaybd/status/2017858554871570655",
+      "title": "@akshaybd tweets (Feb 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-01",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "src_011",
+      "url": "https://x.com/akshaybd/status/2023782015301284325",
+      "title": "@akshaybd tweets (Feb 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-17",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "src_012",
+      "url": "https://x.com/akshaybd/status/2020410434130702525",
+      "title": "@akshaybd tweets (Feb 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-08",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "src_013",
+      "url": "https://x.com/akshaybd/status/2022370256698917068",
+      "title": "@akshaybd tweets (Feb 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-13",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "src_014",
+      "url": "https://x.com/marginsmall/status/2024598307335786811",
+      "title": "@marginsmall tweet (Feb 19, 2026)",
+      "platform": "twitter",
+      "published_at": "2026-02-19",
+      "submitted_by": "u_satoshi",
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "099f600c-3",
+      "url": "https://x.com/test_newauthor/status/999",
+      "title": "Test post about something",
+      "platform": "x",
+      "published_at": "2026-02-20",
+      "submitted_by": "anon",
+      "created_at": "2026-02-20T18:31:30.593Z"
+    },
+    {
+      "id": "961e6b77-2",
+      "url": "https://x.com/akshaybd/status/2024867338424922455",
+      "title": null,
+      "platform": null,
+      "published_at": "2026-02-20",
+      "submitted_by": "anon",
+      "created_at": "2026-02-20T19:32:10.443Z"
+    },
+    {
+      "id": "7a11f8d5-1",
+      "url": "https://x.com/punter_punts/status/2024928536214069366",
+      "title": "Interpreting SOL strength on tariff talk day",
+      "platform": "x",
+      "published_at": "2026-02-20",
+      "submitted_by": "anon",
+      "created_at": "2026-02-20T20:29:52.173Z"
+    },
+    {
+      "id": "2cba2895-a",
+      "url": "https://x.com/claudeai/status/2024907535145468326",
+      "title": "Introducing Claude Code Security",
+      "platform": "x",
+      "published_at": "2026-02-20",
+      "submitted_by": "anon",
+      "created_at": "2026-02-20T23:04:07.027Z"
+    }
+  ],
+  "tickers": [
+    {
+      "id": "tkr_cat",
+      "symbol": "CAT",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_ceg",
+      "symbol": "CEG",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "f494d3d3-7",
+      "symbol": "CRWD",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_dell",
+      "symbol": "DELL",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_etn",
+      "symbol": "ETN",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_eufn",
+      "symbol": "EUFN",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_evr",
+      "symbol": "EVR",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_fcx",
+      "symbol": "FCX",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_ionq",
+      "symbol": "IONQ",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_ivol",
+      "symbol": "IVOL",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "112543fb-8",
+      "symbol": "KXSOLMAXY-27JAN01-170",
+      "name": null,
+      "instrument_type": "kalshi",
+      "platform": "kalshi",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_laes",
+      "symbol": "LAES",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_mp",
+      "symbol": "MP",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_msft",
+      "symbol": "MSFT",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_pltr",
+      "symbol": "PLTR",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_rpv",
+      "symbol": "RPV",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "30417e01-0",
+      "symbol": "SOL",
+      "name": null,
+      "instrument_type": "perps",
+      "platform": "hyperliquid",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "tkr_spgi",
+      "symbol": "SPGI",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    },
+    {
+      "id": "e87dd883-f",
+      "symbol": "TEST",
+      "name": null,
+      "instrument_type": "stock",
+      "platform": "robinhood",
+      "sector": null,
+      "logo_url": null,
+      "expires_at": null,
+      "underlying_event": null
+    }
+  ],
+  "quotes": [
+    {
+      "id": "q_001",
+      "source_id": "src_001",
+      "text": "On-prem is back. It's going to happen. Do I, if I'm Geico, want to have all of my actuaries using all of our proprietary, private and confidential data on risk pricing in an open instance of an LLM? The answer is no.",
+      "speaker": "chamath",
+      "timestamp": "42:15",
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_002",
+      "source_id": "src_001",
+      "text": "Too expensive.",
+      "speaker": "friedberg",
+      "timestamp": "43:30",
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_003",
+      "source_id": "src_002",
+      "text": "100% of code is AI. Five SWEs independently confirmed they write zero human code post-Feb 5. Every one of those engineers runs their code through MSFT's tollbooth: VS Code, GitHub, Copilot, Azure, OpenAI.",
+      "speaker": "threadguy",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_004",
+      "source_id": "src_003",
+      "text": "Bloomberg confirmed quants suffered their worst drawdown since October in the first two weeks of January, down 2.8% per UBS prime book estimates. Goldman prime data showed systematic long-short managers in their worst 10-day stretch simultaneously. This wasn't a story about quantum fundamentals deteriorating — it was forced selling by systematic strategies rotating out of last year's hottest momentum factor.",
+      "speaker": "martinshkreli",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_005",
+      "source_id": "src_003",
+      "text": "Michael Grimes walking back into Morgan Stanley in February 2026 is the signal the IPO factory restarts at full capacity. Goldman CEO Solomon is calling 2026 a 'record-breaking year for M&A,' SEC Chair Atkins is coordinating what they're both calling the 'Great IPO Wave.' Pipeline is real: SpaceX ($1.5T), Databricks ($134B), Stripe ($120B), potentially OpenAI and Anthropic.",
+      "speaker": "martinshkreli",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_006",
+      "source_id": "src_005",
+      "text": "ai overbuild, 2027 compute glut, 2028/2030 washout, quantum plugs into ai subsidised infra to meet 2030/2035 nist deadline. saas meltdown but pqc software still has nist tailwinds via us gov",
+      "speaker": "marginsmall",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_007",
+      "source_id": "src_006",
+      "text": "The United States is going to categorize AI as a military proxy, it is going to be heavily funded and the United States is going to do everything in our power to make sure we win this AI race.",
+      "speaker": "creator",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_008",
+      "source_id": "src_006",
+      "text": "The Chinese AI models are completely on par if not superior to the US models and are dominating us in usage. Minimax 2.5 is 27 cents per million tokens. Opus 4.6 is $5. It is 20x cheaper.",
+      "speaker": "creator",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_009",
+      "source_id": "src_006",
+      "text": "Software gets commoditized and then the bottleneck becomes the industrial side. China hyperfocused on industrials. Everything is produced in China. They have a complete monopoly over the atoms thing.",
+      "speaker": "creator",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_010",
+      "source_id": "src_006",
+      "text": "Out of 100 things made in the military, there are like 80 that the process is traced back to China. If there were a conflict, these factories get cut off and suddenly you cannot make drones or bullets.",
+      "speaker": "creator",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_011",
+      "source_id": "src_007",
+      "text": "Is on-premise the new cloud? I'm beginning to think yes. It's the only way for companies to not blow themselves up and have some semblance of capability in an AI world.",
+      "speaker": "chamath",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_012",
+      "source_id": "src_007",
+      "text": "How many white collar workers are currently feverishly uploading decks, models, PDFs and other documents into open LLMs",
+      "speaker": "chamath",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_013",
+      "source_id": "src_008",
+      "text": "Microsoft has been the worst-performing stock of the hyperscalers since the November 30, 2022 launch of ChatGPT and has significantly underperformed the Nasdaq during that period.",
+      "speaker": "chamath",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_014",
+      "source_id": "src_009",
+      "text": "f(i) = p x c x a where i=intelligence, p=power, c=compute, a=algorithms, multiplied together. This means negative any one = zero intelligence.",
+      "speaker": "chamath",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_015",
+      "source_id": "src_010",
+      "text": "the *secular* bull mkt in tech is over",
+      "speaker": "akshaybd",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_016",
+      "source_id": "src_010",
+      "text": "financial engineering papered over by unstoppable passive flows has been at the heart of price action of many US public companies. as flows stall, it'll force a [reckoning]",
+      "speaker": "akshaybd",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_017",
+      "source_id": "src_011",
+      "text": "european banks outperformed the mag7 in the last year (and YTD)",
+      "speaker": "akshaybd",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_018",
+      "source_id": "src_011",
+      "text": "the bet is simply that the pendulum will swing back from peak US (v. international)",
+      "speaker": "akshaybd",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_019",
+      "source_id": "src_012",
+      "text": "electricity is the new oil. entering a golden age for electrification driven by reshoring, data centre needs, and energy independence",
+      "speaker": "akshaybd",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_020",
+      "source_id": "src_013",
+      "text": "inflation is a monetary phenomenon. tech people calling for deflation will likely be wrong",
+      "speaker": "akshaybd",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_021",
+      "source_id": "src_013",
+      "text": "if you're in bits, pivot to atoms",
+      "speaker": "akshaybd",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    },
+    {
+      "id": "q_022",
+      "source_id": "src_014",
+      "text": "market all in on duration mismatch",
+      "speaker": "marginsmall",
+      "timestamp": null,
+      "paragraph_ref": null,
+      "created_at": "2026-02-20T18:21:24.549Z"
+    }
+  ],
+  "call_quotes": [
+    {
+      "call_id": "00647c32-0",
+      "quote_id": "q_017"
+    },
+    {
+      "call_id": "00647c32-0",
+      "quote_id": "q_018"
+    },
+    {
+      "call_id": "14ac0a5d-f",
+      "quote_id": "q_009"
+    },
+    {
+      "call_id": "21eca4de-0",
+      "quote_id": "q_013"
+    },
+    {
+      "call_id": "24362ed0-7",
+      "quote_id": "q_015"
+    },
+    {
+      "call_id": "24362ed0-7",
+      "quote_id": "q_016"
+    },
+    {
+      "call_id": "2adf621a-1",
+      "quote_id": "q_022"
+    },
+    {
+      "call_id": "64f8db31-d",
+      "quote_id": "q_011"
+    },
+    {
+      "call_id": "64f8db31-d",
+      "quote_id": "q_012"
+    },
+    {
+      "call_id": "6f1aeb7a-d",
+      "quote_id": "q_014"
+    },
+    {
+      "call_id": "707d404a-d",
+      "quote_id": "q_010"
+    },
+    {
+      "call_id": "72573558-7",
+      "quote_id": "q_007"
+    },
+    {
+      "call_id": "a62faa7c-b",
+      "quote_id": "q_019"
+    },
+    {
+      "call_id": "ad074dd4-6",
+      "quote_id": "q_020"
+    },
+    {
+      "call_id": "ad074dd4-6",
+      "quote_id": "q_021"
+    },
+    {
+      "call_id": "c_dell_long",
+      "quote_id": "q_001"
+    },
+    {
+      "call_id": "c_dell_long",
+      "quote_id": "q_002"
+    },
+    {
+      "call_id": "c_evr_long",
+      "quote_id": "q_005"
+    },
+    {
+      "call_id": "c_ionq_long",
+      "quote_id": "q_004"
+    },
+    {
+      "call_id": "c_laes_long",
+      "quote_id": "q_006"
+    },
+    {
+      "call_id": "c_msft_long",
+      "quote_id": "q_003"
+    },
+    {
+      "call_id": "f5f2dab0-e",
+      "quote_id": "q_008"
+    }
+  ]
+}
