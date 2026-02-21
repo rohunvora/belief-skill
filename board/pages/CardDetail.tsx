@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from "react";
-import type { Call, Comment, PriceLadderStep } from "../types";
+import type { Call, PriceLadderStep } from "../types";
 import { extractChainDisplay, extractDerivationDetail } from "../types";
 import { Avatar } from "../components/CallCard";
 import { useLivePrices } from "../hooks/useLivePrices";
 import { useCallDetail } from "../hooks/useCallDetail";
-import { useWatchlist } from "../hooks/useWatchlist";
-import { timeAgo, formatPrice, formatWatchers, computePnl } from "../utils";
+import { timeAgo, formatPrice, computePnl } from "../utils";
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -110,7 +109,6 @@ function PriceLadder({
 
 export function CardDetail({ id }: { id: string }) {
   const { call, loading } = useCallDetail(id);
-  const { isStarred, toggle } = useWatchlist();
   const [linkCopied, setLinkCopied] = useState(false);
 
   const singleCallArray = useMemo(() => call ? [call] : [], [call?.id]);
@@ -143,7 +141,6 @@ export function CardDetail({ id }: { id: string }) {
   const callerHandle = call.caller_handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
   const displayAvatarUrl = call.source_handle ? call.author_avatar_url : call.caller_avatar_url;
-  const comments: Comment[] = [];
 
   const livePrice = livePrices.get(call.id);
 
@@ -158,8 +155,6 @@ export function CardDetail({ id }: { id: string }) {
       ? "border-l-green-400"
       : "border-l-red-400"
     : "border-l-gray-200";
-
-  const starred = isStarred(call.id);
 
   const copyLink = () => {
     const url = `${window.location.origin}${window.location.pathname}#/call/${call.id}`;
@@ -187,22 +182,13 @@ export function CardDetail({ id }: { id: string }) {
             <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="lg" />
             <div>
               <div className="flex items-center gap-1.5">
-                <a
-                  href={`#/author/${displayHandle}`}
-                  className="text-base font-semibold text-gray-900 hover:underline active:text-gray-900"
-                >
+                <span className="text-base font-semibold text-gray-900">
                   @{displayHandle}
-                </a>
+                </span>
                 {call.source_handle &&
                   call.source_handle !== callerHandle && (
                     <span className="text-xs text-gray-500">
-                      via{" "}
-                      <a
-                        href={`#/author/${callerHandle}`}
-                        className="hover:underline active:text-gray-900"
-                      >
-                        @{callerHandle}
-                      </a>
+                      via @{callerHandle}
                     </span>
                   )}
               </div>
@@ -216,14 +202,7 @@ export function CardDetail({ id }: { id: string }) {
                 {call.scan_source && (
                   <span className="text-xs text-gray-500">
                     &middot;{" "}
-                    {call.source_id ? (
-                      <a
-                        href={`#/source/${call.source_id}`}
-                        className="hover:underline active:text-gray-900"
-                      >
-                        {call.scan_source}
-                      </a>
-                    ) : call.source_url ? (
+                    {call.source_url ? (
                       <a
                         href={call.source_url}
                         target="_blank"
@@ -275,14 +254,6 @@ export function CardDetail({ id }: { id: string }) {
                 {call.source_handle && (
                   <p className="text-xs text-gray-500 mt-1">
                     — @{call.source_handle}
-                    {call.source_id && (
-                      <a
-                        href={`#/source/${call.source_id}`}
-                        className="ml-1.5 text-gray-400 hover:text-gray-600 hover:underline active:text-gray-900"
-                      >
-                        Source details
-                      </a>
-                    )}
                     {call.source_url && (
                       <a
                         href={call.source_url}
@@ -321,12 +292,9 @@ export function CardDetail({ id }: { id: string }) {
         {/* HOW TO PROFIT */}
         <div className="flex items-baseline justify-between mb-3">
           <div className="flex items-baseline gap-2">
-            <a
-              href={`#/ticker/${call.ticker}`}
-              className="text-lg font-bold text-gray-700 hover:underline active:text-gray-900"
-            >
+            <span className="text-lg font-bold text-gray-700">
               {call.ticker}
-            </a>
+            </span>
             <span
               className={`text-sm font-semibold ${
                 call.direction === "long"
@@ -507,84 +475,25 @@ export function CardDetail({ id }: { id: string }) {
           </p>
         )}
 
-        {/* Footer + share — desktop only */}
-        <div className="hidden md:flex items-center justify-between pt-3 border-t border-gray-100 text-xs text-gray-500">
-          <div className="flex items-center gap-3">
-            {call.votes > 0 && (
-              <span className="font-medium">+{call.votes}</span>
-            )}
-            {call.watchers > 0 && (
-              <span className="font-medium">
-                {formatWatchers(call.watchers)} watching
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => toggle(call.id)}
-              className={`flex items-center gap-1 transition-colors active:scale-90 active:opacity-70 ${starred ? "text-yellow-500" : "text-gray-400 hover:text-yellow-400"}`}
-            >
-              <span className="text-sm">{starred ? "\u2605" : "\u2606"}</span>
-              <span className="text-[11px]">{starred ? "Tracking" : "Track"}</span>
-            </button>
-            <button
-              onClick={copyLink}
-              className="text-gray-400 hover:text-gray-600 active:text-gray-900 transition-colors flex items-center gap-1"
-            >
-              {linkCopied ? (
-                <span className="text-[11px]">Copied</span>
-              ) : (
-                <>
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                  <span className="text-[11px]">Copy link</span>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      </article>
-
-      {comments.length > 0 && (
-        <div className="mt-4">
-          <div className="text-xs text-gray-500 mb-2">
-            {comments.length} comment{comments.length !== 1 ? "s" : ""}
-          </div>
-          <div className="border border-gray-200 rounded-lg bg-white divide-y divide-gray-100 px-4">
-            {comments.map((comment) => (
-              <div key={comment.id} className="py-3 text-sm text-gray-800">
-                {comment.content}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Mobile bottom action bar */}
-      <div
-        className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 md:hidden"
-        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)" }}
-      >
-        <div className="flex gap-3 px-4 pt-3">
-          <button
-            onClick={() => toggle(call.id)}
-            className={`flex-1 py-3 rounded-lg font-medium text-sm active:scale-95 transition-all ${
-              starred
-                ? "bg-yellow-400 text-gray-900"
-                : "bg-gray-100 text-gray-700"
-            }`}
-          >
-            {starred ? "\u2605 Tracking" : "\u2606 Track"}
-          </button>
+        {/* Footer: share */}
+        <div className="flex items-center justify-end pt-3 border-t border-gray-100 text-xs text-gray-500">
           <button
             onClick={copyLink}
-            className="flex-1 py-3 rounded-lg font-medium text-sm bg-gray-900 text-white active:scale-95 active:opacity-90 transition-all"
+            className="text-gray-400 hover:text-gray-600 active:text-gray-900 transition-colors flex items-center gap-1"
           >
-            {linkCopied ? "Copied!" : "Share"}
+            {linkCopied ? (
+              <span className="text-[11px]">Copied!</span>
+            ) : (
+              <>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                <span className="text-[11px]">Copy link</span>
+              </>
+            )}
           </button>
         </div>
-      </div>
+      </article>
     </div>
   );
 }

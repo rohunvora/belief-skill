@@ -1,0 +1,27 @@
+flowchart TD
+    IN["Raw input arrives"]
+    CHECK{"What type?"}
+    CLEAR["Clear thesis\nProceed directly"]
+    VIBE["Vibe or question\nReframe + ask user to pick interpretation"]
+    NONE["No direction\nRedirect: what do you think will happen?"]
+    URL["URL\nExtract content → get source_date → historical price if past"]
+    HANDLE["X handle\nHandle Scan pipeline: cost gate → fetch → filter → surface"]
+    SCREENSHOT["Screenshot\nExtract text from image"]
+    MULTI["Multiple theses\nRoute all or pick? → Bulk Mode if all"]
+
+    IN --> CHECK
+    CHECK -->|"AI defense spending will boom"| CLEAR
+    CHECK -->|"everyone's on Ozempic"| VIBE
+    CHECK -->|"tell me about stocks"| NONE
+    CHECK -->|"x.com/punter_punts/status/..."| URL
+    CHECK -->|"scan @chamath"| HANDLE
+    CHECK -->|image of a tweet| SCREENSHOT
+    CHECK -->|transcript with 5 claims| MULTI
+
+    CLEAR --> NEXT["→ Faithful Extraction"]
+    VIBE -->|user picks| NEXT
+    URL --> NEXT
+    HANDLE --> NEXT
+    SCREENSHOT --> NEXT
+    MULTI -->|"all"| BULK["→ Bulk Mode"]
+    MULTI -->|picks one| NEXT

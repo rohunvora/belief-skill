@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import type { Call } from "../types";
 import { extractChainDisplay } from "../types";
 import type { LivePriceData } from "../hooks/useLivePrices";
-import { useWatchlist } from "../hooks/useWatchlist";
 import { timeAgo, formatPrice, computePnl } from "../utils";
 import { getLogoUrl } from "../logos";
 
@@ -131,8 +130,6 @@ interface CallCardProps {
 }
 
 export function CallCard({ call, onClick, livePrice }: CallCardProps) {
-  const { isStarred, toggle } = useWatchlist();
-  const starred = isStarred(call.id);
   const callerHandle = call.caller_handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
   const displayAvatarUrl = call.source_handle ? call.author_avatar_url : call.caller_avatar_url;
@@ -157,34 +154,19 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
     >
       {/* Row 1: Avatar + @handle + source icon + time */}
       <div className="flex items-center gap-2 mb-1">
-        <a href={`#/author/${displayHandle}`} onClick={(e) => e.stopPropagation()}>
-          <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="md" />
-        </a>
-        <a href={`#/author/${displayHandle}`} onClick={(e) => e.stopPropagation()} className="text-[15px] font-semibold text-gray-900 hover:underline active:text-gray-900">@{displayHandle}</a>
+        <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="md" />
+        <span className="text-[15px] font-semibold text-gray-900">@{displayHandle}</span>
         {call.source_url && (
-          <span className="flex items-center">
-            {call.source_id ? (
-              <a
-                href={`#/source/${call.source_id}`}
-                onClick={(e) => e.stopPropagation()}
-                className="p-1.5 -m-1.5 opacity-60 hover:opacity-100 active:opacity-100 transition-opacity"
-                title="View source details"
-              >
-                <SourceIcon url={call.source_url} />
-              </a>
-            ) : (
-              <a
-                href={call.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="p-1.5 -m-1.5 opacity-60 hover:opacity-100 active:opacity-100 transition-opacity"
-                title={call.source_url}
-              >
-                <SourceIcon url={call.source_url} />
-              </a>
-            )}
-          </span>
+          <a
+            href={call.source_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="p-1.5 -m-1.5 opacity-60 hover:opacity-100 active:opacity-100 transition-opacity"
+            title={call.source_url}
+          >
+            <SourceIcon url={call.source_url} />
+          </a>
         )}
         <span className="text-[11px] text-gray-400">· {timeAgo(call.source_date ?? call.created_at)}</span>
       </div>
@@ -204,34 +186,25 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
         </p>
       )}
 
-      {/* Row 3: Ticker badge + price + P&L / status */}
+      {/* Row 3: Ticker badge + price + P&L */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <a href={`#/ticker/${call.ticker}`} onClick={(e) => e.stopPropagation()} className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-2 py-1 hover:opacity-80 active:opacity-70 transition-opacity`}>
+          <span className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-2 py-1`}>
             {call.call_type === "derived" && <span className="text-gray-400 mr-0.5">&rarr;</span>}
             <TickerLogo ticker={call.ticker} platform={call.platform} instrument={call.instrument} />
             {dirArrow} {call.ticker}
-          </a>
+          </span>
           <span className="text-xs text-gray-400">{formatPrice(call.entry_price)}</span>
         </div>
-        <div className="flex items-center gap-2">
-          {pnl != null && (
-            <span
-              className={`text-sm font-bold tabular-nums ${
-                pnl >= 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%
-            </span>
-          )}
-          <button
-            onClick={(e) => { e.stopPropagation(); toggle(call.id); }}
-            className={`w-11 h-11 -mr-2 flex items-center justify-center text-lg transition-colors active:scale-90 active:opacity-70 ${starred ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
-            title={starred ? "Untrack" : "Track"}
+        {pnl != null && (
+          <span
+            className={`text-sm font-bold tabular-nums ${
+              pnl >= 0 ? "text-green-600" : "text-red-600"
+            }`}
           >
-            {starred ? "\u2605" : "\u2606"}
-          </button>
-        </div>
+            {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%
+          </span>
+        )}
       </div>
 
     </article>

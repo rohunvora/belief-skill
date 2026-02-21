@@ -1,0 +1,17 @@
+flowchart TD
+    INPUT["INPUT\nText, URL, handle, screenshot, or thesis"]
+    VALIDATE{"Input Validation\n7 checks: what type of input?"}
+    EXTRACT["Faithful Extraction\nLayer 1: author's words preserved"]
+    SHAPE["Thesis Shape\nBinary / Mispriced / Sector / Relative / Vulnerability"]
+    DEEPER["Deeper Claim\nLayer 2: obvious vs non-obvious play"]
+    RESEARCH["Research\nSketch → Validate premises → Ground with data"]
+    SCORE["Score + Select\nHard gates → Rubric → Cross-check → Stress test"]
+    OUTPUT["Output\nProse reply + Board POST"]
+
+    INPUT --> VALIDATE
+    VALIDATE --> EXTRACT
+    EXTRACT --> SHAPE
+    SHAPE --> DEEPER
+    DEEPER --> RESEARCH
+    RESEARCH --> SCORE
+    SCORE --> OUTPUT

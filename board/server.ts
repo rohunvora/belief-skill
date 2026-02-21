@@ -1,15 +1,10 @@
 import index from "./index.html";
 import {
-  getAllCalls, getCall, getCallWithJoins, getCallsBatch, queryFeed,
-  listCalls, insertCall, updatePrice, deleteCall,
-  insertUser, getUserByHandle, listUsers, getSubmitterProfile, getLeaderboard,
-  listAuthors, getAuthorWithCalls, getQuotesByCall,
-  listSources, getSourceWithDetail,
-  listTickers, getTickerWithCalls,
+  getCall, getCallWithJoins, getCallsBatch, queryFeed,
+  insertCall, updatePrice, deleteCall,
+  insertUser, getUserByHandle,
+  getQuotesByCall,
   ensureAuthor, ensureSource, ensureTicker,
-  searchEntities, getTrending,
-  getAuthorWithCallsPaginated, getTickerWithCallsPaginated,
-  getSourceWithDetailPaginated, getSubmitterProfilePaginated,
 } from "./db";
 import { renderCard } from "./templates/card";
 import { renderPermalink } from "./templates/permalink";
@@ -249,88 +244,7 @@ Bun.serve({
         return Response.json({ deleted: true });
       },
     },
-    "/api/users": {
-      GET: () => {
-        return Response.json(listUsers());
-      },
-    },
-    "/api/leaderboard": {
-      GET: () => {
-        return Response.json(getLeaderboard());
-      },
-    },
-    "/api/search": {
-      GET: (req) => {
-        const url = new URL(req.url);
-        const q = url.searchParams.get("q");
-        if (!q || q.length < 1) return Response.json({ tickers: [], authors: [] });
-        return Response.json(searchEntities(q));
-      },
-    },
-    "/api/trending": {
-      GET: (req) => {
-        const url = new URL(req.url);
-        const days = Number(url.searchParams.get("days")) || 7;
-        const limit = Number(url.searchParams.get("limit")) || 20;
-        return Response.json(getTrending({ days, limit }));
-      },
-    },
-    // ── Entity API Routes ─────────────────────────────────────
-    "/api/authors": {
-      GET: () => {
-        return Response.json(listAuthors());
-      },
-    },
-    "/api/authors/:handle": {
-      GET: (req) => {
-        const url = new URL(req.url);
-        const cursor = url.searchParams.get("cursor") ?? undefined;
-        const limit = Number(url.searchParams.get("limit")) || undefined;
-        const data = getAuthorWithCallsPaginated(req.params.handle, { cursor, limit });
-        if (!data) return Response.json({ error: "Author not found" }, { status: 404 });
-        return Response.json(data);
-      },
-    },
-    "/api/sources": {
-      GET: () => {
-        return Response.json(listSources());
-      },
-    },
-    "/api/sources/:id": {
-      GET: (req) => {
-        const url = new URL(req.url);
-        const cursor = url.searchParams.get("cursor") ?? undefined;
-        const limit = Number(url.searchParams.get("limit")) || undefined;
-        const data = getSourceWithDetailPaginated(req.params.id, { cursor, limit });
-        if (!data) return Response.json({ error: "Source not found" }, { status: 404 });
-        return Response.json(data);
-      },
-    },
-    "/api/tickers": {
-      GET: () => {
-        return Response.json(listTickers());
-      },
-    },
-    "/api/tickers/:symbol": {
-      GET: (req) => {
-        const url = new URL(req.url);
-        const cursor = url.searchParams.get("cursor") ?? undefined;
-        const limit = Number(url.searchParams.get("limit")) || undefined;
-        const data = getTickerWithCallsPaginated(req.params.symbol, { cursor, limit });
-        if (!data) return Response.json({ error: "Ticker not found" }, { status: 404 });
-        return Response.json(data);
-      },
-    },
-    "/api/profile/:handle": {
-      GET: (req) => {
-        const url = new URL(req.url);
-        const cursor = url.searchParams.get("cursor") ?? undefined;
-        const limit = Number(url.searchParams.get("limit")) || undefined;
-        const data = getSubmitterProfilePaginated(req.params.handle, { cursor, limit });
-        if (!data) return Response.json({ error: "User not found" }, { status: 404 });
-        return Response.json(data);
-      },
-    },
+    // ── Quotes ────────────────────────────────────────────────
     "/api/calls/:id/quotes": {
       GET: (req) => {
         const quotes = getQuotesByCall(req.params.id);

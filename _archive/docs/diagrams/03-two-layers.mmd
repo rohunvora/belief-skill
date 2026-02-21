@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph LAYER1["Layer 1: Author's Signal"]
+        A1["author_thesis\ntheir words, verbatim"]
+        A2["author_ticker\nif they named one"]
+        A3["conditions\nqualifications attached"]
+        A4["source_quote + handle + date"]
+    end
+
+    subgraph LAYER2["Layer 2: Skill's Routing"]
+        R1["thesis\nreframed by skill"]
+        R2["ticker\nrouted instrument"]
+        R3["direction\nlong or short"]
+        R4["derivation chain\nsegments + steps"]
+    end
+
+    TIER{"Attribution Tier"}
+
+    LAYER1 --> TIER
+    LAYER2 --> TIER
+    TIER -->|"author named ticker\nskill routes same"| DIRECT["direct\nauthor's call"]
+    TIER -->|"author named ticker\nskill routes elsewhere"| DERIVED["derived\nvia belief.board"]
+    TIER -->|"no ticker named"| DERIVED

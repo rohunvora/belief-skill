@@ -1,0 +1,20 @@
+flowchart TD
+    CANDIDATES["Candidate instruments\nfrom discovery tools"]
+    GATES{"Hard Gates"}
+    FAIL["Disqualified"]
+    UNDERLYING["Pick underlying\nAlignment + Edge"]
+    WRAPPER["Evaluate wrappers\nPayoff Shape + Timing Forgiveness"]
+    COMPARE["Compare head-to-head\nCross-check vs different instrument class"]
+    STRESS["Stress Test\nStrongest case against the winner"]
+    WINNER["THE TRADE + ALT"]
+
+    CANDIDATES --> GATES
+    GATES -->|"thesis contradiction"| FAIL
+    GATES -->|"no liquidity"| FAIL
+    GATES -->|"expires before catalyst"| FAIL
+    GATES -->|survives| UNDERLYING
+    UNDERLYING --> WRAPPER
+    WRAPPER --> COMPARE
+    COMPARE --> STRESS
+    STRESS -->|"can rebut"| WINNER
+    STRESS -->|"devastating, can't rebut"| COMPARE

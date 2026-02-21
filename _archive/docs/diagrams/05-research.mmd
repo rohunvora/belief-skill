@@ -1,0 +1,16 @@
+flowchart TD
+    SKETCH["Draft chain sketch\nHypothesis, not conclusion"]
+    FLAG["Flag stale premises\nTraining knowledge has a cutoff"]
+    VALIDATE{"Phase 1: Validate\n1-2 searches test factual premises"}
+    KILL["Kill sketch\nRedraft from what you found"]
+    GROUND["Phase 2: Ground\nPricing, consensus, timing, prediction markets"]
+    TOOLS["Instrument Discovery\nRobinhood + Kalshi + HL + Polymarket in parallel"]
+    READY["Ready to score"]
+
+    SKETCH --> FLAG
+    FLAG --> VALIDATE
+    VALIDATE -->|"premises hold"| GROUND
+    VALIDATE -->|"premise fails"| KILL
+    KILL --> SKETCH
+    GROUND --> TOOLS
+    TOOLS --> READY

@@ -1,0 +1,22 @@
+flowchart LR
+    subgraph EXTRACT["Extraction: fires at Input Validation"]
+        T1["transcript/extract.ts\nURL → text"]
+        T2["x/user-timeline.ts\nhandle → tweets"]
+        T3["robinhood/historical.ts\nticker + date → OHLC"]
+    end
+
+    subgraph DISCOVER["Discovery: fires during Research, all parallel"]
+        T4["robinhood/instruments.ts\ntickers → price, cap, 52W"]
+        T5["hyperliquid/instruments.ts\ntickers → price, funding, OI"]
+        T6["kalshi/instruments.ts\nkeywords → open events"]
+        T7["polymarket/instruments.ts\nkeywords → binary markets"]
+        T8["bankr/instruments.ts\nthesis → tokens, PM, onchain"]
+        T9["angel/instruments.ts\nkeywords → active raises"]
+    end
+
+    subgraph RETURNS["Returns: fires during Scoring, top 2-3"]
+        T10["robinhood/returns.ts\nentry, target, stop, options"]
+        T11["hyperliquid/returns.ts\nentry, liquidation, funding"]
+        T12["kalshi/returns.ts\nbuy price, implied prob, return %"]
+        T13["polymarket/returns.ts\nbinary payoff, orderbook"]
+    end

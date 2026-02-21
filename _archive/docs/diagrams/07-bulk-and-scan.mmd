@@ -1,0 +1,19 @@
+flowchart TD
+    subgraph HANDLE["Handle Scan: scan @chamath"]
+        H1["Check X_BEARER_TOKEN\nIf missing: screenshot or browser fallback"]
+        H2["Cost gate\nShow price, wait for yes"]
+        H3["Fetch tweets\nvia X adapter"]
+        H4["Filter for directional takes\nDiscard jokes, commentary"]
+        H5["Surface to user\nOne line per take, user picks"]
+        H6["Route each selected take\nStandard pipeline per tweet"]
+        H1 --> H2 --> H3 --> H4 --> H5 --> H6
+    end
+
+    subgraph BULK["Bulk Mode: transcript with 5 theses"]
+        P1["Extract and Cluster\nCapture each claim, deduplicate"]
+        P2["Tier: T1 route / T2 sweep / T3 skip"]
+        P3["Instrument Sweep\nBatch by platform, all in parallel"]
+        P4["Deep Route\nFull pipeline on T1 only, top 3-5"]
+        P5["Output\nDeep routes as prose, T2 as quick hits, T3 as skips"]
+        P1 --> P2 --> P3 --> P4 --> P5
+    end

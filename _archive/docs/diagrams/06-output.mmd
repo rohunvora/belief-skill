@@ -1,0 +1,26 @@
+flowchart TD
+    RESULT["Routing result\nWinner + alt + chain + data"]
+
+    subgraph REPLY["The Reply: Chat"]
+        R1["Source excerpt\nkey quote + attribution"]
+        R2["The trade\nticker, price, quantity in first 2 sentences"]
+        R3["Edge + kills + alt"]
+        R4["Derivation chain\nsegments + steps + chose_over"]
+        R5["Follow-ups\n2-3 reasons user wouldn't execute"]
+        R6["Disclaimer"]
+        R1 --> R2 --> R3 --> R4 --> R5 --> R6
+    end
+
+    subgraph RECORD["The Record: Board POST"]
+        B1["Construct JSON\nCall layer + Routing layer + Detail fields"]
+        B2["POST /api/takes"]
+        B3{"Success?"}
+        B4["4-line teaser with permalink"]
+        B5["Board unavailable, skip"]
+        B1 --> B2 --> B3
+        B3 -->|yes| B4
+        B3 -->|no| B5
+    end
+
+    RESULT --> REPLY
+    RESULT --> RECORD
