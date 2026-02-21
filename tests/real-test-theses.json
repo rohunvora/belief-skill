@@ -1,0 +1,166 @@
+[
+  {
+    "id": "real-01",
+    "source": "real-routings.md / golden/nettspend-session.jsonl",
+    "shape": "cultural_uninvestable",
+    "difficulty": "hard",
+    "input": "how do i long nettspend?",
+    "notes": "Uninvestable subject (person, artist). No ticker. Forces expression fidelity ladder. Correct answer: non-financial (concert tickets + merch) > UMG tangential. Tests whether skill avoids forcing a stock pick when none has real thesis alignment.",
+    "expected": {
+      "call_type": "derived",
+      "should_route_to_non_financial": true,
+      "alt_ticker": "UMGNF",
+      "kills_condition": "album flops / label drops support",
+      "should_NOT_do": "force a stock pick with weak thesis alignment"
+    },
+    "prior_rating": null,
+    "prior_notes": "Correct behavior confirmed in golden session. Pre-prose-format output."
+  },
+  {
+    "id": "real-02",
+    "source": "real-routings.md",
+    "shape": "sector_theme_verbose",
+    "difficulty": "medium",
+    "input": "i think that at some point the american military will become the biggest buyer of ai/compute/hardware, but i don't know which one or where the spend will specifically go, but i just think that the entire american ai buildout is truly the underpinnings of the new cold war (the ai race between america and china) and i want to bet on america...",
+    "notes": "Multi-paragraph personal thesis with explicit uncertainty ('i don't know which one'). Key difficulty: user is wrong on current facts (military is NOT biggest AI buyer today — $13.4B vs $50-80B hyperscalers). Tests honest research correction. Correct routing: PLTR shares (structural thesis, no catalyst) or PLTR-PERP on HL (-26% annualized funding = longs get paid). Tests whether skill corrects user's facts before routing, not after.",
+    "expected": {
+      "call_type": "derived",
+      "ticker": "PLTR",
+      "platform": ["robinhood", "hyperliquid"],
+      "honest_correction": "military is NOT biggest AI buyer yet — $13.4B vs $50-80B hyperscalers",
+      "edge_insight": "HL PLTR-PERP has negative funding — longs get paid to hold",
+      "chose_over": ["LMT", "RTX", "NVDA"],
+      "should_NOT_do": "affirm the premise without correction"
+    },
+    "prior_rating": null,
+    "prior_notes": "Initial routing missed HL (adapter bug at the time, since fixed). Honest correction was the best part."
+  },
+  {
+    "id": "real-03",
+    "source": "real-routings.md / test-20260218-190936.jsonl",
+    "shape": "bulk_url_video",
+    "difficulty": "hard",
+    "input": "https://www.youtube.com/watch?v=1fevAtp8yvI",
+    "notes": "YouTube URL, 4,267 words, 'China Maxing' thesis. 4 distinct theses inside. Tests bulk mode extraction, URL handling, honest conviction flagging, and whether all 4 get different treatment. Known failure: all 4 were routed to equities with identical card structure (templating problem). Correct behavior: differentiate by shape, conviction, and available instruments.",
+    "expected": {
+      "mode": "bulk",
+      "theses_count": 4,
+      "tickers": ["PLTR", "CEG", "CAT", "MP"],
+      "highest_conviction": "MP",
+      "honest_flag_required": "CAT — most consensus thesis, edge is thin",
+      "should_NOT_do": "identical card structure for all 4, all equities long with same format"
+    },
+    "prior_rating": 2,
+    "prior_notes": "Rated 2/5. Correct thesis extraction but templating problem — all 4 looked identical. No Kalshi, no perps, no pair trades despite relative value opportunities."
+  },
+  {
+    "id": "real-04",
+    "source": "test-20260218-211138.jsonl",
+    "shape": "casual_cultural_observation",
+    "difficulty": "medium",
+    "input": "costco gold bars keep selling out within hours → angle: gold bull run has legs — retail just entered",
+    "notes": "Casual observation with explicit framing ('retail just entered'). Tests tone-matching — casual input should get casual output length. Known failure: output was too long, asked clarifying questions that should have been inferred. Correct routing: GDX (miners have operational leverage, lag spot); HL GOLD-PERP as alt. Key insight: retail entering spot ≠ late bull, miners are the leveraged expression.",
+    "expected": {
+      "call_type": "derived",
+      "ticker": "GDX",
+      "platform": ["robinhood", "hyperliquid"],
+      "insight": "retail entering spot gold = mid-bull. Miners lag and have operational leverage.",
+      "output_length": "short — match input sophistication",
+      "should_NOT_do": "long output, clarifying questions user already answered, forget to post board link"
+    },
+    "prior_rating": 2,
+    "prior_notes": "Rated 2/5. Too long for casual input. Follow-up questions were things I should have interpreted myself. Forgot to post board link."
+  },
+  {
+    "id": "real-05",
+    "source": "real-routings.md / test-20260219-163845.jsonl",
+    "shape": "cultural_observation_infrastructure",
+    "difficulty": "hard",
+    "input": "https://x.com/chiefofautism/status/2024535712071028921 — '76 nodes in 13 countries with 10 layers, from a quartz mine in North Carolina to your chat window'",
+    "notes": "Tweet as URL, cultural/infrastructural observation, not an explicit trade thesis. Requires reframing: '76 nodes = 76 potential chokepoints — companies owning irreplaceable nodes have pricing power.' Correct routing: COHR (optical interconnect, ~40% AI datacenter transceivers, not fully priced) over ASML (100% EUV monopoly but already at ATH). Tests ability to resist the obvious answer (ASML) when it's already priced in, and find the next chokepoint down. Also tests: don't ask clarifying questions for a tweet input, just route.",
+    "expected": {
+      "call_type": "derived",
+      "ticker": "COHR",
+      "reasoning": "furthest down physical stack with pricing power that isn't fully priced",
+      "chose_over": "ASML (fully priced at ATH), NVDA (most visible but most competitive layer), MU (6.8x from lows)",
+      "should_NOT_do": "ask 'which angle?' for a tweet input, route to ASML"
+    },
+    "prior_rating": 3.5,
+    "prior_notes": "Rated 3.5/5. Chokepoint analysis was correct. Dismissed ASML correctly. Output was too long for a tweet-sourced input."
+  },
+  {
+    "id": "real-06",
+    "source": "real-routings.md",
+    "shape": "micro_macro_crowding",
+    "difficulty": "hard",
+    "input": "market all in on duration mismatch",
+    "notes": "5 words. No ticker. Cryptic macro observation. Multiple valid interpretations. Key difficulty: 'duration mismatch' can imply rate direction (TBT) OR positioning crowding (IVOL). The correct interpretation is crowding → volatility thesis, NOT rate direction. Verified: Bloomberg Feb 5 confirmed hedge funds in leveraged Treasury spread trades showing 'signs of strain'. Correct routing: IVOL (interest rate volatility ETF — gains from yield curve moves in ANY direction). This is the canonical example of non-obvious thesis interpretation. Tests: does the skill recognize crowding as a volatility signal, not a direction signal?",
+    "expected": {
+      "call_type": "derived",
+      "ticker": "IVOL",
+      "thesis_interpretation": "crowding → volatility, NOT rate direction",
+      "chose_over": "TBT (directional, decays daily, wrong thesis), KRE puts (SVB replay, already priced since 2023)",
+      "research_required": "verify crowding claim with actual positioning data",
+      "should_NOT_do": "route to TBT or TLT, interpret as simple rate direction call"
+    },
+    "prior_rating": null,
+    "prior_notes": "Best single routing across all sessions. The crowding→volatility interpretation was the most valuable insight in any session."
+  },
+  {
+    "id": "real-07",
+    "source": "real-routings.md",
+    "shape": "handle_scan_bulk",
+    "difficulty": "hard",
+    "input": "@chamath (x.com/chamath — last 50 posts)",
+    "notes": "Handle scan mode. 50 posts. Must synthesize a worldview, identify the best theses, and tier them (deep route vs quick hit). From Feb session: found 5 tradeable theses: DELL long (on-prem back), MSFT short (worst-performing hyperscaler), CEG long (f(i)=pxa), critical minerals quick hit, SaaS implosion quick hit. Tests bulk mode tiering, handle scan pipeline, and whether skill differentiates theses that deserve different treatment (MSFT short was direct, others derived).",
+    "expected": {
+      "mode": "handle_scan",
+      "posts_fetched": 50,
+      "theses_found": 5,
+      "deep_routes": ["DELL long", "MSFT short", "CEG long"],
+      "quick_hits": ["critical minerals", "SaaS implosion"],
+      "direct_call": "MSFT short (chamath named it explicitly)",
+      "chose_over": ["HPE over DELL", "HPE lower margin"],
+      "should_NOT_do": "treat all 5 with identical format, miss the direct/derived classification difference"
+    },
+    "prior_rating": null,
+    "prior_notes": "All 3 deep routes were equity longs (except MSFT short). No prediction market, perp, or pair trade appeared. DELL appeared again from same chain as SKILL.md examples — overfitting evidence."
+  },
+  {
+    "id": "real-08",
+    "source": "results.jsonl (tr-2026-02-18-559)",
+    "shape": "relative_value",
+    "difficulty": "easy",
+    "input": "SOL is going to flip ETH. The developer migration is accelerating.",
+    "notes": "Relative value thesis. Clean, explicit direction. Correct routing: long SOL / short ETH on Hyperliquid (isolates the ratio from market direction). This is the skill's cleanest success. Tests pair trade logic and whether skill goes to HL for relative value (not just 'buy SOL').",
+    "expected": {
+      "call_type": "derived",
+      "ticker": "SOL-ETH",
+      "platform": "hyperliquid",
+      "direction": "long SOL / short ETH",
+      "insight": "pair trade isolates the ratio from overall crypto market direction",
+      "should_NOT_do": "just say 'buy SOL on Robinhood'"
+    },
+    "prior_rating": 5,
+    "prior_notes": "Rated excellent. Pair trade logic was crystal clear. Best result in the corpus."
+  },
+  {
+    "id": "real-09",
+    "source": "debug-export-2026-02-20-session2.md",
+    "shape": "internal_contradiction",
+    "difficulty": "hard",
+    "input": "https://x.com/claudeai/status/2024907535145468326 — 'Introducing Claude Code Security, now in limited research preview. It scans codebases for vulnerabilities and suggests targeted software patches for human review, allowing teams to find and fix issues that traditional tools often miss.'",
+    "notes": "Internal contradiction thesis. SNPS (Synopsys) is the only public company with meaningful code security revenue (Coverity, Black Duck) — so it should be short. BUT: SNPS is 70% EDA (chip design tools), which has a massive AI tailwind. You'd be shorting a company with a legitimate AI tailwind on one side to express a competitive headwind on the other. Tests: does the skill flag the internal contradiction honestly and size down accordingly? Also: pure-plays (Snyk, Veracode, Checkmarx) are all private. GTLB is better aligned but was down 8% on earnings the same day. Tests graceful degradation when the instrument landscape is weak.",
+    "expected": {
+      "call_type": "derived",
+      "ticker": "SNPS",
+      "direction": "short",
+      "size_adjustment": "size down — internal contradiction (EDA tailwind vs code security headwind)",
+      "flag_required": "pure-plays all private; SNPS has internal contradiction; GTLB is better aligned but wrong entry timing",
+      "alt": "watch GTLB — if stabilizes $22-24 after earnings, cleaner entry",
+      "should_NOT_do": "ignore the EDA tailwind, route full size, ignore that pure-plays are private"
+    },
+    "prior_rating": null,
+    "prior_notes": "No rating — ref only. Internal contradiction was correctly flagged. Instrument landscape was weak (pure-plays private, options illiquid, no HL listing)."
+  }
+]
