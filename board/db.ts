@@ -172,6 +172,7 @@ db.run(`CREATE INDEX IF NOT EXISTS idx_calls_source_id ON calls(source_id)`);
 db.run(`CREATE INDEX IF NOT EXISTS idx_calls_submitted_by ON calls(submitted_by)`);
 db.run(`CREATE INDEX IF NOT EXISTS idx_quotes_source_id ON quotes(source_id)`);
 db.run(`CREATE INDEX IF NOT EXISTS idx_sources_submitted ON sources(submitted_by)`);
+db.run(`CREATE INDEX IF NOT EXISTS idx_calls_watchers_created ON calls(watchers DESC, created_at DESC)`);
 
 // ── Data Migration: Populate entity tables from existing flat data ──
 
@@ -644,7 +645,7 @@ export function getAuthorWithCalls(handle: string): {
   for (const c of calls) {
     tickerCounts[c.ticker] = (tickerCounts[c.ticker] ?? 0) + 1;
     if (!tickerDirections[c.ticker]) tickerDirections[c.ticker] = { long: 0, short: 0 };
-    tickerDirections[c.ticker][c.direction === "long" ? "long" : "short"]++;
+    tickerDirections[c.ticker]![c.direction === "long" ? "long" : "short"]++;
   }
 
   // Sources this author's calls came from
@@ -769,8 +770,8 @@ export function getTickerWithCalls(symbol: string): {
   for (const c of calls) {
     if (!c.author_id) continue;
     if (!authorMap[c.author_id]) authorMap[c.author_id] = { callCount: 0, directions: { long: 0, short: 0 } };
-    authorMap[c.author_id].callCount++;
-    authorMap[c.author_id].directions[c.direction === "long" ? "long" : "short"]++;
+    authorMap[c.author_id]!.callCount++;
+    authorMap[c.author_id]!.directions[c.direction === "long" ? "long" : "short"]++;
   }
   const authorCoverage: Array<{ author: Author; callCount: number; directions: { long: number; short: number } }> = [];
   for (const [aid, stats] of Object.entries(authorMap)) {
@@ -989,6 +990,112 @@ export function getAllCalls(): Call[] {
   return listCalls({ limit: 200 });
 }
 
+/** Paginated feed query with denormalized caller/author data via JOIN. */
+export function queryFeed(opts: {
+  cursor?: string;
+  limit?: number;
+  sort?: "new";
+  ticker?: string;
+  direction?: string;
+  authorId?: string;
+  tickerId?: string;
+  submittedBy?: string;
+  ids?: string[];
+} = {}): { items: any[]; next_cursor: string | null; total: number } {
+  const limit = opts.limit ?? 20;
+  const cursorConds: string[] = [];
+  const cursorParams: any[] = [];
+  const filterConds: string[] = [];
+  const filterParams: any[] = [];
+
+  if (opts.authorId) { filterConds.push("c.author_id = ?"); filterParams.push(opts.authorId); }
+  if (opts.tickerId) { filterConds.push("c.ticker_id = ?"); filterParams.push(opts.tickerId); }
+  if (opts.ticker) { filterConds.push("c.ticker = ?"); filterParams.push(opts.ticker); }
+  if (opts.direction) { filterConds.push("c.direction = ?"); filterParams.push(opts.direction); }
+  if (opts.submittedBy) { filterConds.push("c.submitted_by = ?"); filterParams.push(opts.submittedBy); }
+  if (opts.ids && opts.ids.length > 0) {
+    filterConds.push(`c.id IN (${opts.ids.map(() => "?").join(",")})`);
+    filterParams.push(...opts.ids);
+  }
+
+  if (opts.cursor) { cursorConds.push("c.created_at < ?"); cursorParams.push(opts.cursor); }
+
+  const filterWhere = filterConds.length > 0 ? `WHERE ${filterConds.join(" AND ")}` : "";
+  const fullConds = [...filterConds, ...cursorConds];
+  const fullParams = [...filterParams, ...cursorParams];
+  const fullWhere = fullConds.length > 0 ? `WHERE ${fullConds.join(" AND ")}` : "";
+
+  // Total count (without cursor)
+  const totalRow = db.prepare(`SELECT COUNT(*) as cnt FROM calls c ${filterWhere}`).get(...filterParams) as any;
+  const total = totalRow.cnt;
+
+  // Fetch items with denormalized caller/author info
+  const rows = db.prepare(`
+    SELECT c.*, u.handle as caller_handle, u.avatar_url as caller_avatar_url,
+           a.handle as author_handle_joined, a.avatar_url as author_avatar_url
+    FROM calls c
+    LEFT JOIN users u ON u.id = c.caller_id
+    LEFT JOIN authors a ON a.id = c.author_id
+    ${fullWhere}
+    ORDER BY c.created_at DESC
+    LIMIT ?
+  `).all(...fullParams, limit + 1);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+  const items = sliced.map((row: any) => ({
+    ...unpackRow(row),
+    caller_handle: row.caller_handle ?? null,
+    caller_avatar_url: row.caller_avatar_url ?? null,
+    author_avatar_url: row.author_avatar_url ?? null,
+  }));
+
+  const lastItem = items[items.length - 1];
+  const next_cursor = hasMore && lastItem ? lastItem.created_at : null;
+
+  return { items, next_cursor, total };
+}
+
+/** Single call by ID with denormalized caller/author data. */
+export function getCallWithJoins(id: string): any | null {
+  const row = db.prepare(`
+    SELECT c.*, u.handle as caller_handle, u.avatar_url as caller_avatar_url,
+           a.handle as author_handle_joined, a.avatar_url as author_avatar_url
+    FROM calls c
+    LEFT JOIN users u ON u.id = c.caller_id
+    LEFT JOIN authors a ON a.id = c.author_id
+    WHERE c.id = ?
+  `).get(id) as any;
+  if (!row) return null;
+  return {
+    ...unpackRow(row),
+    caller_handle: row.caller_handle ?? null,
+    caller_avatar_url: row.caller_avatar_url ?? null,
+    author_avatar_url: row.author_avatar_url ?? null,
+  };
+}
+
+/** Batch fetch calls by IDs with denormalized data. */
+export function getCallsBatch(ids: string[]): any[] {
+  if (ids.length === 0) return [];
+  const placeholders = ids.map(() => "?").join(",");
+  const rows = db.prepare(`
+    SELECT c.*, u.handle as caller_handle, u.avatar_url as caller_avatar_url,
+           a.handle as author_handle_joined, a.avatar_url as author_avatar_url
+    FROM calls c
+    LEFT JOIN users u ON u.id = c.caller_id
+    LEFT JOIN authors a ON a.id = c.author_id
+    WHERE c.id IN (${placeholders})
+    ORDER BY c.created_at DESC
+  `).all(...ids);
+  return rows.map((row: any) => ({
+    ...unpackRow(row),
+    caller_handle: row.caller_handle ?? null,
+    caller_avatar_url: row.caller_avatar_url ?? null,
+    author_avatar_url: row.author_avatar_url ?? null,
+  }));
+}
+
 export function deleteCall(id: string): boolean {
   const result = db.prepare("DELETE FROM calls WHERE id = ?").run(id);
   // Clean up quote links
@@ -1025,4 +1132,319 @@ export function getLeaderboard(): Array<{ user: User; total_calls: number }> {
     },
     total_calls: row.total_calls ?? 0,
   }));
+}
+
+// ── Search ───────────────────────────────────────────────────────────
+
+/** Search tickers, authors, and call theses by substring match. */
+export function searchEntities(q: string): { tickers: TickerEntity[]; authors: Author[] } {
+  const term = `%${q}%`;
+  const tickers = db.prepare(`
+    SELECT * FROM tickers WHERE symbol LIKE ? OR name LIKE ? LIMIT 5
+  `).all(term, term).map(rowToTicker);
+
+  const authors = db.prepare(`
+    SELECT * FROM authors WHERE handle LIKE ? OR name LIKE ? LIMIT 5
+  `).all(term, term).map(rowToAuthor);
+
+  return { tickers, authors };
+}
+
+// ── Paginated Entity Queries ─────────────────────────────────────────
+
+/** Author with paginated calls. */
+export function getAuthorWithCallsPaginated(handle: string, opts: { cursor?: string; limit?: number } = {}): {
+  author: Author;
+  calls: any[];
+  next_cursor: string | null;
+  total: number;
+  tickerCounts: Record<string, number>;
+  tickerDirections: Record<string, { long: number; short: number }>;
+  sources: Array<{ source: Source; callCount: number }>;
+} | null {
+  const author = getAuthorByHandle(handle);
+  if (!author) return null;
+
+  const limit = opts.limit ?? 20;
+  const conditions = ["c.author_id = ?"];
+  const params: any[] = [author.id];
+  if (opts.cursor) { conditions.push("c.created_at < ?"); params.push(opts.cursor); }
+
+  const total = (db.prepare(`SELECT COUNT(*) as cnt FROM calls WHERE author_id = ?`).get(author.id) as any).cnt;
+
+  const rows = db.prepare(`
+    SELECT c.*, u.handle as caller_handle, u.avatar_url as caller_avatar_url,
+           a.handle as author_handle_joined, a.avatar_url as author_avatar_url
+    FROM calls c
+    LEFT JOIN users u ON u.id = c.caller_id
+    LEFT JOIN authors a ON a.id = c.author_id
+    WHERE ${conditions.join(" AND ")}
+    ORDER BY c.created_at DESC LIMIT ?
+  `).all(...params, limit + 1);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+  const calls = sliced.map((row: any) => ({
+    ...unpackRow(row),
+    caller_handle: row.caller_handle ?? null,
+    caller_avatar_url: row.caller_avatar_url ?? null,
+    author_avatar_url: row.author_avatar_url ?? null,
+  }));
+  const lastItem = calls[calls.length - 1];
+  const next_cursor = hasMore && lastItem ? lastItem.created_at : null;
+
+  // Stats from ALL calls (not just this page)
+  const allCallRows = db.prepare("SELECT ticker, direction, source_id FROM calls WHERE author_id = ?").all(author.id) as any[];
+  const tickerCounts: Record<string, number> = {};
+  const tickerDirections: Record<string, { long: number; short: number }> = {};
+  const sourceCallCounts: Record<string, number> = {};
+  for (const c of allCallRows) {
+    tickerCounts[c.ticker] = (tickerCounts[c.ticker] ?? 0) + 1;
+    if (!tickerDirections[c.ticker]) tickerDirections[c.ticker] = { long: 0, short: 0 };
+    tickerDirections[c.ticker]![c.direction === "long" ? "long" : "short"]++;
+    if (c.source_id) sourceCallCounts[c.source_id] = (sourceCallCounts[c.source_id] ?? 0) + 1;
+  }
+  const sources: Array<{ source: Source; callCount: number }> = [];
+  for (const [sid, count] of Object.entries(sourceCallCounts)) {
+    const src = getSource(sid);
+    if (src) sources.push({ source: src, callCount: count });
+  }
+  sources.sort((a, b) => b.callCount - a.callCount);
+
+  return { author, calls, next_cursor, total, tickerCounts, tickerDirections, sources };
+}
+
+/** Ticker with paginated calls. */
+export function getTickerWithCallsPaginated(symbol: string, opts: { cursor?: string; limit?: number } = {}): {
+  ticker: TickerEntity;
+  calls: any[];
+  next_cursor: string | null;
+  total: number;
+  directionBreakdown: { long: number; short: number };
+  authorCoverage: Array<{ author: Author; callCount: number; directions: { long: number; short: number } }>;
+} | null {
+  const ticker = getTickerBySymbol(symbol);
+  if (!ticker) return null;
+
+  const limit = opts.limit ?? 20;
+  const conditions = ["c.ticker_id = ?"];
+  const params: any[] = [ticker.id];
+  if (opts.cursor) { conditions.push("c.created_at < ?"); params.push(opts.cursor); }
+
+  const total = (db.prepare(`SELECT COUNT(*) as cnt FROM calls WHERE ticker_id = ?`).get(ticker.id) as any).cnt;
+
+  const rows = db.prepare(`
+    SELECT c.*, u.handle as caller_handle, u.avatar_url as caller_avatar_url,
+           a.handle as author_handle_joined, a.avatar_url as author_avatar_url
+    FROM calls c
+    LEFT JOIN users u ON u.id = c.caller_id
+    LEFT JOIN authors a ON a.id = c.author_id
+    WHERE ${conditions.join(" AND ")}
+    ORDER BY c.created_at DESC LIMIT ?
+  `).all(...params, limit + 1);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+  const calls = sliced.map((row: any) => ({
+    ...unpackRow(row),
+    caller_handle: row.caller_handle ?? null,
+    caller_avatar_url: row.caller_avatar_url ?? null,
+    author_avatar_url: row.author_avatar_url ?? null,
+  }));
+  const lastItem = calls[calls.length - 1];
+  const next_cursor = hasMore && lastItem ? lastItem.created_at : null;
+
+  // Stats from ALL calls
+  const allCallRows = db.prepare("SELECT direction, author_id FROM calls WHERE ticker_id = ?").all(ticker.id) as any[];
+  const directionBreakdown = { long: 0, short: 0 };
+  const authorMap: Record<string, { callCount: number; directions: { long: number; short: number } }> = {};
+  for (const c of allCallRows) {
+    if (c.direction === "long") directionBreakdown.long++;
+    else directionBreakdown.short++;
+    if (c.author_id) {
+      if (!authorMap[c.author_id]) authorMap[c.author_id] = { callCount: 0, directions: { long: 0, short: 0 } };
+      authorMap[c.author_id]!.callCount++;
+      authorMap[c.author_id]!.directions[c.direction === "long" ? "long" : "short"]++;
+    }
+  }
+  const authorCoverage: Array<{ author: Author; callCount: number; directions: { long: number; short: number } }> = [];
+  for (const [aid, stats] of Object.entries(authorMap)) {
+    const author = getAuthor(aid);
+    if (author) authorCoverage.push({ author, ...stats });
+  }
+  authorCoverage.sort((a, b) => b.callCount - a.callCount);
+
+  return { ticker, calls, next_cursor, total, directionBreakdown, authorCoverage };
+}
+
+/** Source with paginated calls. */
+export function getSourceWithDetailPaginated(id: string, opts: { cursor?: string; limit?: number } = {}): {
+  source: Source;
+  calls: any[];
+  next_cursor: string | null;
+  total: number;
+  quotes: Quote[];
+} | null {
+  const source = getSource(id);
+  if (!source) return null;
+
+  const limit = opts.limit ?? 20;
+  const conditions = ["c.source_id = ?"];
+  const params: any[] = [id];
+  if (opts.cursor) { conditions.push("c.created_at < ?"); params.push(opts.cursor); }
+
+  const total = (db.prepare(`SELECT COUNT(*) as cnt FROM calls WHERE source_id = ?`).get(id) as any).cnt;
+
+  const rows = db.prepare(`
+    SELECT c.*, u.handle as caller_handle, u.avatar_url as caller_avatar_url,
+           a.handle as author_handle_joined, a.avatar_url as author_avatar_url
+    FROM calls c
+    LEFT JOIN users u ON u.id = c.caller_id
+    LEFT JOIN authors a ON a.id = c.author_id
+    WHERE ${conditions.join(" AND ")}
+    ORDER BY c.created_at DESC LIMIT ?
+  `).all(...params, limit + 1);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+  const calls = sliced.map((row: any) => ({
+    ...unpackRow(row),
+    caller_handle: row.caller_handle ?? null,
+    caller_avatar_url: row.caller_avatar_url ?? null,
+    author_avatar_url: row.author_avatar_url ?? null,
+  }));
+  const lastItem = calls[calls.length - 1];
+  const next_cursor = hasMore && lastItem ? lastItem.created_at : null;
+
+  const quoteRows = db.prepare("SELECT * FROM quotes WHERE source_id = ? ORDER BY created_at").all(id);
+  return { source, calls, next_cursor, total, quotes: quoteRows.map(rowToQuote) };
+}
+
+/** Submitter profile with paginated calls. */
+export function getSubmitterProfilePaginated(handle: string, opts: { cursor?: string; limit?: number } = {}): {
+  user: User;
+  calls: any[];
+  next_cursor: string | null;
+  total: number;
+  authorsSurfaced: Array<{ author: Author; callCount: number }>;
+  tickersCovered: Array<{ symbol: string; count: number; directions: { long: number; short: number } }>;
+} | null {
+  const user = getUserByHandle(handle);
+  if (!user) return null;
+
+  const limit = opts.limit ?? 20;
+  const conditions = ["c.submitted_by = ?"];
+  const params: any[] = [user.id];
+  if (opts.cursor) { conditions.push("c.created_at < ?"); params.push(opts.cursor); }
+
+  const total = (db.prepare(`SELECT COUNT(*) as cnt FROM calls WHERE submitted_by = ?`).get(user.id) as any).cnt;
+
+  const rows = db.prepare(`
+    SELECT c.*, u.handle as caller_handle, u.avatar_url as caller_avatar_url,
+           a.handle as author_handle_joined, a.avatar_url as author_avatar_url
+    FROM calls c
+    LEFT JOIN users u ON u.id = c.caller_id
+    LEFT JOIN authors a ON a.id = c.author_id
+    WHERE ${conditions.join(" AND ")}
+    ORDER BY c.created_at DESC LIMIT ?
+  `).all(...params, limit + 1);
+
+  const hasMore = rows.length > limit;
+  const sliced = hasMore ? rows.slice(0, limit) : rows;
+  const calls = sliced.map((row: any) => ({
+    ...unpackRow(row),
+    caller_handle: row.caller_handle ?? null,
+    caller_avatar_url: row.caller_avatar_url ?? null,
+    author_avatar_url: row.author_avatar_url ?? null,
+  }));
+  const lastItem = calls[calls.length - 1];
+  const next_cursor = hasMore && lastItem ? lastItem.created_at : null;
+
+  // Stats from ALL calls
+  const allCallRows = db.prepare("SELECT source_handle, ticker, direction, author_id FROM calls WHERE submitted_by = ?").all(user.id) as any[];
+  const authorMap = new Map<string, number>();
+  const tickerMap = new Map<string, { count: number; long: number; short: number }>();
+  for (const c of allCallRows) {
+    if (c.source_handle) authorMap.set(c.source_handle, (authorMap.get(c.source_handle) ?? 0) + 1);
+    if (!tickerMap.has(c.ticker)) tickerMap.set(c.ticker, { count: 0, long: 0, short: 0 });
+    const entry = tickerMap.get(c.ticker)!;
+    entry.count++;
+    if (c.direction === "long") entry.long++;
+    else if (c.direction === "short") entry.short++;
+  }
+  const authorsSurfaced: Array<{ author: Author; callCount: number }> = [];
+  for (const [h, count] of [...authorMap.entries()].sort((a, b) => b[1] - a[1])) {
+    const author = getAuthorByHandle(h);
+    if (author) authorsSurfaced.push({ author, callCount: count });
+  }
+  const tickersCovered = [...tickerMap.entries()]
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([symbol, d]) => ({ symbol, count: d.count, directions: { long: d.long, short: d.short } }));
+
+  return { user, calls, next_cursor, total, authorsSurfaced, tickersCovered };
+}
+
+// ── Trending ──────────────────────────────────────────────────────────
+
+export interface TrendingTicker {
+  ticker: string;
+  ticker_id: string | null;
+  call_count: number;
+  author_count: number;
+  authors: Array<{ handle: string; avatar_url: string | null; direction: string }>;
+  latest_thesis: string;
+  latest_time: string;
+}
+
+/** Tickers with 2+ calls in the last N days, ranked by call count then author count. */
+export function getTrending(opts: { days?: number; limit?: number } = {}): TrendingTicker[] {
+  const days = opts.days ?? 7;
+  const limit = opts.limit ?? 20;
+
+  const rows = db.prepare(`
+    SELECT c.ticker, c.ticker_id,
+           COUNT(*) as cnt,
+           COUNT(DISTINCT c.author_id) as authors
+    FROM calls c
+    WHERE c.created_at > datetime('now', '-' || ? || ' days')
+      AND c.author_id IS NOT NULL
+    GROUP BY c.ticker
+    HAVING cnt >= 2
+    ORDER BY cnt DESC, authors DESC
+    LIMIT ?
+  `).all(days, limit) as any[];
+
+  return rows.map((row) => {
+    // Get distinct authors with their most recent direction
+    const authorRows = db.prepare(`
+      SELECT a.handle, a.avatar_url, c.direction,
+             MAX(c.created_at) as latest
+      FROM calls c
+      JOIN authors a ON a.id = c.author_id
+      WHERE c.ticker = ? AND c.created_at > datetime('now', '-' || ? || ' days')
+      GROUP BY c.author_id
+      ORDER BY latest DESC
+    `).all(row.ticker, days) as any[];
+
+    // Get the most recent call's thesis
+    const latestCall = db.prepare(`
+      SELECT thesis, created_at FROM calls
+      WHERE ticker = ? AND created_at > datetime('now', '-' || ? || ' days')
+      ORDER BY created_at DESC LIMIT 1
+    `).get(row.ticker, days) as any;
+
+    return {
+      ticker: row.ticker,
+      ticker_id: row.ticker_id,
+      call_count: row.cnt,
+      author_count: row.authors,
+      authors: authorRows.map((a: any) => ({
+        handle: a.handle,
+        avatar_url: a.avatar_url,
+        direction: a.direction,
+      })),
+      latest_thesis: latestCall?.thesis ?? "",
+      latest_time: latestCall?.created_at ?? "",
+    };
+  });
 }

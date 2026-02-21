@@ -109,11 +109,11 @@ export interface Call {
   caller_id: string;         // who submitted this routing
 
   // ── Entity FKs (new normalized schema) ──
-  author_id: string | null;      // FK -> authors.id
-  source_id: string | null;      // FK -> sources.id
-  ticker_id: string | null;      // FK -> tickers.id
-  submitted_by: string | null;   // FK -> users.id (same as caller_id, normalized name)
-  price_captured_at: string | null; // when entry_price was actually fetched
+  author_id?: string | null;      // FK -> authors.id
+  source_id?: string | null;      // FK -> sources.id
+  ticker_id?: string | null;      // FK -> tickers.id
+  submitted_by?: string | null;   // FK -> users.id (same as caller_id, normalized name)
+  price_captured_at?: string | null; // when entry_price was actually fetched
 
   // resolution (optional — calls are timestamped belief snapshots, P&L is always live)
   status?: string;

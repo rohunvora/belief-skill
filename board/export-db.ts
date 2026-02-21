@@ -27,8 +27,8 @@ const db = new Database(DB_PATH, { readonly: true });
 
 // ── Helpers ──────────────────────────────────────────────────────────
 
-function rows<T = Record<string, unknown>>(sql: string, ...params: unknown[]): T[] {
-  return db.prepare(sql).all(...params) as T[];
+function rows<T = Record<string, unknown>>(sql: string): T[] {
+  return db.prepare(sql).all() as T[];
 }
 
 function unpackCall(row: Record<string, unknown>): Record<string, unknown> {

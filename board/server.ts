@@ -1,11 +1,15 @@
 import index from "./index.html";
 import {
-  getAllCalls, getCall, listCalls, insertCall, updatePrice, deleteCall,
-  insertUser, getUserByHandle, listUsers, getSubmitterProfile,
+  getAllCalls, getCall, getCallWithJoins, getCallsBatch, queryFeed,
+  listCalls, insertCall, updatePrice, deleteCall,
+  insertUser, getUserByHandle, listUsers, getSubmitterProfile, getLeaderboard,
   listAuthors, getAuthorWithCalls, getQuotesByCall,
   listSources, getSourceWithDetail,
   listTickers, getTickerWithCalls,
   ensureAuthor, ensureSource, ensureTicker,
+  searchEntities, getTrending,
+  getAuthorWithCallsPaginated, getTickerWithCallsPaginated,
+  getSourceWithDetailPaginated, getSubmitterProfilePaginated,
 } from "./db";
 import { renderCard } from "./templates/card";
 import { renderPermalink } from "./templates/permalink";
@@ -69,40 +73,44 @@ async function fetchPriceForCall(
   }
 }
 
-async function fetchAllPrices(): Promise<Record<string, PriceResult>> {
+async function fetchPricesForIds(ids: string[]): Promise<Record<string, PriceResult>> {
+  if (ids.length === 0) return {};
+
   const now = Date.now();
+  const result: Record<string, PriceResult> = {};
+  const toFetch: { id: string; platform: string | null; ticker: string; entryPrice: number }[] = [];
 
-  if (now - cacheTimestamp < CACHE_TTL_MS && Object.keys(priceCache).length > 0) {
-    return priceCache;
-  }
-
-  const allCalls = getAllCalls();
-
-  const results = await Promise.allSettled(
-    allCalls.map(async (call) => {
-      const price = await fetchPriceForCall(call.platform, call.ticker);
-      if (price != null) {
-        updatePrice(call.id, price);
-      }
-      return { callId: call.id, price, entryPrice: call.entry_price };
-    })
-  );
-
-  const prices: Record<string, PriceResult> = {};
-
-  for (const result of results) {
-    if (result.status === "fulfilled" && result.value.price != null) {
-      const { callId, price, entryPrice } = result.value;
-      const changePct =
-        entryPrice !== 0 ? ((price - entryPrice) / entryPrice) * 100 : 0;
-      prices[callId] = { price, changePct, timestamp: now };
+  // Check per-call cache
+  for (const id of ids) {
+    const cached = priceCache[id];
+    if (cached && now - cached.timestamp < CACHE_TTL_MS) {
+      result[id] = cached;
+    } else {
+      const call = getCall(id);
+      if (call) toFetch.push({ id: call.id, platform: call.platform, ticker: call.ticker, entryPrice: call.entry_price });
     }
   }
 
-  priceCache = prices;
-  cacheTimestamp = now;
+  // Fetch stale/missing prices
+  const fetched = await Promise.allSettled(
+    toFetch.map(async (c) => {
+      const price = await fetchPriceForCall(c.platform, c.ticker);
+      if (price != null) updatePrice(c.id, price);
+      return { callId: c.id, price, entryPrice: c.entryPrice };
+    })
+  );
 
-  return prices;
+  for (const r of fetched) {
+    if (r.status === "fulfilled" && r.value.price != null) {
+      const { callId, price, entryPrice } = r.value;
+      const changePct = entryPrice !== 0 ? ((price - entryPrice) / entryPrice) * 100 : 0;
+      const entry: PriceResult = { price, changePct, timestamp: now };
+      priceCache[callId] = entry;
+      result[callId] = entry;
+    }
+  }
+
+  return result;
 }
 
 // ── Server ───────────────────────────────────────────────────────────
@@ -114,9 +122,13 @@ Bun.serve({
   routes: {
     // ── API ────────────────────────────────────────────────────
     "/api/prices": {
-      GET: async () => {
+      GET: async (req) => {
         try {
-          const prices = await fetchAllPrices();
+          const url = new URL(req.url);
+          const idsParam = url.searchParams.get("ids");
+          if (!idsParam) return Response.json({});
+          const ids = idsParam.split(",").filter(Boolean);
+          const prices = await fetchPricesForIds(ids);
           return Response.json(prices);
         } catch (e) {
           console.error("GET /api/prices error:", e);
@@ -127,10 +139,14 @@ Bun.serve({
     "/api/takes": {
       GET: (req) => {
         const url = new URL(req.url);
-        const limit = Number(url.searchParams.get("limit")) || 50;
-        const caller = url.searchParams.get("caller") ?? undefined;
-        const calls = listCalls({ limit, callerId: caller });
-        return Response.json(calls);
+        const limit = Number(url.searchParams.get("limit")) || 20;
+        const cursor = url.searchParams.get("cursor") ?? undefined;
+        const authorId = url.searchParams.get("authorId") ?? undefined;
+        const tickerId = url.searchParams.get("tickerId") ?? undefined;
+        const ticker = url.searchParams.get("ticker") ?? undefined;
+        const direction = url.searchParams.get("direction") ?? undefined;
+        const result = queryFeed({ cursor, limit, authorId, tickerId, ticker, direction });
+        return Response.json(result);
       },
       POST: async (req) => {
         try {
@@ -212,7 +228,21 @@ Bun.serve({
         }
       },
     },
+    "/api/takes/batch": {
+      GET: (req) => {
+        const url = new URL(req.url);
+        const idsParam = url.searchParams.get("ids");
+        if (!idsParam) return Response.json([]);
+        const ids = idsParam.split(",").filter(Boolean);
+        return Response.json(getCallsBatch(ids));
+      },
+    },
     "/api/takes/:id": {
+      GET: (req) => {
+        const call = getCallWithJoins(req.params.id);
+        if (!call) return Response.json({ error: "Not found" }, { status: 404 });
+        return Response.json(call);
+      },
       DELETE: (req) => {
         const deleted = deleteCall(req.params.id);
         if (!deleted) return Response.json({ error: "Not found" }, { status: 404 });
@@ -224,6 +254,27 @@ Bun.serve({
         return Response.json(listUsers());
       },
     },
+    "/api/leaderboard": {
+      GET: () => {
+        return Response.json(getLeaderboard());
+      },
+    },
+    "/api/search": {
+      GET: (req) => {
+        const url = new URL(req.url);
+        const q = url.searchParams.get("q");
+        if (!q || q.length < 1) return Response.json({ tickers: [], authors: [] });
+        return Response.json(searchEntities(q));
+      },
+    },
+    "/api/trending": {
+      GET: (req) => {
+        const url = new URL(req.url);
+        const days = Number(url.searchParams.get("days")) || 7;
+        const limit = Number(url.searchParams.get("limit")) || 20;
+        return Response.json(getTrending({ days, limit }));
+      },
+    },
     // ── Entity API Routes ─────────────────────────────────────
     "/api/authors": {
       GET: () => {
@@ -232,7 +283,10 @@ Bun.serve({
     },
     "/api/authors/:handle": {
       GET: (req) => {
-        const data = getAuthorWithCalls(req.params.handle);
+        const url = new URL(req.url);
+        const cursor = url.searchParams.get("cursor") ?? undefined;
+        const limit = Number(url.searchParams.get("limit")) || undefined;
+        const data = getAuthorWithCallsPaginated(req.params.handle, { cursor, limit });
         if (!data) return Response.json({ error: "Author not found" }, { status: 404 });
         return Response.json(data);
       },
@@ -244,7 +298,10 @@ Bun.serve({
     },
     "/api/sources/:id": {
       GET: (req) => {
-        const data = getSourceWithDetail(req.params.id);
+        const url = new URL(req.url);
+        const cursor = url.searchParams.get("cursor") ?? undefined;
+        const limit = Number(url.searchParams.get("limit")) || undefined;
+        const data = getSourceWithDetailPaginated(req.params.id, { cursor, limit });
         if (!data) return Response.json({ error: "Source not found" }, { status: 404 });
         return Response.json(data);
       },
@@ -256,14 +313,20 @@ Bun.serve({
     },
     "/api/tickers/:symbol": {
       GET: (req) => {
-        const data = getTickerWithCalls(req.params.symbol);
+        const url = new URL(req.url);
+        const cursor = url.searchParams.get("cursor") ?? undefined;
+        const limit = Number(url.searchParams.get("limit")) || undefined;
+        const data = getTickerWithCallsPaginated(req.params.symbol, { cursor, limit });
         if (!data) return Response.json({ error: "Ticker not found" }, { status: 404 });
         return Response.json(data);
       },
     },
     "/api/profile/:handle": {
       GET: (req) => {
-        const data = getSubmitterProfile(req.params.handle);
+        const url = new URL(req.url);
+        const cursor = url.searchParams.get("cursor") ?? undefined;
+        const limit = Number(url.searchParams.get("limit")) || undefined;
+        const data = getSubmitterProfilePaginated(req.params.handle, { cursor, limit });
         if (!data) return Response.json({ error: "User not found" }, { status: 404 });
         return Response.json(data);
       },
