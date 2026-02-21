@@ -1,48 +1,49 @@
-import React, { useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Avatar } from "../components/CallCard";
-import { useBoardData } from "../hooks/useData";
 import { formatWatchers } from "../utils";
+import type { User } from "../types";
+
+interface LeaderboardEntry {
+  user: User;
+  total_calls: number;
+}
 
 export function Leaderboard() {
-  const { calls, users, loading } = useBoardData();
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Rank by total calls submitted
-  const entries = useMemo(() => {
-    return users
-      .map((user) => {
-        const userCalls = calls.filter((c) => c.caller_id === user.id);
-        return {
-          user: { ...user, total_calls: userCalls.length },
-          originalCalls: userCalls.filter((c) => c.call_type === "original").length,
-          curatedCalls: userCalls.filter((c) => c.call_type !== "original").length,
-        };
+  useEffect(() => {
+    fetch("/api/leaderboard")
+      .then((r) => r.json())
+      .then((data) => {
+        setEntries(data);
+        setLoading(false);
       })
-      .filter((e) => e.user.total_calls > 0)
-      .sort((a, b) => b.user.total_calls - a.user.total_calls);
-  }, [users, calls]);
+      .catch(() => setLoading(false));
+  }, []);
 
   if (loading) return <div className="text-center text-gray-500 py-8">Loading...</div>;
+
+  const ranked = entries.filter((e) => e.total_calls > 0);
 
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Contributors</h1>
         <p className="text-sm text-gray-500">
-          {entries.length} contributors · {calls.length} total calls ·{" "}
-          {formatWatchers(users.reduce((s, u) => s + u.watchers, 0))} watching
+          {ranked.length} contributors
         </p>
       </div>
 
-      {/* Ranked entries by total calls */}
       <div className="flex flex-col gap-2">
-        {entries.map((entry, i) => {
+        {ranked.map((entry, i) => {
           const rank = i + 1;
           const isTop3 = rank <= 3;
 
           return (
             <div
               key={entry.user.id}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors active:bg-gray-100 ${
                 isTop3
                   ? "bg-white border border-gray-200 hover:border-gray-300"
                   : "hover:bg-gray-50"
@@ -51,7 +52,6 @@ export function Leaderboard() {
                 window.location.hash = `/profile/${entry.user.handle}`;
               }}
             >
-              {/* Rank */}
               <span
                 className={`w-7 text-right font-bold tabular-nums ${
                   rank === 1
@@ -66,10 +66,8 @@ export function Leaderboard() {
                 {rank}
               </span>
 
-              {/* Avatar */}
-              <Avatar handle={entry.user.handle} size={isTop3 ? "md" : "sm"} />
+              <Avatar handle={entry.user.handle} avatarUrl={entry.user.avatar_url} size={isTop3 ? "md" : "sm"} />
 
-              {/* Name + calls */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className={`font-semibold text-gray-900 truncate ${isTop3 ? "text-base" : "text-sm"}`}>
@@ -82,13 +80,12 @@ export function Leaderboard() {
                   )}
                 </div>
                 <span className="text-xs text-gray-500">
-                  {entry.user.total_calls} calls · {formatWatchers(entry.user.watchers)} watching
+                  {entry.total_calls} calls · {formatWatchers(entry.user.watchers)} watching
                 </span>
               </div>
 
-              {/* Total calls — hero number */}
               <span className={`text-xl font-extrabold tabular-nums text-gray-900 ${isTop3 ? "text-2xl" : ""}`}>
-                {entry.user.total_calls}
+                {entry.total_calls}
               </span>
             </div>
           );

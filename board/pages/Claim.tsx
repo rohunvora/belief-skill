@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CallCard } from "../components/CallCard";
-import { useBoardData } from "../hooks/useData";
+import type { Call } from "../types";
 
 function generateVerificationCode(): string {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -14,12 +14,20 @@ function generateVerificationCode(): string {
 export function Claim({ handle }: { handle: string }) {
   const [copied, setCopied] = useState(false);
   const [verificationCode] = useState(() => generateVerificationCode());
-  const { getCallsBySourceHandle, loading } = useBoardData();
+  const [attributedCalls, setAttributedCalls] = useState<Call[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/authors/${handle}`)
+      .then((r) => r.json())
+      .then((data) => {
+        setAttributedCalls(data.error ? [] : data.calls ?? []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [handle]);
 
   if (loading) return <div className="text-center text-gray-500 py-8">Loading...</div>;
-
-  // Find calls that attribute this handle as a source
-  const attributedCalls = getCallsBySourceHandle(handle);
 
   if (attributedCalls.length === 0) {
     return (
@@ -30,7 +38,7 @@ export function Claim({ handle }: { handle: string }) {
         </p>
         <a
           href="#/"
-          className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+          className="min-h-[44px] inline-flex items-center text-gray-600 hover:text-gray-900 active:text-gray-900 text-sm font-medium"
         >
           Back to feed
         </a>
@@ -38,7 +46,6 @@ export function Claim({ handle }: { handle: string }) {
     );
   }
 
-  // Compute stats from attributed calls
   const totalWatchers = attributedCalls.reduce((sum, c) => sum + c.watchers, 0);
 
   const handleCopy = () => {
@@ -50,7 +57,6 @@ export function Claim({ handle }: { handle: string }) {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Heading */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           {attributedCalls.length} call{attributedCalls.length !== 1 ? "s" : ""} cite your takes
@@ -60,7 +66,6 @@ export function Claim({ handle }: { handle: string }) {
         </p>
       </div>
 
-      {/* Stats summary */}
       <div className="grid grid-cols-2 gap-3 mb-6">
         <div className="border border-gray-200 rounded-lg p-3 bg-white text-center">
           <div className="text-lg font-bold text-gray-900">{attributedCalls.length}</div>
@@ -74,7 +79,6 @@ export function Claim({ handle }: { handle: string }) {
         </div>
       </div>
 
-      {/* Attributed call cards */}
       <h2 className="text-sm font-medium text-gray-700 mb-3">Calls citing @{handle}</h2>
       <div className="flex flex-col gap-3 mb-8">
         {attributedCalls.map((call) => (
@@ -88,18 +92,16 @@ export function Claim({ handle }: { handle: string }) {
         ))}
       </div>
 
-      {/* CTA section */}
       <div className="border border-gray-200 bg-gray-50 rounded-lg p-6 mb-6">
         <h2 className="text-lg font-bold text-gray-900 mb-2">Claim These Calls</h2>
         <p className="text-sm text-gray-600 mb-4">
           Verify your identity via Twitter to claim your track record. Once verified,
           all calls citing @{handle} will be linked to your profile.
         </p>
-        <button className="w-full py-2.5 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition-colors mb-4">
+        <button className="w-full py-2.5 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 active:scale-95 active:opacity-90 transition-colors mb-4">
           Claim These Calls
         </button>
 
-        {/* Verification mock UI */}
         <div className="border border-gray-200 bg-white rounded-lg p-4">
           <p className="text-sm text-gray-700 mb-3">
             Post this code to verify:
@@ -110,7 +112,7 @@ export function Claim({ handle }: { handle: string }) {
             </code>
             <button
               onClick={handleCopy}
-              className="px-3 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              className="px-3 py-2 text-sm font-medium border border-gray-300 rounded-md hover:bg-gray-50 active:scale-95 active:bg-gray-100 transition-colors"
             >
               {copied ? "Copied" : "Copy"}
             </button>
@@ -121,7 +123,6 @@ export function Claim({ handle }: { handle: string }) {
         </div>
       </div>
 
-      {/* Profile preview */}
       <div className="border border-gray-200 rounded-lg p-6 bg-white mb-6">
         <h3 className="text-sm font-medium text-gray-500 mb-4">
           Preview: your profile after claiming

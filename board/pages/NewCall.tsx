@@ -72,13 +72,13 @@ export function NewCall() {
             setSubmitted(false);
             setErrors({});
           }}
-          className="text-sm text-green-600 hover:underline mr-4"
+          className="text-sm text-green-600 hover:underline active:text-green-800 mr-4"
         >
           Post another
         </button>
         <a
           href="#/"
-          className="text-sm text-gray-500 hover:underline"
+          className="text-sm text-gray-500 hover:underline active:text-gray-900"
         >
           Back to feed
         </a>
@@ -109,7 +109,7 @@ export function NewCall() {
             placeholder="What do you believe?"
             value={form.thesis}
             onChange={(e) => set("thesis", e.target.value)}
-            className={`w-full px-3 py-2 text-sm border rounded-md bg-white focus:outline-none ${fieldBorder("thesis")}`}
+            className={`w-full px-3 py-2 text-base border rounded-md bg-white focus:outline-none ${fieldBorder("thesis")}`}
           />
           {errors.thesis && (
             <p className="text-xs text-red-500 mt-1">Required</p>
@@ -126,7 +126,7 @@ export function NewCall() {
             placeholder="GOOG, LAES, Kalshi slug..."
             value={form.ticker}
             onChange={(e) => set("ticker", e.target.value)}
-            className={`w-full px-3 py-2 text-sm border rounded-md bg-white focus:outline-none ${fieldBorder("ticker")}`}
+            className={`w-full px-3 py-2 text-base border rounded-md bg-white focus:outline-none ${fieldBorder("ticker")}`}
           />
           {errors.ticker && (
             <p className="text-xs text-red-500 mt-1">Required</p>
@@ -142,7 +142,7 @@ export function NewCall() {
             <button
               type="button"
               onClick={() => set("direction", "long")}
-              className={`flex-1 py-2 text-sm font-medium rounded-l-md border transition-colors ${
+              className={`flex-1 py-2 text-sm font-medium rounded-l-md border transition-colors active:scale-95 ${
                 form.direction === "long"
                   ? "bg-green-600 text-white border-green-600"
                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
@@ -153,7 +153,7 @@ export function NewCall() {
             <button
               type="button"
               onClick={() => set("direction", "short")}
-              className={`flex-1 py-2 text-sm font-medium rounded-r-md border-t border-b border-r transition-colors ${
+              className={`flex-1 py-2 text-sm font-medium rounded-r-md border-t border-b border-r transition-colors active:scale-95 ${
                 form.direction === "short"
                   ? "bg-red-600 text-white border-red-600"
                   : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
@@ -175,7 +175,7 @@ export function NewCall() {
             placeholder="Current price"
             value={form.entryPrice}
             onChange={(e) => set("entryPrice", e.target.value)}
-            className={`w-full px-3 py-2 text-sm border rounded-md bg-white focus:outline-none ${fieldBorder("entryPrice")}`}
+            className={`w-full px-3 py-2 text-base border rounded-md bg-white focus:outline-none ${fieldBorder("entryPrice")}`}
           />
           {errors.entryPrice && (
             <p className="text-xs text-red-500 mt-1">Required</p>
@@ -192,7 +192,7 @@ export function NewCall() {
             placeholder="X% to be +EV"
             value={form.breakeven}
             onChange={(e) => set("breakeven", e.target.value)}
-            className={`w-full px-3 py-2 text-sm border rounded-md bg-white focus:outline-none ${fieldBorder("breakeven")}`}
+            className={`w-full px-3 py-2 text-base border rounded-md bg-white focus:outline-none ${fieldBorder("breakeven")}`}
           />
           {errors.breakeven && (
             <p className="text-xs text-red-500 mt-1">Required</p>
@@ -209,7 +209,7 @@ export function NewCall() {
             placeholder="What kills this trade?"
             value={form.kills}
             onChange={(e) => set("kills", e.target.value)}
-            className={`w-full px-3 py-2 text-sm border rounded-md bg-white focus:outline-none ${fieldBorder("kills")}`}
+            className={`w-full px-3 py-2 text-base border rounded-md bg-white focus:outline-none ${fieldBorder("kills")}`}
           />
           {errors.kills && (
             <p className="text-xs text-red-500 mt-1">Required</p>
@@ -227,7 +227,7 @@ export function NewCall() {
             placeholder="Link to original tweet, article, or post"
             value={form.sourceUrl}
             onChange={(e) => set("sourceUrl", e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="w-full px-3 py-2 text-base border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
           />
         </div>
 
@@ -235,7 +235,7 @@ export function NewCall() {
         <button
           type="button"
           onClick={handleSubmit}
-          className="w-full py-2.5 text-sm font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors"
+          className="w-full py-2.5 text-sm font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 active:scale-95 active:opacity-90 transition-colors"
         >
           Post Call
         </button>

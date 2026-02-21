@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { Header } from "./components/Header";
+import { BottomNav } from "./components/BottomNav";
+import { SearchOverlay } from "./components/SearchOverlay";
 import { Feed } from "./pages/Feed";
 import { CardDetail } from "./pages/CardDetail";
 import { NewCall } from "./pages/NewCall";
@@ -11,8 +13,8 @@ import { HowItWorks } from "./pages/HowItWorks";
 import { AuthorPage } from "./pages/AuthorPage";
 import { SourcePage } from "./pages/SourcePage";
 import { TickerPage } from "./pages/TickerPage";
-import { BoardDataProvider } from "./hooks/useData";
-
+import { Watchlist } from "./pages/Watchlist";
+import { Trending } from "./pages/Trending";
 function parseHash(): { path: string; params: Record<string, string> } {
   const hash = window.location.hash.slice(1) || "/";
   return { path: hash, params: {} };
@@ -35,6 +37,14 @@ function matchRoute(path: string): React.ReactNode {
 
   if (path === "/how-it-works") {
     return <HowItWorks />;
+  }
+
+  if (path === "/watchlist") {
+    return <Watchlist />;
+  }
+
+  if (path === "/trending") {
+    return <Trending />;
   }
 
   const profileMatch = path.match(/^\/(?:u|profile)\/(.+)$/);
@@ -69,6 +79,7 @@ function matchRoute(path: string): React.ReactNode {
 
 function App() {
   const [path, setPath] = useState(() => parseHash().path);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     const onHashChange = () => {
@@ -79,12 +90,12 @@ function App() {
   }, []);
 
   return (
-    <BoardDataProvider>
-      <div className="min-h-screen bg-gray-50" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
-        <Header />
-        <main className="px-4 py-6">{matchRoute(path)}</main>
-      </div>
-    </BoardDataProvider>
+    <div className="min-h-screen bg-gray-50" style={{ fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+      <Header />
+      <main className="px-4 pt-4 pb-24 md:pt-6 md:pb-6">{matchRoute(path)}</main>
+      <BottomNav currentPath={path} onSearchOpen={() => setSearchOpen(true)} />
+      {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
+    </div>
   );
 }
 

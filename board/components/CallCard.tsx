@@ -2,28 +2,27 @@ import React, { useState } from "react";
 import type { Call } from "../types";
 import { extractChainDisplay } from "../types";
 import type { LivePriceData } from "../hooks/useLivePrices";
-import { useBoardData } from "../hooks/useData";
+import { useWatchlist } from "../hooks/useWatchlist";
 import { timeAgo, formatPrice, computePnl } from "../utils";
 import { getLogoUrl } from "../logos";
 
-/** Avatar circle — uses twitter pfp if available, falls back to letter */
+/** Avatar circle — uses provided avatar URL or falls back to letter */
 export function Avatar({
   handle,
+  avatarUrl,
   size = "sm",
 }: {
   handle: string;
+  avatarUrl?: string | null;
   size?: "sm" | "md" | "lg";
 }) {
-  const { getUserByHandle } = useBoardData();
-  const user = getUserByHandle(handle);
-  const avatarUrl = user?.avatar_url;
 
   const sizeClass =
     size === "lg"
       ? "w-10 h-10 text-base"
       : size === "md"
         ? "w-7 h-7 text-xs"
-        : "w-5 h-5 text-[10px]";
+        : "w-5 h-5 text-xs";
 
   if (avatarUrl) {
     return (
@@ -106,7 +105,7 @@ function TickerLogo({ ticker, platform, instrument }: {
     for (const c of ticker) hash = (hash * 31 + c.charCodeAt(0)) | 0;
     const bg = ["bg-gray-500", "bg-gray-600", "bg-gray-700"][Math.abs(hash) % 3];
     return (
-      <span className={`w-4 h-4 ${bg} rounded-full inline-flex items-center justify-center text-white text-[8px] font-bold shrink-0 leading-none`}>
+      <span className={`w-5 h-5 ${bg} rounded-full inline-flex items-center justify-center text-white text-[11px] font-bold shrink-0 leading-none`}>
         {letter}
       </span>
     );
@@ -116,7 +115,7 @@ function TickerLogo({ ticker, platform, instrument }: {
     <img
       src={url}
       alt={ticker}
-      className="w-4 h-4 rounded-full object-contain bg-white shrink-0"
+      className="w-5 h-5 rounded-full object-contain bg-white shrink-0"
       onError={() => setFailed(true)}
     />
   );
@@ -126,17 +125,17 @@ function TickerLogo({ ticker, platform, instrument }: {
 export { formatPrice } from "../utils";
 
 interface CallCardProps {
-  call: Call;
+  call: Call & { caller_handle?: string | null; caller_avatar_url?: string | null; author_avatar_url?: string | null };
   onClick?: () => void;
   livePrice?: LivePriceData;
 }
 
 export function CallCard({ call, onClick, livePrice }: CallCardProps) {
-  const { getUserById } = useBoardData();
-  const caller = getUserById(call.caller_id);
-  const callerHandle = caller?.handle ?? "unknown";
+  const { isStarred, toggle } = useWatchlist();
+  const starred = isStarred(call.id);
+  const callerHandle = call.caller_handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
-  const submitter = call.submitted_by ? getUserById(call.submitted_by) : null;
+  const displayAvatarUrl = call.source_handle ? call.author_avatar_url : call.caller_avatar_url;
 
   // P&L always from live price
   const pnl = livePrice
@@ -153,22 +152,22 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
 
   return (
     <article
-      className="py-3 cursor-pointer"
+      className="py-4 cursor-pointer bg-white active:bg-gray-100 rounded-lg -mx-1 px-1"
       onClick={onClick}
     >
       {/* Row 1: Avatar + @handle + source icon + time */}
       <div className="flex items-center gap-2 mb-1">
         <a href={`#/author/${displayHandle}`} onClick={(e) => e.stopPropagation()}>
-          <Avatar handle={displayHandle} size="md" />
+          <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="md" />
         </a>
-        <a href={`#/author/${displayHandle}`} onClick={(e) => e.stopPropagation()} className="text-[15px] font-semibold text-gray-900 hover:underline">@{displayHandle}</a>
+        <a href={`#/author/${displayHandle}`} onClick={(e) => e.stopPropagation()} className="text-[15px] font-semibold text-gray-900 hover:underline active:text-gray-900">@{displayHandle}</a>
         {call.source_url && (
-          <span className="flex items-center gap-1">
+          <span className="flex items-center">
             {call.source_id ? (
               <a
                 href={`#/source/${call.source_id}`}
                 onClick={(e) => e.stopPropagation()}
-                className="opacity-60 hover:opacity-100 transition-opacity"
+                className="p-1.5 -m-1.5 opacity-60 hover:opacity-100 active:opacity-100 transition-opacity"
                 title="View source details"
               >
                 <SourceIcon url={call.source_url} />
@@ -179,7 +178,7 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="opacity-60 hover:opacity-100 transition-opacity"
+                className="p-1.5 -m-1.5 opacity-60 hover:opacity-100 active:opacity-100 transition-opacity"
                 title={call.source_url}
               >
                 <SourceIcon url={call.source_url} />
@@ -208,7 +207,7 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
       {/* Row 3: Ticker badge + price + P&L / status */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <a href={`#/ticker/${call.ticker}`} onClick={(e) => e.stopPropagation()} className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-1.5 py-0.5 hover:opacity-80 transition-opacity`}>
+          <a href={`#/ticker/${call.ticker}`} onClick={(e) => e.stopPropagation()} className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-2 py-1 hover:opacity-80 active:opacity-70 transition-opacity`}>
             {call.call_type === "derived" && <span className="text-gray-400 mr-0.5">&rarr;</span>}
             <TickerLogo ticker={call.ticker} platform={call.platform} instrument={call.instrument} />
             {dirArrow} {call.ticker}
@@ -225,21 +224,16 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
               {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%
             </span>
           )}
+          <button
+            onClick={(e) => { e.stopPropagation(); toggle(call.id); }}
+            className={`w-11 h-11 -mr-2 flex items-center justify-center text-lg transition-colors active:scale-90 active:opacity-70 ${starred ? "text-yellow-500" : "text-gray-300 hover:text-yellow-400"}`}
+            title={starred ? "Untrack" : "Track"}
+          >
+            {starred ? "\u2605" : "\u2606"}
+          </button>
         </div>
       </div>
 
-      {/* Submitted by attribution */}
-      {submitter && submitter.handle !== displayHandle && (
-        <div className="mt-1">
-          <a
-            href={`#/profile/${submitter.handle}`}
-            onClick={(e) => e.stopPropagation()}
-            className="text-[11px] text-gray-400 hover:text-gray-600 hover:underline"
-          >
-            submitted by @{submitter.handle}
-          </a>
-        </div>
-      )}
     </article>
   );
 }

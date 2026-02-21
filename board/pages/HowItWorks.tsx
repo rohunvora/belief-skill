@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CallCard, Avatar, formatPrice } from "../components/CallCard";
-import { useBoardData } from "../hooks/useData";
 import type { Call, User } from "../types";
 
-/** Annotation label — small colored tag pointing to a part of the UI */
 function Label({
   children,
   color = "gray",
@@ -25,7 +23,6 @@ function Label({
   );
 }
 
-/** Step wrapper — number, heading, context, then children (the visual) */
 function Step({
   number,
   heading,
@@ -51,7 +48,6 @@ function Step({
   );
 }
 
-/** Fake source quote block — represents the raw take before structuring */
 function RawTake() {
   return (
     <div className="border border-gray-200 rounded-lg bg-white p-4">
@@ -83,21 +79,17 @@ function RawTake() {
   );
 }
 
-/** Mini contributors list for the "track records" step */
 function MiniContributors() {
-  const { users, calls } = useBoardData();
+  const [entries, setEntries] = useState<Array<{ user: User; total_calls: number }>>([]);
 
-  // Rank by total calls submitted
-  const topUsers = users
-    .map((u) => ({
-      ...u,
-      total_calls: calls.filter((c) => c.caller_id === u.id).length,
-    }))
-    .filter((u) => u.total_calls > 0)
-    .sort((a, b) => b.total_calls - a.total_calls)
-    .slice(0, 4);
+  useEffect(() => {
+    fetch("/api/leaderboard")
+      .then((r) => r.json())
+      .then((data) => setEntries(data.filter((e: any) => e.total_calls > 0).slice(0, 4)))
+      .catch(() => {});
+  }, []);
 
-  if (topUsers.length === 0) {
+  if (entries.length === 0) {
     return (
       <div className="text-sm text-gray-500 py-4">
         No contributors yet.
@@ -107,14 +99,13 @@ function MiniContributors() {
 
   return (
     <div className="border border-gray-200 rounded-lg bg-white">
-      {topUsers.map((user, i) => {
+      {entries.map((entry, i) => {
         const rank = i + 1;
-
         return (
           <div
-            key={user.id}
-            className={`flex items-center gap-3 px-4 py-3 ${
-              i < topUsers.length - 1 ? "border-b border-gray-100" : ""
+            key={entry.user.id}
+            className={`flex items-center gap-3 px-4 py-3 active:bg-gray-50 transition-colors ${
+              i < entries.length - 1 ? "border-b border-gray-200" : ""
             }`}
           >
             <span
@@ -130,22 +121,22 @@ function MiniContributors() {
             >
               {rank}
             </span>
-            <Avatar handle={user.handle} size="sm" />
+            <Avatar handle={entry.user.handle} avatarUrl={entry.user.avatar_url} size="sm" />
             <div className="flex-1 min-w-0">
               <span className="text-sm font-semibold text-gray-900 truncate">
-                @{user.handle}
+                @{entry.user.handle}
               </span>
               <span className="text-xs text-gray-500 ml-1.5">
-                {user.total_calls} calls
+                {entry.total_calls} calls
               </span>
             </div>
             <span className="text-lg font-extrabold tabular-nums text-gray-900">
-              {user.total_calls}
+              {entry.total_calls}
             </span>
           </div>
         );
       })}
-      <div className="px-4 py-2 border-t border-gray-100">
+      <div className="px-4 py-2 border-t border-gray-200">
         <Label color="gray">Ranked by total calls submitted</Label>
       </div>
     </div>
@@ -153,7 +144,18 @@ function MiniContributors() {
 }
 
 export function HowItWorks() {
-  const { calls, loading } = useBoardData();
+  const [calls, setCalls] = useState<Call[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/takes?limit=5")
+      .then((r) => r.json())
+      .then((data) => {
+        setCalls(data.items ?? []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   if (loading) {
     return (
@@ -161,15 +163,12 @@ export function HowItWorks() {
     );
   }
 
-  // Pick example calls from seed data
   const exampleCall = calls.find((c) => c.ticker === "DELL") || calls[0];
   const exampleCall2 = calls.find((c) => c.id !== exampleCall?.id) || null;
-
   const structuredCall = exampleCall || calls[0];
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Page header — minimal */}
       <div className="mb-10">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">
           How it works
@@ -179,7 +178,6 @@ export function HowItWorks() {
         </p>
       </div>
 
-      {/* Step 1: The raw take */}
       <Step
         number={1}
         heading="Someone makes a call"
@@ -188,7 +186,6 @@ export function HowItWorks() {
         <RawTake />
       </Step>
 
-      {/* Step 2: Structured call */}
       <Step
         number={2}
         heading="Structured into a trade thesis"
@@ -216,7 +213,6 @@ export function HowItWorks() {
         )}
       </Step>
 
-      {/* Step 3: Live tracking */}
       <Step
         number={3}
         heading="Tracked against reality"
@@ -251,7 +247,6 @@ export function HowItWorks() {
         </div>
       </Step>
 
-      {/* Step 4: Track records */}
       <Step
         number={4}
         heading="Track records reveal who's actually good"
@@ -260,7 +255,6 @@ export function HowItWorks() {
         <MiniContributors />
       </Step>
 
-      {/* CTA */}
       <div className="text-center py-8 border-t border-gray-200 mt-4">
         <p className="text-sm text-gray-500 mb-4">
           See it in action.
@@ -268,13 +262,13 @@ export function HowItWorks() {
         <div className="flex justify-center gap-3">
           <a
             href="#/"
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-md hover:bg-gray-800 active:scale-95 active:opacity-90 transition-colors"
           >
             Explore the feed
           </a>
           <a
             href="#/contributors"
-            className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 active:scale-95 active:bg-gray-100 transition-colors"
           >
             View contributors
           </a>
