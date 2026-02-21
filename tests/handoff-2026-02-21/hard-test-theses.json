@@ -1,0 +1,126 @@
+[
+  {
+    "id": "hard-01",
+    "shape": "micro_macro_crowding",
+    "difficulty": "hard",
+    "label": "Pain trade is up",
+    "input": "everyone is positioned for a dollar rally. pain trade is up in everything.",
+    "notes": "9 words. Crowding signal, not a direction call. 'Pain trade is up in everything' means: if most people are long dollar / short risk, the pain trade (the move that hurts the most people) is dollar weakening + risk assets spiking. This is a positioning observation, not a fundamental thesis. The correct interpretation: short dollar or long risk. Closest pure-play: UUP puts (dollar ETF) or DXY-PERP short on HL. Key test: does the skill recognize this as a crowding → reversal thesis, not a fundamental macro call? Does it verify the positioning claim with CFTC COT data?",
+    "expected": {
+      "call_type": "derived",
+      "thesis_interpretation": "crowding → mean reversion, not fundamental macro",
+      "direction": "short dollar / long risk",
+      "platforms": ["hyperliquid", "robinhood"],
+      "research_required": "verify CFTC COT data or speculative positioning on dollar",
+      "chose_over": ["SPY long (too diffuse)", "UUP puts (correct direction but options illiquid on dollar ETFs)"],
+      "should_NOT_do": "take 'pain trade is up' as a bullish call and go long everything, or route to a macro ETF without verifying positioning"
+    }
+  },
+  {
+    "id": "hard-02",
+    "shape": "obvious_is_right",
+    "difficulty": "medium",
+    "label": "Direct ticker, correctly priced, skill should agree",
+    "input": "NVDA is down 25% and Blackwell demand is unaffected. this is a gift.",
+    "notes": "Explicit ticker, explicit price action, explicit catalyst framing ('this is a gift'). Tests whether the skill correctly identifies when the obvious play IS the best expression — and doesn't flip it for contrarianism. The author named NVDA, direction is long, the Blackwell thesis is verifiable. Correct behavior: verify the demand claim (is Blackwell demand actually unaffected?), confirm NVDA is the pure-play (not SMCI or ANET), pick the right instrument (shares if structural, options if near-term catalyst). Should NOT try to find a 'smarter' play.",
+    "expected": {
+      "call_type": "direct",
+      "ticker": "NVDA",
+      "direction": "long",
+      "instrument_decision": "shares (structural thesis) OR options (if earnings catalyst within 30-45d)",
+      "research_required": "verify Blackwell demand signals, check recent hyperscaler capex guidance",
+      "should_NOT_do": "route to SMCI or ANET as 'smarter' plays, flip to short, add unnecessary derivation steps"
+    }
+  },
+  {
+    "id": "hard-03",
+    "shape": "philosophical_abstraction",
+    "difficulty": "hard",
+    "label": "Energy = substrate for civilization thesis",
+    "input": "energy is the only real commodity. money is just stored energy. intelligence is just organized energy. whoever controls energy controls the future.",
+    "notes": "4 sentences, philosophical, no ticker, no direction. Similar to @akshaybd 'energy is the substrate for money/intelligence/national capacity.' Tests: can the skill extract a tradeable thesis from a philosophical claim? The claim implies: energy companies (especially those enabling AI energy demand) are undervalued vs tech companies. Correct route: CEG (nuclear, pure-play AI energy), not XOM (oil — wrong energy thesis). Alt: uranium via CCJ (one step removed from power delivery). Key test: skill must NOT ask 'what do you mean by energy?' — that's asking a clarifying question the user already answered philosophically.",
+    "expected": {
+      "call_type": "derived",
+      "ticker": "CEG",
+      "direction": "long",
+      "derivation": "energy → baseload power for AI → nuclear as only scalable carbon-free baseload → CEG has locked multi-decade PPAs with META and MSFT",
+      "chose_over": "XOM (fossil fuel thesis, not AI energy), CVX (same), PLUG (hydrogen, too early), CCJ (uranium — one step removed from power delivery)",
+      "should_NOT_do": "ask clarifying questions, route to XOM, route to a generic energy ETF (XLE)"
+    }
+  },
+  {
+    "id": "hard-04",
+    "shape": "binary_event_prediction_market_obvious",
+    "difficulty": "easy",
+    "label": "Binary event with clear Kalshi home run",
+    "input": "there's no way we don't get a government shutdown before the debt ceiling resolution. DC is too dysfunctional.",
+    "notes": "Binary event with a clear date (debt ceiling deadline) and a clear yes/no resolution (shutdown happens or doesn't). Kalshi should be the obvious home. Tests whether the skill defaults to stocks (short TLT? short SPY?) or correctly routes to prediction markets when a precise binary exists. Key: 'DC is too dysfunctional' is conviction language that should be reflected in the position size, not just the direction.",
+    "expected": {
+      "primary_platform": "kalshi",
+      "direction": "YES on government shutdown",
+      "should_NOT_do": "suggest short TLT or short SPY as the primary expression — those are diluted"
+    }
+  },
+  {
+    "id": "hard-05",
+    "shape": "compound_conflicting_legs",
+    "difficulty": "hard",
+    "label": "DeepSeek destroyed AI moats but Jensen is still buying",
+    "input": "DeepSeek proved AI is commoditizing. margins are going to zero. but Nvidia just reported blowout earnings so clearly the market doesn't care. i want to be short the narrative but long the picks-and-shovels.",
+    "notes": "Compound thesis with two conflicting legs: (1) short AI narrative/SaaS companies with AI moat claims, (2) long GPU/infrastructure despite commodity thesis. This is internally consistent (DeepSeek → more inference → more GPUs needed) but expressed confusingly. Tests: can skill decompose, resolve the apparent contradiction, and find a single expression that captures both legs? Correct answer: this is actually a Jevons Paradox thesis — cheap AI = more usage = more compute demand. The SHORT is application-layer (AI SaaS with 'AI moat' premium: PLTR at 100x revenue, AI-premium SaaS). The LONG is infrastructure. Skill should find a pair trade: short PLTR (overvalued AI narrative) / long NVDA (infrastructure beneficiary). Or: just NVDA long if skill can only express one leg.",
+    "expected": {
+      "call_type": "derived",
+      "should_decompose": true,
+      "resolution": "Jevons Paradox — cheap AI = more inference = more GPU demand. Contradiction resolves: short narrative premium, long infrastructure.",
+      "primary_expression": "long NVDA (inference demand) / short PLTR (AI narrative premium at 100x revenue)",
+      "alt": "NVDA long only if pair trade is too complex",
+      "should_NOT_do": "treat as irreconcilable contradiction and refuse to route, or ignore the short leg entirely"
+    }
+  },
+  {
+    "id": "hard-06",
+    "shape": "private_company_proxy",
+    "difficulty": "hard",
+    "label": "OpenAI is about to IPO and it's going to change everything",
+    "input": "OpenAI IPO is going to be the biggest in history. Sam is building AGI and nobody is pricing it correctly. I want exposure.",
+    "notes": "The primary subject (OpenAI) is private. No direct investment vehicle. Tests the full expression fidelity ladder. Should explore: MSFT (largest shareholder, ~49% stake worth ~$100B+ if OpenAI IPOs at $300B), then alternatives. Key insight: MSFT is interesting but 70%+ of value is NOT OpenAI — thesis alignment is diluted. Better: wait for IPO, or find alt exposure. Possibly: Anthropic is also private. Pure-play AI infra that benefits regardless of which lab wins: NVDA (all labs buy their GPUs). This is a case where the skill must honestly say 'direct exposure is impossible until IPO, here's the best proxy and why it's imperfect.'",
+    "expected": {
+      "call_type": "derived",
+      "honest_flag": "OpenAI is private — no direct investment vehicle",
+      "proxy_option": "MSFT (largest shareholder) but thesis alignment is diluted (~30% of MSFT value)",
+      "alt_proxy": "NVDA (all labs buy their GPUs — wins regardless of which lab wins)",
+      "chose_over": ["waiting for IPO (no current trade)", "PLTR (gov AI, not consumer AI)"],
+      "should_NOT_do": "just say 'buy MSFT' without flagging the dilution, or pretend the IPO can be bet on directly"
+    }
+  },
+  {
+    "id": "hard-07",
+    "shape": "crowded_consensus_short",
+    "difficulty": "hard",
+    "label": "Real estate is dead — offices will never fill up again",
+    "input": "real estate is dead. offices are empty. nobody is going back full time. the wfh trend is permanent and the market still hasn't priced it in.",
+    "notes": "This thesis is 4 years old (post-COVID consensus). Tests whether the skill flags 'already priced in' correctly. Office REIT vacancy rates are well-documented, market has already punished BXP/VNO/SLG. The 'market still hasn't priced it in' claim is testable. Correct behavior: (1) verify whether it's actually priced in (it largely is), (2) if priced in → flag honestly and reduce conviction, (3) look for the angle that ISN'T priced in (e.g., tier-1 office in NYC is recovering vs tier-2/suburban is dead — more nuanced). May route to SLG short (suburban exposure) vs VNO as hedge, or admit the thesis is stale.",
+    "expected": {
+      "honest_flag": "this thesis may be largely priced in — office REIT prices already reflect WFH discount",
+      "nuance_required": "tier-1 NYC/SF office recovering (RTO mandates), tier-2/suburban still dying",
+      "possible_routing": "SLG puts (more suburban/mixed exposure) if thesis survives pricing analysis",
+      "should_NOT_do": "route to VNO/BXP short without checking if it's already priced in, or accept 'market hasn't priced it' without verifying"
+    }
+  },
+  {
+    "id": "hard-08",
+    "shape": "trad_finance_narrator_scan",
+    "difficulty": "hard",
+    "label": "Shkreli scan — pharma/biotech worldview",
+    "input": "@MartinShkreli",
+    "notes": "Handle scan mode. Martin Shkreli — controversial pharma expert, frequently posts detailed biotech/pharma calls. Tests handle scan on a non-obvious handle (not a macro pundit like Chamath). Key challenges: (1) his tweets are often long-form and technical (drug trials, FDA approvals, patent cliffs), (2) he names tickers explicitly (direct calls) more than most, (3) some of his positions may be disclosed (material non-public info risk — should the skill flag this?). Expected: 3-5 theses extracted, mix of direct and derived, biotech-sector instruments (pharma stocks, possibly Kalshi FDA approval markets), honest flagging of information credibility.",
+    "expected": {
+      "mode": "handle_scan",
+      "posts_fetched": 50,
+      "sector": "pharma/biotech",
+      "likely_instruments": ["pharma stocks", "Kalshi FDA markets"],
+      "flag_required": "direct calls from a disclosed position holder — verify for MNPI risk",
+      "should_NOT_do": "treat all his calls as direct without verifying he's not in the position, fail to find Kalshi FDA approval markets"
+    }
+  }
+]
