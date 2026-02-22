@@ -30,11 +30,11 @@ function formatDate(iso: string): string {
 
 /**
  * Get the headline quote for the card. Uses author's voice when available.
- * Priority: source_quote > author_thesis > first derivation step > thesis
+ * Priority: headline_quote > source_quote > first derivation step > thesis
  */
 function getQuote(call: Call, chain: ReturnType<typeof extractChainDisplay>): string {
+  if (call.headline_quote) return call.headline_quote;
   if (call.source_quote) return call.source_quote;
-  if (call.author_thesis) return call.author_thesis;
   if (chain.steps[0] && call.source_handle) return chain.steps[0];
   return call.thesis;
 }

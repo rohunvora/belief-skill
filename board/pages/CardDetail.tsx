@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
-import type { Call, PriceLadderStep } from "../types";
-import { extractChainDisplay, extractDerivationDetail } from "../types";
+import type { Call, PriceLadderStep, DerivationStep, Segment } from "../types";
+import { extractDerivationDetail, extractChainDisplay } from "../types";
 import { Avatar } from "../components/CallCard";
 import { useLivePrices } from "../hooks/useLivePrices";
 import { useCallDetail } from "../hooks/useCallDetail";
@@ -14,95 +14,178 @@ function formatDate(dateStr: string): string {
   });
 }
 
-function PriceLadder({
+/** Asymmetry bar — replaces price ladder. Shows risk/reward as a horizontal bar. */
+function AsymmetryBar({
   steps,
-  entry,
+  entryPrice,
   currentPrice,
+  direction,
 }: {
   steps: PriceLadderStep[];
-  entry: number;
+  entryPrice: number;
   currentPrice?: number;
+  direction: "long" | "short";
 }) {
-  const hasEntry = steps.some((s) => s.pnl_pct === 0);
-  const allSteps = hasEntry
-    ? steps
-    : [...steps, { price: entry, pnl_pct: 0, pnl_dollars: 0, label: "entry" }];
-  const sorted = [...allSteps].sort((a, b) => a.price - b.price);
-  const maxAbs = Math.max(...sorted.map((s) => Math.abs(s.pnl_pct)));
+  if (steps.length < 2) return null;
 
-  let closestIdx = -1;
-  if (currentPrice != null) {
-    let minDist = Infinity;
-    sorted.forEach((step, i) => {
-      const dist = Math.abs(step.price - currentPrice);
-      if (dist < minDist) {
-        minDist = dist;
-        closestIdx = i;
-      }
-    });
-  }
+  const sorted = [...steps].sort((a, b) => a.pnl_pct - b.pnl_pct);
+  const worst = sorted[0]; // most negative pnl_pct
+  const best = sorted[sorted.length - 1]; // most positive pnl_pct
+
+  // Need both upside and downside to show the bar
+  if (worst.pnl_pct >= 0 || best.pnl_pct <= 0) return null;
+
+  const totalRange = best.pnl_pct - worst.pnl_pct;
+  const downsidePct = Math.abs(worst.pnl_pct);
+  const upsidePct = best.pnl_pct;
+
+  // Current position as percentage along the bar (0 = worst, 100 = best)
+  const currentPnl = currentPrice
+    ? computePnl(entryPrice, currentPrice, direction)
+    : 0;
+  const markerPos = ((currentPnl - worst.pnl_pct) / totalRange) * 100;
+  const clampedPos = Math.max(2, Math.min(98, markerPos));
+
+  // Asymmetry ratio
+  const ratio = downsidePct > 0 ? (upsidePct / downsidePct) : null;
+
+  // Zero line position (entry point)
+  const zeroPos = ((0 - worst.pnl_pct) / totalRange) * 100;
 
   return (
-    <div className="space-y-1.5">
-      {sorted.map((step, i) => {
-        const isEntry = step.pnl_pct === 0;
-        const isPositive = step.pnl_pct > 0;
-        const isClosest = i === closestIdx;
-        const barWidth =
-          maxAbs > 0 ? (Math.abs(step.pnl_pct) / maxAbs) * 100 : 0;
+    <div className="py-3">
+      {/* Labels above */}
+      <div className="flex justify-between text-[11px] mb-2">
+        <span className="text-red-500 max-w-[45%] truncate">
+          ▼ {worst.pnl_pct}% {worst.label}
+        </span>
+        <span className="text-green-600 max-w-[45%] truncate text-right">
+          ▲ +{best.pnl_pct}% {best.label}
+        </span>
+      </div>
 
-        return (
-          <div
-            key={i}
-            className={`grid grid-cols-[80px_60px_1fr] gap-2 items-center text-sm rounded px-1 -mx-1 ${
-              isClosest ? "bg-gray-100 ring-1 ring-gray-300" : ""
-            }`}
-          >
-            <span
-              className={`font-mono text-right ${isClosest ? "text-gray-900 font-semibold" : "text-gray-700"}`}
-            >
-              {formatPrice(step.price)}
-            </span>
-            <span
-              className={`font-mono text-right text-xs font-medium ${
-                isEntry
-                  ? "text-gray-500"
-                  : isPositive
-                    ? "text-green-700"
-                    : "text-red-600"
-              }`}
-            >
-              {isEntry
-                ? "\u2014"
-                : `${isPositive ? "+" : ""}${step.pnl_pct}%`}
-            </span>
-            <div className="flex items-center gap-2">
-              {!isEntry && (
-                <div
-                  className={`h-4 rounded-sm ${isPositive ? "bg-green-200" : "bg-red-200"}`}
-                  style={{
-                    width: `${Math.max(barWidth, 4)}%`,
-                    maxWidth: "60%",
-                  }}
-                />
-              )}
-              {isEntry && (
-                <div className="h-4 w-1 bg-gray-400 rounded-sm" />
-              )}
-              <span
-                className={`text-xs ${isEntry ? "text-gray-600 font-medium" : "text-gray-500"}`}
-              >
-                {step.label}
-                {isClosest && (
-                  <span className="ml-1.5 text-gray-700 font-medium">
-                    &larr; now
+      {/* Bar */}
+      <div className="relative h-3 rounded-full overflow-hidden bg-gray-100">
+        {/* Red zone (left of zero) */}
+        <div
+          className="absolute inset-y-0 left-0 bg-red-100 rounded-l-full"
+          style={{ width: `${zeroPos}%` }}
+        />
+        {/* Green zone (right of zero) */}
+        <div
+          className="absolute inset-y-0 right-0 bg-green-100 rounded-r-full"
+          style={{ width: `${100 - zeroPos}%` }}
+        />
+        {/* Zero line (entry) */}
+        <div
+          className="absolute inset-y-0 w-px bg-gray-300"
+          style={{ left: `${zeroPos}%` }}
+        />
+        {/* Current position marker */}
+        <div
+          className={`absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm ${
+            currentPnl >= 0 ? "bg-green-500" : "bg-red-500"
+          }`}
+          style={{ left: `${clampedPos}%`, marginLeft: "-5px" }}
+        />
+      </div>
+
+      {/* Marker label + asymmetry ratio */}
+      <div className="flex justify-between items-center mt-1.5">
+        <span className="text-[11px] text-gray-400">
+          {currentPrice
+            ? `● here (${currentPnl >= 0 ? "+" : ""}${currentPnl.toFixed(1)}%)`
+            : `● entry`
+          }
+        </span>
+        {ratio != null && ratio > 1 && (
+          <span className="text-[11px] text-green-600 font-medium">
+            {ratio.toFixed(1)}x more upside
+          </span>
+        )}
+        {ratio != null && ratio < 1 && (
+          <span className="text-[11px] text-red-500 font-medium">
+            {(1 / ratio).toFixed(1)}x more downside
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Collapsible reasoning section */
+function ReasoningSection({ call }: { call: Call }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const detail = extractDerivationDetail(call);
+  const chain = extractChainDisplay(call);
+
+  // Check if we have any reasoning content
+  const hasDetailedSteps = detail && detail.steps.length > 0;
+  const hasChainSteps = chain.hasChain && chain.steps.length > 0;
+  const hasReasoning = call.reasoning;
+
+  if (!hasDetailedSteps && !hasChainSteps && !hasReasoning) return null;
+
+  return (
+    <div className="mb-3">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="text-[13px] text-gray-400 hover:text-gray-600 active:text-gray-700 flex items-center gap-1"
+      >
+        <svg
+          className={`w-3 h-3 transition-transform ${expanded ? "rotate-90" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+        {expanded ? "Hide reasoning" : "Show reasoning"}
+      </button>
+
+      {expanded && (
+        <div className="mt-2 pl-3 border-l border-gray-100 space-y-1.5">
+          {/* Detailed steps with segment references */}
+          {hasDetailedSteps && detail!.steps.map((step: DerivationStep, i: number) => {
+            const seg: Segment | null = step.segment !== undefined ? (detail!.segments[step.segment] ?? null) : null;
+            return (
+              <div key={i} className="text-[13px] text-gray-600 leading-relaxed">
+                <span className="text-gray-400 mr-1.5">{i + 1}.</span>
+                {step.text}
+                {seg && (
+                  <span className="text-[11px] text-gray-400 ml-1.5">
+                    — {seg.speaker}{seg.timestamp ? ` @ ${seg.timestamp}` : ""}
                   </span>
                 )}
-              </span>
+              </div>
+            );
+          })}
+
+          {/* Simple chain steps (no segment data) */}
+          {!hasDetailedSteps && hasChainSteps && chain.steps.map((step: string, i: number) => (
+            <div key={i} className="text-[13px] text-gray-600 leading-relaxed">
+              <span className="text-gray-400 mr-1.5">{i + 1}.</span>
+              {step}
             </div>
-          </div>
-        );
-      })}
+          ))}
+
+          {/* Plain reasoning text */}
+          {!hasDetailedSteps && !hasChainSteps && hasReasoning && (
+            <p className="text-[13px] text-gray-600 leading-relaxed">
+              {call.reasoning}
+            </p>
+          )}
+
+          {/* Chose over */}
+          {(detail?.chose_over || chain.chose_over) && (
+            <p className="text-[12px] text-gray-500 pt-1.5 border-t border-gray-100">
+              Instead of: {detail?.chose_over || chain.chose_over}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -148,13 +231,7 @@ export function CardDetail({ id }: { id: string }) {
     ? computePnl(call.entry_price, livePrice.currentPrice, call.direction)
     : null;
 
-  const isWinning = pnl != null && pnl >= 0;
-
-  const borderAccent = pnl != null
-    ? isWinning
-      ? "border-l-green-400"
-      : "border-l-red-400"
-    : "border-l-gray-200";
+  const isLong = call.direction === "long";
 
   const copyLink = () => {
     const url = `${window.location.origin}${window.location.pathname}#/call/${call.id}`;
@@ -173,310 +250,138 @@ export function CardDetail({ id }: { id: string }) {
         &larr; Feed
       </a>
 
-      <article
-        className={`border border-gray-200 border-l-[3px] ${borderAccent} rounded-lg bg-white p-5`}
-      >
-        {/* WHO */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2.5">
-            <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="lg" />
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-base font-semibold text-gray-900">
-                  @{displayHandle}
-                </span>
-                {call.source_handle &&
-                  call.source_handle !== callerHandle && (
-                    <span className="text-xs text-gray-500">
-                      via @{callerHandle}
-                    </span>
-                  )}
-              </div>
-              <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
-                <span className="text-xs text-gray-500">
-                  {formatDate(call.source_date ?? call.created_at)}
-                  {call.source_date && call.source_date !== call.created_at.slice(0, 10) && (
-                    <span className="text-gray-400"> · added {formatDate(call.created_at)}</span>
-                  )}
-                </span>
-                {call.scan_source && (
-                  <span className="text-xs text-gray-500">
-                    &middot;{" "}
-                    {call.source_url ? (
-                      <a
-                        href={call.source_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:underline active:text-gray-900"
-                      >
-                        {call.scan_source}
-                      </a>
-                    ) : (
-                      call.scan_source
-                    )}
-                  </span>
-                )}
-                {call.call_type !== "original" && (
-                  <span className={`text-[11px] px-1.5 py-0.5 rounded ${
-                    call.call_type === "direct" ? "bg-blue-50 text-blue-600" :
-                    call.call_type === "derived" ? "bg-amber-50 text-amber-600" :
-                    "bg-gray-100 text-gray-600"
-                  }`}>
-                    {call.call_type === "direct" ? "direct call" :
-                     call.call_type === "derived" ? "AI-routed" :
-                     call.call_type}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-          <span className="text-xs text-gray-500" title={call.source_date ?? call.created_at}>
-            {timeAgo(call.source_date ?? call.created_at)}
-          </span>
-        </div>
+      <article className="bg-white rounded-lg border border-gray-200 p-5">
 
-        {/* WHAT */}
-        <h1 className="text-xl font-bold text-gray-900 mb-2 leading-snug">
-          {call.thesis}
-        </h1>
-
-        {/* The Call — author's preserved signal */}
-        {(call.source_quote || call.author_thesis || call.conditions) && (
-          <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3">
-            <div className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-2">
-              What They Said
-            </div>
-            {call.source_quote && (
-              <div className="border-l-2 border-gray-300 pl-3 mb-2">
-                <p className="text-sm text-gray-600 italic leading-relaxed">
-                  &ldquo;{call.source_quote}&rdquo;
-                </p>
-                {call.source_handle && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    — @{call.source_handle}
-                    {call.source_url && (
-                      <a
-                        href={call.source_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="ml-1.5 text-gray-400 hover:text-gray-600 hover:underline active:text-gray-900"
-                      >
-                        View original &rarr;
-                      </a>
-                    )}
-                  </p>
-                )}
-              </div>
-            )}
-            {call.author_thesis && call.author_thesis !== call.source_quote && (
-              <p className="text-sm text-gray-700 mb-1">
-                <span className="text-xs font-medium text-gray-500">Their thesis:</span>{" "}
-                {call.author_thesis}
-              </p>
-            )}
-            {call.author_ticker && (
-              <p className="text-xs text-gray-500 mb-1">
-                <span className="font-medium text-gray-500">Their pick:</span>{" "}
-                {call.author_ticker}{call.author_direction ? ` ${call.author_direction}` : ""}
-              </p>
-            )}
-            {call.conditions && (
-              <p className="text-xs text-gray-500 italic">
-                <span className="font-medium not-italic text-gray-500">Conditions:</span>{" "}
-                {call.conditions}
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* HOW TO PROFIT */}
-        <div className="flex items-baseline justify-between mb-3">
+        {/* A. Ticker Header */}
+        <div className="flex items-baseline justify-between mb-1">
           <div className="flex items-baseline gap-2">
-            <span className="text-lg font-bold text-gray-700">
-              {call.ticker}
+            <span className="text-xl font-bold text-gray-900">{call.ticker}</span>
+            <span className={`text-sm font-semibold ${isLong ? "text-green-600" : "text-red-600"}`}>
+              {isLong ? "▲ Long" : "▼ Short"}
             </span>
-            <span
-              className={`text-sm font-semibold ${
-                call.direction === "long"
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
-            >
-              {call.direction === "long" ? "Long" : "Short"}
+            <span className="text-sm text-gray-400">
+              · {formatPrice(call.entry_price)}
             </span>
-            <span className="text-sm text-gray-500">
-              {formatPrice(call.entry_price)}
-            </span>
-            {call.instrument && (
-              <span className="text-xs text-gray-500">
-                {call.instrument}
-              </span>
-            )}
-            {call.platform && (
-              <span className="text-xs text-gray-500">{call.platform}</span>
-            )}
           </div>
-
           {pnl != null && (
             <span
-              className={`text-3xl font-extrabold tabular-nums tracking-tight ${
+              className={`text-2xl font-extrabold tabular-nums tracking-tight ${
                 pnl >= 0 ? "text-green-600" : "text-red-600"
               }`}
             >
-              {pnl >= 0 ? "+" : ""}
-              {pnl.toFixed(1)}%
+              {pnl >= 0 ? "+" : ""}{pnl.toFixed(1)}%
             </span>
           )}
         </div>
 
-        {/* Live price context */}
+        {/* Subtitle: live price + dollar change */}
         {livePrice && (
-          <div className="text-sm text-gray-500 mb-3">
+          <p className="text-sm text-gray-500 mb-4">
             Now {formatPrice(livePrice.currentPrice)}
-            <span className="text-gray-300 mx-1">&middot;</span>
-            <span
-              className={
-                pnl != null && pnl >= 0
-                  ? "text-green-600"
-                  : "text-red-600"
-              }
-            >
+            <span className="text-gray-300 mx-1">·</span>
+            <span className={pnl != null && pnl >= 0 ? "text-green-600" : "text-red-600"}>
               {livePrice.changeDollars >= 0 ? "+" : ""}
               {formatPrice(Math.abs(livePrice.changeDollars))} from entry
             </span>
-          </div>
+          </p>
         )}
+        {!livePrice && <div className="mb-4" />}
 
-        {/* Price ladder */}
-        {call.price_ladder && call.price_ladder.length > 0 && (
-          <div className="border border-gray-200 rounded-md p-4 mb-3 bg-gray-50">
-            <div className="text-xs text-gray-500 mb-3">
-              {formatPrice(call.entry_price)} entry
-            </div>
-            <PriceLadder
-              steps={call.price_ladder}
-              entry={call.entry_price}
-              currentPrice={livePrice?.currentPrice}
-            />
-          </div>
-        )}
-
-        {/* Trade info (for cards without a ladder) */}
-        {!call.price_ladder && (
-          <div className="flex items-baseline gap-4 text-sm mb-3">
-            <span className="text-gray-500">
-              Entry{" "}
-              <span className="font-medium text-gray-900">
-                {formatPrice(call.entry_price)}
-              </span>
-            </span>
-            {call.breakeven && (
-              <span className="text-gray-500">
-                Breakeven{" "}
-                <span className="font-medium text-gray-900">
-                  {call.breakeven}
-                </span>
-              </span>
+        {/* B. Headline quote — the human signal (hero) */}
+        {(call.headline_quote || call.source_quote) && (
+          <div className="border-l-2 border-gray-300 pl-3 mb-4">
+            <p className="text-base font-medium text-gray-900 leading-snug">
+              &ldquo;{call.headline_quote || call.source_quote}&rdquo;
+            </p>
+            <p className="text-[12px] text-gray-500 mt-1.5">
+              — @{displayHandle}
+              {call.source_date && `, ${formatDate(call.source_date)}`}
+              {call.source_url && (
+                <a
+                  href={call.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-1.5 text-gray-400 hover:text-gray-600 hover:underline"
+                >
+                  View original →
+                </a>
+              )}
+            </p>
+            {call.scan_source && (
+              <p className="text-[11px] text-gray-400 mt-1">
+                via {call.scan_source}
+              </p>
             )}
           </div>
         )}
 
-        {/* Reasoning chain */}
-        {call.reasoning && (
-          <p className="text-sm text-gray-700 leading-relaxed mb-3">
-            {call.reasoning}
-          </p>
+        {/* C. Full source quote (if longer than headline — show the evidence) */}
+        {call.source_quote && call.headline_quote && call.source_quote !== call.headline_quote && (
+          <div className="border-l-2 border-gray-100 pl-3 mb-4">
+            <p className="text-[14px] text-gray-600 italic leading-relaxed">
+              &ldquo;{call.source_quote}&rdquo;
+            </p>
+          </div>
         )}
 
-        {(() => {
-          const detail = extractDerivationDetail(call);
-          if (detail && detail.steps.length > 0) {
-            return (
-              <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3 space-y-1.5">
-                <div className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                  Reasoning
-                </div>
-                {detail.steps.map((step, i) => {
-                  const hasEvidence = step.segment !== undefined && detail.segments[step.segment];
-                  const seg = hasEvidence ? detail.segments[step.segment!] : null;
-                  return (
-                    <div key={i} className="flex items-baseline gap-2 text-xs leading-relaxed">
-                      <span className={`shrink-0 text-[11px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                        hasEvidence
-                          ? "bg-blue-50 text-blue-700"
-                          : "bg-amber-50 text-amber-700"
-                      }`}>
-                        {hasEvidence ? "cited" : "inferred"}
-                      </span>
-                      <span className="text-gray-700 flex-1">{step.text}</span>
-                      {seg && (
-                        <span className="shrink-0 text-[11px] text-gray-400">
-                          {seg.speaker}{seg.timestamp ? ` @ ${seg.timestamp}` : ""}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-                {detail.chose_over && (
-                  <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
-                    <span className="font-medium text-gray-600">Instead of:</span>{" "}
-                    {detail.chose_over}
-                  </div>
-                )}
-              </div>
-            );
-          }
-
-          const chain = extractChainDisplay(call);
-          if (!chain.hasChain || chain.steps.length === 0) return null;
-          return (
-            <div className="bg-gray-50 border border-gray-200 rounded-md p-3 mb-3 space-y-1">
-              <div className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-1">
-                Reasoning
-              </div>
-              {chain.steps.map((step, i) => (
-                <div key={i} className="text-xs text-gray-500 font-mono leading-relaxed">
-                  <span className="text-gray-400 select-none">&gt; </span>
-                  {step}
-                </div>
-              ))}
-              {chain.chose_over && (
-                <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-200">
-                  <span className="font-medium text-gray-600">Instead of:</span>{" "}
-                  {chain.chose_over}
-                </div>
-              )}
-            </div>
-          );
-        })()}
-
+        {/* D. Edge — AI's sharpest reframe */}
         {call.edge && (
-          <p className="text-sm text-gray-600 leading-relaxed mb-3">
+          <p className="text-[15px] text-gray-700 leading-relaxed mb-4">
             {call.edge}
           </p>
         )}
 
+        {/* E. Thesis — AI's full argument (only if different from edge) */}
+        {call.thesis && call.thesis !== call.edge && (
+          <p className="text-[14px] text-gray-600 leading-relaxed mb-4">
+            {call.thesis}
+          </p>
+        )}
+
+        {/* F. Asymmetry Bar */}
+        {call.price_ladder && call.price_ladder.length >= 2 && (
+          <div className="border border-gray-100 rounded-md px-4 py-1 mb-4 bg-gray-50/50">
+            <AsymmetryBar
+              steps={call.price_ladder}
+              entryPrice={call.entry_price}
+              currentPrice={livePrice?.currentPrice}
+              direction={call.direction}
+            />
+          </div>
+        )}
+
+        {/* F. Reasoning (collapsible) */}
+        <ReasoningSection call={call} />
+
+        {/* G. Counter + Alternative + Kills */}
         {call.counter && (
-          <p className="text-sm text-gray-500 leading-relaxed mb-3">
-            <span className="font-medium text-gray-600">Counter:</span>{" "}
-            {call.counter}
+          <p className="text-sm text-gray-600 mb-2">
+            <span className="font-medium">Against this:</span> {call.counter}
           </p>
         )}
 
         {call.alternative && (
-          <p className="text-xs text-gray-500 mb-3">
-            <span className="font-medium">Alt:</span> {call.alternative}
-          </p>
+          <div className="bg-gray-50 rounded px-3 py-2 text-sm text-gray-600 mb-2">
+            <span className="font-medium">Chosen over:</span> {call.alternative}
+          </div>
         )}
 
         {call.kills && (
           <p className="text-xs text-gray-500 mb-3">
-            Invalidated if: {call.kills}
+            <span className="text-red-500 font-medium">Dies if:</span> {call.kills}
           </p>
         )}
 
-        {/* Footer: share */}
-        <div className="flex items-center justify-end pt-3 border-t border-gray-100 text-xs text-gray-500">
+        {/* H. Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-gray-100 text-xs text-gray-400">
+          <div className="flex items-center gap-1.5">
+            <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="sm" />
+            <span>@{displayHandle}</span>
+            {call.source_handle && call.source_handle !== callerHandle && (
+              <span>· via @{callerHandle}</span>
+            )}
+            <span>· {formatDate(call.source_date ?? call.created_at)}</span>
+          </div>
           <button
             onClick={copyLink}
             className="text-gray-400 hover:text-gray-600 active:text-gray-900 transition-colors flex items-center gap-1"

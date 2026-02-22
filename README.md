@@ -1,74 +1,97 @@
 # Belief Router
 
-You have opinions about the world. This turns them into trades.
+Turn any opinion into a trade. Paste a tweet, drop a YouTube link, say what you think is going to happen. The skill finds the most direct way to bet on it.
 
-## What You Can Say
+## Real examples
 
-Just talk. The skill figures out what's tradeable.
+These are actual outputs from live test sessions.
 
-| You say | What you get back |
-|---------|-------------------|
-| "Everyone's on Ozempic" | A specific stock to buy, how much it could make, what could go wrong |
-| "AI is going to kill Google" | A bet against Google with exact prices and scenarios |
-| "Fed won't cut rates in March" | A prediction market contract where $80 pays $1,000 if you're right |
-| "SOL is going to flip ETH" | A paired trade that profits on the gap, not the market |
-| *paste a YouTube link* | Pulls out every tradeable claim, asks which ones to route |
-| *forward a tweet* | Same thing. Screenshot, article, podcast link, all work |
+**"inflation is a monetary phenomenon. tech people calling for deflation will likely be wrong. if you're in bits, pivot to atoms."** (@akshaybd)
 
-You don't need to know tickers, strike prices, or what a "put" is. You bring the opinion. The skill does the rest.
+The skill identifies this as a broad thesis (D2, no single obvious ticker), verifies the inflation premise, and presents ranked options: GLD as the most direct monetary inflation play, DBC for broad commodity exposure, XLI if you read "atoms" as industrial reshoring. Doesn't force one answer when the belief maps to a category.
 
-## What You Get Back
+**"NVDA is down 25% and Blackwell demand is unaffected. this is a gift."**
 
-A short explanation of why this is the best way to bet on your idea, then a trade card:
+Author named the ticker. The skill agrees: NVDA shares, long. Verifies Blackwell demand ($500B+ committed through 2026), confirms the obvious play IS the best play. Doesn't manufacture a "smarter" alternative when the direct answer is right.
+
+**"everyone is positioned for a dollar rally. pain trade is up in everything."**
+
+Before routing, the skill checks the setup claim (Research Phase 0). CFTC COT data shows USD is actually net-short $20.5B. The premise is inverted. Notes the correction, then routes on the corrected premise: UUP long (dollar strength is the actual pain trade).
+
+**Scan @chamath** (50 recent tweets)
+
+Fetches posts via X API, filters for directional takes, surfaces 5 tradeable theses. Routes each through the full flow. MSFT short (direct, author named it), DELL long (derived, on-prem thesis), CEG long (derived, power as AI bottleneck). Each card looks different because each thesis is different.
+
+## How it works
+
+The skill follows a decision tree with two quality gates:
 
 ```
-IONQ · STOCK · LONG
-29 shares @ $34.11 · risk $100
-
-$30.70   [-$100]       thesis wrong, you lose $100
-$45.97   [+$344]       starts recovering
-$69.48   [+$1,026]     halfway back to highs
-$84.64   [+$1,466]     full recovery
-
-+EV above 40% · dies if DARPA rejects, rates stay high
-Alt: RGTI $16.09 long (riskier but cheaper)
+  EXTRACT (what did they say?)
+  DECODE  (what do they believe?)
+       |
+  GATE 1: COHERENCE
+       Does quote + ticker make sense side by side?
+       Fails --> reroute closer
+       |
+  RESEARCH --> SCORE --> SELECT
+       |
+  GATE 2: OPTIMALITY
+       Is this the best way to trade this belief?
+       Fails --> find better instrument
+       |
+  OUTPUT
 ```
 
-Every card shows: what you buy, how much you risk, what happens if you're right, what happens if you're wrong, and what would kill the trade.
+Gate 1 checks coherence against the original words (headline test, author test, padding test). Gate 2 checks optimality against the original belief (causal density, instrument structure, edge). Both can reject and loop back.
 
-## How It Works
+## Architecture
 
-1. **Finds the real trade.** Your surface observation ("everyone's on Ozempic") maps to a deeper claim (GLP-1 distribution is the bottleneck). The deeper claim often points to a different, better trade than the obvious one.
-2. **Searches live markets.** Checks stocks, options, prediction markets (Kalshi, Polymarket), crypto perpetuals (Hyperliquid), and private markets automatically. You don't pick the instrument class. It finds the best one.
-3. **Picks one winner.** Evaluates every candidate on four dimensions: how directly it matches your thesis, how much you can make vs lose, whether the market has already priced it in, and how forgiving it is if your timing is off. Compares head-to-head. Returns the single best expression.
-4. **Shows the downside.** Every card includes a "thesis wrong" row with your dollar loss. No trade without a scenario table.
+Inspired by [cloudflare-skill](https://github.com/dmmulroy/cloudflare-skill). The main SKILL.md is a decision tree (228 lines) that routes to reference files loaded on demand. Detail lives in `references/`, not in the main prompt. This keeps the LLM focused on the current step instead of processing 800+ lines of instructions at once.
 
-## What Counts as an Opinion
+```
+SKILL.md                    decision tree + flow (228 lines)
+references/
+  scoring-rubric.md         4-dimension evaluation, hard gates, comparison
+  derivation-chain.md       chain format, examples, anti-patterns, coherence tests
+  output-format.md          payload table, headline quotes, board POST
+  bulk-mode.md              multi-thesis extraction, tiering, scan output
+  handle-scan.md            X API pipeline, cost gate, filtering
+  instrument-reasoning.md   options vs perps vs Kalshi vs shares
+  portfolio-construction.md multi-leg trades, pair construction
+  blindspots.md             platform risk, correlation groups, liquidity
+scripts/adapters/
+  robinhood/                stock/ETF price + returns (via Yahoo Finance)
+  hyperliquid/              perp price, funding, leverage
+  kalshi/                   prediction market discovery + returns
+  polymarket/               binary event markets
+  bankr/                    onchain instruments (15-125s)
+  angel/                    private market raises
+  x/                        X/Twitter user timeline (pay-per-use API)
+  transcript/               URL to text (YouTube, articles, tweets)
+tests/
+  real-test-theses.json     9 cases from actual sessions (with ratings)
+  hard-test-theses.json     8 synthetic hard cases
+board/
+  server.ts                 Bun.serve() on port 4000
+  db.ts                     SQLite (bun:sqlite)
+  components/               React (CallCard, Avatar)
+  pages/                    CallList, CardDetail
+  templates/                server-rendered OG cards + permalinks
+```
 
-Anything with a direction. Explicit or implied.
+## What you can say
 
-- "I think PLTR is undervalued" (obvious direction)
-- "My landlord raised rent 40%" (implies housing inflation accelerating)
-- "Nobody I know uses X/Twitter anymore" (implies usage declining)
-- A podcast where someone says AI spending will double (paste the link)
-- An earnings call transcript (paste it, the skill extracts every claim)
+Anything with a direction.
 
-If your input has multiple claims, the skill asks which ones to route. Or you say "scan this" and it routes them all.
-
-## What It Won't Do
-
-- Execute trades for you. It shows you what to buy and where. You press the button.
-- Manage your portfolio. It tracks beliefs if you want, but it's not a portfolio manager.
-- Give financial advice. Everything is framed as "expressions, not advice."
-
-## Examples
-
-| You say | Skill finds | The insight |
-|---------|------------|-------------|
-| "Everyone's on Ozempic" | HIMS stock, long | The drug makers (Novo, Lilly) are the obvious play and already priced in. The bottleneck is distribution. HIMS is a telehealth company selling GLP-1s that the market still thinks is a hair loss company. |
-| "AI replaces search" | GOOG puts (bet against Google) | Buying AI companies is what everyone is doing. The less crowded trade is betting against the victim. 57% of Google's revenue is search ads. |
-| "Fed won't cut in March" | Kalshi NO contract at $0.08 | Pays $1 if you're right. That's 12x your money with a defined max loss. No stock or ETF gives you that kind of payoff on a rate decision. |
-| *paste a podcast URL* | Extracts 5-7 claims, routes the best ones | Finds every directional statement, ranks them by how tradeable they are, and deep-routes the top picks. |
+| Input | What happens |
+|-------|-------------|
+| "Everyone's on Ozempic" | Decodes the belief, finds NVO at PE 13 as the most direct play |
+| "Fed won't cut in March" | Routes to Kalshi NO contract. $80 pays $1,000 if right. |
+| "SOL is going to flip ETH" | Pair trade on Hyperliquid. Long SOL, short ETH. Isolates the ratio. |
+| Paste a YouTube URL | Extracts every directional claim, asks which to route, deep-analyzes the top picks |
+| `scan @martinshkreli` | Fetches 50 tweets, filters for takes, routes each one |
+| Screenshot of a tweet | Vision extracts the text, routes it like any other input |
 
 ## Install
 
@@ -80,37 +103,23 @@ cd belief-skill
 bun install
 ```
 
-Add the skill to Claude Code and start talking. No special commands. Just say what you think is going to happen.
+The skill activates automatically in Claude Code when you express a belief with trading implications. No slash commands needed.
 
-No API keys required. Uses public APIs (Yahoo Finance, Kalshi, Polymarket, DexScreener, Hyperliquid).
+**Optional:** Set `X_BEARER_TOKEN` in `.env` for handle scanning ($0.26 per 50 tweets, pay-per-use). The skill works without it; you can paste tweets or use screenshots instead.
 
-## Current Stage (v5.4)
+## The two gates
 
-X handle scanning via X API (pay-per-use). Say `scan @chamath` or paste any X handle and the skill fetches their recent original posts, filters for directional takes, and routes each one. Mandatory cost gate before any API spend. Caches user ID lookups locally. Graceful fallback when `X_BEARER_TOKEN` is not set. Also: chain self-test + chain-sketch-before-research flow, em dash ban, inline ticker badges reverted (needs skill-side data, not frontend regex).
+The core insight: every routing failure traces back to one of two problems.
 
-**What's next:** Shorten Telegram output (link to board instead of full card). Bulk mode speed optimization. Deploy board publicly.
+**Gate 1 (Coherence)** catches routings where the chain from quote to ticker doesn't hold. "Inflation is monetary" next to FCX (a copper mine) fails the headline test. A reader can't see why they're together. The old skill produced these because it rewarded "non-obvious" plays. The new skill requires: can a reader see the connection without explanation?
 
-**What's blocked:** Nothing.
+**Gate 2 (Optimality)** catches routings where a better instrument exists. Kalshi NO at $0.08 beats TLT puts for a "Fed won't cut" thesis because it resolves on the exact event with defined risk. Shares beat options for structural theses with no catalyst date. The rubric (alignment, payoff shape, edge, timing forgiveness) makes the comparison explicit.
 
-## Repo Structure
+## What it won't do
 
-```
-SKILL.md              the skill prompt (start here)
-scripts/adapters/     live market API connectors
-references/           context loaded by SKILL.md when needed
-tests/                scoring, smoke, e2e, golden tests
-board/                belief.board web app
-  server.ts           Bun.serve() — API + server-rendered cards/permalinks
-  db.ts               SQLite store (single source of truth)
-  types.ts            Call, User types + derivation chain helpers
-  seed.ts             sample data for development
-  templates/          server-rendered HTML (card, permalink) for OG previews
-  components/         React components (CallCard, Avatar)
-  pages/              React pages (Feed, CardDetail, Profile, Leaderboard)
-  hooks/              React hooks (useData, useLivePrices)
-```
-
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+- Execute trades. It shows what to buy and where. You press the button.
+- Give financial advice. Everything is framed as trades and market data, not recommendations.
+- Route without evidence. Every claim in the output traces to a data source.
 
 ## License
 

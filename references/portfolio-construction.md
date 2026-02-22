@@ -12,9 +12,9 @@ Load this reference only for multi-leg portfolio requests or compound theses wit
 - Thesis implies winners AND losers with roughly equal conviction on both sides
 
 **Don't use multi-leg just because:**
-- You found multiple instruments that express the same thesis — pick the best one
-- You want to "hedge" — if the thesis is wrong, both legs lose anyway in correlated trades
-- Different platforms offer similar exposure — pick the best platform, not all platforms
+- You found multiple instruments that express the same thesis. Pick the best one.
+- You want to "hedge." If the thesis is wrong, both legs lose anyway in correlated trades.
+- Different platforms offer similar exposure. Pick the best platform, not all platforms.
 
 ## Core + Satellite Structure
 
@@ -42,7 +42,7 @@ Check correlation groups (from `references/blindspots.md`):
 - `ai_bullish`: long NVDA/MSFT, long AI tokens, long AI ETFs
 
 **If legs share a group:**
-- Warn: "These legs have correlated exposure — a single move against you hits both."
+- Warn: "These legs have correlated exposure. A single move against you hits both."
 - Reduce combined allocation: treat them as ~1.5 legs of risk, not 2 independent legs.
 - Suggest reducing one leg or finding a genuinely uncorrelated expression.
 
@@ -50,21 +50,21 @@ Check correlation groups (from `references/blindspots.md`):
 
 For "X outperforms Y" or "X flips Y" theses:
 
-1. **Long the outperformer, short the underperformer** — preferably on the same platform for cleaner execution
+1. **Long the outperformer, short the underperformer.** Preferably on the same platform for cleaner execution.
 2. **Size equally in dollar terms** (not share count) to neutralize market direction
-3. **Show combined P&L** — the pair trade profits if the SPREAD moves in your favor, regardless of market direction
+3. **Show combined P&L.** The pair trade profits if the SPREAD moves in your favor, regardless of market direction.
 4. **Warn:** pair trades still have directional risk if correlation breaks (both can go down, or both can go up, with the wrong one moving more)
 
 Platform preference for pairs:
 - Hyperliquid: best for crypto pairs (long SOL / short ETH)
 - Robinhood: best for equity pairs (long ITA / short XLK)
-- Cross-platform pairs are harder to manage — flag the execution complexity
+- Cross-platform pairs are harder to manage. Flag the execution complexity.
 
 ## Time Horizon Alignment
 
 **All legs must have compatible expirations.**
 
-- Don't mix a weekly option with a 6-month ETF hold — the option expires before the thesis plays out
+- Don't mix a weekly option with a 6-month ETF hold. The option expires before the thesis plays out.
 - If using options for multiple legs, align expiration dates
 - If one leg is a perp (no expiry) and another is an option, the option's expiry sets the portfolio's effective time horizon
-- Kalshi contracts have fixed resolution dates — ensure other legs survive past that date
+- Kalshi contracts have fixed resolution dates. Ensure other legs survive past that date.

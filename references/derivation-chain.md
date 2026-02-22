@@ -33,9 +33,19 @@ Output as a JSON object with 3 fields:
 - no arrows, no em dashes. one clean thought per step.
 - chain explains WHY, not WHAT THE PRICE IS. no "down X% from highs" closers
 
-## Self-test
+## Reader Coherence Test
 
-After drafting the chain, test each step: remove it and check if the chain still connects quote to trade. If yes, the step was padding. Cut it. If no, the step is load-bearing. Keep it, even if it contains a researched fact. Fix the routing, not the chain.
+Before research, draft the chain as a hypothesis. Then apply these checks:
+
+**1. The headline test.** Imagine the source quote and the routed ticker on a card side by side. Does a reader who knows nothing about finance see why those two things are next to each other? If not, route closer.
+
+**2. The author test.** Would the original author look at this card and say "yes, that's what I meant"? Or would they say "how did you get THAT from what I said?" If the latter, the routing has gone too far.
+
+**3. The padding test.** Remove any step where the fact is decorative (the chain still connects without it). Keep steps where the fact IS the connection. "COHR controls ~40% of AI datacenter optical transceivers" is load-bearing (it's WHY you pick COHR). "DoD became the largest shareholder in July 2025" is not (it's a credential, not a reason).
+
+If any check fails, don't proceed to research. Reroute first. Research can validate facts but it can't fix a chain that a reader wouldn't follow.
+
+Flag any factual premise (company structure, ownership, market dynamics) as needing validation. These are the first things research must confirm.
 
 ## Examples by Structure
 
@@ -136,7 +146,7 @@ Avoid:
 - Forcing a single linear narrative when evidence is parallel
 - Decorative facts pretending to be reasoning. "DoD became largest shareholder in July 2025" adds credibility but doesn't advance the logic. Test: remove the step. If the chain still connects, the fact was padding
 
-## `chose_over`
+## `chose_over` (renders as "Instead of:")
 
 Why this ticker over the alternatives you considered. Name the runners-up and why they lost. For direct calls (source named the ticker), use: "direct call, source named the ticker explicitly."
 

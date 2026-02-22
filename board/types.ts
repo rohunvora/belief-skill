@@ -133,8 +133,8 @@ export interface Call {
   comments: number;
 
   // ── Layer 1: The Call (author's signal — blob detail) ──
-  source_quote?: string;     // verbatim, strongest 1-2 sentences
-  author_thesis?: string;    // what they actually claimed, in their words (not reframed)
+  source_quote?: string;     // verbatim, strongest 1-2 sentences (full length, for detail page)
+  headline_quote?: string;   // card-friendly quote, max 120 chars, author's actual words with journalistic editing ([...] / ...)
   author_ticker?: string;    // did they name a ticker? null if not
   author_direction?: string; // their stated direction, null if ambiguous
   conditions?: string;       // qualifications they stated, null if none

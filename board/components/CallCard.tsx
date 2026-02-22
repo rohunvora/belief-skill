@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import type { Call } from "../types";
-import { extractChainDisplay } from "../types";
 import type { LivePriceData } from "../hooks/useLivePrices";
 import { timeAgo, formatPrice, computePnl } from "../utils";
 import { getLogoUrl } from "../logos";
@@ -58,7 +57,7 @@ export function Avatar({
 }
 
 /** Inline source-site icon — SVG for known domains, favicon fallback */
-function SourceIcon({ url }: { url: string }) {
+export function SourceIcon({ url }: { url: string }) {
   const size = "w-3.5 h-3.5 shrink-0";
   let hostname: string;
   try { hostname = new URL(url).hostname.replace("www.", ""); } catch { return null; }
@@ -98,13 +97,12 @@ function TickerLogo({ ticker, platform, instrument }: {
   const url = getLogoUrl(ticker, platform, instrument);
 
   if (!url || failed) {
-    // Colored letter fallback (same hash pattern as Avatar)
     const letter = (ticker[0] ?? "?").toUpperCase();
     let hash = 0;
     for (const c of ticker) hash = (hash * 31 + c.charCodeAt(0)) | 0;
     const bg = ["bg-gray-500", "bg-gray-600", "bg-gray-700"][Math.abs(hash) % 3];
     return (
-      <span className={`w-5 h-5 ${bg} rounded-full inline-flex items-center justify-center text-white text-[11px] font-bold shrink-0 leading-none`}>
+      <span className={`w-4 h-4 ${bg} rounded-full inline-flex items-center justify-center text-white text-[10px] font-bold shrink-0 leading-none`}>
         {letter}
       </span>
     );
@@ -114,10 +112,48 @@ function TickerLogo({ ticker, platform, instrument }: {
     <img
       src={url}
       alt={ticker}
-      className="w-5 h-5 rounded-full object-contain bg-white shrink-0"
+      className="w-4 h-4 rounded-full object-contain bg-white shrink-0"
       onError={() => setFailed(true)}
     />
   );
+}
+
+/**
+ * Extract a card-friendly quote from available data.
+ * Priority: headline_quote → sentence-truncated source_quote → thesis
+ */
+function getCardQuote(call: Call): string {
+  // Best case: skill already extracted a headline
+  if (call.headline_quote) return call.headline_quote;
+
+  // Fallback: sentence-boundary truncation of source_quote
+  if (call.source_quote) {
+    const quote = call.source_quote;
+    if (quote.length <= 120) return quote;
+
+    // Split on sentence boundaries (period, exclamation, question, semicolon)
+    const sentences = quote.match(/[^.!?;]+[.!?;]+(\s|$)/g);
+    if (sentences && sentences.length > 0) {
+      let result = sentences[0].trim();
+      if (result.length <= 120) {
+        for (let i = 1; i < sentences.length; i++) {
+          const next = result + " " + sentences[i].trim();
+          if (next.length > 120) break;
+          result = next;
+        }
+        if (result.length > 15 && result.length <= 120) return result;
+      }
+    }
+
+    // No clean sentence break under 120 — truncate at word boundary
+    const truncated = quote.slice(0, 117);
+    const lastSpace = truncated.lastIndexOf(" ");
+    if (lastSpace > 30) return truncated.slice(0, lastSpace) + "...";
+    return truncated + "...";
+  }
+
+  // Last resort
+  return call.thesis;
 }
 
 /** Re-export formatPrice for consumers that import from CallCard */
@@ -127,9 +163,10 @@ interface CallCardProps {
   call: Call & { caller_handle?: string | null; caller_avatar_url?: string | null; author_avatar_url?: string | null };
   onClick?: () => void;
   livePrice?: LivePriceData;
+  compact?: boolean; // when true, omit attribution row (used inside source groups)
 }
 
-export function CallCard({ call, onClick, livePrice }: CallCardProps) {
+export function CallCard({ call, onClick, livePrice, compact }: CallCardProps) {
   const callerHandle = call.caller_handle ?? "unknown";
   const displayHandle = call.source_handle ?? callerHandle;
   const displayAvatarUrl = call.source_handle ? call.author_avatar_url : call.caller_avatar_url;
@@ -139,66 +176,63 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
     ? computePnl(call.entry_price, livePrice.currentPrice, call.direction)
     : null;
 
-  // Direction styling
   const isLong = call.direction === "long";
   const dirArrow = isLong ? "▲" : "▼";
-  const dirBadgeBg = isLong ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700";
+  const dirColor = isLong ? "text-green-600" : "text-red-600";
 
-  // Derivation: greentext steps or fallback to thesis
-  const chain = extractChainDisplay(call);
+  // Card quote — human's words, not AI slop
+  const quoteText = getCardQuote(call);
 
   return (
     <article
-      className="py-4 cursor-pointer bg-white active:bg-gray-100 rounded-lg -mx-1 px-1"
+      className="py-3 cursor-pointer bg-white active:bg-gray-50"
       onClick={onClick}
     >
-      {/* Row 1: Avatar + @handle + source icon + time */}
-      <div className="flex items-center gap-2 mb-1">
-        <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="md" />
-        <span className="text-[15px] font-semibold text-gray-900">@{displayHandle}</span>
-        {call.source_url && (
-          <a
-            href={call.source_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="p-1.5 -m-1.5 opacity-60 hover:opacity-100 active:opacity-100 transition-opacity"
-            title={call.source_url}
-          >
-            <SourceIcon url={call.source_url} />
-          </a>
-        )}
-        <span className="text-[11px] text-gray-400">· {timeAgo(call.source_date ?? call.created_at)}</span>
-      </div>
+      {/* Row 1: Quote — the human signal (hero) */}
+      <p className="text-[14px] text-gray-900 leading-snug line-clamp-2 mb-1.5">
+        &ldquo;{quoteText}&rdquo;
+      </p>
 
-      {/* Row 2: Reasoning steps or thesis fallback */}
-      {chain.hasChain && chain.steps.length > 0 ? (
-        <div className="mb-2 space-y-0.5">
-          {chain.steps.map((step, i) => (
-            <p key={i} className="text-[14px] text-gray-800 leading-snug">
-              <span className="text-gray-400 mr-1">&gt;</span>{step}
-            </p>
-          ))}
+      {/* Row 2: Attribution — who said it, where */}
+      {!compact && (
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <Avatar handle={displayHandle} avatarUrl={displayAvatarUrl} size="sm" />
+          <span className="text-[12px] font-medium text-gray-600">@{displayHandle}</span>
+          {call.source_url && (
+            <a
+              href={call.source_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="opacity-60 hover:opacity-100 active:opacity-100 transition-opacity"
+              title={call.source_url}
+            >
+              <SourceIcon url={call.source_url} />
+            </a>
+          )}
+          {call.scan_source && (
+            <span className="text-[11px] text-gray-400">· {call.scan_source}</span>
+          )}
+          <span className="text-[11px] text-gray-400">· {timeAgo(call.source_date ?? call.created_at)}</span>
         </div>
-      ) : (
-        <p className="text-[15px] text-gray-900 leading-snug line-clamp-2 mb-2">
-          {call.thesis}
-        </p>
       )}
 
-      {/* Row 3: Ticker badge + price + P&L */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className={`inline-flex items-center gap-1 text-xs font-bold ${dirBadgeBg} rounded px-2 py-1`}>
-            {call.call_type === "derived" && <span className="text-gray-400 mr-0.5">&rarr;</span>}
-            <TickerLogo ticker={call.ticker} platform={call.platform} instrument={call.instrument} />
-            {dirArrow} {call.ticker}
-          </span>
-          <span className="text-xs text-gray-400">{formatPrice(call.entry_price)}</span>
-        </div>
+      {/* Row 3: Ticker + price + P&L (the trade output, secondary) */}
+      <div className="flex items-center gap-1.5">
+        <TickerLogo ticker={call.ticker} platform={call.platform} instrument={call.instrument} />
+        <span className="text-[12px] font-semibold text-gray-700">{call.ticker}</span>
+        <span className={`text-[11px] ${dirColor}`}>{dirArrow}</span>
+        <span className="text-[11px] text-gray-400">{formatPrice(call.entry_price)}</span>
+        {livePrice && (
+          <>
+            <span className="text-[11px] text-gray-300">→</span>
+            <span className="text-[11px] text-gray-400">{formatPrice(livePrice.currentPrice)}</span>
+          </>
+        )}
+        <span className="flex-1" />
         {pnl != null && (
           <span
-            className={`text-sm font-bold tabular-nums ${
+            className={`text-[13px] font-bold tabular-nums ${
               pnl >= 0 ? "text-green-600" : "text-red-600"
             }`}
           >
@@ -206,7 +240,6 @@ export function CallCard({ call, onClick, livePrice }: CallCardProps) {
           </span>
         )}
       </div>
-
     </article>
   );
 }

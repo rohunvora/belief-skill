@@ -1,6 +1,44 @@
 # Changelog
 
-## v4.0 — Current
+## v6.0 — Current
+
+### 2026-02-21 (v6.0)
+
+**SKILL.md restructured: 882 lines to 228.** Monolithic prompt replaced with a decision tree that loads reference files on demand. Follows the [cloudflare-skill](https://github.com/dmmulroy/cloudflare-skill) pattern: SKILL.md is the router, `references/` is the encyclopedia.
+
+**Two-gate flowchart.** Every routing passes through Gate 1 (coherence: does quote + ticker make sense side by side?) and Gate 2 (optimality: is this the best way to trade this belief?). Both gates can reject and loop back. This replaces Connection Floor, Challenger Override, Cross-check, and Self-test.
+
+**Deeper Claim rewritten.** "Find the non-obvious play" replaced with "find the most direct instrument." Directness test: if the connection requires 3+ inferential leaps, route closer. This fixed the FCX problem (inflation tweet routed to a copper mine through 5 hops).
+
+**Routing Confidence.** High (D0-D1, one trade), Medium (D2, ranked options), Low (D3+, flag the gap). Not all routings deserve equal confidence.
+
+**Premise verification (Research Phase 0).** First search verifies the author's factual claim before routing. Dollar crowding example: COT data inverted the entire routing.
+
+**New reference files.** scoring-rubric.md, output-format.md, bulk-mode.md, handle-scan.md. Existing derivation-chain.md updated (Self-test replaced with Reader Coherence Test).
+
+**Board cards redesigned.** Source-first layout: quote as hero, attribution row, ticker as badge. Added headline_quote field (max 120 chars, journalistic editing). Source grouping by scan_source. AsymmetryBar replaces PriceLadder on detail page.
+
+**Taxonomy cleanup.** "expression" replaced with "trade" throughout. "+EV above X%" replaced with "profitable above X%". "expression fidelity ladder" simplified. Em dashes purged from all skill and reference files.
+
+**Test corpus added.** 9 real cases (from actual sessions with ratings) + 8 hard synthetic cases covering missing input shapes. Saved to `tests/`.
+
+---
+
+## v5.0
+
+### 2026-02-21 (v5.0)
+
+**Board stripped to read-only viewer.** Removed feed tabs, leaderboard, trending, watchlist, search, profiles, and 9 social pages. The board now does one thing: display skill outputs as readable cards.
+
+📋 **Card audit** — all 21 cards validated against SKILL.md spec. Fixed 5 old-format derivation chains and 4 anti-pattern chains. Deleted 2 test cards.
+
+🔧 **Entity model preserved** — authors, sources, tickers, quotes tables and CRUD all kept. Social pages archived, data layer intact for future scoring/analysis.
+
+📋 **Dead weight archived** — docs/ (41 design files), examples/, 9 pages, 4 components, 3 hooks moved to `_archive/`. Nothing deleted.
+
+---
+
+## v4.0
 
 ### 2026-02-18 (v4.0)
 

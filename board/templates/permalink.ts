@@ -48,9 +48,9 @@ function buildAuthorSection(call: Call): string {
     parts.push(`<blockquote class="source-quote">${escapeHtml(truncate(call.source_quote, 400))}</blockquote>`);
   }
 
-  // Author's thesis (if different from source_quote)
-  if (call.author_thesis && call.author_thesis !== call.source_quote) {
-    parts.push(`<div class="author-thesis"><span class="field-label">Their thesis:</span> ${escapeHtml(call.author_thesis)}</div>`);
+  // Headline quote (if different from source_quote — shows the card-friendly version)
+  if (call.headline_quote && call.headline_quote !== call.source_quote) {
+    parts.push(`<div class="headline-quote"><span class="field-label">Key quote:</span> ${escapeHtml(call.headline_quote)}</div>`);
   }
 
   // Author's ticker (if they named one)
@@ -164,7 +164,7 @@ export function renderPermalink(call: Call): string {
   const thesis = escapeHtml(call.thesis);
 
   // OG meta — use author's voice for social previews
-  const ogQuote = call.source_quote ?? call.author_thesis ?? call.thesis;
+  const ogQuote = call.headline_quote ?? call.source_quote ?? call.thesis;
   const ogTitleText = call.source_handle
     ? `${caller}: "${truncate(ogQuote, 70)}"`
     : truncate(call.thesis, 80);

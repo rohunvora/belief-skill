@@ -820,3 +820,145 @@ Testing @punter_punts tweet (long-form, ~1189 chars) revealed the X API was sile
 **74. fxtwitter.com is the primary no-auth tweet extraction method.** Free, no API key, returns full long tweets with metrics. Third-party dependency risk is acceptable because: (a) vxtwitter backup exists, (b) X API is the preferred path anyway, (c) the skill warns users to set up X_BEARER_TOKEN.
 
 **75. Screenshots are a first-class input path.** Added as step 6 in Input Validation. Vision model reads the image, extracted text is preserved as source material in derivation chain segments, same as URL or pasted text.
+
+## 2026-02-21: Session — Board Simplification (Social Platform → Read-Only Viewer)
+
+### Context
+
+Feeling overwhelmed with repo state. The board had grown into a full social platform (feed with tabs, leaderboard, trending, watchlist, search, author/source/ticker pages, profiles, claim flow) that distracted from the core mission: making the skill's outputs excellent and readable. Bulk uploads (YouTube, Twitter scans) are the most-used feature but outputs aren't optimized for reading.
+
+Root insight: the board exists because skill outputs are too long for Telegram. It's a **reading surface**, not a social network. Everything social was stripped. The board is now a simple chronological list of skill outputs with detail pages.
+
+### What we changed
+
+**Archived to `_archive/` (not deleted):**
+- 9 pages: Feed, Leaderboard, Watchlist, Trending, AuthorPage, SourcePage, TickerPage, Profile, Claim
+- 4 components: BottomNav, SearchBar, SearchOverlay, TrendingBanner
+- 3 hooks: useFeed, useSearch, useWatchlist
+- `docs/` directory (41 design exploration files)
+- `examples/` directory
+
+**Simplified:**
+- `board/app.tsx` — 14 routes → 4: `/` (CallList), `/call/:id` (CardDetail), `/call/new` (NewCall), `/how-it-works` (HowItWorks)
+- `board/components/Header.tsx` — removed search, trending, contributors, watchlist links. Kept: logo, "How it works", New Call button
+- `board/components/CallCard.tsx` — removed useWatchlist, author/source/ticker page links, star button. Handle and ticker are plain text, source URL is external-only
+- `board/pages/CardDetail.tsx` — removed useWatchlist, comments section, social links, mobile action bar. Just the card data + share button
+- `board/server.ts` — stripped 7 social API routes (users, leaderboard, search, trending, authors, sources, tickers, profile). Kept: prices, takes CRUD, quotes, permalinks
+- `board/db.ts` — removed social queries (leaderboard, search, trending, paginated entities, submitter profiles)
+- `board/pages/CallList.tsx` — NEW simple replacement for Feed (fetches `/api/takes?limit=50`, renders CallCards with live prices)
+
+**Preserved (explicitly kept):**
+- Entity model: all tables (users, authors, sources, tickers, quotes, call_quotes), types, CRUD functions, ensure* helpers
+- Core queries: getCall, listCalls, queryFeed, getCallWithJoins
+- Server-rendered permalinks and OG cards
+- Live price infrastructure
+- Two-layer data model (Call vs Routing)
+
+### Card audit (21 cards in board.db)
+
+Audited every card against SKILL.md spec for derivation chain format:
+- Deleted 2 test cards (permalink test, entity creation test)
+- Fixed 5 old-format derivation chains — converted from `{source_said, implies, searching_for, found_because}` to proper `{segments: [{quote, speaker}], steps: [{text, segment?}], chose_over}`
+- Fixed 4 anti-pattern chains where ticker only appeared in last step (RPV, CAT, CEG, DELL)
+- Final result: 21/21 cards clean
+
+### Decisions made
+
+**76. Board is a read-only output viewer, not a social platform.** The board exists to solve one problem: skill outputs are too long for Telegram. Every social feature (feed tabs, leaderboard, trending, watchlist, search, profiles, claim flow) was scope creep that distracted from output quality. Archived, not deleted — can be restored if needed.
+
+**77. Entity model preserved even without social pages.** Authors, sources, tickers, quotes tables and their CRUD operations stay. The entity graph is part of the data model, not a social feature. Future queries, scoring, and analysis will need it. The social *pages* (AuthorPage, TickerPage) are gone, but the underlying data is intact.
+
+**78. Archive over delete.** Everything moved to `_archive/` instead of being deleted. Low risk to restore if any of it becomes relevant again. Git history also preserves everything.
+
+### Files changed
+- `board/app.tsx` — rewritten (4 routes)
+- `board/pages/CallList.tsx` — new file
+- `board/components/Header.tsx` — rewritten
+- `board/components/CallCard.tsx` — stripped social features
+- `board/pages/CardDetail.tsx` — stripped social features
+- `board/server.ts` — stripped social routes
+- `board/db.ts` — stripped social queries
+- `board/board.db` — deleted test cards, fixed derivation chains
+- `_archive/board/` — 9 pages, 4 components, 3 hooks
+- `_archive/docs/` — 41 files
+- `_archive/examples/` — 1 file
+
+## 2026-02-21: Session — Skill Architecture Overhaul (Monolith → Decision Tree + Progressive Disclosure)
+
+### Context
+
+Board redesign revealed that feed cards showed AI-generated reasoning next to tickers with no visible connection to the source quote (e.g., "inflation is monetary" → FCX copper mine). Traced the problem through multiple layers: first the UI hierarchy (fixed with source-first cards + headline_quote), then the routing logic (Deeper Claim was oriented toward "find non-obvious play"), then the fundamental architecture (800-line monolithic prompt with interacting constraints).
+
+### The diagnosis
+
+The skill conflated ROUTING (map belief → most direct expression) with ANALYSIS (generate creative trade ideas). The "Deeper Claim" section actively encouraged multi-hop creative redirection. The accumulated complexity around it (Connection Floor, Challenger Override, Cross-check, 4-dim rubric) was infrastructure for creative stock-picking that should be infrastructure for faithful routing.
+
+Tested 7 existing derived calls against new coherence tests: 2 passed (ETN, MP), 5 failed (FCX, CAT, EVR, SPGI, CRWD). All failures shared the same pattern: the skill found a "non-obvious" trade that required the reader to follow the skill's reasoning rather than the author's claim.
+
+### The flowchart
+
+Developed from first principles: what is the anatomy of dissecting a take into a trade?
+
+```
+EXTRACT → DECODE
+     ↓
+GATE 1: COHERENCE (does quote → instrument hold together?)
+     ↓ pass
+RESEARCH → SCORE → SELECT
+     ↓
+GATE 2: OPTIMALITY (is this the best expression?)
+     ↓ pass
+OUTPUT
+```
+
+Two recursive gates. Gate 1 anchors to the original words. Gate 2 anchors to the original belief. Everything else is linear narrowing from abstract to concrete.
+
+### What changed
+
+**SKILL.md restructured from 882 → 228 lines.** Now a decision tree (the flowchart) with `load references/X.md` directives for detail. Follows the cloudflare-skill pattern: SKILL.md is the router, reference files are the encyclopedia.
+
+**New reference files created:**
+- `references/scoring-rubric.md` — hard gates, 4-dim rubric, HL check, comparison, stress-test, expression ladder
+- `references/output-format.md` — payload table, headline quote rules, example payload, board POST
+- `references/bulk-mode.md` — extract/cluster, instrument sweep, deep route, scan output
+- `references/handle-scan.md` — X API pipeline, cost gate, filtering, routing
+
+**Existing reference file updated:**
+- `references/derivation-chain.md` — "Self-test" replaced with "Reader Coherence Test" (headline test, author test, padding test)
+
+**Key changes to routing logic (in the skeleton):**
+1. Deeper Claim rewritten: "find the most direct instrument" replaces "find the non-obvious play"
+2. Directness test added: 3+ inferential leaps = too far, route closer
+3. Routing Confidence: high (D0-D1, one trade) / medium (D2, ranked options) / low (D3+, flag gap)
+4. Reader Coherence Test replaces Self-test: headline test, author test, padding test
+5. Premise verification as Research Phase 0: verify setup claims before routing
+6. Connection Floor, Challenger Override, Cross-check all deleted (complexity with no quality gain)
+
+### Decisions made
+
+**79. SKILL.md is a router, not an encyclopedia.** The cloudflare-skill pattern: main file is decision tree + load directives, detail lives in reference files loaded on demand. Prevents context window bloat and keeps the LLM focused on the current step.
+
+**80. Two gates, not seven interacting constraints.** Gate 1 (coherence) and Gate 2 (optimality) are the only recursive steps. Everything else is linear. The old skill had Connection Floor, Challenger Override, Cross-check, Early Stop, and Self-test all interacting in ways that produced technically compliant but substantively wrong outputs.
+
+**81. Directness over creativity.** The skill's job is to find the MOST DIRECT instrument, not the cleverest. If the author named a ticker and that ticker IS the thesis, route there. Don't redirect to something "smarter." The FCX problem (inflation tweet → copper mine) was the old skill rewarding itself for creative leaps.
+
+**82. Premise verification as Phase 0.** First search verifies the author's factual claim, not the trade thesis. "Everyone is positioned for a dollar rally" should hit COT data before routing. If the premise is wrong, the entire derivation inverts.
+
+**83. Distance scale for routing confidence.** D0 (subject IS traded) through D3+ (abstract, needs bridge) determines how many options to present and how much to flag the skill's contribution. Not all routings deserve equal confidence.
+
+### Files changed
+- `SKILL.md` — rewritten (882 → 228 lines)
+- `SKILL.md.bak` — backup of old version
+- `references/scoring-rubric.md` — new
+- `references/output-format.md` — new
+- `references/bulk-mode.md` — new
+- `references/handle-scan.md` — new
+- `references/derivation-chain.md` — updated (Self-test → Reader Coherence Test)
+- `board/components/CallCard.tsx` — source-first card layout, headline_quote hero
+- `board/pages/CallList.tsx` — source grouping
+- `board/pages/CardDetail.tsx` — AsymmetryBar, collapsible reasoning, headline_quote as hero pull-quote
+- `board/types.ts` — added headline_quote, removed author_thesis
+- `board/db.ts` — updated packTradeData/unpackRow for headline_quote
+- `board/templates/card.ts` — headline_quote priority in getQuote()
+- `board/templates/permalink.ts` — headline_quote in OG meta
+- `board/backfill-headline-quotes.ts` — one-shot backfill script

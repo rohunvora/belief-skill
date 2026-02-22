@@ -7,7 +7,7 @@ Reference for Claude when generating trade expressions. Surface these warnings p
 | Platform | Tier | Key Facts |
 |----------|------|-----------|
 | Kalshi | Regulated | CFTC-regulated DCM, LedgerX clearinghouse, segregated accounts. NFL payout incident (Jan 2026) resolved. |
-| Robinhood | Regulated | FINRA/SEC regulated. No API — manual execution only. |
+| Robinhood | Regulated | FINRA/SEC regulated. No API; manual execution only. |
 | Hyperliquid | DEX | 3 manipulation incidents in 2025: JELLY (Mar, $12M loss, withdrawals frozen), July incident, POPCAT (Nov, $4.9M bad debt, withdrawals frozen). Less decentralized than claimed. |
 | Bankr | New | Non-custodial (user keeps keys). Alpha-stage SDK. Limited track record. Smart contract risk. |
 
@@ -43,9 +43,9 @@ When 2+ expressions share a group, add correlation warning.
 
 - 82% of retail CFD traders lose money (FCA data)
 - Never gamify or celebrate rapid-fire belief routing
-- Show cumulative P&L honestly — losses included
+- Show cumulative P&L honestly. Losses included.
 - The PnL card leads with the THESIS, not the number
-- Loss cards are equally shareable — never hide losses
+- Loss cards are equally shareable. Never hide losses.
 
 ## Regulatory Context
 

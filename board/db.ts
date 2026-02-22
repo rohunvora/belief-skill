@@ -347,7 +347,7 @@ function packTradeData(call: Partial<Call>): string | null {
   const data: Record<string, any> = {};
   // Layer 1: author's signal (blob detail)
   if (call.source_quote) data.source_quote = call.source_quote;
-  if (call.author_thesis) data.author_thesis = call.author_thesis;
+  if (call.headline_quote) data.headline_quote = call.headline_quote;
   if (call.author_ticker) data.author_ticker = call.author_ticker;
   if (call.author_direction) data.author_direction = call.author_direction;
   if (call.conditions) data.conditions = call.conditions;
@@ -404,7 +404,7 @@ function unpackRow(row: any): Call {
     comments: row.comments,
     // Layer 1: call (blob detail)
     source_quote: tradeData.source_quote,
-    author_thesis: tradeData.author_thesis,
+    headline_quote: tradeData.headline_quote,
     author_ticker: tradeData.author_ticker,
     author_direction: tradeData.author_direction,
     conditions: tradeData.conditions,
